@@ -130,7 +130,7 @@ details.op{margin-top:8px;border:1px solid #d9a93a;background:rgba(240,190,60,.1
 .bzh{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .bzp{background:linear-gradient(165deg,color-mix(in srgb,var(--c) 92%,#000),color-mix(in srgb,var(--c) 42%,#000));color:#fff;border-radius:18px;padding:12px 10px;text-align:center;box-shadow:var(--sh);min-width:0}
 .bzn{width:100%;background:rgba(0,0,0,.2);border:0;border-radius:10px;color:#fff;text-align:center;font:inherit;font-weight:700;padding:5px;font-size:15px}
-.bzs{font-size:62px;font-weight:800;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}
+.bzs{font-size:56px;font-weight:800;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}
 .bzu{font-size:12px;opacity:.95;min-height:20px}.bzl{background:rgba(255,255,255,.26);border-radius:10px;padding:1px 8px;font-weight:700;margin-left:4px}
 .bzc{display:flex;align-items:center;justify-content:space-between;margin-top:8px;background:rgba(0,0,0,.22);border-radius:14px;padding:4px}
 .bzc span{display:flex;flex-direction:column;line-height:1.05}.bzc b{font-size:25px}.bzc small{font-size:10px;opacity:.85}
@@ -183,17 +183,10 @@ details.op{margin-top:8px;border:1px solid #d9a93a;background:rgba(240,190,60,.1
 .gpgo{position:sticky;bottom:-18px;background:var(--card);padding:12px 0 2px;margin-top:10px}.gpgo .b{width:100%;padding:13px;font-size:16px}
 @media(max-width:700px){.gpgo{bottom:0}}
 /* ===== Missions V11 : suivi des points ===== */
-.msn{padding:12px}.msn .gph{margin-top:0}.msbar{display:grid;gap:8px;margin-bottom:10px}.msrd{font-size:15px}
-.msph{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px}.msph span{flex:none;font-size:11px;padding:4px 8px;border-radius:99px;border:1px solid var(--bd);color:var(--mu);white-space:nowrap}.msph span.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
-.msnav{display:flex;gap:8px}.msnav .b.p{flex:1;padding:11px}
-.msal2{background:color-mix(in srgb,var(--ac) 12%,var(--card));border:1px solid var(--ac);border-radius:10px;padding:8px 10px;font-size:13px;margin-bottom:10px}
-.msseg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.msseg button{font:inherit;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:8px;text-align:left;cursor:pointer;display:grid;gap:0;min-width:0}.msseg button.on{border-color:var(--c)}.msseg b{font-size:24px;line-height:1.1}.msseg small{color:var(--mu);font-size:11px}.msseg span{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.msh{display:flex;gap:10px;align-items:center}.msh>div{flex:1;min-width:0}.msh .mi{font-size:24px}.msn1{font-size:18px}.msd1{margin:6px 0 8px;font-size:13px}
-.msrp{display:flex;gap:4px;margin:8px 0}.msrp button{flex:1;font:inherit;font-size:13px;font-weight:700;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 0;cursor:pointer}.msrp button.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,var(--card))}.msrp button.cur::after{content:"";display:block;height:2px;margin:2px 8px 0;background:var(--ac);border-radius:2px}.msrp small{display:block;font-weight:500;color:var(--mu);font-size:10px;min-height:12px}
-.msrn{font-size:13px;color:var(--mu);margin:4px 0 8px}.msrn b{color:var(--tx)}
-.msg{margin:8px 0;border:1px solid var(--bd);border-radius:12px;padding:6px 10px}.msg.due{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}.msgh{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);font-weight:700;padding:4px 0;display:flex;align-items:center;gap:6px}
-.mdot{width:8px;height:8px;border-radius:50%;background:var(--ac);animation:msb 1.2s infinite}@keyframes msb{50%{opacity:.25}}.msdt{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e8a317;margin-left:4px;vertical-align:top}
-.msr{padding:8px 0;border-top:1px solid var(--bd)}.msg>.msr:first-of-type{border-top:0}.msr1{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
+.msn{padding:12px}.msn .gph{margin-top:0}
+.msh{display:flex;gap:10px;align-items:center;margin-top:12px}.msh>div{flex:1;min-width:0}.msh .mi{font-size:24px}.msn1{font-size:18px}
+.msg{margin:12px 0 0}.msgh{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);font-weight:700;padding:4px 0;display:flex;align-items:center;gap:6px}.msgh+.msr{border-top:0}
+.msr{padding:8px 0;border-top:1px solid var(--bd)}.msr1{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}
 .mck{width:38px;height:38px;border-radius:10px;border:2px solid var(--bd);background:var(--card);color:transparent;font-size:20px;font-weight:800;cursor:pointer;display:grid;place-items:center;flex:none;padding:0}.mck.on{background:var(--ac);border-color:var(--ac);color:#fff}.mck.sm{width:28px;height:28px;font-size:15px;border-radius:8px}.mck:disabled{opacity:.4}
 .msx{min-width:0}.mst{font-size:14px;line-height:1.3}.mss{font-size:12px;color:var(--mu);margin-top:2px}.msp{font-size:20px;font-weight:800;text-align:right;line-height:1}.msp small{display:block;font-size:10px;font-weight:600;color:var(--mu)}.msr.ok .msp{color:var(--ac)}
 .stp2{display:inline-flex;align-items:center;gap:4px;flex:none}.stp2 button{width:34px;height:34px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:18px;font-weight:700;cursor:pointer;padding:0}.stp2 button:disabled{opacity:.35}.stp2 b{min-width:24px;text-align:center;font-size:17px}
@@ -201,9 +194,24 @@ details.op{margin-top:8px;border:1px solid #d9a93a;background:rgba(240,190,60,.1
 .msd{margin:8px 0;border:1px solid var(--bd);border-radius:12px;padding:6px 10px}.msd>summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0;display:flex;align-items:center;gap:6px}.msru{font-size:13px;margin:6px 0}
 .msa{border-top:1px solid var(--bd);padding:8px 0}.msal{font-size:12.5px;margin:4px 0}.msal span{color:var(--mu)}.msat{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;margin-top:4px}
 .mslg{max-height:260px;overflow:auto;font-size:12.5px}.mlg{padding:5px 0;border-top:1px solid var(--bd)}.mlg:first-child{border-top:0}.mlt{display:block;color:var(--mu);font-size:11px}.pd{color:var(--ac);white-space:nowrap}.mlg.neg .pd{color:#c0392b}
-.bzp{position:relative}.bzm{display:block;font-size:11px;opacity:.9}.msf{position:absolute;right:12px;top:8px;font-weight:800;font-size:22px;animation:msup 1.2s ease-out forwards;pointer-events:none}@keyframes msup{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}.bzs.pulse{animation:mspl .5s}@keyframes mspl{40%{transform:scale(1.12)}}
+.bzp{position:relative}.bzm{display:block;font-size:11.5px;opacity:.95;margin-top:1px}.msf{position:absolute;right:12px;top:8px;font-weight:800;font-size:22px;animation:msup 1.2s ease-out forwards;pointer-events:none}@keyframes msup{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}.bzs.pulse{animation:mspl .5s}@keyframes mspl{40%{transform:scale(1.12)}}
+/* ===== Score : un tiroir par joueur ===== */
+.bzt button{min-height:46px}
+details.bzcard>summary{list-style:none;display:flex;align-items:center;gap:6px}details.bzcard>summary::-webkit-details-marker{display:none}details.bzcard>summary::after{content:"›";margin-left:auto;color:var(--mu);font-size:20px;line-height:1;transition:transform .2s}details.bzcard[open]>summary::after{transform:rotate(90deg)}
+.pdws{display:grid;gap:10px;margin-bottom:10px}
+.pdw{background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--c);border-radius:16px;box-shadow:var(--sh);overflow:hidden}
+.pdh{display:flex;align-items:center;gap:10px;width:100%;min-height:60px;padding:10px 12px;font:inherit;color:var(--tx);background:none;border:0;text-align:left;cursor:pointer;touch-action:manipulation}
+.pdn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.pdn b{font-size:16px;color:var(--c);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pdn small{font-size:12.5px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pdn em{font-style:normal;font-weight:700;color:var(--ac)}
+.pdt{display:flex;flex-direction:column;align-items:center;line-height:1.05;min-width:46px}.pdt b{font-size:24px;font-variant-numeric:tabular-nums}.pdt small{font-size:10px;color:var(--mu)}
+.pdc{flex:none;width:9px;height:9px;margin:0 4px 3px 2px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:transform .2s}.pdw.open .pdc{transform:rotate(-135deg);margin-top:5px;margin-bottom:0}
+.pdb{padding:0 12px 12px;border-top:1px solid var(--bd)}
+.pdr{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 0;font-size:13px;color:var(--mu)}.pdr span:first-child{font-weight:700;color:var(--tx);font-size:16px}.pdr b{color:var(--ac);font-size:16px}
+.pdx{border-top:1px solid var(--bd);margin-top:12px}.pdx>summary{cursor:pointer;font-weight:600;font-size:14px;padding:10px 0 4px;display:flex;align-items:center;gap:6px;list-style:none}.pdx>summary::-webkit-details-marker{display:none}.pdx>summary::after{content:"›";margin-left:auto;color:var(--mu);font-size:20px;line-height:1;transition:transform .2s}.pdx[open]>summary::after{transform:rotate(90deg)}.pdv{font-weight:400;font-size:12px;color:var(--mu);margin-left:4px}
+.mfin{font-size:12.5px;margin:12px 0 0}
+.w.bzw table{min-width:0;font-size:13px}.bzw td,.bzw th{padding:5px 2px}
 .gtop{border-top:0;margin-top:8px;padding-top:0}.gfc{border-left:5px solid var(--c);padding:4px 0 4px 10px;margin:8px 0}.gfn{display:flex;flex-direction:column}.gfm{font-size:14px;margin-top:2px}
 .gnote.need{color:var(--tx)}.gch{font:inherit;font-size:12px;border:1px solid var(--ac);color:var(--ac);background:transparent;border-radius:99px;padding:3px 10px;cursor:pointer;margin:2px 2px 2px 0}.gpgo2 .b{width:100%;padding:13px;font-size:16px}.ml.need{color:#c0392b}.mo.sm{padding:7px 11px}.mo.sm .mt b{font-weight:600}
+.gmauto b{font-size:16px}
 /* ===== Lanceur de D6 ===== */
 #dzf{position:fixed;z-index:38;width:46px;height:46px;border-radius:50%;left:10px;top:520px;display:grid;place-items:center;color:var(--ac);background:var(--ac);border:2px solid var(--card);box-shadow:0 3px 12px rgba(0,0,0,.28);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;animation:dzpl 4s ease-in-out infinite;opacity:.95;transition:opacity .2s,transform .15s}
 #dzf svg{pointer-events:none}
@@ -547,7 +555,7 @@ function miniBar(){const B=S.bat,c=B.cur||0,CL=["#3ddc97","#f0a54a"],cb=(i,v)=>`
 function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
 function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat",run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
  $("#bar").style.display=g?"flex":"none";$("#m").classList.toggle("gm",g);$("#fab").style.display=g?"none":"";$("#fab").textContent=run?"▶ Reprendre la partie":"🎲 Mode jeu";$("#fab").dataset.act=run?"gresume":"gpick";
- $("#bar").innerHTML=g?[["play","🛡","Unités",tab==="play"],["pst","⚡","Stratagèmes",tab==="pst"],["bat","🏆","Score",tab==="bat"]].map(([k,i,n,on])=>`<button data-tab="${k}" class="${on?"on":""}"><i>${i}</i>${n}${k==="bat"&&S.bat.ms&&S.bat.ms.al?'<u class="msdt"></u>':""}</button>`).join("")+`<button data-act="gmg"><i>☰</i>Gestion</button><button class="end" data-act="gend"><i>⏹</i>Terminer</button>`:""}
+ $("#bar").innerHTML=g?[["play","🛡","Unités",tab==="play"],["pst","⚡","Stratagèmes",tab==="pst"],["bat","🏆","Score",tab==="bat"]].map(([k,i,n,on])=>`<button data-tab="${k}" class="${on?"on":""}"><i>${i}</i>${n}</button>`).join("")+`<button data-act="gmg"><i>☰</i>Gestion</button><button class="end" data-act="gend"><i>⏹</i>Terminer</button>`:""}
 const pHay=p=>[p.name,p.kw,p.fkw,p.equip,p.apt,(p.weapons||[]).map(w=>w.name).join(" "),(p.text||[]).join(" "),(p.xab||[]).map(x=>(x.n||"")+" "+(x.d||"")).join(" ")].join(" ").toLowerCase();
 const pSearch=(L,extra)=>`<div class="card psb"><input id="ps" type="search" placeholder="Chercher unité, arme, aptitude, stratagème…" value="${esc(pq)}" autocomplete="off">${extra||""}</div>`;
 const pNone=()=>`<div class="card"><p>Aucune liste active.</p><p class="mu">Ouvre « Gestion » pour importer ou créer ta liste d’armée, puis touche « ▶ Jouer ».</p><button class="b p" data-tab="lists">Aller à Gestion</button></div>`;
@@ -669,7 +677,7 @@ function doHl(){if(!selRef||!selTxt.length)return;const a=S.hlt[selRef]=S.hlt[se
 document.addEventListener("toggle",e=>{if(e.target&&e.target.dataset&&e.target.dataset.pk!=null){const k=e.target.dataset.pk,df=e.target.dataset.pd==="1";(e.target.open!==df)?pop.add(k):pop.delete(k);return}if(cfs&&e.target&&e.target.dataset&&e.target.dataset.cx!=null){cfs.items[+e.target.dataset.cx].open=e.target.open;return}if(cfs&&e.target&&e.target.dataset&&e.target.dataset.cy!=null){cfs.items[+e.target.dataset.cy].open2=e.target.open;return}const k=e.target&&e.target.dataset&&e.target.dataset.xk;if(k!=null)window.xo=e.target.open?k:null},true);
 document.addEventListener("selectionchange",()=>{let b=$("#hlb");if(!b){b=document.createElement("button");b.id="hlb";b.className="b p";b.textContent="🖍 Surligner la sélection";b.addEventListener("pointerdown",e=>{e.preventDefault();doHl()});document.body.appendChild(b)}const s=getSelection(),n=s.rangeCount&&!s.isCollapsed?s.anchorNode:null,el=n?(n.nodeType===1?n:n.parentNode):null,z=el&&el.closest?el.closest("[data-hlz]"):null;if(z&&z.dataset.hlz){selRef=z.dataset.hlz;selTxt=selPieces();b.style.display=selTxt.length?"block":"none"}else b.style.display="none"});
 let led=false;
-function ledForm(L){const f=(k,lab,auto)=>`<label>${lab}<input data-lo="${k}" inputmode="numeric" placeholder="${auto}" value="${ov(L[k])?esc(L[k]):""}"></label>`;return`<div class="card"><b>Modifier la liste</b><label>Nom<input data-lo="name" value="${esc(L.name)}"></label><div class="row"><span style="flex:1">${f("ovP","Points de l’armée",L.total||"ex. 2000")}</span><span style="flex:1">${f("ovU","Nombre d’unités",lcnt0(L))}</span></div><p class="mu">Une fiche avec meneur(s) ou appui(s) compte pour 1 unité. Laisse « Nombre d’unités » vide pour garder le calcul automatique (valeur affichée en gris).</p><div class="ml">Ma mission de préférence</div>${misPick(L.mission||"","ledit",true,L.game)}${L.mission&&window.misM?`<div class="ml">Ma mission (facultatif)</div>${window.misM(L.mid||"","ledit2",L.mission)}`:""}<p class="mu">Enregistrée dans cette liste, modifiable à tout moment. Chaque nouvelle partie la reprend automatiquement (tu peux la changer pour une seule partie sans toucher à la liste). Touche-la à nouveau pour la retirer.</p><p><button class="b p" data-act="lok">Terminé</button> <button class="b" data-act="lauto">Tout remettre en automatique</button></p></div>`}
+function ledForm(L){const f=(k,lab,auto)=>`<label>${lab}<input data-lo="${k}" inputmode="numeric" placeholder="${auto}" value="${ov(L[k])?esc(L[k]):""}"></label>`;return`<div class="card"><b>Modifier la liste</b><label>Nom<input data-lo="name" value="${esc(L.name)}"></label><div class="row"><span style="flex:1">${f("ovP","Points de l’armée",L.total||"ex. 2000")}</span><span style="flex:1">${f("ovU","Nombre d’unités",lcnt0(L))}</span></div><p class="mu">Une fiche avec meneur(s) ou appui(s) compte pour 1 unité. Laisse « Nombre d’unités » vide pour garder le calcul automatique (valeur affichée en gris).</p><div class="ml">Ma mission de préférence</div>${misPick(L.mission||"","ledit",true,L.game)}<p class="mu">Enregistrée dans cette liste, modifiable à tout moment. Chaque nouvelle partie la reprend automatiquement (tu peux la changer pour une seule partie sans toucher à la liste). Touche-la à nouveau pour la retirer.</p><p><button class="b p" data-act="lok">Terminé</button> <button class="b" data-act="lauto">Tout remettre en automatique</button></p></div>`}
 const dI=t=>`<ins style="background:rgba(28,140,100,.28);text-decoration:none;border-radius:3px;padding:0 2px">${esc(t)}</ins>`,dD=t=>`<del style="background:rgba(214,69,65,.25);border-radius:3px;padding:0 2px">${esc(t)}</del>`;
 function wdiff(a,b){const A=String(a||"").split(/\s+/).filter(Boolean),B=String(b||"").split(/\s+/).filter(Boolean),n=A.length,m=B.length;
  if(!n)return dI(B.join(" "));if(!m)return dD(A.join(" "));if(n*m>400000)return dD(A.join(" "))+" "+dI(B.join(" "));
@@ -797,13 +805,16 @@ function optiView2(L){L.optis=L.optis||[];return`<div class="card row" style="ju
 function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],tt=(i,u)=>B.t.slice(0,u+1).reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0),0),T=[tt(0,4),tt(1,4)],d=T[0]-T[1],sum=T[0]+T[1],w0=sum?Math.round(T[0]/sum*100):50,
  bb=(k,t,i,v,cl)=>`<button class="bzk ${cl||""}" data-act="bd" data-k="${k}" data-t="${t}" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} ${Math.abs(v)}">${v>0?"+":"−"}${cl==="c"?"":Math.abs(v)}</button>`,
  dp=(k,l)=>`<details class="bzcard" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""}><summary>${l}</summary>`,
- hero=`<div class="bzh">${[0,1].map(i=>{const lead=d!==0&&(d>0?i===0:i===1),eq=d===0&&sum>0;return `<div class="bzp" style="--c:${CL[i]}"><input class="bzn" data-bn="${i}" value="${esc(B.n[i])}" aria-label="Nom du joueur ${i+1}"><div class="bzs">${T[i]}</div><div class="bzu">points${lead?` <span class="bzl">▲ +${Math.abs(d)}</span>`:eq?` <span class="bzl">égalité</span>`:""}${B.ms&&window.msTot?` <span class="bzm">dont mission ${window.msTot(i)}</span>`:""}</div><div class="bzc">${bb("cp",-1,i,-1,"c")}<span><b>${B.cp[i]}</b><small>PC</small></span>${bb("cp",-1,i,1,"c")}</div></div>`}).join("")}</div><div class="bzbar"><i style="width:${w0}%;background:${CL[0]}"></i><i style="flex:1;background:${CL[1]}"></i></div>`,
- tabs=`<div class="bzt">${B.t.map((r,t)=>`<button class="${t===c?"on":""}" data-act="bt" data-t="${t}"><b>T${t+1}</b><small>${r.p[0]+r.s[0]+(r.m?r.m[0]:0)} – ${r.p[1]+r.s[1]+(r.m?r.m[1]:0)}</small></button>`).join("")}</div>`,
+ mp=i=>B.t.reduce((x,r)=>x+(r.m?r.m[i]:0),0),
+ hero=`<div class="bzh">${[0,1].map(i=>{const lead=d!==0&&(d>0?i===0:i===1),eq=d===0&&sum>0;return `<div class="bzp" style="--c:${CL[i]}"><input class="bzn" data-bn="${i}" value="${esc(B.n[i])}" aria-label="Nom du joueur ${i+1}"><div class="bzs">${T[i]}</div><div class="bzu">points${lead?` <span class="bzl">▲ +${Math.abs(d)}</span>`:eq?` <span class="bzl">égalité</span>`:""}</div>${B.ms?`<div class="bzm">Mission ${mp(i)} · Manuel ${T[i]-mp(i)}</div>`:""}<div class="bzc">${bb("cp",-1,i,-1,"c")}<span><b>${B.cp[i]}</b><small>PC</small></span>${bb("cp",-1,i,1,"c")}</div></div>`}).join("")}</div><div class="bzbar"><i style="width:${w0}%;background:${CL[0]}"></i><i style="flex:1;background:${CL[1]}"></i></div>`,
+ tabs=`<div class="bzt">${B.t.map((x,t)=>`<button class="${t===c?"on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===c}"><b>R${t+1}</b><small>${x.p[0]+x.s[0]+(x.m?x.m[0]:0)} – ${x.p[1]+x.s[1]+(x.m?x.m[1]:0)}</small></button>`).join("")}</div>`,
  r=B.t[c],
- panel=`<div class="bzcard"><div class="bzth"><b>Tour ${c+1}</b><span class="mu">Ce tour ${r.p[0]+r.s[0]+(r.m?r.m[0]:0)} – ${r.p[1]+r.s[1]+(r.m?r.m[1]:0)} · Cumul ${tt(0,c)} – ${tt(1,c)}</span></div>${[0,1].map(i=>`<div class="bzr" style="--c:${CL[i]}"><div class="bzrn">${esc(B.n[i])}<span>${r.p[i]+r.s[i]+(r.m?r.m[i]:0)} pts ce tour</span></div>${[["p","Primaire"],["s","Secondaire"]].map(([k,l])=>`<div class="bzrow"><span>${l}</span><span class="bzct">${bb(k,c,i,-5,"sm")}${bb(k,c,i,-1,"")}<b>${r[k][i]}</b>${bb(k,c,i,1,"")}${bb(k,c,i,5,"sm")}</span></div>`).join("")}${B.ms?`<div class="bzrow"><span>Mission (auto)</span><span class="bzct"><b>${r.m?r.m[i]:0}</b></span></div>`:""}</div>`).join("")}</div>`,
- tbl=dp("b:t","Détail par tour")+`<div class="w"><table><tr><th>Tour</th><th colspan="4" style="color:${CL[0]}">${esc(B.n[0])}</th><th colspan="4" style="color:${CL[1]}">${esc(B.n[1])}</th></tr><tr><th></th><th>P</th><th>S</th><th>M</th><th>Σ</th><th>P</th><th>S</th><th>M</th><th>Σ</th></tr>${B.t.map((x,t)=>`<tr${t===c?' style="background:var(--bg)"':""}><td>T${t+1}</td><td>${x.p[0]}</td><td>${x.s[0]}</td><td>${x.m?x.m[0]:0}</td><td><b>${tt(0,t)}</b></td><td>${x.p[1]}</td><td>${x.s[1]}</td><td>${x.m?x.m[1]:0}</td><td><b>${tt(1,t)}</b></td></tr>`).join("")}</table><div class="mu">P = primaire · S = secondaire · M = missions (auto) · Σ = cumul</div></div></details>`,
- set=dp("b:s","Joueurs · factions · listes")+[0,1].map(i=>`<div style="margin:10px 0;border-left:5px solid ${CL[i]};padding-left:10px"><b>${esc(B.n[i])}</b><input data-bf="${i}" list="fl" value="${esc(B.f[i])}" placeholder="Faction jouée" style="width:100%;margin-top:6px"><select data-bl="${i}" style="width:100%;margin-top:6px">${lopts(i)}</select></div>`).join("")+`</details>`;
- return hero+(window.msPanel?window.msPanel():"")+tabs+panel+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p>`}
+ man=i=>[["p","Primaire"],["s","Secondaire"]].map(([k,l])=>`<div class="bzrow"><span>${l}</span><span class="bzct">${bb(k,c,i,-5,"sm")}${bb(k,c,i,-1,"")}<b>${r[k][i]}</b>${bb(k,c,i,1,"")}${bb(k,c,i,5,"sm")}</span></div>`).join(""),
+ dr=[0,1].map(man),
+ hist=B.ms&&B.ms.log&&B.ms.log.length&&window.msLogHtml?dp("b:h",`🕘 Historique des validations <span class="mu">(${B.ms.log.length})</span>`)+`<div class="mslg">${window.msLogHtml(B.ms.log,B.n)}</div></details>`:"",
+ tbl=dp("b:t","📊 Détail par round")+`<div class="w bzw"><table><tr><th>Round</th><th colspan="4" style="color:${CL[0]}">${esc(B.n[0])}</th><th colspan="4" style="color:${CL[1]}">${esc(B.n[1])}</th></tr><tr><th></th><th>P</th><th>S</th><th>M</th><th>Σ</th><th>P</th><th>S</th><th>M</th><th>Σ</th></tr>${B.t.map((x,t)=>`<tr${t===c?' style="background:var(--bg)"':""}><td>R${t+1}</td><td>${x.p[0]}</td><td>${x.s[0]}</td><td>${x.m?x.m[0]:0}</td><td><b>${tt(0,t)}</b></td><td>${x.p[1]}</td><td>${x.s[1]}</td><td>${x.m?x.m[1]:0}</td><td><b>${tt(1,t)}</b></td></tr>`).join("")}</table><div class="mu">P = primaire · S = secondaire · M = missions (auto) · Σ = cumul</div></div></details>`,
+ set=dp("b:s","👥 Joueurs · factions · listes")+[0,1].map(i=>`<div style="margin:10px 0;border-left:5px solid ${CL[i]};padding-left:10px"><b>${esc(B.n[i])}</b><input data-bf="${i}" list="fl" value="${esc(B.f[i])}" placeholder="Faction jouée" style="width:100%;margin-top:6px"><select data-bl="${i}" style="width:100%;margin-top:6px">${lopts(i)}</select></div>`).join("")+`</details>`;
+ return hero+tabs+(window.msDrawers?window.msDrawers(dr):dr.map((h,i)=>`<div class="bzcard"><b style="color:${CL[i]}">${esc(B.n[i])}</b>${h}</div>`).join(""))+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p>`}
 let ftab=0,fedLast=null;
 function cutDet(p,dn){const t=(p.text||[]).join(" ");if(!t)return"";const x=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),re=new RegExp("((?:[\\p{L}'’]+\\s-\\s)?(?:"+dn.map(x).join("|")+"))\\s*\\[([^\\]]+)\\]","giu"),tags=[];let m;while(m=re.exec(t))tags.push({i:m.index,l:m[0].length});if(!tags.length)return"";const names=[...(p.equip||"").split(",").map(s=>s.trim()).filter(s=>/\(Aura\)/.test(s)),...(p.apt||"").split(",").map(s=>s.trim())].filter(Boolean),out=[];let keep=t.slice(0,tags[0].i);tags.forEach((g,k)=>{const from=g.i+g.l,nx=k+1<tags.length?tags[k+1].i:t.length;let end=nx;names.forEach(n=>{const j=t.indexOf(n,from);if(j>=0&&j<end)end=j});out.push(t.slice(g.i,end).trim());keep+=" "+t.slice(end,nx)});p.text=[keep.replace(/\s+/g," ").trim()].filter(Boolean);return out.join("\n")}
 const octot=u=>(u.optc||0)+(u.subs||[]).reduce((a,x)=>a+(x.optc||0),0);
@@ -922,7 +933,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data
  else if(a==="fren"){const f=S.fac.find(x=>x.id===d.f);ask({t:"Renommer la faction",input:f.name,ok:"Renommer"},v=>{if(v&&v.trim())f.name=v.trim()});return}
  else if(a==="fdel"){const f=S.fac.find(x=>x.id===d.f);ask({t:"Supprimer la faction ?",p:`« ${f.name} » sera supprimée. Ses figurines restent dans la collection, sans faction.`,ok:"Supprimer",dg:1},()=>{S.fac=S.fac.filter(x=>x!==f);Object.values(S.coll).forEach(m=>{if(m.fac===f.id)m.fac=""})});return}
  else if(a==="bd"){const B=S.bat,v=+d.v,i=+d.i;if(d.k==="cp")B.cp[i]=Math.max(0,B.cp[i]+v);else{const r=B.t[+d.t];r[d.k][i]=Math.max(0,r[d.k][i]+v)}}
- else if(a==="brst"){ask({t:"Réinitialiser la bataille ?",p:"Les points, les PC et les validations de missions (round, phase, historique des validations) repassent à 0. Les noms des joueurs et les missions choisies sont conservés.",ok:"Réinitialiser",dg:1},()=>{S.bat.cp=[0,0];S.bat.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));if(S.bat.ms&&window.msReset)window.msReset()});return}
+ else if(a==="brst"){ask({t:"Réinitialiser la bataille ?",p:"Les points, les PC et les validations de missions (historique compris) repassent à 0. Les noms des joueurs et les missions choisies sont conservés.",ok:"Réinitialiser",dg:1},()=>{S.bat.cp=[0,0];S.bat.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));if(S.bat.ms&&window.msReset)window.msReset()});return}
  else if(a==="pick"&&pk&&pk.lead){const m=S.coll[d.r];if(m&&ed){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref};SH.forEach(f=>s[f]=clone(m[f]));ed.subs.push(s)}pk=null;pkDraw();toast("Meneur ajouté ✓")}
  else if(a==="pick"){const m=S.coll[d.r],c=L.units.find(x=>x.ref===d.r)||S.lists.flatMap(l=>l.units).find(x=>x.ref===d.r),n={ref:m.ref,size:c?c.size:null,pts:m.pts||0};SH.forEach(f=>n[f]=clone(m[f]));n.subs=[];n.man=1;L.units.push(n);save();$("#pr").innerHTML=pkRes();return}
  else if(a==="nunit"){const n={name:"nouvelle unité",size:null,pts:0,subs:[],man:1,ref:rid(),...blank()};L.units.push(n);sync(n);ed=n;ctx="list";edit=true}
@@ -1331,13 +1342,15 @@ const MSD=[{"id":"domination-du-terrain","cat":"take-and-hold","nm":"Domination 
 (()=>{
 const W=SYS.w40k,CN={"take-and-hold":"Prendre et Tenir","purge-the-foe":"Éliminez l’Adversaire","disruption":"Perturbation","reconnaissance":"Reconnaissance","priority-assets":"Atouts Prioritaires"};
 W.missions.forEach(c=>{c.fr=CN[c.id]||c.fr});
-const mOf=id=>MSD.find(m=>m.id===id)||null,mIn=c=>MSD.filter(m=>m.cat===c),catG=id=>W.missions.find(c=>c.id===id)||null;
-const PH=["Commandement","Mouvement","Tir","Charge","Combat","Fin du tour"],CL=["#1fae7c","#e08a2c"];
+const ORD=W.missions.map(c=>c.id),mOf=id=>MSD.find(m=>m.id===id)||null,mIn=c=>MSD.filter(m=>m.cat===c),catG=id=>W.missions.find(c=>c.id===id)||null;
+const autoM=(me,op)=>{const i=ORD.indexOf(op),l=mIn(me);return me&&op&&i>=0&&l[i]?l[i].id:""};
+const CL=["#1fae7c","#e08a2c"];
 const MOL={cmd:"Fin de votre phase de Commandement",tour:"Fin de votre tour",tourany:"Fin d’un tour",bat:"Fin de la bataille"};
 window.misM=(sel,t,cat)=>cat?`<div class="mpk" data-mt="${t}">${mIn(cat).map(m=>`<button type="button" class="mo sm${m.id===sel?" on":""}" data-m="${m.id}" aria-pressed="${m.id===sel}"><span class="mt"><b>${esc(m.nm)}</b>${m.id===sel?`<span class="md">${esc(m.d)}</span>`:""}</span></button>`).join("")}</div>`:`<p class="gnote">Choisis d’abord une catégorie.</p>`;
 
 /* ================= Suivi des missions pendant la bataille ================= */
 const MS=()=>S.bat.ms;
+let dw=0;/* tiroir joueur ouvert : 0, 1 ou -1 (aucun) ; en mémoire seulement */
 const key=(pl,i,rd)=>pl+"|"+i+"|"+rd;
 const CO=(ms,pl)=>{const s=ms&&ms.sel&&ms.sel[pl];return s&&s[1]?mOf(s[1]):null};
 const momentOf=(c,rd)=>c.mo==="cmd"&&rd===5&&c.r5?"tour":c.mo;
@@ -1346,9 +1359,9 @@ function sumsOf(ms){const o=[[0,0,0,0,0],[0,0,0,0,0]];if(!ms||!ms.v)return o;for
 window.msSums=sumsOf;
 window.msTot=pl=>sumsOf(MS())[pl].reduce((a,b)=>a+b,0);
 function msSync(){const B=S.bat,o=sumsOf(B.ms);B.t.forEach((r,k)=>{r.m=[o[0][k],o[1][k]]})}
-function msInit(sel){S.bat.ms={sel,rd:1,ap:0,ph:0,over:false,v:{},ac:{},log:[],al:null,vw:0,vr:0,ed:[false,false]};msSync()}
-window.msReset=()=>{const ms=MS();if(!ms)return;Object.assign(ms,{rd:1,ap:0,ph:0,over:false,v:{},ac:{},log:[],al:null,vw:0,vr:0});msSync()};
-const phn=()=>MS()?PH[MS().ph]:"";
+function recompute(sel){[0,1].forEach(pl=>{const s=sel[pl]||(sel[pl]=["","",0]),o=sel[1-pl]||["","",0];if(!s[2])s[1]=s[0]&&o[0]?autoM(s[0],o[0]):""})}
+function msInit(sel){sel=sel.map(x=>[x[0]||"",x[1]||"",x[2]?1:0]);recompute(sel);S.bat.ms={sel,v:{},ac:{},log:[],ed:[false,false]};dw=0;msSync()}
+window.msReset=()=>{const ms=MS();if(!ms)return;Object.assign(ms,{v:{},ac:{},log:[]});msSync()};
 function popScore(pl,d){if(!(d>0))return;setTimeout(()=>{const z=document.querySelectorAll("#m .bzp")[pl];if(!z)return;const s=z.querySelector(".bzs");if(s){s.classList.remove("pulse");void s.offsetWidth;s.classList.add("pulse")}const f=document.createElement("span");f.className="msf";f.textContent="+"+d;z.appendChild(f);setTimeout(()=>f.remove(),1300)},40)}
 function setVal(pl,i,rd,patch){const ms=MS(),m=CO(ms,pl);if(!m)return;const c=m.cond[i],k=key(pl,i,rd),old=ms.v[k]||{q:0,b:0};
  const nv={q:old.q||0,b:old.b||0};Object.assign(nv,patch);
@@ -1357,74 +1370,65 @@ function setVal(pl,i,rd,patch){const ms=MS(),m=CO(ms,pl);if(!m)return;const c=m.
  if(nv.q===(old.q||0)&&nv.b===(old.b||0))return;
  const d=cellPts(c,nv)-cellPts(c,old);
  if(nv.q||nv.b)ms.v[k]=nv;else delete ms.v[k];
- ms.log.push({t:Date.now(),pl,mi:m.id,ci:i,rd:rd==="F"?5:+rd,f:rd==="F",ph:ms.ph,q:nv.q,b:nv.b,d});
+ ms.log.push({t:Date.now(),pl,mi:m.id,ci:i,rd:rd==="F"?5:+rd,f:rd==="F",q:nv.q,b:nv.b,d});
  msSync();save();draw();popScore(pl,d)}
 function setAct(pl,ai,rd,field,dv){const ms=MS(),m=CO(ms,pl);if(!m)return;const a=m.act[ai],k=pl+"|"+ai+"|"+rd,o=ms.ac[k]||{u:0,a:0},v={u:o.u,a:o.a};
  const once=/^Une fois par tour/i.test(a.l||""),mr=/à partir du (deuxième|troisième|quatrième)/i.exec(a.w||""),minR=mr?{"deuxième":2,"troisième":3,"quatrième":4}[mr[1].toLowerCase()]:1;
- if(dv>0&&field==="u"){if(rd<minR){toast("Impossible avant le round "+minR);return}if(once&&v.u>=1){toast("Limite : une fois par tour");return}if(ms.ph!==2||ms.ap!==pl)toast("Normalement entreprise à ta phase de Tir")}
+ if(dv>0&&field==="u"){if(rd<minR){toast("Impossible avant le round "+minR);return}if(once&&v.u>=1){toast("Limite : une fois par tour");return}}
  v[field]=Math.max(0,v[field]+dv);if(v.a>v.u){if(field==="a"){toast("Il faut d’abord l’avoir entreprise");return}v.a=v.u}
  if(v.u===o.u&&v.a===o.a)return;
  if(v.u||v.a)ms.ac[k]=v;else delete ms.ac[k];
- ms.log.push({t:Date.now(),pl,mi:m.id,ai,rd:+rd,ph:ms.ph,k:field==="u"?"ent":"acc",n:v[field],d:0});save();draw()}
-function step(dir){const ms=MS();if(!ms)return;const idx=(ms.rd-1)*12+ms.ap*6+ms.ph;ms.al=null;
- if(dir>0){if(ms.over)return;const fp=ms.ph,fa=ms.ap,fr=ms.rd,n=idx+1;
-  if(n>59){ms.over=true;ms.al={pl:-1,mo:"bat",rd:5}}else{ms.rd=Math.floor(n/12)+1;ms.ap=Math.floor(n%12/6);ms.ph=n%6;S.bat.cur=ms.rd-1;
-   if(fp===0&&ms.ph===1)ms.al={pl:fa,mo:"cmd",rd:fr};else if(ms.ph===5)ms.al={pl:ms.ap,mo:"tour",rd:ms.rd}}
-  if(ms.al&&!alertMsg(ms.al))ms.al=null}
- else{if(ms.over)ms.over=false;else if(idx>0){const n=idx-1;ms.rd=Math.floor(n/12)+1;ms.ap=Math.floor(n%12/6);ms.ph=n%6;S.bat.cur=ms.rd-1}}
- ms.vr=0;ms.vw=ms.al&&ms.al.pl>=0?ms.al.pl:ms.ap;save();draw()}
-function alertMsg(al){const ms=MS(),B=S.bat;let t="";
- if(al.mo==="bat"){t="⏱ Fin de la bataille : vérifie les conditions de fin de bataille"}
- else{const m=CO(ms,al.pl);if(!m)return false;const n=m.cond.filter(c=>c.rd.includes(al.rd)&&c.mo!=="bat"&&(al.mo==="cmd"?momentOf(c,al.rd)==="cmd":["tour","tourany"].includes(momentOf(c,al.rd)))).length;if(!n)return false;
-  t=`⏱ ${B.n[al.pl]} · ${al.mo==="cmd"?"fin de la phase de Commandement":"fin du tour"} : ${n} condition${n>1?"s":""} à vérifier`}
- toast(t);return true}
+ ms.log.push({t:Date.now(),pl,mi:m.id,ai,rd:+rd,k:field==="u"?"ent":"acc",n:v[field],d:0});save();draw()}
+function seeDw(pl){setTimeout(()=>{const e=document.querySelector('#m .pdw[data-pl="'+pl+'"]');if(!e)return;const h=(document.querySelector("header")||{}).offsetHeight||0,t=e.getBoundingClientRect().top;if(t<h+6||t>innerHeight*.55)window.scrollTo({top:Math.max(0,window.scrollY+t-h-8),behavior:"smooth"})},40)}
 const dd=(k,df)=>{df=!!df;return` data-pk="${k}" data-pd="${df?1:0}"${(df?!pop.has(k):pop.has(k))?" open":""}`};
 const qlab=tx=>/objectif/i.test(tx)?"objectif(s)":/unité/i.test(tx)?"unité(s)":/zone/i.test(tx)?"zone(s)":/marqueur/i.test(tx)?"marqueur(s)":"quantité";
 function stp(attr,v,max,dis){return`<span class="stp2"><button type="button" ${attr} data-v="-1" aria-label="Moins"${dis||v<=0?" disabled":""}>−</button><b>${v}</b><button type="button" ${attr} data-v="1" aria-label="Plus"${dis||v>=max?" disabled":""}>+</button></span>`}
+const wRed=w=>/^(À la fin de votre (tour|phase de Commandement)( \(ou à la fin de votre tour au cinquième round de bataille\))?|À la fin d['’]un tour|Fin de la bataille)\.?$/.test(String(w).trim());
 function condRow(ms,pl,m,c,i,rk){const k=key(pl,i,rk),v=ms.v[k]||{q:0,b:0},p=cellPts(c,v),r=rk==="F"?"F":rk,A=`data-ms="%" data-pl="${pl}" data-i="${i}" data-r="${r}"`,a=x=>A.replace("%",x);
  const ctl=c.k==="chk"?`<button type="button" class="mck${v.q?" on":""}" ${a("tg")} aria-pressed="${!!v.q}" aria-label="Valider">✓</button>`:stp(a("dq"),v.q,99);
  let bo="";if(c.bo){const on=!!v.q;bo=c.bo.k==="chk"?`<div class="msb2${on?"":" off"}"><div class="msb3"><button type="button" class="mck sm${v.b?" on":""}" ${a("tb")} aria-pressed="${!!v.b}"${on?"":" disabled"}>✓</button><b class="pv">+${c.bo.pts} PdV</b></div><span>${esc(c.bo.tx)}</span></div>`:`<div class="msb2${on?"":" off"}"><div class="msb3">${stp(a("db"),v.b,c.k==="cnt"?v.q:99,!on)}<b class="pv">+${c.bo.pts} PdV chacun</b></div><span>${esc(c.bo.tx)}</span></div>`}
- return`<div class="msr${p?" ok":""}"><div class="msr1${c.k==="cnt"?" q":""}">${c.k==="cnt"?"":ctl}<div class="msx"><div class="mst">${esc(c.tx)}</div>${c.w?`<div class="mss">${esc(c.w)}</div>`:""}</div><div class="msp">${c.k==="cnt"?`${c.pts}<small>PdV chacun</small>`:`${c.pts}<small>PdV</small>`}</div></div>${c.k==="cnt"?`<div class="msq2">${ctl}<span>Quantité (${qlab(c.tx)})</span></div>`:""}${bo}${p?`<div class="mst2">= ${p} PdV marqués</div>`:""}</div>`}
-function actHtml(ms,pl,m,rd){if(!m.act.length)return"";return`<details class="msd"${dd("ms:a"+pl,0)}><summary>⚙ Actions spéciales (${m.act.length})</summary>${m.act.map((a,ai)=>{const o=ms.ac[pl+"|"+ai+"|"+rd]||{u:0,a:0},B=`data-ms="ac" data-pl="${pl}" data-ai="${ai}" data-r="${rd}"`;
+ return`<div class="msr${p?" ok":""}"><div class="msr1${c.k==="cnt"?" q":""}">${c.k==="cnt"?"":ctl}<div class="msx"><div class="mst">${esc(c.tx)}</div>${c.w&&!wRed(c.w)?`<div class="mss">${esc(c.w)}</div>`:""}</div><div class="msp">${c.k==="cnt"?`${c.pts}<small>PdV chacun</small>`:`${c.pts}<small>PdV</small>`}</div></div>${c.k==="cnt"?`<div class="msq2">${ctl}<span>Quantité (${qlab(c.tx)})</span></div>`:""}${bo}${p&&(c.k==="cnt"||c.bo)?`<div class="mst2">= ${p} PdV marqués</div>`:""}</div>`}
+function actHtml(ms,pl,m,rd){if(!m.act.length)return"";return`<details class="pdx"${dd("ms:a"+pl,0)}><summary>⚙ Actions spéciales (${m.act.length})</summary>${m.act.map((a,ai)=>{const o=ms.ac[pl+"|"+ai+"|"+rd]||{u:0,a:0},B=`data-ms="ac" data-pl="${pl}" data-ai="${ai}" data-r="${rd}"`;
  return`<div class="msa"><b>Action — ${esc(a.nm)}</b><div class="msal">${[["S’entreprend",a.w],["Unités",a.u],["Limite d’utilisation",a.l],["S’accomplit",a.a],["Effet",a.e],["Restrictions",a.r]].filter(x=>x[1]).map(x=>`<div><span>${x[0]} :</span> ${esc(x[1])}</div>`).join("")}<div><span>Récompense en points :</span> aucune par l’action elle-même (les points viennent des conditions de scoring).</div></div><div class="msat"><span>Entreprise (round ${rd})</span>${stp(B+' data-f="u"',o.u,9)}</div><div class="msat"><span>Accomplie</span>${stp(B+' data-f="a"',o.a,o.u)}</div></div>`}).join("")}</details>`}
-function selPick(ms,pl){const s=ms.sel[pl]||["",""],B=S.bat;return`<div class="ml" style="margin-top:0">Catégorie de mission — ${esc(B.n[pl])}</div>${misPick(s[0],"mc"+pl,false,"w40k")}${s[0]?`<div class="ml">Mission — ${esc(B.n[pl])}</div>${misM(s[1],"mm"+pl,s[0])}`:""}`}
-window.msPanel=function(){const B=S.bat,ms=B.ms;
- if(!ms)return`<div class="card msn"><div class="gph">Missions</div><p class="mu">Aucune mission suivie pour cette partie.</p><button class="b p" data-ms="enable">Suivre les missions de cette partie</button></div>`;
- const o=sumsOf(ms),tot=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0)),pl=ms.vw,R=ms.vr||ms.rd,m=CO(ms,pl),nm=i=>esc(B.n[i]);
- const bar=`<div class="msbar"><div class="msrd"><b>Round ${ms.rd}/5</b> · ${ms.over?"Bataille terminée":`Tour de <b style="color:${CL[ms.ap]}">${nm(ms.ap)}</b>`}</div><div class="msph">${PH.map((p,k)=>`<span class="${!ms.over&&k===ms.ph?"on":""}">${p}</span>`).join("")}</div><div class="msnav"><button type="button" class="b" data-ms="back" aria-label="Étape précédente">◀</button><button type="button" class="b p" data-ms="next"${ms.over?" disabled":""}>${ms.rd===5&&ms.ap===1&&ms.ph===5?"🏁 Fin de la bataille":"Phase suivante ▶"}</button></div></div>`;
- const al=ms.al?`<div class="msal2">⏱ ${ms.al.mo==="bat"?"Fin de la bataille : conditions de fin de bataille à vérifier.":`${nm(ms.al.pl)} : conditions de ${ms.al.mo==="cmd"?"fin de phase de Commandement":"fin de tour"} à vérifier.`}</div>`:"";
- const seg=`<div class="msseg">${[0,1].map(i=>`<button type="button" class="${i===pl?"on":""}" style="--c:${CL[i]}" data-ms="vw" data-v="${i}"><span>${nm(i)}</span><b>${tot[i]}</b><small>PdV mission</small></button>`).join("")}</div>`;
- let body="";
- const s=ms.sel[pl]||["",""];
- if(!m||ms.ed[pl]){body=`<div class="msel">${selPick(ms,pl)}${m?`<p><button type="button" class="b" data-ms="edone" data-pl="${pl}">Terminé</button></p>`:""}</div>`}
- else{const c=catG(m.cat),due=(mo,F)=>ms.al&&((F&&ms.al.mo==="bat")||(!F&&ms.al.mo!=="bat"&&(ms.al.pl===pl||mo==="tourany")&&(ms.al.mo==="cmd"?mo==="cmd":(mo==="tour"||mo==="tourany"))&&ms.al.rd===R));
-  const pills=`<div class="msrp">${[1,2,3,4,5].map(r=>`<button type="button" class="${r===R?"on":""}${r===ms.rd?" cur":""}" data-ms="vr" data-v="${r}">R${r}<small>${o[pl][r-1]||""}</small></button>`).join("")}</div>`;
-  const groups=["cmd","tour","tourany"].map(mo=>{const cs=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo!=="bat"&&c.rd.includes(R)&&momentOf(c,R)===mo);return cs.length?`<div class="msg${due(mo)?" due":""}"><div class="msgh">${MOL[mo]}${due(mo)?'<span class="mdot"></span>':""}</div>${cs.map(([c,i])=>condRow(ms,pl,m,c,i,R)).join("")}</div>`:""}).join("");
-  const bats=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo==="bat");
-  const fin=bats.length?`<details class="msd"${dd("ms:f"+pl,ms.over||due("bat",1))}><summary>🏁 Fin de la bataille${due("bat",1)?'<span class="mdot"></span>':""}</summary><div class="msg${due("bat",1)?" due":""}">${bats.map(([c,i])=>condRow(ms,pl,m,c,i,"F")).join("")}</div></details>`:"";
-  const rules=(m.rules.length||m.setup.length)?`<details class="msd"${dd("ms:r"+pl,0)}><summary>📜 Conditions particulières</summary>${m.setup.map(x=>`<p class="msru"><b>${esc(x.w)}.</b> ${esc(x.t)}</p>`).join("")}${m.rules.map(x=>`<p class="msru">${esc(x)}</p>`).join("")}</details>`:"";
-  body=`<div class="msh"><span class="mi">${c?c.ic:""}</span><div><div class="ml" style="margin:0">${esc(c?c.fr:"")}</div><b class="msn1">${esc(m.nm)}</b></div><button type="button" class="b" data-ms="chg" data-pl="${pl}">Changer</button></div><p class="mu msd1">${esc(m.d)}</p>${rules}${pills}<div class="msrn">Round ${R}${R===ms.rd?" · en cours":""} · points de mission ce round : <b>${o[pl][R-1]}</b></div>${groups||'<p class="mu">Aucune condition à valider pour ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}`}
- const lg=ms.log.length?`<details class="msd"${dd("ms:l",0)}><summary>🕘 Historique des validations (${ms.log.length})</summary><div class="mslg">${msLogHtml(ms.log,B.n)}</div></details>`:"";
- return`<div class="card msn"><div class="gph">Missions · suivi automatique</div>${bar}${al}${seg}${body}${lg}</div>`};
-function logLine(e,names){const m=mOf(e.mi),hh=new Date(e.t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}),meta=`${hh} · R${e.rd}${e.f?" (fin)":""} · ${PH[e.ph]||""}`,who=names[e.pl]||"";
+function selPick(ms,pl){const B=S.bat,sl=i=>ms.sel[i]||["","",0],need=[0,1].filter(i=>!sl(i)[0]||(ms.ed[pl]&&i===pl)),both=sl(0)[0]&&sl(1)[0];
+ let h=need.map(i=>`<div class="ml" style="margin-top:${i===need[0]?0:12}px">Catégorie de mission — ${esc(B.n[i])}</div>${misPick(sl(i)[0],"mc"+i,false,"w40k")}`).join("");
+ if(both)h+=`<p class="gnote">Mission déterminée automatiquement par les deux catégories (règle V11).</p><details class="msd"${dd("ms:m"+pl,0)}><summary>Choisir une autre mission pour ${esc(B.n[pl])}</summary>${misM(sl(pl)[1],"mm"+pl,sl(pl)[0])}</details>`;
+ else h+=`<p class="gnote">La mission de chaque joueur est déterminée dès que les deux catégories sont choisies.</p>`;
+ return h}
+function plBody(ms,pl,R,man,rr){const m=CO(ms,pl);
+ if(!m||ms.ed[pl])return`<div class="msel">${selPick(ms,pl)}${m||ms.ed[pl]?`<p><button type="button" class="b" data-ms="edone" data-pl="${pl}">Terminé</button></p>`:""}</div>`;
+ const o=sumsOf(ms),ct=catG(m.cat),oc=catG((ms.sel[1-pl]||[])[0]),mp=o[pl][R-1];
+ const groups=["cmd","tour","tourany"].map(mo=>{const cs=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo!=="bat"&&c.rd.includes(R)&&momentOf(c,R)===mo);return cs.length?`<div class="msg"><div class="msgh">${MOL[mo]}</div>${cs.map(([c,i])=>condRow(ms,pl,m,c,i,R)).join("")}</div>`:""}).join("");
+ const bats=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo==="bat");
+ const fin=!bats.length?"":R===5?`<div class="msg"><div class="msgh">🏁 ${MOL.bat}</div>${bats.map(([c,i])=>condRow(ms,pl,m,c,i,"F")).join("")}</div>`:`<p class="mu mfin">🏁 ${bats.length} condition${bats.length>1?"s":""} de fin de bataille : à valider au round 5.</p>`;
+ const rules=`<details class="pdx"${dd("ms:r"+pl,0)}><summary>📜 Description et règles</summary><p class="msru">${esc(m.d)}</p>${m.setup.map(x=>`<p class="msru"><b>${esc(x.w)}.</b> ${esc(x.t)}</p>`).join("")}${m.rules.map(x=>`<p class="msru">${esc(x)}</p>`).join("")}</details>`;
+ const manual=`<details class="pdx"${dd("ms:g"+pl,0)}><summary>✎ Points manuels<span class="pdv">P ${rr.p[pl]} · S ${rr.s[pl]}</span></summary>${man}</details>`;
+ return`<div class="msh"><span class="mi">${ct?ct.ic:""}</span><div><div class="ml" style="margin:0">${esc(ct?ct.fr:"")}${oc?" × "+esc(oc.fr):""}</div><b class="msn1">${esc(m.nm)}</b></div><button type="button" class="b" data-ms="chg" data-pl="${pl}">Changer</button></div><div class="pdr"><span>Round ${R}</span><span>Mission <b>${mp}</b> PdV</span></div>${groups||'<p class="mu">Aucune condition à valider ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}${rules}${manual}`}
+window.msDrawers=function(man){const B=S.bat,ms=B.ms,R=(B.cur||0)+1,rr=B.t[R-1];
+ const one=pl=>{const open=dw===pl,m=ms?CO(ms,pl):null,ct=ms?catG((ms.sel[pl]||[])[0]):null,tot=rr.p[pl]+rr.s[pl]+(rr.m?rr.m[pl]:0);
+  const sub=!ms?esc(B.f[pl]||""):m?`${ct?esc(ct.ic)+" ":""}${esc(m.nm)}`:`<em>Mission à choisir</em>`;
+  const body=!open?"":`<div class="pdb">${ms?plBody(ms,pl,R,man[pl],rr):`<div class="pdr"><span>Round ${R}</span><span>Points à la main</span></div>${man[pl]}`}</div>`;
+  return`<section class="pdw${open?" open":""}" style="--c:${CL[pl]}" data-pl="${pl}"><button type="button" class="pdh" data-ms="dw" data-pl="${pl}" aria-expanded="${open}"><span class="pdn"><b>${esc(B.n[pl])}</b><small>${sub||"&nbsp;"}</small></span><span class="pdt"><b>${tot}</b><small>round ${R}</small></span><i class="pdc" aria-hidden="true"></i></button>${body}</section>`};
+ return`<div class="pdws">${one(0)}${one(1)}</div>${ms?"":`<div class="card msn"><div class="gph">Missions</div><p class="mu">Aucune mission suivie pour cette partie.</p><button class="b p" data-ms="enable">Suivre les missions de cette partie</button></div>`}`};
+function logLine(e,names){const m=mOf(e.mi),hh=new Date(e.t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}),meta=`${hh} · R${e.rd}${e.f?" (fin)":""}`,who=names[e.pl]||"";
  let what="",pts="";
  if(e.k==="chg"){what="Mission changée : validations retirées du score";pts=(e.d||0)+" PdV"}
  else if(e.k==="ent"||e.k==="acc"){const a=m&&m.act[e.ai];what=`Action « ${a?a.nm:""} » ${e.k==="ent"?"entreprise":"accomplie"} (total ${e.n})`}
  else{const c=m&&m.cond[e.ci];if(!c)return"";what=c.tx.length>110?c.tx.slice(0,108)+"…":c.tx;if(c.k==="cnt")what+=` — × ${e.q}`;else what+=e.q?" — validée":" — retirée";if(c.bo&&e.b)what+=` + bonus ${c.bo.k==="cnt"?"× "+e.b:"validé"}`;pts=(e.d>0?"+":"")+e.d+" PdV"}
  return`<div class="mlg${e.d<0?" neg":""}"><span class="mlt">${esc(meta)}</span><div><b>${esc(who)}</b> · ${esc(m?m.nm:"")} — ${esc(what)}${pts?` <b class="pd">${pts}</b>`:""}</div></div>`}
 window.msLogHtml=(log,names)=>[...log].reverse().map(e=>logLine(e,names)).join("");
-function chgSel(pl,cat,mid){const ms=MS();if(!ms)return;const old=ms.sel[pl]||["",""],has=Object.keys(ms.v).some(k=>k.split("|")[0]==pl),next=[cat,mid];
- const go=()=>{let rm=0;if(old[1]&&old[1]!==mid){const mo=mOf(old[1]);for(const k of Object.keys(ms.v))if(k.split("|")[0]==pl){const c=mo&&mo.cond[+k.split("|")[1]];rm+=c?cellPts(c,ms.v[k]):0;delete ms.v[k]}if(has)ms.log.push({t:Date.now(),pl,mi:old[1],k:"chg",rd:ms.rd,ph:ms.ph,d:-rm})}
-  ms.sel[pl]=next;msSync();save();draw()};
- if(has&&old[1]&&old[1]!==mid){ask({t:"Changer de mission ?",p:"Les validations de ce joueur pour l’ancienne mission seront retirées de son score (elles restent dans l’historique).",ok:"Changer",dg:1},go)}else go()}
+function chgSel(pl,cat,mid){const ms=MS();if(!ms)return;const old=[0,1].map(i=>(ms.sel[i]||["","",0]).slice()),nx=old.map(x=>x.slice());
+ if(mid)nx[pl]=[cat,mid,1];else if(cat!==old[pl][0])nx[pl]=[cat,"",0];
+ recompute(nx);
+ const ch=[0,1].filter(q=>old[q][1]&&old[q][1]!==nx[q][1]),has=ch.filter(q=>Object.keys(ms.v).some(k=>k.split("|")[0]==q));
+ const go=()=>{ch.forEach(q=>{let rm=0;const mo=mOf(old[q][1]);for(const k of Object.keys(ms.v))if(k.split("|")[0]==q){const c=mo&&mo.cond[+k.split("|")[1]];rm+=c?cellPts(c,ms.v[k]):0;delete ms.v[k]}if(has.includes(q))ms.log.push({t:Date.now(),pl:q,mi:old[q][1],k:"chg",rd:(S.bat.cur||0)+1,d:-rm})});ms.sel=nx;msSync();save();draw()};
+ if(has.length)ask({t:"Changer de mission ?",p:"La mission change. Les validations de l’ancienne mission seront retirées du score du joueur concerné (elles restent dans l’historique).",ok:"Changer",dg:1},go);else go()}
 
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ms]");if(!b)return;e.stopPropagation();
  const a=b.dataset.ms,ms=MS(),pl=+b.dataset.pl,i=+b.dataset.i,r=b.dataset.r,v=+b.dataset.v,C=()=>{const m=CO(ms,pl);return m&&m.cond[i]};
- if(a==="enable"){const L=S.lists.find(l=>l.id===S.pm)||cl();msInit([[L&&L.mission||"",L&&L.mid||""],["",""]]);save();draw()}
+ if(a==="dw"){dw=dw===pl?-1:pl;draw();if(dw===pl)seeDw(pl)}
+ else if(a==="enable"){const L=S.lists.find(l=>l.id===S.pm)||cl();msInit([[L&&L.mission||"","",0],["","",0]]);save();draw()}
  else if(!ms)return;
- else if(a==="next")step(1);else if(a==="back")step(-1);
- else if(a==="vw"){ms.vw=v;ms.vr=0;save();draw()}
- else if(a==="vr"){ms.vr=v===ms.rd?0:v;save();draw()}
  else if(a==="tg"){const o=ms.v[key(pl,i,r)];setVal(pl,i,r,{q:o&&o.q?0:1})}
  else if(a==="tb"){const o=ms.v[key(pl,i,r)]||{};setVal(pl,i,r,{b:o.b?0:1})}
  else if(a==="dq"){const o=ms.v[key(pl,i,r)]||{q:0};setVal(pl,i,r,{q:(o.q||0)+v})}
@@ -1437,18 +1441,21 @@ const P=()=>{const p=S.prep=S.prep||{};if(!p.g)p.g="w40k";["l","me","n","f","ol"
 const facOf=L=>{const c={};L.units.forEach(u=>{const f=(S.coll[u.ref]||{}).fac;if(f)c[f]=(c[f]||0)+1});const k=Object.keys(c).sort((a,b)=>c[b]-c[a])[0],f=S.fac.find(x=>x.id===k);return f?f.name:""};
 const detOf=L=>(L.dets||[]).map(d=>d.name).filter(Boolean).join(" · "),ptsOf=L=>lpts(L)||lpts0(L)||0;
 const mine=()=>S.lists.find(l=>l.id===P().l)||S.lists[0],opp=()=>{const o=P().ol;return o&&S.lists.find(l=>l.id===o)||null},eff1=()=>P().m1||mine().mission||"";
-const ind1=()=>{const p=P(),L=mine(),c=eff1(),m=mOf(p.i1||L.mid||"");return m&&m.cat===c?m.id:""},ind2=()=>{const p=P(),m=mOf(p.i2);return m&&m.cat===p.m2?m.id:""};
+const ind1=()=>{const p=P(),c=eff1(),m=mOf(p.i1);return m&&m.cat===c?m.id:autoM(c,p.m2)},ind2=()=>{const p=P(),m=mOf(p.i2);return m&&m.cat===p.m2?m.id:autoM(p.m2,eff1())};
 let open=false,el=null;
 const sv=(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(save,400)}})();
 const row=(l,v)=>v?`<div class="r"><span>${l}</span><b>${esc(v)}</b></div>`:"";
 function sum(){const p=P(),L=mine(),O=opp();return[
  {name:p.me||"Moi",fac:facOf(L),list:L,det:detOf(L),pts:ptsOf(L),m:eff1(),i:ind1()},
  {name:p.n||"Adversaire",fac:p.f||(O?facOf(O):""),list:O,det:O?detOf(O):p.od,pts:O?ptsOf(O):(+String(p.op).replace(/\D/g,"")||0),m:p.m2,i:ind2()}]}
-function miss(){const p=P(),a=[];if(!eff1())a.push(["c1","Ma catégorie de mission"]);else if(!ind1())a.push(["i1","Ma mission"]);if(!p.m2)a.push(["c2","Catégorie de l’adversaire"]);else if(!ind2())a.push(["i2","Mission de l’adversaire"]);return a}
-const mline=x=>{const c=catG(x.m),m=x.i&&mOf(x.i);return c?`${esc(c.ic+" "+c.fr)}${m?` · <b>${esc(m.nm)}</b>`:` · <i>mission à choisir</i>`}`:"<i>mission à choisir</i>"};
+function miss(){const p=P(),a=[];if(!eff1())a.push(["c1","Ma catégorie de mission"]);if(!p.m2)a.push(["c2","Catégorie de l’adversaire"]);return a}
+const mline=x=>{const c=catG(x.m),m=x.i&&mOf(x.i);return c?`${esc(c.ic+" "+c.fr)}${m?` · <b>${esc(m.nm)}</b>`:` · <i>mission selon la catégorie adverse</i>`}`:"<i>catégorie à choisir</i>"};
 function sumHtml(){return`<div class="gsum">${sum().map((x,i)=>`<div class="gsc"><h5>Joueur ${i+1}</h5><div class="n">${esc(x.name)}</div>${row("Faction",x.fac)}${row("Liste",x.list&&x.list.name)}${row("Détachement",x.det)}${row("Points",x.pts?x.pts+" pts":"")}<div class="r"><span>Mission</span><b>${mline(x)}</b></div></div>`).join("")}</div>`}
 function topHtml(){const ms=miss(),s=sum();return`<div class="gps gtop"><div class="gph">Commencer avec les forces actuelles</div>${s.map((x,i)=>`<div class="gfc" style="--c:${CL[i]}"><div class="gfn"><b>${esc(x.name)}</b><span class="gnote">${[x.fac,x.list&&x.list.name,x.det,x.pts?x.pts+" pts":""].filter(Boolean).map(esc).join(" · ")}</span></div><div class="gfm">${mline(x)}</div></div>`).join("")}${ms.length?`<p class="gnote need">Il manque : ${ms.map(([k,l])=>`<button type="button" class="gch" data-gp="goto" data-k="${k}">${l}</button>`).join(" ")}</p>`:""}<div class="gpgo2"><button class="b p" data-gp="go">▶ Commencer la partie</button></div>${ms.length?`<p class="gnote"><button type="button" class="gch" data-gp="go0">Lancer sans suivi de mission</button></p>`:""}${ms.length?"":`<p class="gnote"><button type="button" class="gch" data-gp="ex">${P().ex?"Masquer les réglages":"Modifier les forces et missions"}</button></p>`}</div>`}
-function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"",showEd=p.ex||mi.length;
+function autoBlk(n){const p=P(),c=n===1?eff1():p.m2,i=n===1?ind1():ind2(),m=mOf(i),man=n===1?p.i1:p.i2,x=n===1?p.x1:p.x2,o=n===1?p.m2:eff1();
+ if(!c)return"";if(!m)return`<p class="gnote">Mission déterminée dès que la catégorie ${n===1?"adverse":"de ton armée"} est choisie (règle V11 : ta catégorie × celle de l’adversaire).</p>`;
+ return`<div class="gmauto"><div class="ml" style="margin-top:10px">${n===1?"Ma mission":"Mission de l’adversaire"} (V11)</div><b>${esc(m.nm)}</b><p class="gnote">${esc(m.d)}</p><p class="gnote">${man?"Choisie manuellement.":"Déterminée automatiquement : "+esc(catG(c).fr)+" × "+esc(catG(o).fr)+"."} <button type="button" class="gch" data-gp="man${n}">${man||x?"Revenir à l’automatique":"Choisir une autre mission"}</button></p>${man||x?misM(i,"q"+n,c):""}</div>`}
+function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"",showEd=(mi.length&&(p.ex=true),p.ex);
  const opts=(sel,none)=>(none?`<option value="">${none}</option>`:"")+S.lists.map(l=>`<option value="${l.id}"${l.id===sel?" selected":""}>${esc(l.name)}</option>`).join("");
  el.innerHTML=`<div class="ov" id="gpo" style="z-index:39"><div class="pn gpn"><div class="top" style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Préparer la bataille</h3><button class="b cx" data-gp="x" aria-label="Fermer">✕</button></div><p class="gnote">${esc(SYS[g].name)} · ${esc(SYS[g].ed)}</p>${topHtml()}
  ${showEd?`<div class="gps"><div class="gph">Joueur 1 — Moi</div>
@@ -1457,14 +1464,14 @@ function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff
   <div class="gpi"><span>Faction</span><b>${esc(facOf(L)||"—")}</b><span>Détachement</span><b>${esc(detOf(L)||"—")}</b><span>Points</span><b>${ptsOf(L)?ptsOf(L)+" pts":"—"}</b></div>
   <div class="ml${need("c1")}" data-need="c1">Ma catégorie de mission</div>${misPick(e1,"p1",false,g)}
   <p class="gnote">${tmp?`Choix pour cette partie uniquement. Catégorie de ta liste : ${esc(lm)}. <button class="b" data-gp="rm1" style="margin-left:4px">Remettre celle de ma liste</button>`:`Reprise de ta liste : ${esc(lm)}. Tu peux la changer pour cette partie sans modifier ta liste.`}</p>
-  ${e1?`<div class="ml${need("i1")}" data-need="i1">Ma mission</div>${misM(ind1(),"q1",e1)}`:""}</div>
+  ${autoBlk(1)}</div>
  <div class="gps"><div class="gph">Joueur 2 — Adversaire</div>
   <label>Nom de l’adversaire<input data-gi="n" value="${esc(p.n)}" placeholder="Adversaire"></label>
   <label>Faction adverse<input data-gi="f" list="gpfl" value="${esc(p.f)}" placeholder="${O&&facOf(O)?esc(facOf(O)):"ex. Tyranides"}"></label><datalist id="gpfl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist>
   <label>Liste adverse<select data-gs="ol">${opts(O?O.id:"","Aucune (adversaire sans Hammer)")}</select></label>
   ${O?`<div class="gpi"><span>Détachement</span><b>${esc(detOf(O)||"—")}</b><span>Points</span><b>${ptsOf(O)?ptsOf(O)+" pts":"—"}</b></div>`:`<label>Détachement (facultatif)<input data-gi="od" value="${esc(p.od)}"></label><label>Points (facultatif)<input data-gi="op" inputmode="numeric" value="${esc(p.op)}" placeholder="ex. 2000"></label>`}
   <div class="ml${need("c2")}" data-need="c2">Catégorie de mission de l’adversaire</div>${misPick(p.m2,"p2",false,g)}
-  ${p.m2?`<div class="ml${need("i2")}" data-need="i2">Mission de l’adversaire</div>${misM(ind2(),"q2",p.m2)}`:""}</div>`:""}
+  ${autoBlk(2)}</div>`:""}
  <div class="gps"><div class="gph">Résumé</div><div id="gpsum">${sumHtml()}</div></div>
  <div class="gpgo"><button class="b p" data-gp="go">⚔ Lancer la partie</button></div></div></div>`;
  const n=el.querySelector(".pn");if(n)n.scrollTop=sc}
@@ -1480,8 +1487,8 @@ function launch(noMs){const p=P(),L=mine(),O=opp(),g=p.g,[a,b]=sum(),B=S.bat,dn=
  gReset();B.n=[a.name,b.name];B.f=[a.fac,b.fac];B.l=[L.id,O?O.id:""];
  const mk=(x,src)=>{const c=catG(x.m),m=x.i&&mOf(x.i);return{name:x.name,fac:x.fac||"",list:x.list?{id:x.list.id,name:x.list.name}:null,det:x.det||"",pts:x.pts||0,mission:c?{id:c.id,fr:c.fr,en:c.en,ic:c.ic,mid:m?m.id:"",mn:m?m.nm:""}:null,src}};
  const rec={id:rid(),d:Date.now(),title:"Partie du "+dn,sys:g,n:[a.name,b.name],f:[a.fac,b.fac],l:[snap(L.id),O?snap(O.id):null],tot:[0,0],cp:[0,0],t:clone(B.t),fin:false,p:[mk(a,p.m1&&p.m1!==(L.mission||"")?"temp":"liste"),mk(b,"adverse")]};
- S.games.unshift(rec);B.gid=rec.id;p.m1="";p.m2="";p.i1="";p.i2="";
- if(!noMs)msInit([[a.m||"",a.i||""],[b.m||"",b.i||""]]);
+ S.games.unshift(rec);B.gid=rec.id;p.m1="";p.m2="";p.i1="";p.i2="";p.x1=p.x2=false;
+ if(!noMs)msInit([[a.m||"",a.i||"",p.i1?1:0],[b.m||"",b.i||"",p.i2?1:0]]);
  S.cur=L.id;S.pm=L.id;S.mg=false;tab=noMs?"play":"bat";close();save();draw();window.scrollTo(0,0);toast("Partie lancée ✓")}
 function goNeed(k){const p=P();p.ex=true;gpDraw();const t=el.querySelector(`[data-need="${k}"]`);if(t)t.scrollIntoView({block:"center",behavior:"smooth"})}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".mo");if(!b)return;e.stopPropagation();e.preventDefault();
@@ -1489,15 +1496,16 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(t==="ledit"){const L=cl();if(!L)return;L.mission=L.mission===id?"":id;if(L.mid){const m=mOf(L.mid);if(!m||m.cat!==L.mission)L.mid=""}L.game=L.game||g;save();draw()}
  else if(t==="ledit2"){const L=cl();if(!L)return;L.mid=L.mid===id?"":id;save();draw()}
  else if(t==="nl"){window.nlM=window.nlM===id?"":id;w.outerHTML=misPick(window.nlM,"nl",false,g)}
- else if(t==="p1"){const p=P();p.m1=id===(mine().mission||"")?"":id;p.i1="";sv();gpDraw()}
- else if(t==="q1"){const p=P(),L=mine();p.i1=(eff1()===L.mission&&id===L.mid)?"":id;sv();gpDraw()}
- else if(t==="p2"){const p=P();p.m2=p.m2===id?"":id;p.i2="";sv();gpDraw()}
- else if(t==="q2"){const p=P();p.i2=p.i2===id?"":id;sv();gpDraw()}
- else if(/^m[cm][01]$/.test(t)&&MS()){const pl=+t[2],s=MS().sel[pl]||["",""];if(t[1]==="c"){if(s[0]!==id)chgSel(pl,id,"")}else chgSel(pl,s[0],id)}},true);
+ else if(t==="p1"){const p=P();p.m1=id===(mine().mission||"")?"":id;p.i1="";p.i2="";p.x1=p.x2=false;sv();gpDraw()}
+ else if(t==="q1"){const p=P();p.i1=id===autoM(eff1(),p.m2)?"":id;sv();gpDraw()}
+ else if(t==="p2"){const p=P();p.m2=p.m2===id?"":id;p.i1="";p.i2="";p.x1=p.x2=false;sv();gpDraw()}
+ else if(t==="q2"){const p=P();p.i2=id===autoM(p.m2,eff1())?"":id;sv();gpDraw()}
+ else if(/^m[cm][01]$/.test(t)&&MS()){const pl=+t[2],s=MS().sel[pl]||["","",0];if(t[1]==="c"){if(s[0]!==id)chgSel(pl,id,"")}else chgSel(pl,s[0],id===s[1]&&!s[2]?"":id)}},true);
 document.addEventListener("click",e=>{if(!open)return;if(e.target.id==="gpo"){close();return}const b=e.target.closest&&e.target.closest("[data-gp]");if(!b||!el.contains(b))return;const a=b.dataset.gp,p=P();
  if(a==="x")close();else if(a==="rm1"){p.m1="";p.i1="";sv();gpDraw()}
  else if(a==="ex"){p.ex=!p.ex;sv();gpDraw()}
  else if(a==="goto")goNeed(b.dataset.k);
+ else if(a==="man1"||a==="man2"){const n=a[3];if(p["i"+n]||p["x"+n]){p["i"+n]="";p["x"+n]=false}else p["x"+n]=true;sv();gpDraw()}
  else if(a==="go0")launch(true);
  else if(a==="go"){const m=miss();if(m.length){goNeed(m[0][0]);toast("Complète d’abord : "+m.map(x=>x[1].toLowerCase()).join(", "))}else launch(false)}});
 document.addEventListener("input",e=>{const k=open&&e.target.dataset&&e.target.dataset.gi;if(!k)return;P()[k]=e.target.value;sv();const s=document.getElementById("gpsum");if(s)s.innerHTML=sumHtml()});
