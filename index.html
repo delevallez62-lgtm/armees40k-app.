@@ -252,12 +252,12 @@ details.bzcard>summary{list-style:none;display:flex;align-items:center;gap:6px}d
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .dkb,:root:not([data-theme="light"]) .dksg button.on,:root:not([data-theme="light"]) .pdg i{color:#06261a}:root:not([data-theme="light"]) .dkn em,:root:not([data-theme="light"]) .dkw.warn{color:#ffc65a;border-color:#ffc65a}:root:not([data-theme="light"]) .dkrd button.on,:root:not([data-theme="light"]) .dkrd button.on small,:root:not([data-theme="light"]) .cradd,:root:not([data-theme="light"]) .catr button.on{color:#06261a}}
 /* ----- carte de mission : carte à jouer ----- */
 body.jclk{overflow:hidden}
-.jco{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.74);backdrop-filter:blur(5px);display:flex;justify-content:center;padding:12px 12px 24px;overflow-y:auto;overscroll-behavior:contain;animation:f .2s}
+.jco{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.74);backdrop-filter:blur(5px);display:flex;justify-content:center;padding:12px 12px 24px;overflow-y:auto;overscroll-behavior:contain}.jco.in{animation:f .2s}
 .jcwrap{width:min(380px,100%);margin:auto 0;padding-top:2px}
 .jctop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .jcs{display:flex;gap:6px;flex:1;min-width:0}.jcs button,.jcs>span{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:99px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer;max-width:50%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.jcs i{flex:none;width:10px;height:10px;border-radius:50%;background:var(--c)}.jcs button.on{background:#fff;color:#1b2a22;border-color:#fff}.jcs>span{cursor:default;background:#fff;color:#1b2a22}
 .jcx{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center;padding:0}
-.jcd{--cd:color-mix(in srgb,var(--c) 72%,#000);position:relative;background:radial-gradient(120% 80% at 50% 0%,#fffef8,#f3ebd9 70%);color:#2b2519;border-radius:20px;border:3px solid var(--c);box-shadow:0 26px 60px rgba(0,0,0,.55),inset 0 0 0 5px #fffdf4;padding:24px 16px 50px;animation:jcin .5s cubic-bezier(.2,.8,.2,1);transform-origin:50% 60%}
+.jcd{--cd:color-mix(in srgb,var(--c) 72%,#000);position:relative;background:radial-gradient(120% 80% at 50% 0%,#fffef8,#f3ebd9 70%);color:#2b2519;border-radius:20px;border:3px solid var(--c);box-shadow:0 26px 60px rgba(0,0,0,.55),inset 0 0 0 5px #fffdf4;padding:24px 16px 50px;transform-origin:50% 60%}.jco.in .jcd{animation:jcin .5s cubic-bezier(.2,.8,.2,1)}
 .jcd::before{content:"";position:absolute;inset:6px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:14px;pointer-events:none}
 @keyframes jcin{0%{transform:perspective(900px) rotateY(-78deg) scale(.9);opacity:0}100%{transform:none;opacity:1}}
 .jci{position:absolute;left:13px;top:11px;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--cd);font:700 19px/1 Georgia,"Times New Roman",serif;z-index:1}.jci span{font-size:15px}.jci.br{left:auto;top:auto;right:13px;bottom:11px;transform:rotate(180deg)}
@@ -284,7 +284,7 @@ body.jclk{overflow:hidden}
 .dkq>span:first-child{flex:1;min-width:0;line-height:1.2}
 .pdg button{white-space:nowrap}
 @media(max-width:380px){.bzg small{font-size:8px;letter-spacing:-.2px}.pdg button{font-size:13px;gap:4px}.dkbtn{font-size:12px;gap:4px}}
-@media(prefers-reduced-motion:reduce){.jcd,.dkc.new{animation:none}}
+@media(prefers-reduced-motion:reduce){.jco.in,.jco.in .jcd,.dkc.new{animation:none}}
 /* ===== v83 : lisibilité, round, renvoi dans la pioche, catalogue ===== */
 .dkobj{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--g) 10%,var(--card));border-left:3px solid var(--g)}.dkobj b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}.dkobj p{margin:2px 0 0;font-size:13.5px;line-height:1.35}
 .dkinfo{display:flex;gap:8px;margin:8px 0 0;padding:7px 10px;border-radius:10px;border:1px dashed var(--bd);font-size:12.5px;line-height:1.35;color:var(--mu)}.dkinfo i{flex:none;font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--mu);color:var(--card);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
@@ -294,7 +294,7 @@ body.jclk{overflow:hidden}
 .dkci{flex:none;width:58px;min-height:54px;border-radius:14px;border:2px solid var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--card));color:var(--ac);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;cursor:pointer;touch-action:manipulation;font:inherit}.dkci small{font-size:10.5px;font-weight:700;line-height:1}.dkci:active{transform:scale(.95)}
 .dkci.s{width:44px;min-height:46px;border-radius:14px;border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 9%,var(--card))}
 /* catalogue */
-.cat{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.6);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;animation:f .2s}
+.cat{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.6);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center}.cat.in{animation:f .2s}
 .catw{width:min(520px,100%);max-height:92vh;max-height:92dvh;background:var(--card);color:var(--tx);border-radius:20px 20px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.4);overflow:hidden}.catw.in{animation:catup .28s cubic-bezier(.2,.8,.2,1)}
 @keyframes catup{from{transform:translateY(46px);opacity:.2}to{transform:none;opacity:1}}
 .cath{display:flex;align-items:center;gap:10px;padding:14px 14px 6px}.catt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}.catt b{font-size:18px}.catt small{font-size:12.5px;color:var(--mu)}
@@ -312,7 +312,7 @@ body.jclk{overflow:hidden}
 .crd{padding:0 0 8px;font-size:13px}.crd p{margin:4px 0}.crnt{color:var(--mu);font-size:12.5px}.crd ul{margin:2px 0 0;padding-left:18px}.crd li{margin:5px 0;line-height:1.35}.crd li ul{margin-top:3px}.crd em{font-style:normal;color:var(--mu);font-size:12px}
 .crnote{font-size:12px;color:var(--mu);margin:0 0 8px}
 @media(max-width:380px){.dkbtn i{display:none}.dkcell{grid-template-columns:1fr 40px}.dkci.s{width:40px}.catr span{max-width:62px;font-size:11px}}
-@media(prefers-reduced-motion:reduce){.cat,.catw.in{animation:none}}
+@media(prefers-reduced-motion:reduce){.cat.in,.catw.in{animation:none}}
 
 /* ===== v84 : modifier la carte de mission et les secondaires ===== */
 .dkhr{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.dkhr .dkh2{flex:1;min-width:0}
@@ -1984,7 +1984,7 @@ function catDraw(first){
  if(catPl<0)return;if(!S.bat){closeCat();return}
  const old=catEl.querySelector(".catb"),top=old?old.scrollTop:0;
  catEl.innerHTML=catHtml(catPl);
- const w=catEl.querySelector(".catw");if(first&&w)w.classList.add("in");
+ const w=catEl.querySelector(".catw"),ov=catEl.querySelector(".cat");if(first){if(w)w.classList.add("in");if(ov)ov.classList.add("in")}
  const nb=catEl.querySelector(".catb");if(nb&&!first)nb.scrollTop=top;
  if(first){const x=catEl.querySelector(".catx");if(x)try{x.focus({preventScroll:true})}catch(_){}}}
 function openCat(pl,from){if(!S.bat)return;catFrom=from;catPl=pl;catNew.clear();document.body.classList.add("jclk");catDraw(true)}
@@ -2041,7 +2041,7 @@ window.sxGameHtml=g=>{const sx=g&&g.sx;if(!sx||!sx.pl)return"";const o=sums(sx),
 {const _g=window.msGameHtml;window.msGameHtml=g=>{window.__edCtx=g&&g.ed||{};try{return(_g?_g(g):"")+window.sxGameHtml(g)}finally{window.__edCtx=null}}}
 
 /* ================= Carte de mission (carte à jouer) ================= */
-let jcPl=-1,jcFrom=null,jcEdit=false,jcDraft=null;
+let jcPl=-1,jcFrom=null,jcEdit=false,jcDraft=null,jcAnim=false;
 const jcEl=document.createElement("div");jcEl.id="jc";document.body.appendChild(jcEl);
 const jcOK=pl=>{const ms=S.bat&&S.bat.ms,m=M();return!!(ms&&m.CO&&m.CO(ms,pl))};
 window.jcOk=jcOK;
@@ -2092,14 +2092,14 @@ function jeSave(){
  if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("✎ Carte « "+mi.nm+" » modifiée")}
 function jeRestore(){const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;
  ask({t:"Rétablir la carte d’origine ?",p:`Toutes les modifications de « ${mi.nm} » (textes, PdV, rounds, conditions ajoutées ou supprimées) seront annulées. Les points déjà validés sont recalculés.`,ok:"Rétablir",dg:1},()=>{const e=edEns();delete e.mi[mi.id];if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("Carte d’origine rétablie")})}
-function jcDraw(keep){if(jcPl<0){jcEl.innerHTML="";return}if(!jcOK(jcPl)){jcClose();return}const old=jcEl.querySelector(".jco"),top=old?old.scrollTop:0;jcEl.innerHTML=jcHtml(jcPl);const w=jcEl.querySelector(".jco");if(w)w.scrollTop=keep===true?top:0}
+function jcDraw(keep){if(jcPl<0){jcEl.innerHTML="";return}if(!jcOK(jcPl)){jcClose();return}const old=jcEl.querySelector(".jco"),top=old?old.scrollTop:0;jcEl.innerHTML=jcHtml(jcPl);const w=jcEl.querySelector(".jco");if(w){if(jcAnim)w.classList.add("in");w.scrollTop=keep===true?top:0}jcAnim=false}
 function jcClose(){jcPl=-1;jcEdit=false;jcDraft=null;jcEl.innerHTML="";if(exId===null&&catPl<0)document.body.classList.remove("jclk");if(jcFrom&&document.contains(jcFrom))try{jcFrom.focus()}catch(_){}jcFrom=null}
 window.jcClose=jcClose;
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-jc]");if(!b)return;
  const a=b.dataset.jc;
  if(a==="bg"){if(e.target!==b)return;e.stopPropagation();if(!jcEdit)jcClose();return}
  e.stopPropagation();
- if(a==="open"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;jcEdit=false;document.body.classList.add("jclk");jcDraw();const x=jcEl.querySelector(".jcx");if(x)try{x.focus({preventScroll:true})}catch(_){}}
+ if(a==="open"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;jcEdit=false;document.body.classList.add("jclk");jcAnim=true;jcDraw();const x=jcEl.querySelector(".jcx");if(x)try{x.focus({preventScroll:true})}catch(_){}}
  else if(a==="pl"){jcPl=+b.dataset.pl;jcDraw()}
  else if(a==="edit")jeOpen()
  else if(a==="close")jcClose()},true);
