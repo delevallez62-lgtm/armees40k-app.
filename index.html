@@ -251,7 +251,7 @@ details.bzcard>summary{list-style:none;display:flex;align-items:center;gap:6px}d
 .dkc.new{animation:dknew 1.8s ease-out}@keyframes dknew{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 70%,transparent);transform:translateY(-10px);opacity:.15}25%{opacity:1;transform:none}100%{box-shadow:0 0 0 16px transparent}}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .dkb,:root:not([data-theme="light"]) .dksg button.on,:root:not([data-theme="light"]) .pdg i{color:#06261a}:root:not([data-theme="light"]) .dkn em,:root:not([data-theme="light"]) .dkw.warn{color:#ffc65a;border-color:#ffc65a}:root:not([data-theme="light"]) .dkrd button.on,:root:not([data-theme="light"]) .dkrd button.on small,:root:not([data-theme="light"]) .cradd,:root:not([data-theme="light"]) .catr button.on{color:#06261a}}
 /* ----- carte de mission : carte à jouer ----- */
-body.jcb{overflow:hidden}
+body.jclk{overflow:hidden}
 .jco{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.74);backdrop-filter:blur(5px);display:flex;justify-content:center;padding:12px 12px 24px;overflow-y:auto;overscroll-behavior:contain;animation:f .2s}
 .jcwrap{width:min(380px,100%);margin:auto 0;padding-top:2px}
 .jctop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -313,6 +313,47 @@ body.jcb{overflow:hidden}
 .crnote{font-size:12px;color:var(--mu);margin:0 0 8px}
 @media(max-width:380px){.dkbtn i{display:none}.dkcell{grid-template-columns:1fr 40px}.dkci.s{width:40px}.catr span{max-width:62px;font-size:11px}}
 @media(prefers-reduced-motion:reduce){.cat,.catw.in{animation:none}}
+
+/* ===== v84 : modifier la carte de mission et les secondaires ===== */
+.dkhr{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}.dkhr .dkh2{flex:1;min-width:0}
+.dked{flex:none;min-height:34px;padding:0 12px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;touch-action:manipulation;margin-bottom:-4px}.dked:active{transform:scale(.96)}
+.dkmod{font-size:12px;color:var(--ac);font-weight:700}
+/* éditeur d’une secondaire */
+.ex{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.62);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center}
+.exw{max-height:94vh;max-height:94dvh}.exb{padding-top:10px}
+.exi{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:0 0 10px;background:var(--card)}
+.exi label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--mu);min-width:0}
+.exi textarea,.exi input{font:inherit;font-size:16px;line-height:1.3;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;width:100%;box-sizing:border-box;font-weight:400;min-width:0}
+.exi textarea{resize:vertical;min-height:58px}.exi input[type=number]{-moz-appearance:textfield}
+.exi textarea:focus,.exi input:focus{outline:2px solid var(--ac);outline-offset:0;border-color:var(--ac)}
+.exg{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin-top:8px}.exg.lv{grid-template-columns:2fr 1fr}
+.exh{font-size:12px;line-height:1.35;color:var(--mu);margin:8px 0 0}
+.exdel,.jedel{display:block;margin:10px 0 0;background:none;border:0;color:#c0392b;font:inherit;font-size:13px;font-weight:700;min-height:38px;padding:0;cursor:pointer;touch-action:manipulation}
+.exadd{display:block;width:100%;min-height:48px;margin-top:4px;border-radius:12px;border:2px dashed var(--ac);background:transparent;color:var(--ac);font:inherit;font-weight:800;font-size:14px;cursor:pointer;touch-action:manipulation}
+.exrst,.jerst{display:block;width:100%;min-height:42px;margin-top:12px;border-radius:12px;border:1px solid var(--bd);background:transparent;color:var(--tx);font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.exf{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--card)}
+.exb2{min-height:48px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:800;font-size:15px;cursor:pointer;touch-action:manipulation}.exb2.p{background:var(--ac);border-color:var(--ac);color:#fff}
+/* éditeur de la carte de mission */
+.jctop.ed{position:sticky;top:-12px;z-index:5;margin:-12px -12px 10px;padding:12px;background:rgba(5,12,9,.92);backdrop-filter:blur(6px);gap:8px}
+.jetl{flex:1;text-align:center;color:#fff;font:700 14px system-ui,sans-serif}
+.jced{flex:none;min-height:36px;padding:0 13px;border-radius:99px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font:inherit;font-weight:700;font-size:13px;cursor:pointer;touch-action:manipulation;white-space:nowrap}.jced.p{background:#1fae7c;border-color:#1fae7c;color:#06261a}
+.jctop:not(.ed) .jcs{flex:1}
+.jee{border:1px solid color-mix(in srgb,var(--c) 45%,#cfc6b0);border-radius:12px;padding:10px;margin:10px 0 0;background:#fffdf4}
+.jee label{display:flex;flex-direction:column;gap:3px;font:700 11px/1.2 system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#6b6250;min-width:0}
+.jee textarea,.jee input,.jee select{font:16px/1.3 system-ui,sans-serif;letter-spacing:0;text-transform:none;font-weight:400;color:#2b2519;background:#fff;border:1px solid #cfc6b0;border-radius:9px;padding:8px 9px;width:100%;box-sizing:border-box;min-width:0}
+.jee textarea{resize:vertical;min-height:70px}.jee select{padding-right:4px}
+.jee textarea:focus,.jee input:focus,.jee select:focus{outline:2px solid var(--cd);outline-offset:0}
+.jeg{display:grid;grid-template-columns:96px 1fr;gap:8px}.jee>*+*{margin-top:8px}.jee>.jedel{margin-top:10px}
+.jer>span{font:700 11px system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:#6b6250}.jer>div{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:3px}
+.jer button{min-height:40px;border-radius:8px;border:1px solid #cfc6b0;background:#faf6ea;color:#a79d84;font:700 13px system-ui,sans-serif;cursor:pointer;touch-action:manipulation}.jer button.on{background:var(--cd);border-color:var(--cd);color:#fff}.jer.off{display:none}
+.jeb{padding-left:8px;border-left:3px solid var(--c);display:grid;gap:6px}.jeb>b{font:700 11px system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--cd)}
+.jedel{font-family:system-ui,sans-serif}
+.jeadd{display:block;width:100%;min-height:48px;margin-top:12px;border-radius:12px;border:2px dashed var(--cd);background:transparent;color:var(--cd);font:800 14px system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+.jerst{border-color:#cfc6b0;color:#2b2519;font-family:system-ui,sans-serif}
+.jced[data-jc=edit]{min-height:40px}
+.jcmk{font-style:normal;color:var(--cd);font-size:11px}
+.jcq.nt{font:700 12px system-ui,sans-serif;color:#6b6250;border:1px dashed #a79d84;padding:3px 9px;border-radius:99px}
+@media(max-width:380px){.jced{padding:0 10px;font-size:12px}.jctop .jcs button,.jctop .jcs>span{padding:0 9px;font-size:12px}}
 .gtop{border-top:0;margin-top:8px;padding-top:0}.gfc{border-left:5px solid var(--c);padding:4px 0 4px 10px;margin:8px 0}.gfn{display:flex;flex-direction:column}.gfm{font-size:14px;margin-top:2px}
 .gnote.need{color:var(--tx)}.gch{font:inherit;font-size:12px;border:1px solid var(--ac);color:var(--ac);background:transparent;border-radius:99px;padding:3px 10px;cursor:pointer;margin:2px 2px 2px 0}.gpgo2 .b{width:100%;padding:13px;font-size:16px}.ml.need{color:#c0392b}.mo.sm{padding:7px 11px}.mo.sm .mt b{font-weight:600}
 .gmauto b{font-size:16px}
@@ -746,7 +787,7 @@ Object.values(S.coll).forEach(m=>{if(m.nb==null)m.nb=(S.lists.flatMap(l=>l.units
 const bp=k=>{const p=S.bpos[k]||{};return(p.x??50)+"% "+(p.y??50)+"%"};
 let frk=null;
 function frDraw(){const ph=!!frk&&frk.slice(0,2)==="p:",img=!frk?"":frk==="s"?S.sban:ph?S.imgs[frk.slice(2)]:frk[0]==="u"?S.ban[frk.slice(2)]:(S.fac.find(f=>f.id===frk.slice(2))||{}).banner;if(!img){frk=null;$("#dg").innerHTML="";return}const p=S.bpos[frk]||{};$("#dg").innerHTML=`<div class="ov ovd" style="z-index:40" data-act="frx"><div class="pn dlgp"><div class="top"><h3 style="margin:0 0 8px">${ph?"Recadrer la photo":"Cadrer la bannière"}</h3><button class="b cx" data-act="frx" aria-label="Fermer">✕</button></div>${ph?`<div id="frp" class="frs"><img src="${img}" style="${pstK(frk)}" alt=""></div>`:`<div id="frp" style="height:120px;border-radius:10px;background:url(${img}) ${bp(frk)}/cover"></div>`}<label>Gauche ↔ droite<input type="range" min="0" max="100" value="${p.x??50}" data-fr="x" style="width:100%"></label><label>Haut ↕ bas<input type="range" min="0" max="100" value="${p.y??50}" data-fr="y" style="width:100%"></label>${ph?`<label>Zoom<input type="range" min="100" max="300" value="${Math.round((p.z??1)*100)}" data-fr="z" style="width:100%"></label>`:""}</div></div>`}
-function gRec(title){const B=S.bat,tt=i=>B.t.reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0),r={title,n:[...B.n],f:[...B.f],l:[0,1].map(i=>snap(B.l[i])),tot:[tt(0),tt(1)],cp:[...B.cp],t:clone(B.t),fin:true,ms:B.ms?clone(B.ms):null,sx:B.sx?clone(B.sx):null},g=B.gid&&S.games.find(x=>x.id===B.gid);if(g)Object.assign(g,r);else S.games.unshift(Object.assign({id:rid(),d:Date.now()},r))}
+function gRec(title){const B=S.bat,tt=i=>B.t.reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0),r={title,n:[...B.n],f:[...B.f],l:[0,1].map(i=>snap(B.l[i])),tot:[tt(0),tt(1)],cp:[...B.cp],t:clone(B.t),fin:true,ms:B.ms?clone(B.ms):null,sx:B.sx?clone(B.sx):null,ed:S.ed&&(Object.keys(S.ed.mi||{}).length||Object.keys(S.ed.sx||{}).length)?clone(S.ed):null},g=B.gid&&S.games.find(x=>x.id===B.gid);if(g)Object.assign(g,r);else S.games.unshift(Object.assign({id:rid(),d:Date.now()},r))}
 function gMis(g){if(!g.p)return"";return`<div class="gmm">${g.p.map(x=>x.mission&&x.mission.id?`<div class="mu">${esc(x.mission.ic||"")} <b>${esc(x.name)}</b> · ${esc(x.mission.fr)}${x.mission.mn?" — "+esc(x.mission.mn):""}${x.src==="temp"?" (choisie pour la partie)":""}</div>`:`<div class="mu"><b>${esc(x.name)}</b> · mission non choisie</div>`).join("")}</div><details style="margin-top:6px"><summary class="mu">Infos de la partie</summary>${g.p.map(x=>`<div style="margin-top:6px"><b>${esc(x.name)}</b><div class="mu">${[x.fac&&"Faction : "+esc(x.fac),x.list&&"Liste : "+esc(x.list.name),x.det&&"Détachement : "+esc(x.det),x.pts&&"Points : "+x.pts].filter(Boolean).join(" · ")||"Aucune autre information"}</div></div>`).join("")}</details>`}
 function gmView(){return S.games.length?S.games.map(g=>{const w=g.tot[0]===g.tot[1]?-1:g.tot[0]>g.tot[1]?0:1,nm=i=>`<b${w===i?' style="color:var(--ac)"':""}>${esc(g.n[i])}</b>${g.f[i]?` <span class="mu">(${esc(g.f[i])})</span>`:""}`;return`<div class="card" style="position:relative"><button class="xx" data-act="gdel" data-g="${g.id}" aria-label="Supprimer">✕</button><div class="mu">${esc(g.title)} · ${new Date(g.d).toLocaleDateString("fr-FR")}</div>${g.fin===false?`<div style="margin:6px 0;padding-right:30px">${nm(0)} <span class="mu">contre</span> ${nm(1)}</div><div class="mu">Partie non terminée · score non enregistré</div>`:`<div style="margin:6px 0;padding-right:30px">${nm(0)} <b style="font-size:22px">${g.tot[0]}</b> – <b style="font-size:22px">${g.tot[1]}</b> ${nm(1)}</div><div class="mu">PC restants : ${g.cp[0]} – ${g.cp[1]}</div>`}${gMis(g)}${window.msGameHtml?window.msGameHtml(g):""}${(g.l||[]).some(x=>x)?`<details style="margin-top:6px"><summary class="mu">Armées jouées</summary>${[0,1].map(i=>g.l[i]?`<div style="margin-top:4px"><b>${esc(g.n[i])}</b> — ${esc(g.l[i].name)} ${g.l[i].units.map(u=>`<div class="mu">• ${esc(cap(u.name))}${u.subs.length?" + "+u.subs.map(s=>esc(cap(s))).join(", "):""}</div>`).join("")}</div>`:"").join("")}</details>`:""}<details style="margin-top:6px"><summary class="mu">Détail par tour</summary>${g.t.map((r,t)=>`<div class="mu">Tour ${t+1} : ${r.p[0]+r.s[0]+(r.m?r.m[0]:0)} (P ${r.p[0]} / S ${r.s[0]}${r.m?" / M "+r.m[0]:""}${r.x?" / O "+r.x[0]:""}) – ${r.p[1]+r.s[1]+(r.m?r.m[1]:0)} (P ${r.p[1]} / S ${r.s[1]}${r.m?" / M "+r.m[1]:""}${r.x?" / O "+r.x[1]:""})</div>`).join("")}</details></div>`}).join(""):"<p>Aucune partie enregistrée. Termine une bataille avec « Enregistrer la partie ».</p>"}
 function upsert(p,facFn,x){const k=nn(p.name),same=Object.values(S.coll).filter(y=>nn(y.name)===k);let m=same.find(y=>wsig(y)===wsig(p));
@@ -1453,7 +1494,11 @@ const MSD=[{"id":"domination-du-terrain","cat":"take-and-hold","nm":"Domination 
 (()=>{
 const W=SYS.w40k,CN={"take-and-hold":"Prendre et Tenir","purge-the-foe":"Éliminez l’Adversaire","disruption":"Perturbation","reconnaissance":"Reconnaissance","priority-assets":"Atouts Prioritaires"};
 W.missions.forEach(c=>{c.fr=CN[c.id]||c.fr});
-const ORD=W.missions.map(c=>c.id),mOf=id=>MSD.find(m=>m.id===id)||null,mIn=c=>MSD.filter(m=>m.cat===c),catG=id=>W.missions.find(c=>c.id===id)||null;
+const edGet=()=>window.__edCtx||S.ed||null;
+function effM(m){if(!m)return m;const e=edGet(),o=e&&e.mi&&e.mi[m.id];if(!o)return m;
+ const cond=m.cond.map((c,i)=>{const p=o.c&&o.c[i];if(!p)return c;const r=Object.assign({},c,p,{ch:1});if(p.bo&&c.bo)r.bo=Object.assign({},c.bo,p.bo);return r}).concat((o.a||[]).map(c=>Object.assign({cu:1,r5:false,w:""},c)));
+ return Object.assign({},m,{cond,edm:1})}
+const ORD=W.missions.map(c=>c.id),mOf=id=>effM(MSD.find(m=>m.id===id)||null),mIn=c=>MSD.filter(m=>m.cat===c),catG=id=>W.missions.find(c=>c.id===id)||null;
 const autoM=(me,op)=>{const i=ORD.indexOf(op),l=mIn(me);return me&&op&&i>=0&&l[i]?l[i].id:""};
 const CL=["#1fae7c","#e08a2c"];
 const MOL={cmd:"Fin de votre phase de Commandement",tour:"Fin de votre tour",tourany:"Fin d’un tour",bat:"Fin de la bataille"};
@@ -1465,7 +1510,7 @@ let dw=0;/* tiroir joueur ouvert : 0, 1 ou -1 (aucun) ; en mémoire seulement */
 const key=(pl,i,rd)=>pl+"|"+i+"|"+rd;
 const CO=(ms,pl)=>{const s=ms&&ms.sel&&ms.sel[pl];return s&&s[1]?mOf(s[1]):null};
 const momentOf=(c,rd)=>c.mo==="cmd"&&rd===5&&c.r5?"tour":c.mo;
-const cellPts=(c,v)=>{if(!v)return 0;const q=v.q||0;let p=c.k==="chk"?(q?c.pts:0):c.pts*q;const bo=c.bo;if(bo&&q){const b=v.b||0;p+=bo.k==="chk"?(b?bo.pts:0):bo.pts*b}return p};
+const cellPts=(c,v)=>{if(!v||c.x)return 0;const q=v.q||0;let p=c.k==="chk"?(q?c.pts:0):c.pts*q;const bo=c.bo;if(bo&&q){const b=v.b||0;p+=bo.k==="chk"?(b?bo.pts:0):bo.pts*b}return p};
 function sumsOf(ms){const o=[[0,0,0,0,0],[0,0,0,0,0]];if(!ms||!ms.v)return o;for(const k in ms.v){const a=k.split("|"),pl=+a[0],m=CO(ms,pl),c=m&&m.cond[+a[1]];if(!c)continue;const r=a[2]==="F"?5:+a[2];o[pl][r-1]+=cellPts(c,ms.v[k])}return o}
 window.msSums=sumsOf;
 window.msTot=pl=>sumsOf(MS())[pl].reduce((a,b)=>a+b,0);
@@ -1474,7 +1519,7 @@ function recompute(sel){[0,1].forEach(pl=>{const s=sel[pl]||(sel[pl]=["","",0]),
 function msInit(sel){sel=sel.map(x=>[x[0]||"",x[1]||"",x[2]?1:0]);recompute(sel);S.bat.ms={sel,v:{},ac:{},log:[],ed:[false,false]};dw=0;msSync()}
 window.msReset=()=>{const ms=MS();if(!ms)return;Object.assign(ms,{v:{},ac:{},log:[]});msSync()};
 function popScore(pl,d){if(!(d>0))return;setTimeout(()=>{const z=document.querySelectorAll("#m .bzp")[pl];if(!z)return;const s=z.querySelector(".bzs");if(s){s.classList.remove("pulse");void s.offsetWidth;s.classList.add("pulse")}const f=document.createElement("span");f.className="msf";f.textContent="+"+d;z.appendChild(f);setTimeout(()=>f.remove(),1300)},40)}
-function setVal(pl,i,rd,patch){const ms=MS(),m=CO(ms,pl);if(!m)return;const c=m.cond[i],k=key(pl,i,rd),old=ms.v[k]||{q:0,b:0};
+function setVal(pl,i,rd,patch){const ms=MS(),m=CO(ms,pl);if(!m)return;const c=m.cond[i];if(!c||c.x)return;const k=key(pl,i,rd),old=ms.v[k]||{q:0,b:0};
  const nv={q:old.q||0,b:old.b||0};Object.assign(nv,patch);
  nv.q=Math.max(0,Math.min(c.k==="chk"?1:99,nv.q|0));
  if(!c.bo||!nv.q)nv.b=0;else if(c.bo.k==="chk")nv.b=nv.b?1:0;else nv.b=Math.max(0,Math.min(c.k==="cnt"?nv.q:99,nv.b|0));
@@ -1509,8 +1554,8 @@ function selPick(ms,pl){const B=S.bat,sl=i=>ms.sel[i]||["","",0],need=[0,1].filt
 function plBody(ms,pl,R,man,rr){const m=CO(ms,pl);
  if(!m||ms.ed[pl])return`<div class="msel">${selPick(ms,pl)}${m||ms.ed[pl]?`<p><button type="button" class="b" data-ms="edone" data-pl="${pl}">Terminé</button></p>`:""}</div>`;
  const o=sumsOf(ms),ct=catG(m.cat),oc=catG((ms.sel[1-pl]||[])[0]),mp=o[pl][R-1];
- const groups=["cmd","tour","tourany"].map(mo=>{const cs=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo!=="bat"&&c.rd.includes(R)&&momentOf(c,R)===mo);return cs.length?`<div class="msg"><div class="msgh">${MOL[mo]}</div>${cs.map(([c,i])=>condRow(ms,pl,m,c,i,R)).join("")}</div>`:""}).join("");
- const bats=m.cond.map((c,i)=>[c,i]).filter(([c])=>c.mo==="bat");
+ const groups=["cmd","tour","tourany"].map(mo=>{const cs=m.cond.map((c,i)=>[c,i]).filter(([c,i])=>!c.x&&c.mo!=="bat"&&(c.rd.includes(R)||ms.v[key(pl,i,R)])&&momentOf(c,R)===mo);return cs.length?`<div class="msg"><div class="msgh">${MOL[mo]}</div>${cs.map(([c,i])=>condRow(ms,pl,m,c,i,R)).join("")}</div>`:""}).join("");
+ const bats=m.cond.map((c,i)=>[c,i]).filter(([c])=>!c.x&&c.mo==="bat");
  const fin=!bats.length?"":R===5?`<div class="msg"><div class="msgh">🏁 ${MOL.bat}</div>${bats.map(([c,i])=>condRow(ms,pl,m,c,i,"F")).join("")}</div>`:`<p class="mu mfin">🏁 ${bats.length} condition${bats.length>1?"s":""} de fin de bataille : à valider au round 5.</p>`;
  const rules=`<details class="pdx"${dd("ms:r"+pl,0)}><summary>📜 Description et règles</summary><p class="msru">${esc(m.d)}</p>${m.setup.map(x=>`<p class="msru"><b>${esc(x.w)}.</b> ${esc(x.t)}</p>`).join("")}${m.rules.map(x=>`<p class="msru">${esc(x)}</p>`).join("")}</details>`;
  const manual=`<details class="pdx"${dd("ms:g"+pl,0)}><summary>✎ Points manuels<span class="pdv">P ${rr.p[pl]} · S ${rr.s[pl]}</span></summary>${man}</details>`;
@@ -1624,7 +1669,7 @@ document.addEventListener("click",e=>{if(!open)return;if(e.target.id==="gpo"){cl
 document.addEventListener("input",e=>{const k=open&&e.target.dataset&&e.target.dataset.gi;if(!k)return;P()[k]=e.target.value;sv();const s=document.getElementById("gpsum");if(s)s.innerHTML=sumHtml()});
 document.addEventListener("change",e=>{const k=open&&e.target.dataset&&e.target.dataset.gs;if(!k)return;const p=P();if(k==="l"){p.l=e.target.value;p.m1="";p.i1=""}else p.ol=e.target.value;save();gpDraw()});
 window.msGameHtml=g=>{if(!g.ms)return"";const o=sumsOf(g.ms),t=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0));return`<div class="mu">Points de mission : ${t[0]} – ${t[1]}</div>${g.ms.log&&g.ms.log.length?`<details style="margin-top:6px"><summary class="mu">Validations de missions (${g.ms.log.length})</summary><div class="mslg">${msLogHtml(g.ms.log,g.n)}</div></details>`:""}`};
-window.__ms={mOf,catG,momentOf,CL,MOL,CO,sumsOf,logLine,popScore,dd,wRed,setDw:p=>{dw=p},seeDw};
+window.__ms={mOf,catG,momentOf,CL,MOL,CO,sumsOf,logLine,popScore,dd,wRed,msSync,setDw:p=>{dw=p},seeDw};
 el=document.createElement("div");el.id="gp";document.body.appendChild(el);
 })();
 </script>
@@ -1707,9 +1752,9 @@ const SM={
  "balise":"À la fin du tour adverse, l’unité désignée est hors de votre zone de déploiement : 3 PdV · hors de votre territoire : 5 PdV.",
  "pillage":"5 PdV si l’action de pillage (phase de Tir) est accomplie à la fin du tour.",
  "purification":"Objectifs purifiés (action accomplie à la fin du tour) : 1 objectif = 2 PdV · 2 objectifs ou plus = 5 PdV."};
-const smOf=(d,m)=>{const s=SM[d.id];return typeof s==="string"?s:(s?s[m==="f"?"f":"t"]:d.d)||""};
+const smOf=(d,m)=>{if(ovOf(d,m))return optsOf(d,m).filter(o=>!o.x).map(o=>String(o.tx).replace(/[.\s]+$/,"")+" : "+ptsTx(o)).join(" · ")+".";const s=SM[d.id];return typeof s==="string"?s:(s?s[m==="f"?"f":"t"]:d.d)||""};
 /* libellé des points d’une option, pour le catalogue et les résumés */
-const ptsTx=o=>o.k==="chk"?o.pts+" PdV":o.k==="cnt"?o.pts+" PdV chacun"+(o.cap?" (maximum "+o.cap+")":""):o.k==="lv"?o.lv.map(l=>l[1]+" PdV").join(" / "):o.t.map((a,i,z)=>a[0]+(i===z.length-1&&z.length>1?" ou plus":"")+" : "+a[1]+" PdV").join(" · ");
+const ptsTx=o=>o.k==="chk"?o.pts+" PdV":o.k==="cnt"?o.pts+" PdV chacun"+(o.cap?" (maximum "+o.cap+")":o.mx?" (jusqu’à "+o.mx+" fois)":""):o.k==="lv"?o.lv.map(l=>l[1]+" PdV").join(" / "):o.t.map((a,i,z)=>a[0]+(i===z.length-1&&z.length>1?" ou plus":"")+" : "+a[1]+" PdV").join(" · ");
 
 /* ---------- état ---------- */
 const NEWD=()=>({mode:"t",pl:[{cards:{}},{cards:{}}],log:[]});
@@ -1717,9 +1762,15 @@ const DEF=NEWD();
 const view=()=>S.bat.sx||DEF;
 function ens(){const B=S.bat;if(!B.sx)B.sx=NEWD();const s=B.sx;s.mode=s.mode==="f"?"f":"t";s.pl=s.pl||[{cards:{}},{cards:{}}];[0,1].forEach(i=>{s.pl[i]=s.pl[i]||{cards:{}};s.pl[i].cards=s.pl[i].cards||{}});s.log=s.log||[];return s}
 const rdNow=()=>(S.bat.cur||0)+1;
-const optsOf=(d,m)=>d.o||(m==="f"?d.f:d.t);
-const maxQ=o=>o.k==="chk"?1:o.k==="lv"?o.lv.length:o.k==="cnt"?(o.cap?Math.ceil(o.cap/o.pts):(o.mx||9)):(o.mx||5);
-const optPts=(o,q)=>{q=q|0;if(q<=0)return 0;if(o.k==="chk")return o.pts;if(o.k==="cnt"){const p=o.pts*q;return o.cap?Math.min(o.cap,p):p}if(o.k==="lv")return(o.lv[q-1]||[0,0])[1];if(o.k==="tr"){let p=0;o.t.forEach(a=>{if(q>=a[0])p=a[1]});return p}return 0};
+/* ===== Modifications perso (S.ed) : cartes secondaires et missions, communes à toutes les parties ===== */
+const edGet=()=>window.__edCtx||S.ed||null;
+function edEns(){if(!S.ed||typeof S.ed!=="object")S.ed={};if(!S.ed.mi)S.ed.mi={};if(!S.ed.sx)S.ed.sx={};return S.ed}
+const ek=(d,m)=>d.o?"o":(m==="f"?"f":"t");
+const optsBase=(d,m)=>d.o||(m==="f"?d.f:d.t);
+const ovOf=(d,m)=>{const e=edGet();return e&&e.sx&&e.sx[d.id]&&e.sx[d.id][ek(d,m)]||null};
+const optsOf=(d,m)=>{const b=optsBase(d,m),ov=ovOf(d,m);if(!ov)return b;return b.map((o,i)=>{const p=ov.c&&ov.c[i];return p?Object.assign({},o,p):o}).concat((ov.a||[]).map(o=>Object.assign({cu:1},o)))};
+const maxQ=o=>o.k==="chk"?1:o.k==="lv"?o.lv.length:o.k==="cnt"?(()=>{const a=o.mx|0,b=o.cap&&o.pts?Math.ceil(o.cap/o.pts):0;return a&&b?Math.min(a,b):(a||b||9)})():(o.mx||5);
+const optPts=(o,q)=>{q=q|0;if(q<=0||o.x)return 0;if(o.k==="chk")return o.pts;if(o.k==="cnt"){q=Math.min(q,maxQ(o));const p=o.pts*q;return o.cap?Math.min(o.cap,p):p}if(o.k==="lv")return(o.lv[q-1]||[0,0])[1];if(o.k==="tr"){let p=0;o.t.forEach(a=>{if(q>=a[0])p=a[1]});return p}return 0};
 function cardPts(c,def,mode){const by=[0,0,0,0,0];let tot=0;if(c&&def&&c.v){const os=optsOf(def,mode)||[];for(const k in c.v){const a=k.split("|"),o=os[+a[0]],r=+a[1]-1;if(!o||!(r>=0&&r<5))continue;const p=optPts(o,c.v[k]);by[r]+=p;tot+=p}}return{tot,by}}
 const dead=c=>c.st==="x"&&c.kp===0;
 function sums(sx){const o=[[0,0,0,0,0],[0,0,0,0,0]];if(!sx||!sx.pl)return o;[0,1].forEach(pl=>{const cs=(sx.pl[pl]||{}).cards||{};for(const id in cs){const c=cs[id];if(dead(c))continue;cardPts(c,BY[id],sx.mode).by.forEach((v,k)=>{o[pl][k]+=v})}});return o}
@@ -1780,7 +1831,7 @@ function tryDraw(pl){
  doDraw(pl)}
 function setQ(pl,id,oi,q){
  const sx=view(),c=sx.pl[pl].cards[id],def=BY[id];if(!c||!def)return;
- const os=optsOf(def,sx.mode),o=os[oi],R=rdNow();if(!o)return;
+ const os=optsOf(def,sx.mode),o=os[oi],R=rdNow();if(!o||o.x)return;
  if(dead(c)){toast("Points retirés : carte supprimée");return}
  if(o.r0&&R<o.r0){toast("Possible à partir du round "+o.r0);return}
  q=Math.max(0,Math.min(maxQ(o),q|0));
@@ -1828,7 +1879,13 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  else if(a==="catpl"){catPl=pl;catDraw()}
  else if(a==="catrd"){S.bat.cur=+b.dataset.v;save();draw();catDraw()}
  else if(a==="catv"){const k=pl+":"+id;if(catOpenSet.has(k))catOpenSet.delete(k);else catOpenSet.add(k);catDraw()}
- else if(a==="cadd")addManual(pl,id)},true);
+ else if(a==="cadd")addManual(pl,id);
+ else if(a==="sxe")exOpen(b.dataset.id,b);
+ else if(a==="exc")exClose();
+ else if(a==="exs")exSave();
+ else if(a==="exa")exAdd();
+ else if(a==="exd")exDel(+b.dataset.i);
+ else if(a==="exr")exRestore()},true);
 /* accordéon : ouvrir une carte referme les autres cartes de la même liste */
 document.addEventListener("toggle",e=>{const t=e.target;if(!t||!t.classList||!t.classList.contains("dkc")||!t.open||!t.parentElement)return;
  const y0=t.getBoundingClientRect().top;let ch=0;
@@ -1861,8 +1918,8 @@ function cardHtml(pl,d,c,R,sx){
  const miss=live&&(d.des||[]).some(f=>!String((c.d||{})[f.f]||"").trim());
  const sub=`Round ${c.rd}${live?` · <span class="dkst">En cours</span>`:` · <span class="dkst ${c.st==="d"?"ok":"no"}">${c.st==="d"?"Terminée":c.pc?"Défaussée (+1 PC)":"Supprimée"}</span>`}${c.man&&live?" · ajoutée à la main":""}${miss?` · <em>à désigner</em>`:""}`;
  let b=`<div class="dkd"><div class="dkobj"><b>🎯 Objectif</b><p>${esc(d.d)}</p></div>${d.nt?`<div class="dkinfo"><i aria-hidden="true">ℹ</i><span>${esc(d.nt)}</span></div>`:""}`;
- b+=`<div class="dkh2">Comment marquer${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")} · round ${R}</div>`;
- b+=os.map((o,oi)=>optHtml(pl,d,c,oi,o,R,gone,os)).join("");
+ b+=`<div class="dkhr"><div class="dkh2">Comment marquer${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")} · round ${R}</div><button type="button" class="dked" data-dk="sxe" data-id="${d.id}" aria-label="Modifier les conditions de ${esc(d.nm)}">✎ Modifier</button></div>`;
+ b+=os.map((o,oi)=>o.x?"":optHtml(pl,d,c,oi,o,R,gone,os)).join("");
  b+=desHtml(pl,d,c);
  b+=`<div class="dktt"><span>Total de la carte</span><span><b>${shown}</b> PdV</span></div>`;
  const rs=cp.by.map((v,i)=>v?`R${i+1} : ${v}`:"").filter(Boolean);
@@ -1871,7 +1928,7 @@ function cardHtml(pl,d,c,R,sx){
  if(live)b+=`<div class="dkact"><button type="button" class="fin" data-dk="done" data-pl="${pl}" data-id="${d.id}">✔ Terminer</button><button type="button" class="del" data-dk="del" data-pl="${pl}" data-id="${d.id}">🗑 Supprimer</button><button type="button" class="ret" data-dk="ret" data-pl="${pl}" data-id="${d.id}">🔄 Renvoyer dans la pioche et repiocher 1</button></div><p class="dkhelp"><b>Terminer</b> : objectif accompli, il quitte la liste. <b>Supprimer</b> : tu l’abandonnes. <b>Renvoyer</b> : la carte retourne dans la pioche.</p>`;
  else b+=`<p class="dkrs">${c.st==="d"?"Objectif terminé":c.pc?"Carte défaussée (+1 PC)":"Objectif supprimé"} au round ${c.re||c.rd}${gone?" · points retirés du score":" · points conservés dans le score"}. Cette carte ne peut plus être tirée pendant la partie.</p>`;
  b+=`</div>`;
- return`<details class="dkc st-${c.st}${recent.has(pl+"|"+d.id)?" new":""}" style="--g:${G.c}" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""} data-id="${d.id}"><summary><span class="dkg" aria-hidden="true">${G.ic}</span><span class="dkn"><b>${esc(d.nm)}</b><small>${sub}</small></span><span class="dkp"><b>${shown}</b><small>PdV</small></span>${live?`<span class="dksm">${esc(smOf(d,mode))}</span>`:""}</summary>${b}</details>`}
+ return`<details class="dkc st-${c.st}${recent.has(pl+"|"+d.id)?" new":""}" style="--g:${G.c}" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""} data-id="${d.id}"><summary><span class="dkg" aria-hidden="true">${G.ic}</span><span class="dkn"><b>${esc(d.nm)}${ovOf(d,mode)?` <span class="dkmod" title="Carte modifiée">✎</span>`:""}</b><small>${sub}</small></span><span class="dkp"><b>${shown}</b><small>PdV</small></span>${live?`<span class="dksm">${esc(smOf(d,mode))}</span>`:""}</summary>${b}</details>`}
 /* journal */
 function logHtml1(e,names){
  const d=BY[e.id],nm=d?d.nm:"",hh=new Date(e.t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}),meta=`${hh} · R${e.rd||"?"}`,who=(e.pl===0||e.pl===1)?(names[e.pl]||""):"";
@@ -1911,14 +1968,14 @@ window.sxBar=()=>{const B=S.bat;return`<div class="dkbar">${[0,1].map(i=>{const 
 /* ---------- catalogue : toutes les secondaires, ajout à la main au round en cours ---------- */
 let catPl=-1,catFrom=null;const catOpenSet=new Set();
 const catEl=document.createElement("div");catEl.id="sxcat";document.body.appendChild(catEl);
-function condLi(d,mode){return optsOf(d,mode).map(o=>`<li>${o.sup?"<b>En plus</b> : ":""}${esc(o.tx)}${o.k==="lv"?`<ul>${o.lv.map(l=>`<li>${esc(l[0])} — <b>${l[1]} PdV</b></li>`).join("")}</ul>`:` — <b>${esc(ptsTx(o))}</b>`}${o.w?` <em>⏱ ${esc(o.w)}</em>`:""}${o.r0?` <em>🔒 dès le round ${o.r0}</em>`:""}</li>`).join("")}
+function condLi(d,mode){return optsOf(d,mode).filter(o=>!o.x).map(o=>`<li>${o.sup?"<b>En plus</b> : ":""}${esc(o.tx)}${o.k==="lv"?`<ul>${o.lv.map(l=>`<li>${esc(l[0])} — <b>${l[1]} PdV</b></li>`).join("")}</ul>`:` — <b>${esc(ptsTx(o))}</b>`}${o.w?` <em>⏱ ${esc(o.w)}</em>`:""}${o.r0?` <em>🔒 dès le round ${o.r0}</em>`:""}</li>`).join("")}
 function catHtml(pl){
  const sx=view(),B=S.bat,R=rdNow(),cs=sx.pl[pl].cards,mode=sx.mode,nm=B.n[pl],cu=B.cur||0;
  const ST=c=>c.st==="a"?`Active · R${c.rd}`:c.st==="d"?"Terminée":c.pc?"Défaussée":"Supprimée";
  const grp=g=>`<div class="crg" style="--g:${GR[g].c}">${GR[g].ic} ${esc(GR[g].nm)}</div>`+SXD.filter(d=>d.g===g).map(d=>{
   const c=cs[d.id],k=pl+":"+d.id,op=catOpenSet.has(k);
   const act=!c?`<button type="button" class="cradd" data-dk="cadd" data-pl="${pl}" data-id="${d.id}" aria-label="Ajouter ${esc(d.nm)} à ${esc(nm)}, round ${R}">＋ Ajouter</button>`:`<span class="crchip${c.st==="a"?" on":""}">${ST(c)}</span>`;
-  return`<div class="cr${c?" has":""}" style="--g:${GR[g].c}" data-id="${d.id}"><div class="cr1"><div class="crn"><b>${esc(d.nm)}</b><p>${esc(smOf(d,mode))}</p></div>${act}</div><button type="button" class="crv" data-dk="catv" data-pl="${pl}" data-id="${d.id}" aria-expanded="${op}">${op?"Masquer les conditions ▴":"Voir toutes les conditions ▾"}</button>${op?`<div class="crd"><p>🎯 ${esc(d.d)}</p>${d.nt?`<p class="crnt">ℹ ${esc(d.nt)}</p>`:""}<div class="dkh2">Conditions${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")}</div><ul>${condLi(d,mode)}</ul></div>`:""}${c&&c.st!=="a"?`<p class="crnote">Archivée : elle ne peut plus être ajoutée pendant cette partie.</p>`:""}</div>`}).join("");
+  return`<div class="cr${c?" has":""}" style="--g:${GR[g].c}" data-id="${d.id}"><div class="cr1"><div class="crn"><b>${esc(d.nm)}</b><p>${esc(smOf(d,mode))}</p></div>${act}</div><button type="button" class="crv" data-dk="catv" data-pl="${pl}" data-id="${d.id}" aria-expanded="${op}">${op?"Masquer les conditions ▴":"Voir toutes les conditions ▾"}</button>${op?`<div class="crd"><p>🎯 ${esc(d.d)}</p>${d.nt?`<p class="crnt">ℹ ${esc(d.nt)}</p>`:""}<div class="dkhr"><div class="dkh2">Conditions${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")}${ovOf(d,mode)?" · modifiées":""}</div><button type="button" class="dked" data-dk="sxe" data-id="${d.id}">✎ Modifier</button></div><ul>${condLi(d,mode)}</ul></div>`:""}${c&&c.st!=="a"?`<p class="crnote">Archivée : elle ne peut plus être ajoutée pendant cette partie.</p>`:""}</div>`}).join("");
  return`<div class="cat" data-dk="catbg"><div class="catw" role="dialog" aria-modal="true" aria-label="Toutes les secondaires"><div class="cath"><div class="catt"><b>Toutes les secondaires</b><small>Ajout à la main · mode ${mode==="f"?"Fixe":"Tactique"}</small></div><button type="button" class="catx" data-dk="catx" aria-label="Fermer">✕</button></div>`+
  `<div class="catc"><div class="catp" role="group" aria-label="Joueur">${[0,1].map(i=>`<button type="button" class="${i===pl?"on":""}" style="--c:${CL[i]}" data-dk="catpl" data-pl="${i}" aria-pressed="${i===pl}"><i></i>${esc(B.n[i])}</button>`).join("")}</div>`+
  `<div class="catr" role="group" aria-label="Round"><span>Ajouter au round</span>${B.t.map((x,t)=>`<button type="button" class="${t===cu?"on":""}" data-dk="catrd" data-v="${t}" aria-pressed="${t===cu}">R${t+1}</button>`).join("")}</div></div>`+
@@ -1930,51 +1987,131 @@ function catDraw(first){
  const w=catEl.querySelector(".catw");if(first&&w)w.classList.add("in");
  const nb=catEl.querySelector(".catb");if(nb&&!first)nb.scrollTop=top;
  if(first){const x=catEl.querySelector(".catx");if(x)try{x.focus({preventScroll:true})}catch(_){}}}
-function openCat(pl,from){if(!S.bat)return;catFrom=from;catPl=pl;catNew.clear();document.body.classList.add("jcb");catDraw(true)}
-function closeCat(){catPl=-1;catEl.innerHTML="";document.body.classList.remove("jcb");
+function openCat(pl,from){if(!S.bat)return;catFrom=from;catPl=pl;catNew.clear();document.body.classList.add("jclk");catDraw(true)}
+function closeCat(){catPl=-1;catEl.innerHTML="";document.body.classList.remove("jclk");
  if(catFrom&&document.contains(catFrom))try{catFrom.focus({preventScroll:true})}catch(_){}catFrom=null;
  if(catNew.size){recent=new Set(catNew);catNew.clear();draw();reveal();fade()}}
 window.sxCatClose=closeCat;
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&catPl>=0){e.stopPropagation();closeCat()}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&catPl>=0&&exId===null&&!dlg){e.stopPropagation();closeCat()}},true);
+/* ---------- éditeur d’une carte secondaire (conditions, PdV, nombre de fois) ---------- */
+let exId=null,exMode="t",exDraft=null,exFrom=null;
+const jclone=o=>JSON.parse(JSON.stringify(o));
+const num=(v,lo,hi)=>Math.max(lo,Math.min(hi,parseInt(v,10)||0));
+const exEl=document.createElement("div");exEl.id="sxed";document.body.appendChild(exEl);
+const exTimes=o=>o.k==="chk"?1:(o.mx||(o.cap&&o.pts?Math.ceil(o.cap/o.pts):9));
+function exItem(o){const i=o.i,I=`data-i="${i}"`,n=(k,l,v,x)=>`<label>${l}<input type="number" inputmode="numeric" min="0" max="99" data-ex="${k}" ${I} ${x||""} value="${v}"></label>`;
+ let h=`<div class="exi"><label class="exl">Condition<textarea data-ex="tx" ${I} rows="2">${esc(o.tx)}</textarea></label>`;
+ if(o.k==="chk"||o.k==="cnt")h+=`<div class="exg">${n("pts","PdV"+(o.k==="cnt"?" par fois":""),o.pts)}${n("mx","Réalisable (fois)",exTimes(o),'min="1"')}${o.k==="cnt"?n("cap","Plafond de PdV",o.cap||"",'placeholder="aucun"'):""}</div>${o.k==="chk"?`<p class="exh">1 = une seule fois. Avec 2 ou plus, la condition devient un compteur (les PdV valent pour chaque fois).</p>`:""}`;
+ else if(o.k==="lv")h+=o.lv.map((l,j)=>`<div class="exg lv"><label class="w2">Palier ${j+1}<input type="text" data-ex="lvl" ${I} data-j="${j}" value="${esc(l[0])}"></label>${n("lvp","PdV",l[1],`data-j="${j}"`)}</div>`).join("");
+ else h+=`<p class="exh">Nombre atteint (${esc(o.u||"quantité")}) → PdV</p>`+o.t.map((a,j)=>`<div class="exg">${n("tm","À partir de",a[0],`data-j="${j}"`)}${n("tp","PdV",a[1],`data-j="${j}"`)}</div>`).join("");
+ return h+`<button type="button" class="exdel" data-dk="exd" ${I}>🗑 Supprimer cette condition</button></div>`}
+function exHtml(){const d=BY[exId],ov=ovOf(d,exMode),vis=exDraft.filter(o=>!o.x);
+ return`<div class="ex"><div class="catw exw in" role="dialog" aria-modal="true" aria-label="Modifier ${esc(d.nm)}"><div class="cath"><div class="catt"><b>Modifier « ${esc(d.nm)} »</b><small>${d.o?"Mêmes conditions en Fixe et en Tactique":"Version "+(exMode==="f"?"Fixe":"Tactique")+" (mode de la partie)"}</small></div><button type="button" class="catx" data-dk="exc" aria-label="Annuler">✕</button></div><div class="catb exb">${vis.length?vis.map(exItem).join(""):`<p class="dkx">Aucune condition. Ajoute-en une.</p>`}<button type="button" class="exadd" data-dk="exa">＋ Ajouter une condition</button><p class="exh">Les changements valent pour toutes tes parties, cartes déjà tirées comprises : les points déjà marqués sont recalculés.</p>${ov?`<button type="button" class="exrst" data-dk="exr">↺ Rétablir la carte d’origine</button>`:""}</div><div class="exf"><button type="button" class="exb2" data-dk="exc">Annuler</button><button type="button" class="exb2 p" data-dk="exs">Enregistrer</button></div></div></div>`}
+function exDraw(first){if(exId===null)return;const old=exEl.querySelector(".exb"),top=old?old.scrollTop:0;exEl.innerHTML=exHtml();const w=exEl.querySelector(".exw");if(!first&&w)w.classList.remove("in");const nb=exEl.querySelector(".exb");if(nb&&!first)nb.scrollTop=top}
+function exOpen(id,from){const d=BY[id];if(!d||!S.bat)return;exId=id;exMode=view().mode;exFrom=from;exDraft=optsOf(d,exMode).map((o,i)=>Object.assign(jclone(o),{i}));document.body.classList.add("jclk");exDraw(true)}
+function exClose(){exId=null;exDraft=null;exEl.innerHTML="";if(catPl<0&&jcPl<0)document.body.classList.remove("jclk");if(exFrom&&document.contains(exFrom))try{exFrom.focus({preventScroll:true})}catch(_){}exFrom=null}
+function exAdd(){exDraft.push({tx:"",k:"chk",pts:3,i:exDraft.length,neu:1});exDraw();const t=[...exEl.querySelectorAll(".exi textarea")].pop();if(t){try{t.focus({preventScroll:true})}catch(_){}t.scrollIntoView({block:"center"})}}
+function exDel(i){const j=exDraft.findIndex(o=>o.i===i);if(j<0)return;const o=exDraft[j];if(o.neu){exDraft.splice(j,1);exDraft.forEach((x,k)=>{x.i=k})}else o.x=1;exDraw()}
+const exFin=o=>{const f=jclone(o);if(f.k==="chk"){if(f._mx&&f.mx>1){f.k="cnt";f.u=f.u||"fois"}else delete f.mx}if(f.k==="tr")f.t.sort((a,b)=>a[0]-b[0]);return f};
+function exSave(){
+ const d=BY[exId],key=ek(d,exMode),base=optsBase(d,exMode),n=base.length,K=["tx","pts","k","mx","cap","u"],c={},a=[];
+ for(const o of exDraft)if(!o.x&&!String(o.tx||"").trim()){toast("Écris le texte de chaque condition");return}
+ exDraft.forEach(o=>{const f=exFin(o);
+  if(o.i<n){const b=base[o.i],p={};
+   K.forEach(k=>{const fv=f[k],bv=b[k];if(fv===bv)return;if((fv===0||fv===""||fv==null)&&(bv===0||bv===""||bv==null))return;p[k]=fv===""?0:fv});
+   if(JSON.stringify(f.lv)!==JSON.stringify(b.lv))p.lv=f.lv;
+   if(JSON.stringify(f.t)!==JSON.stringify(b.t))p.t=f.t;
+   if(f.x)p.x=1;if(Object.keys(p).length)c[o.i]=p}
+  else{const q=jclone(f);["i","_mx","neu","cu"].forEach(k=>delete q[k]);q.tx=String(q.tx).trim();a.push(q)}});
+ const e=edEns();e.sx[d.id]=e.sx[d.id]||{};
+ if(!Object.keys(c).length&&!a.length)delete e.sx[d.id][key];else e.sx[d.id][key]={c,a};
+ if(!Object.keys(e.sx[d.id]).length)delete e.sx[d.id];
+ sync();save();draw();if(catPl>=0)catDraw();exClose();toast("✎ « "+d.nm+" » modifiée")}
+function exRestore(){const d=BY[exId];ask({t:"Rétablir la carte d’origine ?",p:`Toutes les modifications de « ${d.nm} »${d.o?"":" ("+(exMode==="f"?"Fixe":"Tactique")+")"} seront annulées. Les points déjà marqués sont recalculés.`,ok:"Rétablir",dg:1},()=>{const e=edEns(),id=d.id;if(e.sx[id]){delete e.sx[id][ek(d,exMode)];if(!Object.keys(e.sx[id]).length)delete e.sx[id]}sync();save();draw();if(catPl>=0)catDraw();exClose();toast("Carte d’origine rétablie")})}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&exId!==null&&!dlg){e.stopPropagation();exClose()}},true);
+exEl.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.ex;if(!k||!exDraft)return;const o=exDraft.find(x=>x.i===+t.dataset.i);if(!o)return;const j=+t.dataset.j,v=t.value;
+ if(k==="tx")o.tx=v;else if(k==="pts")o.pts=num(v,0,99);else if(k==="mx"){o.mx=Math.max(1,num(v,0,99));o._mx=1}else if(k==="cap")o.cap=num(v,0,99);
+ else if(k==="lvl")o.lv[j][0]=v;else if(k==="lvp")o.lv[j][1]=num(v,0,99);else if(k==="tm")o.t[j][0]=num(v,0,99);else if(k==="tp")o.t[j][1]=num(v,0,99)});
 /* historique d’une partie enregistrée */
 window.sxGameHtml=g=>{const sx=g&&g.sx;if(!sx||!sx.pl)return"";const o=sums(sx),t=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0)),any=[0,1].some(i=>Object.keys(sx.pl[i].cards||{}).length);if(!any)return"";
  const ST={a:"en cours",d:"terminée",x:"supprimée"};
  const per=[0,1].map(pl=>{const cs=sx.pl[pl].cards||{},l=SXD.filter(d=>cs[d.id]).sort((a,b)=>(cs[a.id].t-cs[b.id].t)||((cs[a.id].i||0)-(cs[b.id].i||0)));if(!l.length)return"";return`<div class="mu" style="margin-top:6px"><b>${esc(g.n[pl])}</b></div>${l.map(d=>{const c=cs[d.id],p=cardPts(c,d,sx.mode).tot;return`<div class="mu">• ${esc(d.nm)} — R${c.rd} · ${c.pc?"défaussée":ST[c.st]} · ${dead(c)?"points retirés":p+" PdV"}</div>`}).join("")}`}).join("");
  const lg=(sx.log||[]).length?`<div class="mslg" style="margin-top:6px">${[...sx.log].reverse().map(e=>logHtml1(e,g.n)).join("")}</div>`:"";
  return`<div class="mu">Objectifs secondaires : ${t[0]} – ${t[1]} <span>(mode ${sx.mode==="f"?"Fixe":"Tactique"})</span></div><details style="margin-top:6px"><summary class="mu">Cartes secondaires jouées</summary>${per}${lg}</details>`};
-{const _g=window.msGameHtml;window.msGameHtml=g=>(_g?_g(g):"")+window.sxGameHtml(g)}
+{const _g=window.msGameHtml;window.msGameHtml=g=>{window.__edCtx=g&&g.ed||{};try{return(_g?_g(g):"")+window.sxGameHtml(g)}finally{window.__edCtx=null}}}
 
 /* ================= Carte de mission (carte à jouer) ================= */
-let jcPl=-1,jcFrom=null;
+let jcPl=-1,jcFrom=null,jcEdit=false,jcDraft=null;
 const jcEl=document.createElement("div");jcEl.id="jc";document.body.appendChild(jcEl);
 const jcOK=pl=>{const ms=S.bat&&S.bat.ms,m=M();return!!(ms&&m.CO&&m.CO(ms,pl))};
 window.jcOk=jcOK;
+const MOK=["cmd","tour","tourany","bat"];
 function jcHtml(pl){
  const ms=S.bat.ms,m=M(),mi=m.CO(ms,pl),ct=m.catG((ms.sel[pl]||[])[0]),oc=m.catG((ms.sel[1-pl]||[])[0]),B=S.bat,col=CL[pl];
  const rank=MSD.filter(x=>x.cat===mi.cat).findIndex(x=>x.id===mi.id)+1,sc=m.sumsOf(ms)[pl],tot=sc.reduce((a,b)=>a+b,0);
  const pips=c=>c.mo==="bat"?`<span class="jcfin">🏁 Fin de bataille</span>`:`<span class="jcp">${[1,2,3,4,5].map(r=>`<i class="${c.rd.includes(r)?"on":""}">R${r}</i>`).join("")}</span>`;
- const row=c=>`<div class="jcr"><div class="jct">${esc(c.tx)}</div>${c.w&&!m.wRed(c.w)?`<div class="jcnote">${esc(c.w)}</div>`:""}<div class="jcm"><span class="jcq">${c.pts}<small>PdV${c.k==="cnt"?" chacun":""}</small></span>${pips(c)}</div>${c.bo?`<div class="jcbo"><b>+${c.bo.pts}</b> PdV${c.bo.k==="cnt"?" chacun":""} · ${esc(c.bo.tx.replace(/^\+\s*/,""))}</div>`:""}${c.mo==="cmd"&&c.r5?`<div class="jcnote">Au round 5 : à la fin de votre tour.</div>`:""}</div>`;
- const grp=["cmd","tour","tourany","bat"].map(mo=>{const cs=mi.cond.filter(c=>c.mo===mo);return cs.length?`<div class="jcg">${esc(m.MOL[mo])}</div>${cs.map(row).join("")}`:""}).join("");
+ const row=c=>`<div class="jcr"><div class="jct">${esc(c.tx)}${c.ch||c.cu?` <i class="jcmk" title="${c.cu?"Condition ajoutée":"Condition modifiée"}">✎</i>`:""}</div>${c.w&&!m.wRed(c.w)?`<div class="jcnote">${esc(c.w)}</div>`:""}<div class="jcm">${c.pts?`<span class="jcq">${c.pts}<small>PdV${c.k==="cnt"?" chacun":""}</small></span>`:`<span class="jcq nt">Rappel</span>`}${pips(c)}</div>${c.bo?`<div class="jcbo"><b>+${c.bo.pts}</b> PdV${c.bo.k==="cnt"?" chacun":""} · ${esc(String(c.bo.tx).replace(/^\+\s*/,""))}</div>`:""}${c.mo==="cmd"&&c.r5?`<div class="jcnote">Au round 5 : à la fin de votre tour.</div>`:""}</div>`;
+ const head=`<div class="jci"><b>${rank||""}</b><span>${ct?ct.ic:""}</span></div><div class="jci br"><b>${rank||""}</b><span>${ct?ct.ic:""}</span></div><div class="jch"><div class="jcc">${ct?esc(ct.fr):""}${oc?` × ${esc(oc.fr)}`:""}</div><h3>${esc(mi.nm)}</h3><div class="jcdv"><i></i><b>◆</b><i></i></div><p class="jcf">${esc(mi.d)}</p></div>`;
+ if(jcEdit)return`<div class="jco" data-jc="bg"><div class="jcwrap" role="dialog" aria-modal="true" aria-label="Modifier la carte de mission"><div class="jctop ed"><button type="button" class="jced" data-je="cancel">Annuler</button><b class="jetl">Modifier la carte</b><button type="button" class="jced p" data-je="save">Enregistrer</button></div><article class="jcd" style="--c:${col}">${head}<div class="jcb"><div class="jcsm">Conditions de la mission</div>${jcDraft.filter(c=>!c.x).map(c=>jeItem(c,m)).join("")||`<p class="jcnote" style="text-align:center">Aucune condition. Ajoute-en une.</p>`}<button type="button" class="jeadd" data-je="add">＋ Ajouter une condition</button><p class="jcnote">Ces modifications valent pour toutes tes parties avec cette mission. Les points déjà validés sont recalculés.</p>${mi.edm?`<button type="button" class="jerst" data-je="rst">↺ Rétablir la carte d’origine</button>`:""}</div></article></div></div>`;
+ const grp=["cmd","tour","tourany","bat"].map(mo=>{const cs=mi.cond.filter(c=>!c.x&&c.mo===mo);return cs.length?`<div class="jcg">${esc(m.MOL[mo])}</div>${cs.map(row).join("")}`:""}).join("");
  const act=mi.act.length?`<div class="jcg">Actions spéciales</div>${mi.act.map(a=>`<div class="jcr"><div class="jct">⚙ <b>${esc(a.nm)}</b></div>${a.w?`<div class="jcnote">${esc(a.w)}</div>`:""}</div>`).join("")}`:"";
  const both=jcOK(0)&&jcOK(1);
- const idx=`<div class="jci"><b>${rank||""}</b><span>${ct?ct.ic:""}</span></div>`;
  return`<div class="jco" data-jc="bg"><div class="jcwrap" role="dialog" aria-modal="true" aria-label="Carte de mission de ${esc(B.n[pl])}">`+
- `<div class="jctop">${both?`<div class="jcs">${[0,1].map(i=>`<button type="button" class="${i===pl?"on":""}" style="--c:${CL[i]}" data-jc="pl" data-pl="${i}" aria-pressed="${i===pl}"><i></i>${esc(B.n[i])}</button>`).join("")}</div>`:`<div class="jcs"><span style="--c:${col}"><i></i>${esc(B.n[pl])}</span></div>`}<button type="button" class="jcx" data-jc="close" aria-label="Fermer">✕</button></div>`+
- `<article class="jcd" style="--c:${col}">${idx}<div class="jci br"><b>${rank||""}</b><span>${ct?ct.ic:""}</span></div>`+
- `<div class="jch"><div class="jcc">${ct?esc(ct.fr):""}${oc?` × ${esc(oc.fr)}`:""}</div><h3>${esc(mi.nm)}</h3><div class="jcdv"><i></i><b>◆</b><i></i></div><p class="jcf">${esc(mi.d)}</p></div>`+
- `<div class="jcb"><div class="jcsm">Comment marquer · rounds 1 à 5</div>${grp}${act}</div>`+
+ `<div class="jctop">${both?`<div class="jcs">${[0,1].map(i=>`<button type="button" class="${i===pl?"on":""}" style="--c:${CL[i]}" data-jc="pl" data-pl="${i}" aria-pressed="${i===pl}"><i></i>${esc(B.n[i])}</button>`).join("")}</div>`:`<div class="jcs"><span style="--c:${col}"><i></i>${esc(B.n[pl])}</span></div>`}<button type="button" class="jced" data-jc="edit" aria-label="Modifier la carte de mission">✎ Modifier</button><button type="button" class="jcx" data-jc="close" aria-label="Fermer">✕</button></div>`+
+ `<article class="jcd" style="--c:${col}">${head}`+
+ `<div class="jcb"><div class="jcsm">Comment marquer · rounds 1 à 5${mi.edm?" · carte modifiée":""}</div>${grp}${act}</div>`+
  `<footer class="jcn"><div class="jcn1"><span>Marqué</span><b>${tot} PdV</b></div><div class="jcn5">${sc.map((v,i)=>`<span class="${v?"on":""}"><small>R${i+1}</small><b>${v}</b></span>`).join("")}</div></footer></article></div></div>`}
-function jcDraw(){if(jcPl<0){jcEl.innerHTML="";return}if(!jcOK(jcPl)){jcClose();return}jcEl.innerHTML=jcHtml(jcPl);const w=jcEl.querySelector(".jco");if(w)w.scrollTop=0}
-function jcClose(){jcPl=-1;jcEl.innerHTML="";document.body.classList.remove("jcb");if(jcFrom&&document.contains(jcFrom))try{jcFrom.focus()}catch(_){}jcFrom=null}
+/* ---------- éditeur de la carte de mission ---------- */
+function jeItem(c,m){const i=c.i,I=`data-i="${i}"`;
+ return`<div class="jee"><label class="jel">Texte de la condition<textarea data-je="tx" ${I} rows="3">${esc(c.tx)}</textarea></label>`+
+ `<div class="jeg"><label>PdV<input type="number" inputmode="numeric" min="0" max="99" data-je="pts" ${I} value="${c.pts}"></label><label>Compte<select data-je="k" ${I}><option value="chk"${c.k==="chk"?" selected":""}>Une seule fois</option><option value="cnt"${c.k==="cnt"?" selected":""}>Chacun (× quantité)</option></select></label></div>`+
+ `<label class="jel">Quand<select data-je="mo" ${I}>${MOK.map(k=>`<option value="${k}"${c.mo===k?" selected":""}>${esc(m.MOL[k])}</option>`).join("")}</select></label>`+
+ `<div class="jer${c.mo==="bat"?" off":""}"><span>Actif aux rounds</span><div>${[1,2,3,4,5].map(r=>`<button type="button" class="${c.rd.includes(r)?"on":""}" data-je="rd" ${I} data-r="${r}" aria-pressed="${c.rd.includes(r)}">R${r}</button>`).join("")}</div></div>`+
+ `<label class="jel">Précision (facultatif)<input type="text" data-je="w" ${I} value="${esc(c._w||"")}" placeholder="ex. : dès le round 2"></label>`+
+ (c.bo?`<div class="jeb"><b>Bonus</b><label class="jel"><input type="text" data-je="bt" ${I} value="${esc(c.bo.tx)}" aria-label="Texte du bonus"></label><label>PdV du bonus<input type="number" inputmode="numeric" min="0" max="99" data-je="bp" ${I} value="${c.bo.pts}"></label></div>`:"")+
+ `<button type="button" class="jedel" data-je="del" ${I}>🗑 Supprimer cette condition</button></div>`}
+function jeOpen(){const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;
+ jcDraft=mi.cond.map((c,i)=>{const f=jclone(c);delete f.ch;delete f.cu;f.i=i;f._w=m.wRed(c.w)?"":(c.w||"");return f});
+ jcEdit=true;jcDraw();const w=jcEl.querySelector(".jco");if(w)w.scrollTop=0}
+function jeExit(){jcEdit=false;jcDraft=null;jcDraw()}
+function jeAdd(){jcDraft.push({tx:"",pts:3,k:"chk",mo:"tour",rd:[1,2,3,4,5],w:"",_w:"",r5:false,i:jcDraft.length,neu:1});jcDraw(true);const t=[...jcEl.querySelectorAll(".jee textarea")].pop();if(t){try{t.focus({preventScroll:true})}catch(_){}t.scrollIntoView({block:"center"})}}
+function jeDel(i){const j=jcDraft.findIndex(c=>c.i===i);if(j<0)return;const c=jcDraft[j];if(c.neu){jcDraft.splice(j,1);jcDraft.forEach((x,k)=>{x.i=k})}else c.x=1;jcDraw(true)}
+function jeSave(){
+ const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;const id=mi.id,base=MSD.find(x=>x.id===id),n=base.cond.length;
+ for(const c of jcDraft){if(c.x)continue;if(!String(c.tx||"").trim()){toast("Écris le texte de chaque condition");return}if(c.mo!=="bat"&&!c.rd.length){toast("Coche au moins un round : "+short(c.tx));return}}
+ const cc={},a=[];
+ jcDraft.forEach(c=>{const rd=c.mo==="bat"?[5]:c.rd.slice().sort((x,y)=>x-y),w=String(c._w||"").trim();
+  if(c.i<n){const b=base.cond[c.i],p={};
+   if(c.tx!==b.tx)p.tx=c.tx;if(c.pts!==b.pts)p.pts=c.pts;if(c.k!==b.k)p.k=c.k;if(c.mo!==b.mo){p.mo=c.mo;if(b.r5)p.r5=false}
+   if(c.mo!=="bat"&&JSON.stringify(rd)!==JSON.stringify(b.rd))p.rd=rd;
+   const w0=m.wRed(b.w)?"":(b.w||"");if(w!==w0)p.w=w;
+   if(b.bo&&c.bo&&(c.bo.tx!==b.bo.tx||c.bo.pts!==b.bo.pts))p.bo={tx:c.bo.tx,pts:c.bo.pts};
+   if(c.x)p.x=1;if(Object.keys(p).length)cc[c.i]=p}
+  else{const q={tx:c.tx,pts:c.pts,k:c.k,mo:c.mo,rd,w,r5:false};if(c.x)q.x=1;a.push(q)}});
+ const e=edEns();if(!Object.keys(cc).length&&!a.length)delete e.mi[id];else e.mi[id]={c:cc,a};
+ if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("✎ Carte « "+mi.nm+" » modifiée")}
+function jeRestore(){const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;
+ ask({t:"Rétablir la carte d’origine ?",p:`Toutes les modifications de « ${mi.nm} » (textes, PdV, rounds, conditions ajoutées ou supprimées) seront annulées. Les points déjà validés sont recalculés.`,ok:"Rétablir",dg:1},()=>{const e=edEns();delete e.mi[mi.id];if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("Carte d’origine rétablie")})}
+function jcDraw(keep){if(jcPl<0){jcEl.innerHTML="";return}if(!jcOK(jcPl)){jcClose();return}const old=jcEl.querySelector(".jco"),top=old?old.scrollTop:0;jcEl.innerHTML=jcHtml(jcPl);const w=jcEl.querySelector(".jco");if(w)w.scrollTop=keep===true?top:0}
+function jcClose(){jcPl=-1;jcEdit=false;jcDraft=null;jcEl.innerHTML="";if(exId===null&&catPl<0)document.body.classList.remove("jclk");if(jcFrom&&document.contains(jcFrom))try{jcFrom.focus()}catch(_){}jcFrom=null}
 window.jcClose=jcClose;
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-jc]");if(!b)return;
  const a=b.dataset.jc;
- if(a==="bg"){if(e.target!==b)return;e.stopPropagation();jcClose();return}
+ if(a==="bg"){if(e.target!==b)return;e.stopPropagation();if(!jcEdit)jcClose();return}
  e.stopPropagation();
- if(a==="open"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;document.body.classList.add("jcb");jcDraw();const x=jcEl.querySelector(".jcx");if(x)try{x.focus({preventScroll:true})}catch(_){}}
+ if(a==="open"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;jcEdit=false;document.body.classList.add("jclk");jcDraw();const x=jcEl.querySelector(".jcx");if(x)try{x.focus({preventScroll:true})}catch(_){}}
  else if(a==="pl"){jcPl=+b.dataset.pl;jcDraw()}
+ else if(a==="edit")jeOpen()
  else if(a==="close")jcClose()},true);
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&jcPl>=0){e.stopPropagation();jcClose()}},true);
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-je]");if(!b||!jcDraft)return;e.stopPropagation();
+ const a=b.dataset.je,c=jcDraft.find(x=>x.i===+b.dataset.i);
+ if(a==="cancel")jeExit();else if(a==="save")jeSave();else if(a==="add")jeAdd();else if(a==="del")jeDel(+b.dataset.i);else if(a==="rst")jeRestore();
+ else if(a==="rd"&&c){const r=+b.dataset.r,k=c.rd.indexOf(r);if(k>=0)c.rd.splice(k,1);else c.rd.push(r);b.classList.toggle("on",k<0);b.setAttribute("aria-pressed",k<0)}},true);
+jcEl.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.je;if(!k||!jcDraft)return;const c=jcDraft.find(x=>x.i===+t.dataset.i);if(!c)return;const v=t.value;
+ if(k==="tx")c.tx=v;else if(k==="pts")c.pts=num(v,0,99);else if(k==="w")c._w=v;else if(k==="bt"&&c.bo)c.bo.tx=v;else if(k==="bp"&&c.bo)c.bo.pts=num(v,0,99);
+ else if(k==="k")c.k=v==="cnt"?"cnt":"chk";
+ else if(k==="mo"){c.mo=MOK.includes(v)?v:"tour";const r=t.closest(".jee").querySelector(".jer");if(r)r.classList.toggle("off",c.mo==="bat")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&jcPl>=0&&exId===null&&!dlg){e.stopPropagation();if(jcEdit)jeExit();else jcClose()}},true);
 })();
 </script>
 </body>
