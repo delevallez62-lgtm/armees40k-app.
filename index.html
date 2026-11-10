@@ -213,29 +213,29 @@ details.bzcard>summary{list-style:none;display:flex;align-items:center;gap:6px}d
 .bzn0{display:flex;align-items:center;gap:6px}.bzn0 .bzn{flex:1;min-width:0;width:auto}
 .bzi{flex:none;width:34px;height:34px;border:0;border-radius:10px;background:rgba(255,255,255,.26);color:#fff;display:grid;place-items:center;cursor:pointer;padding:0;touch-action:manipulation}.bzi:active{transform:scale(.92)}.bzi svg{display:block}
 .bzg{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:3px;margin-top:3px}.bzg span{display:flex;flex-direction:column;line-height:1.1;background:rgba(0,0,0,.2);border-radius:8px;padding:3px 0;min-width:0}.bzg b{font-size:14px;font-variant-numeric:tabular-nums}.bzg small{font-size:9px;letter-spacing:-.15px;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:clip}
-.dkbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 0}
-.dkbtn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:6px 6px;border:2px solid var(--c);border-radius:14px;background:color-mix(in srgb,var(--c) 13%,var(--card));color:var(--tx);font:inherit;font-weight:700;font-size:13px;line-height:1.1;cursor:pointer;touch-action:manipulation}.dkbtn i{font-style:normal;font-size:18px}.dkbtn:active{transform:scale(.97)}.dkbtn.off{opacity:.55}
+.dkbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 0}.dkcell{display:grid;grid-template-columns:1fr 44px;gap:4px;min-width:0}
+.dkbtn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;min-width:0;padding:6px 6px;border:2px solid var(--c);border-radius:14px;background:color-mix(in srgb,var(--c) 13%,var(--card));color:var(--tx);font:inherit;font-weight:700;font-size:13px;line-height:1.1;cursor:pointer;touch-action:manipulation}.dkbtn i{font-style:normal;font-size:18px}.dkbtn:active{transform:scale(.97)}.dkbtn.off{opacity:.55}
 .pdnr{display:flex;align-items:center;gap:6px;min-width:0}.pdnr b{min-width:0}.pdk{flex:none;font-style:normal;font-size:11px;font-weight:700;background:var(--bg);border:1px solid var(--bd);border-radius:99px;padding:1px 7px;color:var(--mu)}
 .pdg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:12px 0 0;padding:4px;background:var(--bg);border:1px solid var(--bd);border-radius:12px}.pdg button{border:0;background:transparent;color:var(--tx);font:inherit;font-weight:700;font-size:14px;min-height:42px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;touch-action:manipulation}.pdg button.on{background:var(--card);box-shadow:0 1px 5px rgba(0,0,0,.2);color:var(--ac)}.pdg i{font-style:normal;min-width:20px;height:20px;border-radius:10px;background:var(--ac);color:#fff;font-size:12px;display:inline-grid;place-items:center;padding:0 5px}
 .dk{padding-top:2px}
-.dkm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 0;font-size:13px;color:var(--mu)}
+.dkm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 0 0;font-size:13px;color:var(--mu)}
 .dksg{display:inline-flex;border:1px solid var(--bd);border-radius:10px;overflow:hidden;flex:none}.dksg button{border:0;background:var(--card);color:var(--tx);font:inherit;font-size:13px;font-weight:600;padding:7px 14px;min-height:38px;cursor:pointer;touch-action:manipulation}.dksg button.on{background:var(--ac);color:#fff}.dksg button.lk{opacity:.5}
-.dkb{display:flex;width:100%;align-items:center;justify-content:center;gap:8px;min-height:54px;margin:12px 0 6px;border:0;border-radius:14px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;letter-spacing:.03em;cursor:pointer;touch-action:manipulation;box-shadow:0 3px 10px rgba(0,0,0,.2)}.dkb:active{transform:scale(.98)}.dkb[aria-disabled="true"]{background:var(--bd);color:var(--mu);box-shadow:none}
+.dkb{display:flex;width:100%;align-items:center;justify-content:center;gap:8px;min-height:54px;margin:0;border:0;border-radius:14px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;letter-spacing:.03em;cursor:pointer;touch-action:manipulation;box-shadow:0 3px 10px rgba(0,0,0,.2)}.dkb:active{transform:scale(.98)}.dkb[aria-disabled="true"]{background:var(--bd);color:var(--mu);box-shadow:none}
 .dks{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--mu);margin:2px 0 6px}.dks b{color:var(--tx)}
 .dkx{font-size:13px;margin:8px 0;color:var(--mu)}
 .dkc{border:1px solid var(--bd);border-left:5px solid var(--g);border-radius:14px;background:var(--card);margin:9px 0;overflow:hidden}
-.dkc>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;min-height:60px;touch-action:manipulation}.dkc>summary::-webkit-details-marker{display:none}.dkc>summary::after{content:"›";flex:none;color:var(--mu);font-size:22px;line-height:1;transition:transform .2s;margin-left:-2px}.dkc[open]>summary::after{transform:rotate(90deg)}
+.dkc>summary{list-style:none;display:grid;grid-template-columns:36px minmax(0,1fr) auto 12px;grid-template-rows:auto auto;column-gap:10px;row-gap:7px;align-items:center;padding:10px 10px;cursor:pointer;min-height:64px;touch-action:manipulation}.dkc>summary::-webkit-details-marker{display:none}.dkc>summary>.dkg{grid-area:1/1}.dkc>summary>.dkn{grid-area:1/2}.dkc>summary>.dkp{grid-area:1/3}.dkc>summary::after{grid-area:1/4;content:"›";color:var(--mu);font-size:22px;line-height:1;transition:transform .2s;justify-self:end}.dkc>summary>.dksm{grid-area:2/1/3/5}.dkc[open]>summary::after{transform:rotate(90deg)}
 .dkg{flex:none;width:36px;height:46px;border-radius:7px;border:1.5px solid var(--g);background:color-mix(in srgb,var(--g) 14%,var(--card));display:grid;place-items:center;font-size:18px}
-.dkn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.dkn b{font-size:15px;line-height:1.15}.dkn small{font-size:12px;color:var(--mu);line-height:1.25}.dkn em{font-style:normal;font-weight:700;color:#c07a00}
+.dkn{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.dkn b{font-size:15px;line-height:1.15}.dkn small{font-size:11.5px;color:var(--mu);line-height:1.25}.dksm{font-size:13px;line-height:1.35;color:var(--tx);opacity:.9}.dkn em{font-style:normal;font-weight:700;color:#c07a00}
 .dkp{flex:none;display:flex;flex-direction:column;align-items:center;line-height:1.05;min-width:34px}.dkp b{font-size:21px;font-variant-numeric:tabular-nums}.dkp small{font-size:10px;color:var(--mu)}
 .dkc.st-d,.dkc.st-x{background:color-mix(in srgb,var(--bd) 22%,var(--card))}.dkc.st-x .dkn b{text-decoration:line-through;text-decoration-thickness:1px;opacity:.8}
 .dkst{font-weight:700}.dkst.ok{color:var(--ac)}.dkst.no{color:#c0392b}
 .dkd{padding:0 12px 12px;border-top:1px solid var(--bd)}
-.dkdsc{font-size:13.5px;margin:10px 0 0}.dknt{font-size:12.5px;color:var(--mu);margin:6px 0 0}
+
 .dkh2{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);font-weight:700;margin:14px 0 2px}
 .dko{padding:9px 0;border-top:1px solid var(--bd)}.dkh2+.dko{border-top:0}
 .dko1{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.dko1.q{grid-template-columns:1fr auto}
-.dkot{font-size:14px;line-height:1.3;min-width:0}.dkow{font-size:12px;color:var(--mu);margin-top:2px;font-weight:400}.dkow.warn{color:#c07a00;font-weight:600}
+.dkot{font-size:14px;line-height:1.3;min-width:0}.dkow{font-size:12px;color:var(--mu);margin-top:3px;font-weight:400}.dkwr{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.dkw{font-size:11.5px;line-height:1.25;padding:2px 8px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);color:var(--mu);font-weight:600}.dkw.warn{color:#c07a00;border-color:#c07a00;background:color-mix(in srgb,#c07a00 10%,var(--card))}
 .dksup{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ac);border:1px solid var(--ac);border-radius:99px;padding:0 6px;margin-right:2px;vertical-align:1px}
 .dkop{font-size:20px;font-weight:800;text-align:right;line-height:1}.dkop small{display:block;font-size:10px;font-weight:600;color:var(--mu);margin-top:2px}.dko.ok .dkop{color:var(--ac)}
 .dkq{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px;color:var(--mu)}.dkq .stp2 button{width:42px;height:42px;font-size:20px}.dkq .stp2 b{min-width:28px;font-size:19px;color:var(--tx)}.dkeq{color:var(--ac);font-size:13px;min-width:70px;text-align:right}
@@ -246,10 +246,10 @@ details.bzcard>summary{list-style:none;display:flex;align-items:center;gap:6px}d
 .dkf{display:block;margin:8px 0 0;font-size:12.5px;color:var(--mu)}.dkf input{display:block;width:100%;margin-top:3px;min-height:42px;font-size:15px}
 .dkpc{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 0;font-size:13px;color:var(--mu)}.dkpc .stp2 b{color:var(--tx)}
 .dkdisc{display:block;width:100%;margin-top:8px;min-height:44px;border-radius:12px;border:1px dashed var(--ac);background:transparent;color:var(--ac);font:inherit;font-weight:700;font-size:13.5px;cursor:pointer}
-.dkact{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.dkact button{min-height:46px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;touch-action:manipulation;line-height:1.15;padding:4px 6px}.dkact .fin{border-color:var(--ac);color:var(--ac)}.dkact .del{color:#c0392b;border-color:color-mix(in srgb,#c0392b 55%,var(--bd))}
+.dkact{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.dkact .ret{grid-column:1/-1}.dkhelp{font-size:11.5px;line-height:1.35;color:var(--mu);margin:8px 0 0}.dkhelp b{color:var(--tx)}.dkact button{min-height:46px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;touch-action:manipulation;line-height:1.15;padding:4px 6px}.dkact .fin{border-color:var(--ac);color:var(--ac)}.dkact .del{color:#c0392b;border-color:color-mix(in srgb,#c0392b 55%,var(--bd))}.dkact .ret{border-style:dashed;background:transparent}
 .dkch{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.dkch span{font-size:12px;border:1px solid var(--g);border-radius:99px;padding:3px 9px;background:color-mix(in srgb,var(--g) 10%,var(--card))}
 .dkc.new{animation:dknew 1.8s ease-out}@keyframes dknew{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ac) 70%,transparent);transform:translateY(-10px);opacity:.15}25%{opacity:1;transform:none}100%{box-shadow:0 0 0 16px transparent}}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .dkb,:root:not([data-theme="light"]) .dksg button.on,:root:not([data-theme="light"]) .pdg i{color:#06261a}:root:not([data-theme="light"]) .dkn em,:root:not([data-theme="light"]) .dkow.warn{color:#ffc65a}}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .dkb,:root:not([data-theme="light"]) .dksg button.on,:root:not([data-theme="light"]) .pdg i{color:#06261a}:root:not([data-theme="light"]) .dkn em,:root:not([data-theme="light"]) .dkw.warn{color:#ffc65a;border-color:#ffc65a}:root:not([data-theme="light"]) .dkrd button.on,:root:not([data-theme="light"]) .dkrd button.on small,:root:not([data-theme="light"]) .cradd,:root:not([data-theme="light"]) .catr button.on{color:#06261a}}
 /* ----- carte de mission : carte à jouer ----- */
 body.jcb{overflow:hidden}
 .jco{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.74);backdrop-filter:blur(5px);display:flex;justify-content:center;padding:12px 12px 24px;overflow-y:auto;overscroll-behavior:contain;animation:f .2s}
@@ -285,6 +285,34 @@ body.jcb{overflow:hidden}
 .pdg button{white-space:nowrap}
 @media(max-width:380px){.bzg small{font-size:8px;letter-spacing:-.2px}.pdg button{font-size:13px;gap:4px}.dkbtn{font-size:12px;gap:4px}}
 @media(prefers-reduced-motion:reduce){.jcd,.dkc.new{animation:none}}
+/* ===== v83 : lisibilité, round, renvoi dans la pioche, catalogue ===== */
+.dkobj{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--g) 10%,var(--card));border-left:3px solid var(--g)}.dkobj b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}.dkobj p{margin:2px 0 0;font-size:13.5px;line-height:1.35}
+.dkinfo{display:flex;gap:8px;margin:8px 0 0;padding:7px 10px;border-radius:10px;border:1px dashed var(--bd);font-size:12.5px;line-height:1.35;color:var(--mu)}.dkinfo i{flex:none;font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--mu);color:var(--card);font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:1px}
+.dkrd{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:12px 0 0}.dkrl{grid-column:1/-1;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--mu)}
+.dkrd button{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;min-height:46px;padding:4px 0;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:11px;font:inherit;cursor:pointer;touch-action:manipulation}.dkrd button b{font-size:14px}.dkrd button small{font-size:11.5px;color:var(--mu);font-variant-numeric:tabular-nums}.dkrd button.on{background:var(--ac);border-color:var(--ac);color:#fff}.dkrd button.on small{color:#fff;opacity:.92}
+.dkrow{display:flex;gap:8px;margin:10px 0 6px}.dkrow .dkb{flex:1;min-width:0}
+.dkci{flex:none;width:58px;min-height:54px;border-radius:14px;border:2px solid var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--card));color:var(--ac);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;cursor:pointer;touch-action:manipulation;font:inherit}.dkci small{font-size:10.5px;font-weight:700;line-height:1}.dkci:active{transform:scale(.95)}
+.dkci.s{width:44px;min-height:46px;border-radius:14px;border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 9%,var(--card))}
+/* catalogue */
+.cat{position:fixed;inset:0;z-index:39;background:rgba(5,12,9,.6);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;animation:f .2s}
+.catw{width:min(520px,100%);max-height:92vh;max-height:92dvh;background:var(--card);color:var(--tx);border-radius:20px 20px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.4);overflow:hidden}.catw.in{animation:catup .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes catup{from{transform:translateY(46px);opacity:.2}to{transform:none;opacity:1}}
+.cath{display:flex;align-items:center;gap:10px;padding:14px 14px 6px}.catt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}.catt b{font-size:18px}.catt small{font-size:12.5px;color:var(--mu)}
+.catx{flex:none;width:40px;height:40px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px;cursor:pointer;display:grid;place-items:center;padding:0}
+.catc{padding:6px 14px 10px;border-bottom:1px solid var(--bd)}
+.catp{display:grid;grid-template-columns:1fr 1fr;gap:6px}.catp button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 10px;border-radius:12px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:700;font-size:14px;cursor:pointer;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;touch-action:manipulation}.catp i{flex:none;width:11px;height:11px;border-radius:50%;background:var(--c)}.catp button.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}
+.catr{display:grid;grid-template-columns:auto repeat(5,1fr);gap:5px;align-items:center;margin-top:8px}.catr span{font-size:12px;color:var(--mu);font-weight:600;padding-right:4px;line-height:1.1;max-width:78px}.catr button{min-height:38px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:700;font-size:13px;cursor:pointer;touch-action:manipulation}.catr button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.catb{overflow-y:auto;overscroll-behavior:contain;padding:2px 14px calc(22px + env(safe-area-inset-bottom,0px));flex:1}
+.crg{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:var(--g);margin:16px 0 2px}
+.cr{border:1px solid var(--bd);border-left:5px solid var(--g);border-radius:12px;padding:9px 10px 2px;margin:8px 0;background:var(--card)}.cr.has{background:color-mix(in srgb,var(--bd) 18%,var(--card))}
+.cr1{display:flex;gap:10px;align-items:flex-start}.crn{flex:1;min-width:0}.crn b{font-size:15px;line-height:1.2}.crn p{margin:2px 0 0;font-size:12.5px;line-height:1.35;color:var(--mu)}
+.cradd{flex:none;min-height:44px;padding:0 12px;border-radius:12px;border:0;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:13px;cursor:pointer;touch-action:manipulation;white-space:nowrap}.cradd:active{transform:scale(.96)}
+.crchip{flex:none;align-self:center;font-size:11.5px;font-weight:700;border:1px solid var(--bd);border-radius:99px;padding:4px 10px;color:var(--mu);white-space:nowrap}.crchip.on{color:var(--ac);border-color:var(--ac)}
+.crv{display:block;background:none;border:0;color:var(--ac);font:inherit;font-size:12.5px;font-weight:700;padding:6px 0;min-height:36px;cursor:pointer;touch-action:manipulation}
+.crd{padding:0 0 8px;font-size:13px}.crd p{margin:4px 0}.crnt{color:var(--mu);font-size:12.5px}.crd ul{margin:2px 0 0;padding-left:18px}.crd li{margin:5px 0;line-height:1.35}.crd li ul{margin-top:3px}.crd em{font-style:normal;color:var(--mu);font-size:12px}
+.crnote{font-size:12px;color:var(--mu);margin:0 0 8px}
+@media(max-width:380px){.dkbtn i{display:none}.dkcell{grid-template-columns:1fr 40px}.dkci.s{width:40px}.catr span{max-width:62px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.cat,.catw.in{animation:none}}
 .gtop{border-top:0;margin-top:8px;padding-top:0}.gfc{border-left:5px solid var(--c);padding:4px 0 4px 10px;margin:8px 0}.gfn{display:flex;flex-direction:column}.gfm{font-size:14px;margin-top:2px}
 .gnote.need{color:var(--tx)}.gch{font:inherit;font-size:12px;border:1px solid var(--ac);color:var(--ac);background:transparent;border-radius:99px;padding:3px 10px;cursor:pointer;margin:2px 2px 2px 0}.gpgo2 .b{width:100%;padding:13px;font-size:16px}.ml.need{color:#c0392b}.mo.sm{padding:7px 11px}.mo.sm .mt b{font-weight:600}
 .gmauto b{font-size:16px}
@@ -1633,8 +1661,8 @@ const SXD=[
 {id:"position-avancee",nm:"Position avancée",en:"Forward Position",g:"c",d:"Contrôler des objectifs du camp adverse.",
  o:[chk("Vous contrôlez l’objectif domiciliaire adverse et/ou les objectifs d’expansion",5,{w:T_FIN})]},
 {id:"defendre-la-place-forte",nm:"Défendre la place forte",en:"Defend Stronghold",g:"c",d:"Garder le contrôle de votre objectif domiciliaire pendant le tour adverse.",
- o:[chk("Vous contrôlez votre objectif domiciliaire",3,{w:"À la fin du tour adverse, à partir du round 2.",r0:2}),
-    chk("Aucune unité ennemie ne se trouve dans votre zone de déploiement",2,{w:"À la fin du tour adverse, à partir du round 2.",r0:2,req:0,sup:1})]},
+ o:[chk("Vous contrôlez votre objectif domiciliaire",3,{w:T_ADV,r0:2}),
+    chk("Aucune unité ennemie ne se trouve dans votre zone de déploiement",2,{w:T_ADV,r0:2,req:0,sup:1})]},
 {id:"controle-du-centre",nm:"Contrôle du centre",en:"Centre Ground",g:"c",d:"Avoir une unité à moins de 3 pouces du centre du champ de bataille.",
  o:[lvl("Vous avez une unité à moins de 3 pouces du centre du champ de bataille",[["Aucun ennemi à moins de 3 pouces",3],["Aucun ennemi à moins de 6 pouces",5]])]},
 {id:"demonstration-de-force",nm:"Démonstration de force",en:"Display of Might",g:"c",d:"Avoir davantage d’unités entièrement dans la zone neutre que l’adversaire.",
@@ -1659,6 +1687,29 @@ const SXD=[
 ];
 const BY={};SXD.forEach(c=>{BY[c.id]=c});
 const GR={e:{nm:"Élimination",ic:"⚔️",c:"#d9534f"},c:{nm:"Contrôle du champ de bataille",ic:"🚩",c:"#4a8fe0"},a:{nm:"Action",ic:"⚙️",c:"#d99a2b"}};
+/* Résumé d’une ligne de chaque carte : ce qu’il faut faire, combien ça rapporte, quand. {f,t} si Fixe ≠ Tactique. */
+const SM={
+ "assassinat":{f:"3 PdV par personnage ennemi éliminé (4 PdV s’il a 4 PV ou plus).",t:"5 PdV si un personnage ennemi est éliminé pendant ce tour (ou s’il n’en reste plus)."},
+ "abattez-les":{f:"4 PdV par figurine ennemie de 10 PV ou plus détruite.",t:"5 PdV si une figurine ennemie de 10 PV ou plus est détruite."},
+ "un-coup-devastateur":{f:"4 PdV par unité ennemie détruite qui comptait 13 figurines ou plus au début de la bataille.",t:"5 PdV si une unité ennemie qui comptait 13 figurines ou plus au début de la bataille est détruite."},
+ "aucun-prisonnier":"2 PdV par unité ennemie détruite pendant ce tour — maximum 5 PdV.",
+ "force-ecrasante":"3 PdV par unité ennemie détruite qui avait commencé le tour à portée d’un objectif — maximum 5 PdV.",
+ "engagez-tous-les-fronts":{f:"Unités entièrement dans 3 quarts de table différents : 2 PdV · dans 4 quarts : 4 PdV.",t:"Unités entièrement dans 3 quarts de table différents : 3 PdV · dans 4 quarts : 5 PdV."},
+ "securisez-la-zone-neutre":"5 PdV si vous contrôlez au moins 2 objectifs de la zone neutre à la fin de votre tour.",
+ "position-avancee":"5 PdV si vous contrôlez l’objectif domiciliaire adverse et/ou des objectifs d’expansion à la fin de votre tour.",
+ "defendre-la-place-forte":"3 PdV si vous contrôlez votre objectif domiciliaire à la fin du tour adverse (dès le round 2), + 2 PdV si aucun ennemi n’est dans votre zone de déploiement.",
+ "controle-du-centre":"Une unité à moins de 3 pouces du centre : 3 PdV si aucun ennemi à moins de 3 pouces, 5 PdV si aucun à moins de 6 pouces.",
+ "demonstration-de-force":"Plus d’unités entièrement en zone neutre que l’adversaire : 2 PdV à la fin de votre tour, 5 PdV à la fin du tour adverse.",
+ "derriere-les-lignes-ennemies":"3 PdV par unité entièrement dans la zone de déploiement adverse à la fin de votre tour — maximum 5 PdV.",
+ "debordement":"Une unité à moins de 6 pouces d’un bord, hors de son territoire : 3 PdV · deux unités près de bords opposés : 5 PdV.",
+ "une-cible-tentante":"5 PdV si vous contrôlez l’objectif désigné par l’adversaire à la fin de votre tour.",
+ "fardeau-de-la-confiance":"2 PdV par objectif gardé que vous contrôlez encore, l’unité désignée étant à portée, à la fin du tour adverse — maximum 5 PdV.",
+ "balise":"À la fin du tour adverse, l’unité désignée est hors de votre zone de déploiement : 3 PdV · hors de votre territoire : 5 PdV.",
+ "pillage":"5 PdV si l’action de pillage (phase de Tir) est accomplie à la fin du tour.",
+ "purification":"Objectifs purifiés (action accomplie à la fin du tour) : 1 objectif = 2 PdV · 2 objectifs ou plus = 5 PdV."};
+const smOf=(d,m)=>{const s=SM[d.id];return typeof s==="string"?s:(s?s[m==="f"?"f":"t"]:d.d)||""};
+/* libellé des points d’une option, pour le catalogue et les résumés */
+const ptsTx=o=>o.k==="chk"?o.pts+" PdV":o.k==="cnt"?o.pts+" PdV chacun"+(o.cap?" (maximum "+o.cap+")":""):o.k==="lv"?o.lv.map(l=>l[1]+" PdV").join(" / "):o.t.map((a,i,z)=>a[0]+(i===z.length-1&&z.length>1?" ou plus":"")+" : "+a[1]+" PdV").join(" · ");
 
 /* ---------- état ---------- */
 const NEWD=()=>({mode:"t",pl:[{cards:{}},{cards:{}}],log:[]});
@@ -1678,27 +1729,52 @@ function stat(pl){const cs=view().pl[pl].cards,av=[],ac=[],ar=[];SXD.forEach(d=>
  ar.sort((a,b)=>((cs[b.id].te||cs[b.id].t)-(cs[a.id].te||cs[a.id].t))||((cs[a.id].i||0)-(cs[b.id].i||0)));
  return{av,ac,ar}}
 const hasPts=sx=>[0,1].some(pl=>Object.values(sx.pl[pl].cards).some(c=>c.v&&Object.keys(c.v).length));
-let lock=0,recent=new Set();const segs=[0,0];
+let lock=0,recent=new Set();const catNew=new Set();const segs=[0,0];
 const short=s=>{s=String(s||"");return s.length>46?s.slice(0,44)+"…":s};
 
 /* ---------- actions ---------- */
 function doDraw(pl){
  const sx=ens(),cs=sx.pl[pl].cards,pool=SXD.filter(d=>!cs[d.id]);
- if(!pool.length){toast("Paquet épuisé : plus aucune carte à tirer");return}
+ if(!pool.length){toast("Pioche vide : plus aucune carte à tirer");return}
  const R=rdNow(),ts=Date.now(),got=[];
  for(let i=0;i<2&&pool.length;i++)got.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
  recent=new Set();
  got.forEach((d,i)=>{cs[d.id]={st:"a",rd:R,t:ts,i,v:{},d:{}};sx.log.push({t:ts,pl,id:d.id,rd:R,k:"dr"});recent.add(pl+"|"+d.id);if((d.des||[]).length)pop.add("dk:"+pl+":"+d.id)});
  segs[pl]=1;lock=Date.now()+800;
  if(M().setDw)M().setDw(pl);
- sync();save();draw();
- setTimeout(()=>{const e=document.querySelector(".pdw.open .dkc.new"),a=document.querySelector(".pdw.open .dkb");if(!e||!a)return;const h=(document.querySelector("header")||{}).offsetHeight||0,r=e.getBoundingClientRect();if(r.top<h+8||r.bottom>innerHeight-76)window.scrollTo({top:Math.max(0,window.scrollY+a.getBoundingClientRect().top-h-10),behavior:"smooth"})},90);
- toast("🎴 "+got.map(d=>d.nm).join(" · "));
- clearTimeout(doDraw.h);doDraw.h=setTimeout(()=>{recent.clear();document.querySelectorAll(".dkc.new").forEach(e=>e.classList.remove("new"))},2400)}
+ sync();save();draw();reveal();
+ toast("🎴 "+got.map(d=>d.nm).join(" · "));fade()}
+/* fait défiler jusqu’aux cartes qui viennent d’arriver (si elles sont hors écran) */
+function reveal(){setTimeout(()=>{const e=document.querySelector(".pdw.open .dkc.new"),a=document.querySelector(".pdw.open .dkrow");if(!e||!a)return;const h=(document.querySelector("header")||{}).offsetHeight||0,r=e.getBoundingClientRect();if(r.top<h+8||r.bottom>innerHeight-76)window.scrollTo({top:Math.max(0,window.scrollY+a.getBoundingClientRect().top-h-10),behavior:"smooth"})},90)}
+function fade(){clearTimeout(fade.h);fade.h=setTimeout(()=>{recent.clear();document.querySelectorAll(".dkc.new").forEach(e=>e.classList.remove("new"))},2400)}
+/* une seule carte ouverte par liste (accordéon) : on garde la plus récente */
+function normOpen(pl,list){let k=0;list.forEach(d=>{const key="dk:"+pl+":"+d.id;if(pop.has(key)){if(k)pop.delete(key);k++}})}
+/* renvoyer une carte active dans la pioche et en repiocher une autre au hasard */
+function askRet(pl,id){
+ const sx=view(),c=sx.pl[pl].cards[id],d=BY[id];if(!c||!d||c.st!=="a")return;
+ if(!SXD.some(x=>x.id!==id&&!sx.pl[pl].cards[x.id])){toast("Aucune autre carte à repiocher : la pioche est vide");return}
+ const n=cardPts(c,d,sx.mode).tot,nm=S.bat.n[pl];
+ ask({t:"Renvoyer « "+d.nm+" » dans la pioche ?",p:`« ${d.nm} » retourne dans la pioche de ${nm} (elle pourra être tirée de nouveau plus tard) et ${nm} repioche 1 carte au hasard, au round ${rdNow()}.${n?` Les ${n} PdV marqués avec cette carte seront retirés du score.`:" Aucun point n’a été marqué avec cette carte."}`,ok:"Renvoyer et repiocher 1",dg:n?1:0},()=>doReturn(pl,id))}
+function doReturn(pl,id){
+ const sx=ens(),cs=sx.pl[pl].cards,c=cs[id],d=BY[id];if(!c||!d||c.st!=="a")return;
+ const pool=SXD.filter(x=>x.id!==id&&!cs[x.id]);if(!pool.length){toast("Aucune autre carte à repiocher : la pioche est vide");return}
+ const nd=pool[Math.floor(Math.random()*pool.length)],R=rdNow(),ts=Date.now(),pts=cardPts(c,d,sx.mode).tot;
+ delete cs[id];cs[nd.id]={st:"a",rd:R,t:ts,i:0,v:{},d:{},rp:id};
+ sx.log.push({t:ts,pl,id,to:nd.id,rd:R,k:"rp",d:-pts});
+ recent=new Set([pl+"|"+nd.id]);pop.delete("dk:"+pl+":"+id);if((nd.des||[]).length)pop.add("dk:"+pl+":"+nd.id);
+ segs[pl]=1;lock=Date.now()+800;if(M().setDw)M().setDw(pl);
+ sync();save();draw();reveal();toast("🔄 « "+d.nm+" » renvoyée · repioché « "+nd.nm+" »");fade()}
+/* ajout manuel depuis le catalogue : la carte devient active au round en cours */
+function addManual(pl,id){
+ const sx=ens(),cs=sx.pl[pl].cards,d=BY[id];if(!d)return;if(cs[id]){toast("« "+d.nm+" » n’est plus disponible pour "+S.bat.n[pl]);catDraw();return}
+ const R=rdNow(),ts=Date.now();
+ cs[id]={st:"a",rd:R,t:ts,i:0,v:{},d:{},man:1};sx.log.push({t:ts,pl,id,rd:R,k:"dr",man:1});
+ recent=new Set([pl+"|"+id]);pop.add("dk:"+pl+":"+id);catNew.add(pl+"|"+id);segs[pl]=1;if(M().setDw)M().setDw(pl);
+ sync();save();draw();catDraw();toast("＋ « "+d.nm+" » ajoutée à "+S.bat.n[pl]+" · round "+R);fade()}
 function tryDraw(pl){
  const now=Date.now();if(now<lock)return;lock=now+800;
  const sx=view(),st=stat(pl);
- if(!st.av.length){toast("Paquet épuisé : les 18 cartes de "+S.bat.n[pl]+" ont déjà été tirées");return}
+ if(!st.av.length){toast("Pioche vide : les 18 cartes de "+S.bat.n[pl]+" ont déjà été tirées");return}
  const R=rdNow(),n=Object.values(sx.pl[pl].cards).filter(c=>c.rd===R).length;
  if(n){ask({t:"Tirer encore au round "+R+" ?",p:`${S.bat.n[pl]} a déjà tiré ${n} carte${n>1?"s":""} ce round. Pense à choisir le round suivant (bande R1–R5) avant de tirer. Tirer 2 cartes de plus quand même ?`,ok:"Tirer 2 cartes"},()=>doDraw(pl));return}
  doDraw(pl)}
@@ -1744,7 +1820,20 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  else if(a==="set")setQ(pl,id,+b.dataset.oi,+b.dataset.q);
  else if(a==="done")askDone(pl,id);
  else if(a==="del")askDel(pl,id);
- else if(a==="disc")askDisc(pl,id)},true);
+ else if(a==="disc")askDisc(pl,id);
+ else if(a==="ret")askRet(pl,id);
+ else if(a==="cat")openCat(pl,b);
+ else if(a==="catx")closeCat();
+ else if(a==="catbg"){if(e.target===b)closeCat()}
+ else if(a==="catpl"){catPl=pl;catDraw()}
+ else if(a==="catrd"){S.bat.cur=+b.dataset.v;save();draw();catDraw()}
+ else if(a==="catv"){const k=pl+":"+id;if(catOpenSet.has(k))catOpenSet.delete(k);else catOpenSet.add(k);catDraw()}
+ else if(a==="cadd")addManual(pl,id)},true);
+/* accordéon : ouvrir une carte referme les autres cartes de la même liste */
+document.addEventListener("toggle",e=>{const t=e.target;if(!t||!t.classList||!t.classList.contains("dkc")||!t.open||!t.parentElement)return;
+ const y0=t.getBoundingClientRect().top;let ch=0;
+ t.parentElement.querySelectorAll(":scope>.dkc[open]").forEach(o=>{if(o!==t){o.open=false;pop.delete(o.dataset.pk);ch=1}});
+ if(ch){const dy=t.getBoundingClientRect().top-y0;if(Math.abs(dy)>1)window.scrollBy({top:dy,behavior:"instant"})}},true);
 /* champs « à désigner » : sauvegarde en direct, une ligne d’historique à la fin de la saisie */
 const svd=(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(save,350)}})();
 document.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.dkd;if(!k)return;const[pl,id,f]=k.split("|"),c=view().pl[+pl].cards[id];if(!c)return;ens();c.d=c.d||{};c.d[f]=t.value;svd()});
@@ -1754,11 +1843,13 @@ document.addEventListener("change",e=>{const t=e.target,k=t.dataset&&t.dataset.d
 
 /* ---------- rendu : tiroir « Secondaires » ---------- */
 const stp=(A,q,mx,dis)=>`<span class="stp2"><button type="button" data-dk="set" ${A} data-q="${q-1}" aria-label="Moins"${dis||q<=0?" disabled":""}>−</button><b>${q}</b><button type="button" data-dk="set" ${A} data-q="${q+1}" aria-label="Plus"${dis||q>=mx?" disabled":""}>+</button></span>`;
-function optHtml(pl,d,c,oi,o,R,gone){
+function optHtml(pl,d,c,oi,o,R,gone,os){
  const q=c.v[oi+"|"+R]||0,p=optPts(o,q),A=`data-pl="${pl}" data-id="${d.id}" data-oi="${oi}"`;
  const early=o.r0&&R<o.r0,noreq=o.req!=null&&!(c.v[o.req+"|"+R]>0),dis=gone||early||noreq;
- const warn=early?`À partir du round ${o.r0}.`:noreq?"Valide d’abord la condition précédente.":"";
- const tx=`<div class="dkot">${o.sup?`<span class="dksup">supplémentaires</span> `:""}${esc(o.tx)}${o.w?`<div class="dkow">${esc(o.w)}</div>`:""}${o.nt?`<div class="dkow">${esc(o.nt)}</div>`:""}${warn?`<div class="dkow warn">${warn}</div>`:""}</div>`;
+ const ch=[];if(o.w)ch.push(`<span class="dkw">⏱ ${esc(o.w.replace(/\.$/,""))}</span>`);
+ if(o.r0)ch.push(`<span class="dkw${early?" warn":""}">🔒 Dès le round ${o.r0}</span>`);
+ if(o.req!=null)ch.push(`<span class="dkw${noreq?" warn":""}">${o.req===oi-1?"↳ Si la condition ci-dessus est remplie":"Après : "+esc(short(os[o.req].tx))}</span>`);
+ const tx=`<div class="dkot">${o.sup?`<span class="dksup">en plus</span> `:""}${esc(o.tx)}${ch.length?`<div class="dkwr">${ch.join("")}</div>`:""}${o.nt?`<div class="dkow">${esc(o.nt)}</div>`:""}</div>`;
  if(o.k==="chk")return`<div class="dko${p?" ok":""}"><div class="dko1"><button type="button" class="mck${q?" on":""}" data-dk="set" ${A} data-q="${q?0:1}" aria-pressed="${!!q}" aria-label="Valider : ${esc(o.tx)}"${dis?" disabled":""}>✓</button>${tx}<div class="dkop">${o.pts}<small>PdV</small></div></div></div>`;
  if(o.k==="cnt")return`<div class="dko${p?" ok":""}"><div class="dko1 q">${tx}<div class="dkop">${o.pts}<small>PdV chacun${o.cap?` · max ${o.cap}`:""}</small></div></div><div class="dkq"><span>${esc(o.u||"quantité")}</span>${stp(A,q,maxQ(o),dis)}<b class="dkeq">${p?`= ${p} PdV${o.cap&&o.pts*q>o.cap?" (max)":""}`:""}</b></div></div>`;
  if(o.k==="lv")return`<div class="dko${p?" ok":""}">${tx}<div class="dklv">${o.lv.map((l,i)=>`<button type="button" class="${q===i+1?"on":""}" data-dk="set" ${A} data-q="${q===i+1?0:i+1}" aria-pressed="${q===i+1}"${dis?" disabled":""}><span class="dkr"></span><span>${esc(l[0])}</span><em>${l[1]} PdV</em></button>`).join("")}</div></div>`;
@@ -1768,24 +1859,25 @@ function pcHtml(pl,d){const n=S.bat.cp[pl]||0;return`<div class="dkpc"><span>PC 
 function cardHtml(pl,d,c,R,sx){
  const mode=sx.mode,os=optsOf(d,mode),G=GR[d.g],cp=cardPts(c,d,mode),k="dk:"+pl+":"+d.id,live=c.st==="a",gone=dead(c),shown=gone?0:cp.tot;
  const miss=live&&(d.des||[]).some(f=>!String((c.d||{})[f.f]||"").trim());
- const sub=`Round ${c.rd}${live?` · <span class="dkst">En cours</span>`:` · <span class="dkst ${c.st==="d"?"ok":"no"}">${c.st==="d"?"Terminée":c.pc?"Défaussée (+1 PC)":"Supprimée"}</span>`}${miss?` · <em>à désigner</em>`:""}`;
- let b=`<div class="dkd"><p class="dkdsc">${esc(d.d)}</p>${d.nt?`<p class="dknt">${esc(d.nt)}</p>`:""}`;
- b+=`<div class="dkh2">Conditions${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")} · round ${R}</div>`;
- b+=os.map((o,oi)=>optHtml(pl,d,c,oi,o,R,gone)).join("");
+ const sub=`Round ${c.rd}${live?` · <span class="dkst">En cours</span>`:` · <span class="dkst ${c.st==="d"?"ok":"no"}">${c.st==="d"?"Terminée":c.pc?"Défaussée (+1 PC)":"Supprimée"}</span>`}${c.man&&live?" · ajoutée à la main":""}${miss?` · <em>à désigner</em>`:""}`;
+ let b=`<div class="dkd"><div class="dkobj"><b>🎯 Objectif</b><p>${esc(d.d)}</p></div>${d.nt?`<div class="dkinfo"><i aria-hidden="true">ℹ</i><span>${esc(d.nt)}</span></div>`:""}`;
+ b+=`<div class="dkh2">Comment marquer${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")} · round ${R}</div>`;
+ b+=os.map((o,oi)=>optHtml(pl,d,c,oi,o,R,gone,os)).join("");
  b+=desHtml(pl,d,c);
  b+=`<div class="dktt"><span>Total de la carte</span><span><b>${shown}</b> PdV</span></div>`;
  const rs=cp.by.map((v,i)=>v?`R${i+1} : ${v}`:"").filter(Boolean);
  if(rs.length)b+=`<div class="dkrs">${gone?"Points retirés (non comptés) — ":"Par round — "}${rs.join(" · ")}</div>`;
  if(d.pc&&live)b+=pcHtml(pl,d);
- if(live)b+=`<div class="dkact"><button type="button" class="fin" data-dk="done" data-pl="${pl}" data-id="${d.id}">✔ Terminer l’objectif</button><button type="button" class="del" data-dk="del" data-pl="${pl}" data-id="${d.id}">🗑 Supprimer l’objectif</button></div>`;
+ if(live)b+=`<div class="dkact"><button type="button" class="fin" data-dk="done" data-pl="${pl}" data-id="${d.id}">✔ Terminer</button><button type="button" class="del" data-dk="del" data-pl="${pl}" data-id="${d.id}">🗑 Supprimer</button><button type="button" class="ret" data-dk="ret" data-pl="${pl}" data-id="${d.id}">🔄 Renvoyer dans la pioche et repiocher 1</button></div><p class="dkhelp"><b>Terminer</b> : objectif accompli, il quitte la liste. <b>Supprimer</b> : tu l’abandonnes. <b>Renvoyer</b> : la carte retourne dans la pioche.</p>`;
  else b+=`<p class="dkrs">${c.st==="d"?"Objectif terminé":c.pc?"Carte défaussée (+1 PC)":"Objectif supprimé"} au round ${c.re||c.rd}${gone?" · points retirés du score":" · points conservés dans le score"}. Cette carte ne peut plus être tirée pendant la partie.</p>`;
  b+=`</div>`;
- return`<details class="dkc st-${c.st}${recent.has(pl+"|"+d.id)?" new":""}" style="--g:${G.c}" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""} data-id="${d.id}"><summary><span class="dkg" aria-hidden="true">${G.ic}</span><span class="dkn"><b>${esc(d.nm)}</b><small>${sub}</small></span><span class="dkp"><b>${shown}</b><small>PdV</small></span></summary>${b}</details>`}
+ return`<details class="dkc st-${c.st}${recent.has(pl+"|"+d.id)?" new":""}" style="--g:${G.c}" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""} data-id="${d.id}"><summary><span class="dkg" aria-hidden="true">${G.ic}</span><span class="dkn"><b>${esc(d.nm)}</b><small>${sub}</small></span><span class="dkp"><b>${shown}</b><small>PdV</small></span>${live?`<span class="dksm">${esc(smOf(d,mode))}</span>`:""}</summary>${b}</details>`}
 /* journal */
 function logHtml1(e,names){
  const d=BY[e.id],nm=d?d.nm:"",hh=new Date(e.t).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}),meta=`${hh} · R${e.rd||"?"}`,who=(e.pl===0||e.pl===1)?(names[e.pl]||""):"";
  let what="",pts="",neg=0;
- if(e.k==="dr")what="carte tirée";
+ if(e.k==="dr")what=e.man?"ajoutée à la main":"carte tirée";
+ else if(e.k==="rp"){const t=BY[e.to];what=`renvoyée dans la pioche → repioché « ${t?t.nm:"?"} »`;if(e.d){pts=e.d+" PdV";neg=1}}
  else if(e.k==="pt"){const o=d&&(optsOf(d,e.m)||[])[e.oi];let lab=o?short(o.tx):"";
   if(o){if(o.k==="lv")lab=e.q?short(o.lv[e.q-1][0]):lab;else if(o.k==="cnt"||o.k==="tr")lab+=` — × ${e.q}`;else lab+=e.q?" — validée":" — retirée"}
   what=(e.cor?"correction : ":"")+lab;pts=(e.d>0?"+":"")+e.d+" PdV";neg=e.d<0}
@@ -1797,22 +1889,53 @@ function logHtml1(e,names){
  return`<div class="mlg${neg?" neg":""}"><span class="mlt">${meta}</span><div>${who?`<b>${esc(who)}</b> · `:""}${nm?`<b>${esc(nm)}</b> — `:""}${esc(what)}${pts?` <b class="pd">${pts}</b>`:""}</div></div>`}
 window.sxLogN=()=>view().log.length;
 window.sxHist=(mlog,names)=>{const L=[];(mlog||[]).forEach(e=>L.push({t:e.t,h:()=>M().logLine?M().logLine(e,names):""}));view().log.forEach(e=>L.push({t:e.t,h:()=>logHtml1(e,names)}));return L.sort((a,b)=>b.t-a.t).map(x=>x.h()).join("")};
+const ICO='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5.5 7.5v10a2.5 2.5 0 0 0 2.5 2.5h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="9" y="3" width="11" height="14.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M14.5 7v6.5M11.25 10.25h6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 window.sxView=(pl,R)=>{
- const sx=view(),B=S.bat,nm=B.n[pl],st=stat(pl),cs=sx.pl[pl].cards,locked=hasPts(sx),exh=!st.av.length;
- let h=`<div class="dk"><div class="dkm"><span>Mode des secondaires</span><span class="dksg" role="group" aria-label="Mode des secondaires">${[["t","Tactique"],["f","Fixe"]].map(([v,l])=>`<button type="button" data-dk="mode" data-v="${v}" class="${sx.mode===v?"on":""}${locked&&sx.mode!==v?" lk":""}" aria-pressed="${sx.mode===v}">${l}</button>`).join("")}</span></div>`;
- h+=`<button type="button" class="dkb" data-dk="draw" data-pl="${pl}"${exh?' aria-disabled="true"':""}>${exh?"Paquet épuisé":"🎴 TIRER 2 SECONDAIRES"}</button>`;
- h+=`<div class="dks"><span><b>${st.av.length}</b> disponibles</span><span><b>${st.ac.length}</b> actives</span><span><b>${st.ar.length}</b> archivées</span></div>`;
- if(exh)h+=`<p class="dkx">Paquet épuisé : les 18 cartes de ${esc(nm)} ont été tirées. Les cartes terminées ou supprimées ne reviennent pas avant une nouvelle partie.</p>`;
- h+=st.ac.length?st.ac.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""):(exh?"":`<p class="dkx">Aucun objectif actif. Tire 2 secondaires pour commencer.</p>`);
+ const sx=view(),B=S.bat,nm=B.n[pl],st=stat(pl),cs=sx.pl[pl].cards,locked=hasPts(sx),exh=!st.av.length,cu=B.cur||0;
+ normOpen(pl,st.ac);normOpen(pl,st.ar);
+ let h=`<div class="dk"><div class="dkrd" role="group" aria-label="Round où marquer les points"><span class="dkrl">Marquer au round · PdV secondaires</span>${B.t.map((x,t)=>`<button type="button" class="${t===cu?"on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===cu}" aria-label="Round ${t+1}, ${(x.x||[0,0])[pl]} points secondaires"><b>R${t+1}</b><small>${(x.x||[0,0])[pl]}</small></button>`).join("")}</div>`;
+ h+=`<div class="dkm"><span>Mode des secondaires</span><span class="dksg" role="group" aria-label="Mode des secondaires">${[["t","Tactique"],["f","Fixe"]].map(([v,l])=>`<button type="button" data-dk="mode" data-v="${v}" class="${sx.mode===v?"on":""}${locked&&sx.mode!==v?" lk":""}" aria-pressed="${sx.mode===v}">${l}</button>`).join("")}</span></div>`;
+ h+=`<div class="dkrow"><button type="button" class="dkb" data-dk="draw" data-pl="${pl}"${exh?' aria-disabled="true"':""}>${exh?"Pioche vide":"🎴 TIRER 2 SECONDAIRES"}</button><button type="button" class="dkci" data-dk="cat" data-pl="${pl}" aria-label="Catalogue des 18 secondaires : en ajouter une à la main pour ${esc(nm)}">${ICO}<small>Toutes</small></button></div>`;
+ h+=`<div class="dks"><span><b>${st.av.length}</b> dans la pioche</span><span><b>${st.ac.length}</b> actives</span><span><b>${st.ar.length}</b> archivées</span></div>`;
+ if(exh)h+=`<p class="dkx">Pioche vide : les 18 cartes de ${esc(nm)} ont été tirées. Les cartes terminées ou supprimées ne reviennent pas avant une nouvelle partie.</p>`;
+ h+=st.ac.length?st.ac.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""):(exh?"":`<p class="dkx">Aucun objectif actif. Tire 2 secondaires, ou ajoute-en une à la main avec l’icône « Toutes ».</p>`);
  const dp=(k,l,n,body)=>{const kk="dk:"+k+":"+pl;return`<details class="pdx" data-pk="${kk}" data-pd="0"${pop.has(kk)?" open":""}><summary>${l}<span class="pdv">${n}</span></summary>${body}</details>`};
  if(st.ar.length)h+=dp("ar","🗂 Cartes archivées",st.ar.length,st.ar.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""));
- if(st.av.length)h+=dp("av","🂠 Paquet restant",st.av.length+" disponibles",`<div class="dkch">${st.av.map(d=>`<span style="--g:${GR[d.g].c}">${GR[d.g].ic} ${esc(d.nm)}</span>`).join("")}</div>`);
+ if(st.av.length)h+=dp("av","🂠 Paquet restant",st.av.length+" cartes",`<div class="dkch">${st.av.map(d=>`<span style="--g:${GR[d.g].c}">${GR[d.g].ic} ${esc(d.nm)}</span>`).join("")}</div>`);
  const lg=sx.log.filter(e=>e.k==="md"||e.pl===pl);
  if(lg.length)h+=dp("lg","🕘 Historique de "+esc(nm),lg.length,`<div class="mslg">${[...lg].reverse().map(e=>logHtml1(e,B.n)).join("")}</div>`);
  return h+`</div>`};
 window.sxSeg=pl=>segs[pl]||0;
 window.sxCount=pl=>stat(pl).ac.length;
-window.sxBar=()=>{const B=S.bat;return`<div class="dkbar">${[0,1].map(i=>{const n=stat(i).av.length;return`<button type="button" class="dkbtn${n?"":" off"}" style="--c:${CL[i]}" data-dk="draw" data-pl="${i}" aria-label="${n?"Tirer 2 objectifs secondaires pour ":"Paquet épuisé pour "}${esc(B.n[i])}"><i aria-hidden="true">🎴</i><span>${n?"Tirer 2 secondaires":"Paquet épuisé"}</span></button>`}).join("")}</div>`};
+window.sxBar=()=>{const B=S.bat;return`<div class="dkbar">${[0,1].map(i=>{const n=stat(i).av.length,nm=esc(B.n[i]);return`<div class="dkcell" style="--c:${CL[i]}"><button type="button" class="dkbtn${n?"":" off"}" data-dk="draw" data-pl="${i}" aria-label="${n?"Tirer 2 objectifs secondaires pour ":"Pioche vide pour "}${nm}"><i aria-hidden="true">🎴</i><span>${n?"Tirer 2 secondaires":"Pioche vide"}</span></button><button type="button" class="dkci s" data-dk="cat" data-pl="${i}" aria-label="Catalogue : ajouter une secondaire à la main pour ${nm}" title="Toutes les secondaires">${ICO}</button></div>`}).join("")}</div>`};
+/* ---------- catalogue : toutes les secondaires, ajout à la main au round en cours ---------- */
+let catPl=-1,catFrom=null;const catOpenSet=new Set();
+const catEl=document.createElement("div");catEl.id="sxcat";document.body.appendChild(catEl);
+function condLi(d,mode){return optsOf(d,mode).map(o=>`<li>${o.sup?"<b>En plus</b> : ":""}${esc(o.tx)}${o.k==="lv"?`<ul>${o.lv.map(l=>`<li>${esc(l[0])} — <b>${l[1]} PdV</b></li>`).join("")}</ul>`:` — <b>${esc(ptsTx(o))}</b>`}${o.w?` <em>⏱ ${esc(o.w)}</em>`:""}${o.r0?` <em>🔒 dès le round ${o.r0}</em>`:""}</li>`).join("")}
+function catHtml(pl){
+ const sx=view(),B=S.bat,R=rdNow(),cs=sx.pl[pl].cards,mode=sx.mode,nm=B.n[pl],cu=B.cur||0;
+ const ST=c=>c.st==="a"?`Active · R${c.rd}`:c.st==="d"?"Terminée":c.pc?"Défaussée":"Supprimée";
+ const grp=g=>`<div class="crg" style="--g:${GR[g].c}">${GR[g].ic} ${esc(GR[g].nm)}</div>`+SXD.filter(d=>d.g===g).map(d=>{
+  const c=cs[d.id],k=pl+":"+d.id,op=catOpenSet.has(k);
+  const act=!c?`<button type="button" class="cradd" data-dk="cadd" data-pl="${pl}" data-id="${d.id}" aria-label="Ajouter ${esc(d.nm)} à ${esc(nm)}, round ${R}">＋ Ajouter</button>`:`<span class="crchip${c.st==="a"?" on":""}">${ST(c)}</span>`;
+  return`<div class="cr${c?" has":""}" style="--g:${GR[g].c}" data-id="${d.id}"><div class="cr1"><div class="crn"><b>${esc(d.nm)}</b><p>${esc(smOf(d,mode))}</p></div>${act}</div><button type="button" class="crv" data-dk="catv" data-pl="${pl}" data-id="${d.id}" aria-expanded="${op}">${op?"Masquer les conditions ▴":"Voir toutes les conditions ▾"}</button>${op?`<div class="crd"><p>🎯 ${esc(d.d)}</p>${d.nt?`<p class="crnt">ℹ ${esc(d.nt)}</p>`:""}<div class="dkh2">Conditions${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")}</div><ul>${condLi(d,mode)}</ul></div>`:""}${c&&c.st!=="a"?`<p class="crnote">Archivée : elle ne peut plus être ajoutée pendant cette partie.</p>`:""}</div>`}).join("");
+ return`<div class="cat" data-dk="catbg"><div class="catw" role="dialog" aria-modal="true" aria-label="Toutes les secondaires"><div class="cath"><div class="catt"><b>Toutes les secondaires</b><small>Ajout à la main · mode ${mode==="f"?"Fixe":"Tactique"}</small></div><button type="button" class="catx" data-dk="catx" aria-label="Fermer">✕</button></div>`+
+ `<div class="catc"><div class="catp" role="group" aria-label="Joueur">${[0,1].map(i=>`<button type="button" class="${i===pl?"on":""}" style="--c:${CL[i]}" data-dk="catpl" data-pl="${i}" aria-pressed="${i===pl}"><i></i>${esc(B.n[i])}</button>`).join("")}</div>`+
+ `<div class="catr" role="group" aria-label="Round"><span>Ajouter au round</span>${B.t.map((x,t)=>`<button type="button" class="${t===cu?"on":""}" data-dk="catrd" data-v="${t}" aria-pressed="${t===cu}">R${t+1}</button>`).join("")}</div></div>`+
+ `<div class="catb">${grp("e")}${grp("c")}${grp("a")}</div></div></div>`}
+function catDraw(first){
+ if(catPl<0)return;if(!S.bat){closeCat();return}
+ const old=catEl.querySelector(".catb"),top=old?old.scrollTop:0;
+ catEl.innerHTML=catHtml(catPl);
+ const w=catEl.querySelector(".catw");if(first&&w)w.classList.add("in");
+ const nb=catEl.querySelector(".catb");if(nb&&!first)nb.scrollTop=top;
+ if(first){const x=catEl.querySelector(".catx");if(x)try{x.focus({preventScroll:true})}catch(_){}}}
+function openCat(pl,from){if(!S.bat)return;catFrom=from;catPl=pl;catNew.clear();document.body.classList.add("jcb");catDraw(true)}
+function closeCat(){catPl=-1;catEl.innerHTML="";document.body.classList.remove("jcb");
+ if(catFrom&&document.contains(catFrom))try{catFrom.focus({preventScroll:true})}catch(_){}catFrom=null;
+ if(catNew.size){recent=new Set(catNew);catNew.clear();draw();reveal();fade()}}
+window.sxCatClose=closeCat;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&catPl>=0){e.stopPropagation();closeCat()}},true);
 /* historique d’une partie enregistrée */
 window.sxGameHtml=g=>{const sx=g&&g.sx;if(!sx||!sx.pl)return"";const o=sums(sx),t=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0)),any=[0,1].some(i=>Object.keys(sx.pl[i].cards||{}).length);if(!any)return"";
  const ST={a:"en cours",d:"terminée",x:"supprimée"};
