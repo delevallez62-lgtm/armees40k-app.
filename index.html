@@ -354,6 +354,136 @@ body.jclk{overflow:hidden}
 .jcmk{font-style:normal;color:var(--cd);font-size:11px}
 .jcq.nt{font:700 12px system-ui,sans-serif;color:#6b6250;border:1px dashed #a79d84;padding:3px 9px;border-radius:99px}
 @media(max-width:380px){.jced{padding:0 10px;font-size:12px}.jctop .jcs button,.jctop .jcs>span{padding:0 9px;font-size:12px}}
+
+/* ===== v87 : la table de jeu ===== */
+:root{--fd:"Big Shoulders Display","Oswald","Arial Narrow","Roboto Condensed",system-ui,sans-serif;--brass:#e3bd62}
+.tbw{max-width:640px;margin:0 auto}
+
+/* ----- le tapis ----- */
+.tbt{position:relative;margin:2px 0 16px;padding:7px;border-radius:24px;background:linear-gradient(155deg,#3a4c41 0%,#18241d 38%,#0a110d 100%);box-shadow:0 14px 30px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 0 rgba(0,0,0,.55)}
+.tbm{position:relative;border-radius:17px;overflow:hidden;isolation:isolate;color:#e9f3ec;
+ background:repeating-linear-gradient(0deg,rgba(214,255,232,.055) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(214,255,232,.055) 0 1px,transparent 1px 24px),radial-gradient(130% 90% at 50% 50%,#26492f 0%,#183425 52%,#0f2119 100%);
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.65),inset 0 8px 20px rgba(0,0,0,.45)}
+.tbm::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxNjAnIGhlaWdodD0nMTYwJz48ZmlsdGVyIGlkPSduJyB4PScwJyB5PScwJyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nLjknIG51bU9jdGF2ZXM9JzInIHN0aXRjaFRpbGVzPSdzdGl0Y2gnLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9Jy4zMyAuMzMgLjMzIDAgMCAuMzMgLjMzIC4zMyAwIDAgLjMzIC4zMyAuMzMgMCAwIDAgMCAwIDAgMScvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxNjAnIGhlaWdodD0nMTYwJyBmaWx0ZXI9J3VybCgjbiknLz48L3N2Zz4=");opacity:.2;mix-blend-mode:overlay}
+.tbm>*{position:relative;z-index:1}
+
+/* ----- les deux zones de déploiement ----- */
+.tbz{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"h s" "p s";gap:10px 12px;align-items:center;padding:14px 14px 16px}
+.tbz::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.05) 0 6px,transparent 6px 14px),linear-gradient(var(--dir,0deg),color-mix(in srgb,var(--c) 50%,transparent),color-mix(in srgb,var(--c) 9%,transparent) 90%)}
+.tbz.o{--dir:180deg;border-bottom:2px dashed color-mix(in srgb,var(--cb) 55%,transparent)}
+.tbz.m{--dir:0deg;border-top:2px dashed color-mix(in srgb,var(--cb) 55%,transparent)}
+.tbz.sel::after{content:"";position:absolute;inset:5px;border-radius:13px;border:2px solid var(--cb);pointer-events:none;box-shadow:0 0 16px color-mix(in srgb,var(--c) 60%,transparent),inset 0 0 14px color-mix(in srgb,var(--c) 38%,transparent)}
+.tbh{grid-area:h;display:flex;gap:6px;align-items:center;min-width:0}
+.tbn{flex:1;min-width:0;height:42px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(rgba(0,0,0,.46),rgba(0,0,0,.3));color:#fff;font:700 16px/1 system-ui,-apple-system,sans-serif;box-shadow:inset 0 1px 4px rgba(0,0,0,.55)}
+.tbn:focus{outline:2px solid var(--cb);outline-offset:1px}
+.tbc{flex:none;width:44px;height:42px;display:grid;place-items:center;padding:0;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.13);color:#fff;cursor:pointer;touch-action:manipulation}.tbc:active{transform:scale(.95)}.tbc svg{display:block}
+.tbp{grid-area:p;display:flex;align-items:center;gap:8px}
+.tbpl{font:600 13px/1 system-ui,-apple-system,sans-serif;color:#b9cdc1;min-width:20px}
+.tbp button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.12);color:#fff;font:600 24px/1 system-ui,-apple-system,sans-serif;display:grid;place-items:center;padding:0 0 2px;cursor:pointer;touch-action:manipulation}.tbp button:active{transform:scale(.92)}.tbp button:disabled{opacity:.32}
+.tbpn{width:52px;height:46px;clip-path:polygon(25% 2%,75% 2%,100% 50%,75% 98%,25% 98%,0 50%);background:linear-gradient(165deg,#ffffff,color-mix(in srgb,var(--cb) 34%,#cfe0d6));color:#0d2218;font:900 27px/46px var(--fd);text-align:center;font-variant-numeric:tabular-nums}
+.tbsc{box-sizing:border-box;grid-area:s;position:relative;min-width:96px;padding:7px 12px 15px;border-radius:15px;text-align:center;background:linear-gradient(rgba(0,0,0,.52),rgba(0,0,0,.34));border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 2px 7px rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.08)}
+.tbv{font:900 clamp(52px,17vw,68px)/.88 var(--fd);color:#fff;letter-spacing:.5px;text-shadow:0 0 18px color-mix(in srgb,var(--c) 75%,transparent),0 2px 0 rgba(0,0,0,.45);font-variant-numeric:tabular-nums}
+.tbsc small{display:block;margin-top:3px;font:600 11.5px/1 system-ui,-apple-system,sans-serif;color:#b9cdc1}
+.tbl{position:absolute;left:50%;bottom:-11px;transform:translateX(-50%);white-space:nowrap;padding:3px 10px;border-radius:99px;background:var(--brass);color:#2b1d03;font:800 12px/1.1 system-ui,-apple-system,sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.tbv.pulse{animation:mspl .5s}
+.tbz .msf{right:14px;top:6px;font:900 34px/1 var(--fd);color:var(--brass);text-shadow:0 2px 6px rgba(0,0,0,.6)}
+
+/* ----- le rail des manches ----- */
+.tbr{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:10px 8px 8px;background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.22));border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}
+.tbj{border:0;background:none;padding:0;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-height:64px;touch-action:manipulation}
+.tbjn{box-sizing:border-box;width:42px;height:42px;margin-top:3px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 23px/.85 var(--fd);color:#e7efe9;background:radial-gradient(circle at 35% 28%,#5b6d62,#2c3a32 58%,#18221c);box-shadow:0 2px 0 #08100b,inset 0 1px 0 rgba(255,255,255,.25);transition:transform .15s}
+.tbjn em{font:700 10px/1 system-ui,-apple-system,sans-serif;font-style:normal;margin-bottom:2px;opacity:.7}
+.tbj:active .tbjn{transform:scale(.92)}
+.tbj.on .tbjn{width:48px;height:48px;margin-top:0;color:#2b1d03;background:radial-gradient(circle at 35% 28%,#fff1b8,#e3bd62 52%,#8a6420);box-shadow:0 0 0 3px rgba(227,189,98,.34),0 0 20px rgba(227,189,98,.55),0 2px 0 #4a3208}
+.tbj.on .tbjn em{opacity:.7}
+.tbj small{font:700 11.5px/1 system-ui,-apple-system,sans-serif;color:#a9bfb1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tbj small i{font-style:normal}
+.tbj.on small{color:#fff}
+.tbb{grid-column:1/-1;display:flex;height:4px;margin:4px 6px 0;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.08)}.tbb i{display:block;transition:width .25s}
+
+/* ----- onglets des fiches ----- */
+.tbs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 -1px;position:relative;z-index:1}
+.tbs button{min-height:58px;border:1px solid var(--bd);border-top:4px solid color-mix(in srgb,var(--c) 38%,transparent);border-bottom:0;border-radius:14px 14px 0 0;background:color-mix(in srgb,var(--bd) 38%,var(--bg));color:var(--mu);font:inherit;cursor:pointer;padding:6px 8px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;touch-action:manipulation;min-width:0}
+.tbs button .tbsn{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 16px/1.15 system-ui,-apple-system,sans-serif;color:var(--tx)}
+.tbs button small{font-size:12px;line-height:1.2;color:var(--mu)}
+.tbs button.on{background:var(--card);border-color:var(--bd);border-top-color:var(--c);color:var(--tx);box-shadow:0 -4px 14px -6px color-mix(in srgb,var(--c) 55%,transparent)}
+.tbs button.on small{color:var(--tx)}
+
+/* ----- la fiche du joueur ----- */
+.pdw.tbsh{border:1px solid var(--bd);border-radius:16px;overflow:visible;padding:2px 12px 16px;background:var(--card);box-shadow:var(--sh);margin-bottom:12px}
+.pdw.tbsh[data-pl="0"]{border-top-left-radius:0}.pdw.tbsh[data-pl="1"]{border-top-right-radius:0}
+.tbq{padding-top:12px}
+.tbq+.tbq{margin-top:20px;padding-top:18px;border-top:1px dashed var(--bd)}
+.tbqh{display:flex;align-items:center;gap:10px;margin:0}
+.tbqi{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:19px;background:color-mix(in srgb,var(--c) 16%,var(--card));border:1px solid color-mix(in srgb,var(--c) 42%,var(--bd))}
+.tbqt{flex:1;min-width:0}.tbqt h3{margin:0;font:700 17px/1.2 system-ui,-apple-system,sans-serif;color:var(--tx)}.tbqt small{display:block;margin-top:2px;font-size:12.5px;line-height:1.2;color:var(--mu)}
+.tbqs{display:flex;align-items:baseline;gap:5px;flex:none}.tbqs b{font:900 32px/1 var(--fd);color:var(--c);font-variant-numeric:tabular-nums}.tbqs small{font-size:12px;color:var(--mu)}
+.tbmk{font-style:normal;font-size:13px;color:var(--mu);font-weight:600}
+.tbsh .tbn0{margin-top:12px}
+
+/* mission primaire */
+.tbsh .msh{margin-top:10px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;padding:11px 12px;border-radius:14px;background:color-mix(in srgb,var(--c) 9%,var(--card));border:1px solid color-mix(in srgb,var(--c) 36%,var(--bd))}
+.tbsh .msh .mi{font-size:28px;line-height:1}
+.tbsh .msh .ml{margin:0!important;font-size:12.5px;letter-spacing:0;text-transform:none;font-weight:600;color:var(--mu);line-height:1.3}
+.tbsh .msn1{font:700 19px/1.2 system-ui,-apple-system,sans-serif;display:block;margin-top:1px}
+.mstb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0 0}
+.tbbt{min-height:42px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:600 13.5px/1.15 system-ui,-apple-system,sans-serif;cursor:pointer;padding:4px 6px;touch-action:manipulation}.tbbt:active{transform:scale(.97)}
+.tbsh .pdr{margin:16px 0 0;align-items:center;font-size:13px}
+.tbsh .pdr span:first-child{font:700 15px/1.2 system-ui,-apple-system,sans-serif}
+.tbsh .pdr span:last-child{display:flex;align-items:baseline;gap:5px}.tbsh .pdr b{font:900 26px/1 var(--fd);color:var(--c)}
+.tbsh .msg{margin:10px 0 0}
+.tbsh .msgh{padding:4px 2px 0;font-size:13px;letter-spacing:0;text-transform:none;font-weight:700;color:var(--tx)}
+.tbsh .msgh::before{content:"⏱";font-size:13px;opacity:.75}
+.tbsh .msr{position:relative;border:1px solid var(--bd);border-radius:14px;padding:11px 12px;margin:8px 0 0;background:var(--card)}
+.tbsh .msgh+.msr{border-top:1px solid var(--bd)}
+.tbsh .msr.ok{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 11%,var(--card))}
+.tbsh .msr1{grid-template-columns:auto minmax(0,1fr) auto;gap:12px}
+.tbsh .mck{position:static;width:46px;height:46px;border-radius:50%;border:2px solid color-mix(in srgb,var(--mu) 60%,var(--bd));background:color-mix(in srgb,var(--bd) 25%,transparent);font-size:22px;transition:transform .12s}
+.tbsh .mck:active{transform:scale(.9)}
+.tbsh .mck.on{border-color:var(--ac);background:radial-gradient(circle at 35% 28%,color-mix(in srgb,var(--ac) 62%,#fff),var(--ac));color:#fff}
+.tbsh .mck:not(.sm)::after{content:"";position:absolute;inset:0;border-radius:14px}
+.tbsh .mck.sm{width:30px;height:30px;font-size:16px;border-radius:50%}
+.tbsh .msb2 .mck.sm{position:static}
+.tbsh .mst{font-size:14.5px;line-height:1.35}
+.tbsh .msp{font:900 30px/1 var(--fd)}.tbsh .msp small{font:600 11px/1.1 system-ui,-apple-system,sans-serif;margin-top:2px}
+.tbsh .msq2{margin-top:8px}
+.tbsh .stp2{gap:6px}.tbsh .stp2 button{width:42px;height:42px;border-radius:50%;font-size:21px}.tbsh .stp2 b{min-width:30px;font:800 24px/1 var(--fd);color:var(--tx)}
+.tbsh .pdx{margin-top:10px;border:1px solid var(--bd);border-radius:12px;padding:0 12px;border-top:1px solid var(--bd)}.tbsh .pdx>summary{padding:12px 0;min-height:24px}.tbsh .pdx[open]>summary{border-bottom:1px solid var(--bd);margin-bottom:6px}
+
+/* secondaires */
+.tbsh .msel{margin-top:14px}
+.tbsh .msel .ml{margin-bottom:8px;font:700 14.5px/1.3 system-ui,-apple-system,sans-serif;letter-spacing:0;text-transform:none;color:var(--tx)}
+.tbsh .msel>p:last-child{margin:12px 0 0}
+.tbsh .msel [data-ms=edone]{display:block;width:100%;min-height:48px;font-weight:700;font-size:15px}
+.tbsh .dk{padding-top:0}
+.tbsh .dkm{margin-top:12px}
+.tbsh .dkb{font-size:15px;letter-spacing:0;font-weight:700;border-radius:14px;min-height:56px}
+.tbsh .dks{margin:6px 2px 4px;font-size:13px}
+.tbsh .dkc{border-radius:16px;border:1px solid var(--bd);border-left:6px solid var(--g);margin:10px 0;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.tbsh .dkc>summary{padding:12px 12px 12px 10px}
+.tbsh .dkg{width:40px;height:50px;border-radius:8px;font-size:20px;box-shadow:inset 0 0 0 2px var(--card),inset 0 0 0 3px color-mix(in srgb,var(--g) 55%,transparent)}
+.tbsh .dkn b{font-size:16px}
+.tbsh .dkp{min-width:44px;height:44px;border-radius:50%;justify-content:center;background:color-mix(in srgb,var(--g) 14%,var(--card));border:2px solid var(--g)}.tbsh .dkp b{font:900 24px/.9 var(--fd)}.tbsh .dkp small{font-size:9.5px;line-height:1}
+.tbsh .dksm{font-size:13.5px}
+.tbsh .dko{position:relative}
+.tbsh .dko .mck{width:44px;height:44px}
+.tbsh .dko .mck:not(.sm)::after{content:"";position:absolute;inset:0}
+.tbsh .dkop{font:900 28px/1 var(--fd)}.tbsh .dkop small{font:600 10.5px/1.1 system-ui,-apple-system,sans-serif}
+
+/* ----- la barre qui suit : scores + manches ----- */
+.tbk{position:fixed;left:0;right:0;top:calc(var(--hh,48px) - 1px);z-index:4;max-width:980px;margin:0 auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 10px;background:#0b130f;border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 10px 22px rgba(0,0,0,.38);color:#fff;transform:translateY(-12px);opacity:0;visibility:hidden;transition:transform .18s ease,opacity .18s ease,visibility 0s .18s}
+.tbk.on{transform:none;opacity:1;visibility:visible;transition:transform .18s ease,opacity .18s ease}
+.tbkp{display:flex;align-items:center;gap:7px;height:42px;padding:0 10px 0 6px;border-radius:21px;border:2px solid transparent;background:rgba(255,255,255,.07);color:#fff;font:inherit;cursor:pointer;touch-action:manipulation}
+.tbkp i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#06261a;font:800 15px/1 var(--fd);font-style:normal}
+.tbkp b{font:900 28px/1 var(--fd);font-variant-numeric:tabular-nums;min-width:22px;text-align:center}
+.tbkp.on{border-color:var(--cb);background:color-mix(in srgb,var(--c) 24%,transparent)}.tbkp b.pulse{animation:mspl .5s}
+.tbkr{display:flex;justify-content:center;gap:5px}
+.tbkr button{width:32px;height:32px;border-radius:50%;border:0;background:radial-gradient(circle at 35% 28%,#5b6d62,#2c3a32 60%,#18221c);color:#e7efe9;font:800 17px/1 var(--fd);padding:0;cursor:pointer;touch-action:manipulation;box-shadow:0 1px 0 #08100b,inset 0 1px 0 rgba(255,255,255,.22)}
+.tbkr button.on{width:36px;height:36px;margin:-2px 0;color:#2b1d03;background:radial-gradient(circle at 35% 28%,#fff1b8,#e3bd62 52%,#8a6420);box-shadow:0 0 12px rgba(227,189,98,.6)}
+
+/* ----- petits écrans ----- */
+@media(max-width:370px){.tbc{width:40px}.tbsc{min-width:84px;padding:7px 8px 15px}.tbj small{font-size:10.5px}.tbkp{padding:0 8px 0 5px;gap:5px}.tbkr{gap:3px}.tbkr button{width:29px;height:29px}.tbkr button.on{width:33px;height:33px}}
+@media(prefers-reduced-motion:reduce){.tbk,.tbk.on,.tbjn,.tbb i{transition:none}.tbv.pulse{animation:none}}
 .gtop{border-top:0;margin-top:8px;padding-top:0}.gfc{border-left:5px solid var(--c);padding:4px 0 4px 10px;margin:8px 0}.gfn{display:flex;flex-direction:column}.gfm{font-size:14px;margin-top:2px}
 .gnote.need{color:var(--tx)}.gch{font:inherit;font-size:12px;border:1px solid var(--ac);color:var(--ac);background:transparent;border-radius:99px;padding:3px 10px;cursor:pointer;margin:2px 2px 2px 0}.gpgo2 .b{width:100%;padding:13px;font-size:16px}.ml.need{color:#c0392b}.mo.sm{padding:7px 11px}.mo.sm .mt b{font-weight:600}
 .gmauto b{font-size:16px}
@@ -553,6 +683,7 @@ details.eq>summary{color:var(--mu)}.led{border-color:var(--bd);color:var(--mu)}
 #dzs .dzft .r3{display:grid;gap:6px;margin-top:7px}
 .dzsvb{margin-top:4px!important}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 <div id="sb"></div><header><h1>Mes armées 40k<small id="cl"></small><span id="sy" data-s="loc" role="button">💾</span></h1><nav id="nav"></nav><span class="hbn"><button data-act="sban" title="Changer la bannière du site">🖼</button><button data-act="frm" data-k="s" id="fsb" title="Cadrer la bannière">✥</button><button data-act="dsban" id="dsb" title="Retirer la bannière">✕</button></span></header>
@@ -732,7 +863,7 @@ function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===
  else if(tab==="strats")h=stView(L);else if(tab==="opti")h=optiView2(L);else if(tab==="strats0"){const g={};L.strats.forEach(s=>(g[s.det]=g[s.det]||[]).push(s));
   h=Object.entries(g).map(([d,a])=>`<details class="card" ${d===window.po?"open":""}><summary><b>${esc(d)}</b> <span class="mu">${a.length} stratagèmes</span></summary>${a.map(s=>`<div class="card"><b>${esc(s.name)}</b> <span class="mu">${s.cp} PC</span><p class="pre">${esc(s.body)}</p></div>`).join("")}</details>`).join("")||"<p>Aucun stratagème détecté.</p>"}
  else h=`<div class="card"><p>Colle ici tout le texte d’une armée, ou choisis un PDF ou un lien. Chaque import crée une nouvelle liste, sauf si tu coches l’option ci-dessous.</p><label>Nom de la liste<input id="nm" placeholder="ex. Ma liste Nécrons"></label><label>Points de l’armée (facultatif)<input id="ptsin" inputmode="numeric" placeholder="ex. 2000"></label><label>Faction des figurines<select id="impfac" style="width:100%"><option value="auto">Automatique (mot-clé de faction de chaque unité)</option>${S.fac.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}<option value="">Ne pas changer</option></select></label><label>…ou créer une nouvelle faction<input id="newfac" placeholder="ex. Nécrons"></label><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="onlyc" style="width:auto">Ajouter seulement les figurines à la collection (sans créer de liste)</label><label>Importer depuis un lien armylistnetwork<input id="lnk" inputmode="url" placeholder="https://40k.armylistnetwork.com/liste-….html" style="width:100%"></label><p><button class="b" data-act="implink">Lire le lien</button></p><p class="mu" style="margin:0 0 8px">La page publique ne contient que les noms des aptitudes (pas leur texte de règle). Si le site bloque la lecture directe, un relais public est utilisé : il ne voit que ce lien.</p><label>Importer depuis un PDF<input type="file" id="pdf" accept="application/pdf,.pdf" style="width:100%"></label><p class="mu" style="margin:0 0 8px">Choisis le PDF de ton armée : le texte est lu puis importé comme s’il était collé ci-dessous. Il doit contenir du texte (pas une image scannée).</p><label>…ou colle le texte de la liste<textarea id="raw" rows="12"></textarea></label><p><button class="b p" data-act="imp">Importer</button></p></div>`;
- $("#m").innerHTML=h;modal();barDraw()}
+ $("#m").innerHTML=h;modal();barDraw();if(window.tbPost)window.tbPost()}
 document.addEventListener("click-old",e=>{const t=e.target.closest("[data-tab],[data-act]");if(!t)return;
  if(t.dataset.tab){tab=t.dataset.tab;window.po=null;draw();return}
  const a=t.dataset.act,L=cl(),u=ed==null||!L?null:L.units[ed],d=t.dataset;
@@ -947,17 +1078,10 @@ function optCost(raw){let t=String(raw||"").replace(/^\s*Optimisations?\s*/i,"")
 function cutOpti(sl){const j=sl.findIndex(l=>/^Optimisations?\s*(?:\(?[+\-]?\d{1,3}\s*(?:pts?|points?)?\)?)?\s*:/i.test(l));if(j<0)return{seg:sl,opti:"",optc:0};let e=j+1;while(e<sl.length&&!/^(Equipement|Aptitudes|Mots-clés|Portée\s+A|M\s+E\s+SV)/i.test(sl[e]))e++;const t=[sl[j].replace(/^Optimisations?\s*(?:\(?[+\-]?\d{1,3}\s*(?:pts?|points?)?\)?)?\s*:\s*/i,""),...sl.slice(j+1,e)].filter(Boolean).join("\n");return{seg:[...sl.slice(0,j),...sl.slice(e)],opti:t,optc:optCost([sl[j],...sl.slice(j+1,e)].join("\n"))}}
 function cutBody(a,us){const j=a.findIndex(l=>/Optimisations?\s*(?:\(?[+\-]?\d{1,3}\s*(?:pts?|points?)?\)?)?\s*:/i.test(l));if(j<0)return a.join("\n");let e=j;if(e>0&&us&&us.some(u=>nn(u.name)===nn(a[e-1])))e--;return a.slice(0,e).join("\n")}
 function optiView2(L){L.optis=L.optis||[];return`<div class="card row" style="justify-content:space-between"><b>Optimisations libres</b><button class="b p" data-act="onew">+ Optimisation</button></div>`+(L.optis.map((o,i)=>`<div class="card"><label>Nom<input data-oo="${i}.name" value="${esc(o.name)}"></label><label>Optimisation<textarea data-oo="${i}.text" rows="3">${esc(o.text)}</textarea></label><button class="b x" data-act="odel" data-i="${i}" style="margin-top:6px">Supprimer</button></div>`).join("")||`<p class="mu">Aucune optimisation libre.</p>`)+optiView(L)}
-function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],xx=(r,i)=>r.x?r.x[i]:0,tt=(i,u)=>B.t.slice(0,u+1).reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+xx(r,i),0),T=[tt(0,4),tt(1,4)],d=T[0]-T[1],sum=T[0]+T[1],w0=sum?Math.round(T[0]/sum*100):50,
+function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],xx=(r,i)=>r.x?r.x[i]:0,tt=(i,u)=>B.t.slice(0,u+1).reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+xx(r,i),0),
  bb=(k,t,i,v,cl)=>`<button class="bzk ${cl||""}" data-act="bd" data-k="${k}" data-t="${t}" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} ${Math.abs(v)}">${v>0?"+":"−"}${cl==="c"?"":Math.abs(v)}</button>`,
  dp=(k,l)=>`<details class="bzcard" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""}><summary>${l}</summary>`,
- mp=i=>B.t.reduce((x,r)=>x+(r.m?r.m[i]:0),0),
- xp=i=>B.t.reduce((x,r)=>x+xx(r,i),0),
  hasX=!!B.sx,
- ico=i=>window.jcOk&&window.jcOk(i)?`<button type="button" class="bzi" data-jc="open" data-pl="${i}" aria-label="Carte de mission de ${esc(B.n[i])}" title="Voir la carte de mission"><svg viewBox="0 0 20 24" width="16" height="19" aria-hidden="true"><rect x="2" y="1.5" width="16" height="21" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 6.6l3.2 4.6-3.2 4.6-3.2-4.6z" fill="currentColor"/><circle cx="5.2" cy="5" r="1" fill="currentColor"/><circle cx="14.8" cy="19" r="1" fill="currentColor"/></svg></button>`:"",
- grid=i=>B.ms||hasX?`<div class="bzg" style="--n:${B.ms?3:2}">${B.ms?`<span><b>${mp(i)}</b><small>Mission</small></span>`:""}<span><b>${xp(i)}</b><small>Secondaires</small></span><span><b>${T[i]-mp(i)-xp(i)}</b><small>Manuel</small></span></div>`:"",
- hero=`<div class="bzh">${[0,1].map(i=>{const lead=d!==0&&(d>0?i===0:i===1),eq=d===0&&sum>0;return `<div class="bzp" style="--c:${CL[i]}"><div class="bzn0"><input class="bzn" data-bn="${i}" value="${esc(B.n[i])}" aria-label="Nom du joueur ${i+1}">${ico(i)}</div><div class="bzs">${T[i]}</div><div class="bzu">points${lead?` <span class="bzl">▲ +${Math.abs(d)}</span>`:eq?` <span class="bzl">égalité</span>`:""}</div>${grid(i)}<div class="bzc">${bb("cp",-1,i,-1,"c")}<span><b>${B.cp[i]}</b><small>PC</small></span>${bb("cp",-1,i,1,"c")}</div></div>`}).join("")}</div><div class="bzbar"><i style="width:${w0}%;background:${CL[0]}"></i><i style="flex:1;background:${CL[1]}"></i></div>`,
- tabs=`<div class="bzt">${B.t.map((x,t)=>`<button class="${t===c?"on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===c}"><b>R${t+1}</b><small>${x.p[0]+x.s[0]+(x.m?x.m[0]:0)+xx(x,0)} – ${x.p[1]+x.s[1]+(x.m?x.m[1]:0)+xx(x,1)}</small></button>`).join("")}</div>`,
- bar=window.sxBar?window.sxBar():"",
  r=B.t[c],
  man=i=>[["p","Primaire"],["s","Secondaire"]].map(([k,l])=>`<div class="bzrow"><span>${l}</span><span class="bzct">${bb(k,c,i,-5,"sm")}${bb(k,c,i,-1,"")}<b>${r[k][i]}</b>${bb(k,c,i,1,"")}${bb(k,c,i,5,"sm")}</span></div>`).join(""),
  dr=[0,1].map(man),
@@ -966,7 +1090,7 @@ function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],xx=(r,i)=>
  nc=hasX?5:4,
  tbl=dp("b:t","📊 Détail par round")+`<div class="w bzw"><table><tr><th>Round</th><th colspan="${nc}" style="color:${CL[0]}">${esc(B.n[0])}</th><th colspan="${nc}" style="color:${CL[1]}">${esc(B.n[1])}</th></tr><tr><th></th>${[0,1].map(()=>`<th>P</th><th>S</th><th>M</th>${hasX?"<th>O</th>":""}<th>Σ</th>`).join("")}</tr>${B.t.map((x,t)=>`<tr${t===c?' style="background:var(--bg)"':""}><td>R${t+1}</td>${[0,1].map(i=>`<td>${x.p[i]}</td><td>${x.s[i]}</td><td>${x.m?x.m[i]:0}</td>${hasX?`<td>${xx(x,i)}</td>`:""}<td><b>${tt(i,t)}</b></td>`).join("")}</tr>`).join("")}</table><div class="mu">P = primaire · S = secondaire · M = missions (auto)${hasX?" · O = objectifs secondaires (cartes)":""} · Σ = cumul</div></div></details>`,
  set=dp("b:s","👥 Joueurs · factions · listes")+[0,1].map(i=>`<div style="margin:10px 0;border-left:5px solid ${CL[i]};padding-left:10px"><b>${esc(B.n[i])}</b><input data-bf="${i}" list="fl" value="${esc(B.f[i])}" placeholder="Faction jouée" style="width:100%;margin-top:6px"><select data-bl="${i}" style="width:100%;margin-top:6px">${lopts(i)}</select></div>`).join("")+`</details>`;
- return hero+tabs+bar+(window.msDrawers?window.msDrawers(dr):dr.map((h,i)=>`<div class="bzcard"><b style="color:${CL[i]}">${esc(B.n[i])}</b>${h}</div>`).join(""))+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p>`}
+ return`<div class="tbw">${window.tbScene?window.tbScene(dr):""}`+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p></div>`}
 let ftab=0,fedLast=null;
 function cutDet(p,dn){const t=(p.text||[]).join(" ");if(!t)return"";const x=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),re=new RegExp("((?:[\\p{L}'’]+\\s-\\s)?(?:"+dn.map(x).join("|")+"))\\s*\\[([^\\]]+)\\]","giu"),tags=[];let m;while(m=re.exec(t))tags.push({i:m.index,l:m[0].length});if(!tags.length)return"";const names=[...(p.equip||"").split(",").map(s=>s.trim()).filter(s=>/\(Aura\)/.test(s)),...(p.apt||"").split(",").map(s=>s.trim())].filter(Boolean),out=[];let keep=t.slice(0,tags[0].i);tags.forEach((g,k)=>{const from=g.i+g.l,nx=k+1<tags.length?tags[k+1].i:t.length;let end=nx;names.forEach(n=>{const j=t.indexOf(n,from);if(j>=0&&j<end)end=j});out.push(t.slice(g.i,end).trim());keep+=" "+t.slice(end,nx)});p.text=[keep.replace(/\s+/g," ").trim()].filter(Boolean);return out.join("\n")}
 const octot=u=>(u.optc||0)+(u.subs||[]).reduce((a,x)=>a+(x.optc||0),0);
@@ -1518,7 +1642,7 @@ function msSync(){const B=S.bat,o=sumsOf(B.ms);B.t.forEach((r,k)=>{r.m=[o[0][k],
 function recompute(sel){[0,1].forEach(pl=>{const s=sel[pl]||(sel[pl]=["","",0]),o=sel[1-pl]||["","",0];if(!s[2])s[1]=s[0]&&o[0]?autoM(s[0],o[0]):""})}
 function msInit(sel){sel=sel.map(x=>[x[0]||"",x[1]||"",x[2]?1:0]);recompute(sel);S.bat.ms={sel,v:{},ac:{},log:[],ed:[false,false]};dw=0;msSync()}
 window.msReset=()=>{const ms=MS();if(!ms)return;Object.assign(ms,{v:{},ac:{},log:[]});msSync()};
-function popScore(pl,d){if(!(d>0))return;setTimeout(()=>{const z=document.querySelectorAll("#m .bzp")[pl];if(!z)return;const s=z.querySelector(".bzs");if(s){s.classList.remove("pulse");void s.offsetWidth;s.classList.add("pulse")}const f=document.createElement("span");f.className="msf";f.textContent="+"+d;z.appendChild(f);setTimeout(()=>f.remove(),1300)},40)}
+function popScore(pl,d){if(!(d>0))return;setTimeout(()=>{const z=document.querySelector('#m .tbz[data-pl="'+pl+'"]');if(z){const s=z.querySelector(".tbv");if(s){s.classList.remove("pulse");void s.offsetWidth;s.classList.add("pulse")}const f=document.createElement("span");f.className="msf";f.textContent="+"+d;z.appendChild(f);setTimeout(()=>f.remove(),1300)}const k=document.querySelector('#tbk.on .tbkp[data-pl="'+pl+'"] b');if(k){k.classList.remove("pulse");void k.offsetWidth;k.classList.add("pulse")}},40)}
 function setVal(pl,i,rd,patch){const ms=MS(),m=CO(ms,pl);if(!m)return;const c=m.cond[i];if(!c||c.x)return;const k=key(pl,i,rd),old=ms.v[k]||{q:0,b:0};
  const nv={q:old.q||0,b:old.b||0};Object.assign(nv,patch);
  nv.q=Math.max(0,Math.min(c.k==="chk"?1:99,nv.q|0));
@@ -1559,7 +1683,7 @@ function plBody(ms,pl,R,man,rr){const m=CO(ms,pl);
  const fin=!bats.length?"":R===5?`<div class="msg"><div class="msgh">🏁 ${MOL.bat}</div>${bats.map(([c,i])=>condRow(ms,pl,m,c,i,"F")).join("")}</div>`:`<p class="mu mfin">🏁 ${bats.length} condition${bats.length>1?"s":""} de fin de bataille : à valider au round 5.</p>`;
  const rules=`<details class="pdx"${dd("ms:r"+pl,0)}><summary>📜 Description et règles</summary><p class="msru">${esc(m.d)}</p>${m.setup.map(x=>`<p class="msru"><b>${esc(x.w)}.</b> ${esc(x.t)}</p>`).join("")}${m.rules.map(x=>`<p class="msru">${esc(x)}</p>`).join("")}</details>`;
  const manual=`<details class="pdx"${dd("ms:g"+pl,0)}><summary>✎ Points manuels<span class="pdv">P ${rr.p[pl]} · S ${rr.s[pl]}</span></summary>${man}</details>`;
- return`<div class="msh"><span class="mi">${ct?ct.ic:""}</span><div><div class="ml" style="margin:0">${esc(ct?ct.fr:"")}${oc?" × "+esc(oc.fr):""}</div><b class="msn1">${esc(m.nm)}</b></div><button type="button" class="b" data-ms="chg" data-pl="${pl}">Changer</button></div><div class="pdr"><span>Round ${R}</span><span>Mission <b>${mp}</b> PdV</span></div>${groups||'<p class="mu">Aucune condition à valider ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}${rules}${manual}`}
+ return`<div class="msh"><span class="mi">${ct?ct.ic:""}</span><div><div class="ml" style="margin:0">${esc(ct?ct.fr:"")}${oc?" × "+esc(oc.fr):""}</div><b class="msn1">${esc(m.nm)}${m.edm?` <i class="tbmk" title="Mission modifiée">✎</i>`:""}</b></div></div><div class="mstb"><button type="button" class="tbbt" data-jc="open" data-pl="${pl}">📜 Carte</button><button type="button" class="tbbt" data-jc="edit0" data-pl="${pl}">✎ Modifier</button><button type="button" class="tbbt" data-ms="chg" data-pl="${pl}">↻ Changer</button></div>${groups||'<p class="mu">Aucune condition à valider ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}${rules}${manual}`}
 window.msDrawers=function(man){const B=S.bat,ms=B.ms,R=(B.cur||0)+1,rr=B.t[R-1],XS=!!window.sxView;
  const one=pl=>{const open=dw===pl,m=ms?CO(ms,pl):null,ct=ms?catG((ms.sel[pl]||[])[0]):null,tot=rr.p[pl]+rr.s[pl]+(rr.m?rr.m[pl]:0)+(rr.x?rr.x[pl]:0),nA=XS?window.sxCount(pl):0,sg=XS?window.sxSeg(pl):0;
   const sub=!ms?esc(B.f[pl]||""):m?`${ct?esc(ct.ic)+" ":""}${esc(m.nm)}`:`<em>Mission à choisir</em>`;
@@ -1669,7 +1793,7 @@ document.addEventListener("click",e=>{if(!open)return;if(e.target.id==="gpo"){cl
 document.addEventListener("input",e=>{const k=open&&e.target.dataset&&e.target.dataset.gi;if(!k)return;P()[k]=e.target.value;sv();const s=document.getElementById("gpsum");if(s)s.innerHTML=sumHtml()});
 document.addEventListener("change",e=>{const k=open&&e.target.dataset&&e.target.dataset.gs;if(!k)return;const p=P();if(k==="l"){p.l=e.target.value;p.m1="";p.i1=""}else p.ol=e.target.value;save();gpDraw()});
 window.msGameHtml=g=>{if(!g.ms)return"";const o=sumsOf(g.ms),t=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0));return`<div class="mu">Points de mission : ${t[0]} – ${t[1]}</div>${g.ms.log&&g.ms.log.length?`<details style="margin-top:6px"><summary class="mu">Validations de missions (${g.ms.log.length})</summary><div class="mslg">${msLogHtml(g.ms.log,g.n)}</div></details>`:""}`};
-window.__ms={mOf,catG,momentOf,CL,MOL,CO,sumsOf,logLine,popScore,dd,wRed,msSync,setDw:p=>{dw=p},seeDw};
+window.__ms={mOf,catG,momentOf,CL,MOL,CO,sumsOf,logLine,popScore,dd,wRed,msSync,setDw:p=>{dw=p},getDw:()=>dw,seeDw,plBody};
 el=document.createElement("div");el.id="gp";document.body.appendChild(el);
 })();
 </script>
@@ -1796,7 +1920,7 @@ function doDraw(pl){
  sync();save();draw();reveal();
  toast("🎴 "+got.map(d=>d.nm).join(" · "));fade()}
 /* fait défiler jusqu’aux cartes qui viennent d’arriver (si elles sont hors écran) */
-function reveal(){setTimeout(()=>{const e=document.querySelector(".pdw.open .dkc.new"),a=document.querySelector(".pdw.open .dkrow");if(!e||!a)return;const h=(document.querySelector("header")||{}).offsetHeight||0,r=e.getBoundingClientRect();if(r.top<h+8||r.bottom>innerHeight-76)window.scrollTo({top:Math.max(0,window.scrollY+a.getBoundingClientRect().top-h-10),behavior:"smooth"})},90)}
+function reveal(){setTimeout(()=>{const e=document.querySelector(".pdw.open .dkc.new"),a=document.querySelector(".pdw.open .dkrow");if(!e||!a)return;const h=tbTop(),r=e.getBoundingClientRect();if(r.top<h+8||r.bottom>innerHeight-76)window.scrollTo({top:Math.max(0,window.scrollY+a.getBoundingClientRect().top-h-10),behavior:"smooth"})},90)}
 function fade(){clearTimeout(fade.h);fade.h=setTimeout(()=>{recent.clear();document.querySelectorAll(".dkc.new").forEach(e=>e.classList.remove("new"))},2400)}
 /* une seule carte ouverte par liste (accordéon) : on garde la plus récente */
 function normOpen(pl,list){let k=0;list.forEach(d=>{const key="dk:"+pl+":"+d.id;if(pop.has(key)){if(k)pop.delete(key);k++}})}
@@ -1950,9 +2074,9 @@ const ICO='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><p
 window.sxView=(pl,R)=>{
  const sx=view(),B=S.bat,nm=B.n[pl],st=stat(pl),cs=sx.pl[pl].cards,locked=hasPts(sx),exh=!st.av.length,cu=B.cur||0;
  normOpen(pl,st.ac);normOpen(pl,st.ar);
- let h=`<div class="dk"><div class="dkrd" role="group" aria-label="Round où marquer les points"><span class="dkrl">Marquer au round · PdV secondaires</span>${B.t.map((x,t)=>`<button type="button" class="${t===cu?"on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===cu}" aria-label="Round ${t+1}, ${(x.x||[0,0])[pl]} points secondaires"><b>R${t+1}</b><small>${(x.x||[0,0])[pl]}</small></button>`).join("")}</div>`;
+ let h=`<div class="dk">`;
  h+=`<div class="dkm"><span>Mode des secondaires</span><span class="dksg" role="group" aria-label="Mode des secondaires">${[["t","Tactique"],["f","Fixe"]].map(([v,l])=>`<button type="button" data-dk="mode" data-v="${v}" class="${sx.mode===v?"on":""}${locked&&sx.mode!==v?" lk":""}" aria-pressed="${sx.mode===v}">${l}</button>`).join("")}</span></div>`;
- h+=`<div class="dkrow"><button type="button" class="dkb" data-dk="draw" data-pl="${pl}"${exh?' aria-disabled="true"':""}>${exh?"Pioche vide":"🎴 TIRER 2 SECONDAIRES"}</button><button type="button" class="dkci" data-dk="cat" data-pl="${pl}" aria-label="Catalogue des 18 secondaires : en ajouter une à la main pour ${esc(nm)}">${ICO}<small>Toutes</small></button></div>`;
+ h+=`<div class="dkrow"><button type="button" class="dkb" data-dk="draw" data-pl="${pl}"${exh?' aria-disabled="true"':""}>${exh?"Pioche vide":"🎴 Tirer 2 secondaires"}</button><button type="button" class="dkci" data-dk="cat" data-pl="${pl}" aria-label="Catalogue des 18 secondaires : en ajouter une à la main pour ${esc(nm)}">${ICO}<small>Toutes</small></button></div>`;
  h+=`<div class="dks"><span><b>${st.av.length}</b> dans la pioche</span><span><b>${st.ac.length}</b> actives</span><span><b>${st.ar.length}</b> archivées</span></div>`;
  if(exh)h+=`<p class="dkx">Pioche vide : les 18 cartes de ${esc(nm)} ont été tirées. Les cartes terminées ou supprimées ne reviennent pas avant une nouvelle partie.</p>`;
  h+=st.ac.length?st.ac.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""):(exh?"":`<p class="dkx">Aucun objectif actif. Tire 2 secondaires, ou ajoute-en une à la main avec l’icône « Toutes ».</p>`);
@@ -2041,7 +2165,7 @@ window.sxGameHtml=g=>{const sx=g&&g.sx;if(!sx||!sx.pl)return"";const o=sums(sx),
 {const _g=window.msGameHtml;window.msGameHtml=g=>{window.__edCtx=g&&g.ed||{};try{return(_g?_g(g):"")+window.sxGameHtml(g)}finally{window.__edCtx=null}}}
 
 /* ================= Carte de mission (carte à jouer) ================= */
-let jcPl=-1,jcFrom=null,jcEdit=false,jcDraft=null,jcAnim=false;
+let jcPl=-1,jcFrom=null,jcEdit=false,jcDraft=null,jcAnim=false,jcDirect=false;
 const jcEl=document.createElement("div");jcEl.id="jc";document.body.appendChild(jcEl);
 const jcOK=pl=>{const ms=S.bat&&S.bat.ms,m=M();return!!(ms&&m.CO&&m.CO(ms,pl))};
 window.jcOk=jcOK;
@@ -2073,7 +2197,9 @@ function jeItem(c,m){const i=c.i,I=`data-i="${i}"`;
 function jeOpen(){const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;
  jcDraft=mi.cond.map((c,i)=>{const f=jclone(c);delete f.ch;delete f.cu;f.i=i;f._w=m.wRed(c.w)?"":(c.w||"");return f});
  jcEdit=true;jcDraw();const w=jcEl.querySelector(".jco");if(w)w.scrollTop=0}
-function jeExit(){jcEdit=false;jcDraft=null;jcDraw()}
+/* fin de l’édition : retour à la carte, ou fermeture si l’édition a été ouverte directement depuis la fiche */
+function jeDone(){jcEdit=false;jcDraft=null;if(jcDirect){jcDirect=false;jcClose()}else jcDraw()}
+function jeExit(){jeDone()}
 function jeAdd(){jcDraft.push({tx:"",pts:3,k:"chk",mo:"tour",rd:[1,2,3,4,5],w:"",_w:"",r5:false,i:jcDraft.length,neu:1});jcDraw(true);const t=[...jcEl.querySelectorAll(".jee textarea")].pop();if(t){try{t.focus({preventScroll:true})}catch(_){}t.scrollIntoView({block:"center"})}}
 function jeDel(i){const j=jcDraft.findIndex(c=>c.i===i);if(j<0)return;const c=jcDraft[j];if(c.neu){jcDraft.splice(j,1);jcDraft.forEach((x,k)=>{x.i=k})}else c.x=1;jcDraw(true)}
 function jeSave(){
@@ -2089,17 +2215,18 @@ function jeSave(){
    if(c.x)p.x=1;if(Object.keys(p).length)cc[c.i]=p}
   else{const q={tx:c.tx,pts:c.pts,k:c.k,mo:c.mo,rd,w,r5:false};if(c.x)q.x=1;a.push(q)}});
  const e=edEns();if(!Object.keys(cc).length&&!a.length)delete e.mi[id];else e.mi[id]={c:cc,a};
- if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("✎ Carte « "+mi.nm+" » modifiée")}
+ if(m.msSync)m.msSync();save();draw();jeDone();toast("✎ Carte « "+mi.nm+" » modifiée")}
 function jeRestore(){const m=M(),mi=m.CO(S.bat.ms,jcPl);if(!mi)return;
- ask({t:"Rétablir la carte d’origine ?",p:`Toutes les modifications de « ${mi.nm} » (textes, PdV, rounds, conditions ajoutées ou supprimées) seront annulées. Les points déjà validés sont recalculés.`,ok:"Rétablir",dg:1},()=>{const e=edEns();delete e.mi[mi.id];if(m.msSync)m.msSync();save();draw();jcEdit=false;jcDraft=null;jcDraw();toast("Carte d’origine rétablie")})}
+ ask({t:"Rétablir la carte d’origine ?",p:`Toutes les modifications de « ${mi.nm} » (textes, PdV, rounds, conditions ajoutées ou supprimées) seront annulées. Les points déjà validés sont recalculés.`,ok:"Rétablir",dg:1},()=>{const e=edEns();delete e.mi[mi.id];if(m.msSync)m.msSync();save();draw();jeDone();toast("Carte d’origine rétablie")})}
 function jcDraw(keep){if(jcPl<0){jcEl.innerHTML="";return}if(!jcOK(jcPl)){jcClose();return}const old=jcEl.querySelector(".jco"),top=old?old.scrollTop:0;jcEl.innerHTML=jcHtml(jcPl);const w=jcEl.querySelector(".jco");if(w){if(jcAnim)w.classList.add("in");w.scrollTop=keep===true?top:0}jcAnim=false}
-function jcClose(){jcPl=-1;jcEdit=false;jcDraft=null;jcEl.innerHTML="";if(exId===null&&catPl<0)document.body.classList.remove("jclk");if(jcFrom&&document.contains(jcFrom))try{jcFrom.focus()}catch(_){}jcFrom=null}
+function jcClose(){jcPl=-1;jcEdit=false;jcDraft=null;jcDirect=false;jcEl.innerHTML="";if(exId===null&&catPl<0)document.body.classList.remove("jclk");if(jcFrom&&document.contains(jcFrom))try{jcFrom.focus()}catch(_){}jcFrom=null}
 window.jcClose=jcClose;
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-jc]");if(!b)return;
  const a=b.dataset.jc;
  if(a==="bg"){if(e.target!==b)return;e.stopPropagation();if(!jcEdit)jcClose();return}
  e.stopPropagation();
  if(a==="open"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;jcEdit=false;document.body.classList.add("jclk");jcAnim=true;jcDraw();const x=jcEl.querySelector(".jcx");if(x)try{x.focus({preventScroll:true})}catch(_){}}
+ else if(a==="edit0"){const pl=+b.dataset.pl;if(!jcOK(pl)){toast("Choisis d’abord les catégories de mission");return}jcFrom=b;jcPl=pl;jcEdit=false;jcDirect=true;document.body.classList.add("jclk");jcAnim=true;jeOpen();const x=jcEl.querySelector('[data-je="cancel"]');if(x)try{x.focus({preventScroll:true})}catch(_){}}
  else if(a==="pl"){jcPl=+b.dataset.pl;jcDraw()}
  else if(a==="edit")jeOpen()
  else if(a==="close")jcClose()},true);
@@ -2112,6 +2239,69 @@ jcEl.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.je;if(
  else if(k==="k")c.k=v==="cnt"?"cnt":"chk";
  else if(k==="mo"){c.mo=MOK.includes(v)?v:"tour";const r=t.closest(".jee").querySelector(".jer");if(r)r.classList.toggle("off",c.mo==="bat")}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&jcPl>=0&&exId===null&&!dlg){e.stopPropagation();if(jcEdit)jeExit();else jcClose()}},true);
+
+/* ================= v87 : la table de jeu (écran Score) ================= */
+const CLB=["#3ddc97","#f0a54a"];
+const tbRd=(t,i)=>{const r=S.bat.t[t];return r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0)};
+const tbTot=i=>S.bat.t.reduce((a,_,t)=>a+tbRd(t,i),0);
+const tbSeat=()=>(M().getDw?M().getDw():0)===1?1:0;
+const tbIni=n=>{const c=String(n||"").trim().charAt(0);return c?c.toUpperCase():"?"};
+const CARDI='<svg viewBox="0 0 20 24" width="18" height="21" aria-hidden="true"><rect x="2" y="1.5" width="16" height="21" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 6.6l3.2 4.6-3.2 4.6-3.2-4.6z" fill="currentColor"/><circle cx="5.2" cy="5" r="1" fill="currentColor"/><circle cx="14.8" cy="19" r="1" fill="currentColor"/></svg>';
+/* une zone de déploiement : nom, PC, score */
+function tbZone(i,seat,T,d,sum){
+ const B=S.bat,lead=d!==0&&(d>0?i===0:i===1),eq=d===0&&sum>0,nm=esc(B.n[i]),n=B.cp[i];
+ return`<section class="tbz ${i===1?"o":"m"}${i===seat?" sel":""}" style="--c:${CL[i]};--cb:${CLB[i]}" data-pl="${i}">`+
+  `<div class="tbh"><input class="tbn" data-bn="${i}" value="${nm}" autocomplete="off" aria-label="Nom du joueur ${i+1}">${jcOK(i)?`<button type="button" class="tbc" data-jc="open" data-pl="${i}" aria-label="Carte de mission de ${nm}" title="Carte de mission">${CARDI}</button>`:""}</div>`+
+  `<div class="tbp" role="group" aria-label="Points de commandement de ${nm}"><span class="tbpl">PC</span><button type="button" data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="-1" aria-label="Retirer 1 point de commandement"${n<=0?" disabled":""}>−</button><span class="tbpn">${n}</span><button type="button" data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="1" aria-label="Ajouter 1 point de commandement">+</button></div>`+
+  `<div class="tbsc"><div class="tbv">${T[i]}</div><small>PdV</small>${lead?`<span class="tbl">▲ +${Math.abs(d)}</span>`:eq?`<span class="tbl">égalité</span>`:""}</div></section>`}
+/* le rail des 5 rounds, entre les deux zones */
+function tbRail(c,T){
+ const B=S.bat,sum=T[0]+T[1],w0=sum?Math.round(T[0]/sum*100):50;
+ return`<div class="tbr" role="group" aria-label="Round de la bataille">`+B.t.map((x,t)=>{const a=tbRd(t,0),b=tbRd(t,1);return`<button type="button" class="tbj${t===c?" on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===c}" aria-label="Round ${t+1} : ${esc(B.n[0])} ${a}, ${esc(B.n[1])} ${b}"><span class="tbjn"><em>R</em>${t+1}</span><small><i style="color:${CLB[0]}">${a}</i> – <i style="color:${CLB[1]}">${b}</i></small></button>`}).join("")+`<div class="tbb" aria-hidden="true"><i style="width:${w0}%;background:${CL[0]}"></i><i style="flex:1;background:${CL[1]}"></i></div></div>`}
+/* un bloc de la fiche : icône, titre, points marqués ce round, contenu */
+const tbq=(ic,tt,sub,pts,body,cls)=>`<div class="tbq${cls?" "+cls:""}"><div class="tbqh"><span class="tbqi" aria-hidden="true">${ic}</span><div class="tbqt"><h3>${tt}</h3><small>${sub}</small></div><div class="tbqs"><b>${pts}</b><small>PdV</small></div></div>${body}</div>`;
+function tbSheet(seat,R,rr,man){
+ const B=S.bat,ms=B.ms,m=M();
+ let h=`<section class="pdw open tbsh" id="tbp" role="tabpanel" aria-labelledby="tbt${seat}" style="--c:${CL[seat]};--cb:${CLB[seat]}" data-pl="${seat}">`;
+ if(ms&&m.plBody)h+=tbq("🎯","Mission primaire","Round "+R,rr.m?rr.m[seat]:0,m.plBody(ms,seat,R,man[seat],rr),"tbq1");
+ else h+=tbq("✎","Points à la main","Round "+R,rr.p[seat]+rr.s[seat],man[seat],"tbq1");
+ h+=tbq("🎴","Objectifs secondaires","Round "+R,rr.x?rr.x[seat]:0,window.sxView(seat,R),"tbq2");
+ h+=`</section>`;
+ if(!ms)h+=`<div class="card msn"><div class="gph">Missions</div><p class="mu">Aucune mission suivie pour cette partie.</p><button class="b p" data-ms="enable">Suivre les missions de cette partie</button></div>`;
+ return h}
+/* la scène complète : plateau, onglets des joueurs, fiche du joueur choisi */
+window.tbScene=man=>{
+ const B=S.bat,c=B.cur||0,R=c+1,rr=B.t[c],seat=tbSeat(),T=[tbTot(0),tbTot(1)],d=T[0]-T[1],sum=T[0]+T[1];
+ const tabs=`<div class="tbs" role="tablist" aria-label="Fiche du joueur">${[0,1].map(i=>`<button type="button" role="tab" id="tbt${i}" class="${i===seat?"on":""}" style="--c:${CL[i]}" data-tb="seat" data-pl="${i}" aria-selected="${i===seat}" aria-controls="tbp"><span class="tbsn" data-tbn="${i}">${esc(B.n[i])}</span><small>Round ${R} : <b>${tbRd(c,i)}</b> PdV</small></button>`).join("")}</div>`;
+ return`<div class="tbt"><div class="tbm">${tbZone(1,seat,T,d,sum)}${tbRail(c,T)}${tbZone(0,seat,T,d,sum)}</div></div>`+tabs+tbSheet(seat,R,rr,man)};
+/* ----- barre qui suit le défilement : scores + rounds, visible quand le plateau est sorti de l’écran ----- */
+const tbk=document.createElement("div");tbk.id="tbk";tbk.className="tbk";tbk.setAttribute("role","group");tbk.setAttribute("aria-label","Scores et rounds");document.body.appendChild(tbk);
+let tbkH="",tbRaf=0;
+const tbHd=()=>{const h=document.querySelector("header");return h?h.offsetHeight:0};
+function tbTop(){if(!document.querySelector(".tbt"))return tbHd();if(!tbkH){const h=tbTick();tbk.innerHTML=h;tbkH=h}return tbHd()+tbk.offsetHeight}
+function tbTick(){
+ const B=S.bat,c=B.cur||0,seat=tbSeat();
+ const chip=i=>`<button type="button" class="tbkp${seat===i?" on":""}" style="--c:${CL[i]};--cb:${CLB[i]}" data-tb="seat" data-pl="${i}" data-sc="1" aria-label="Fiche de ${esc(B.n[i])} : ${tbTot(i)} points de victoire"><i aria-hidden="true">${esc(tbIni(B.n[i]))}</i><b>${tbTot(i)}</b></button>`;
+ return chip(0)+`<div class="tbkr" role="group" aria-label="Round">${B.t.map((x,t)=>`<button type="button" class="${t===c?"on":""}" data-act="bt" data-t="${t}" aria-pressed="${t===c}" aria-label="Round ${t+1}">${t+1}</button>`).join("")}</div>`+chip(1)}
+function tbScroll(){
+ const t=document.querySelector(".tbt"),ok=!!(t&&tab==="bat"&&S.bat);
+ if(!ok){tbk.classList.remove("on");return}
+ /* le contenu est toujours prêt : la hauteur de la barre est donc exacte */
+ const h=tbTick();if(h!==tbkH){tbk.innerHTML=h;tbkH=h}
+ /* la barre apparaît quand le bas du plateau passe sous elle ; marge de 14 px avant de la masquer (évite le clignotement) */
+ const lim=tbHd()+tbk.offsetHeight,bt=t.getBoundingClientRect().bottom;
+ tbk.classList.toggle("on",tbk.classList.contains("on")?bt<lim+18:bt<lim+4)}
+window.tbPost=()=>{document.documentElement.style.setProperty("--hh",tbHd()+"px");tbScroll()};
+window.addEventListener("scroll",()=>{if(tbRaf)return;tbRaf=requestAnimationFrame(()=>{tbRaf=0;tbScroll()})},{passive:true});
+window.addEventListener("resize",()=>window.tbPost());
+/* choix du joueur dont on voit la fiche (depuis les onglets ou depuis la barre qui suit) */
+function tbSeatTo(pl,sc){
+ if(tbSeat()!==pl){if(M().setDw)M().setDw(pl);draw()}
+ if(sc)setTimeout(()=>{const t=document.querySelector(".tbs");if(!t)return;window.scrollTo({top:Math.max(0,window.scrollY+t.getBoundingClientRect().top-tbTop()-8),behavior:"smooth"})},30)}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tb]");if(!b)return;e.stopPropagation();
+ if(b.dataset.tb==="seat")tbSeatTo(+b.dataset.pl===1?1:0,b.dataset.sc==="1")},true);
+/* le nom tapé dans le plateau met à jour les onglets en direct */
+document.addEventListener("input",e=>{const t=e.target,k=t&&t.dataset&&t.dataset.bn;if(k==null)return;const v=t.value||"Joueur "+(+k+1);document.querySelectorAll('[data-tbn="'+k+'"]').forEach(x=>{x.textContent=v});tbkH="";tbScroll()});
 })();
 </script>
 </body>
