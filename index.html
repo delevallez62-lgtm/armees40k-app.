@@ -878,6 +878,118 @@ main>.card:has(>[data-act=gdel])>details>summary::after{content:"";position:abso
 main>.card:has(>[data-act=gdel])>details[open]>summary::after{transform:rotate(180deg)}
 main>.card:has(>[data-act=gdel])>details[open]{padding-bottom:12px}
 
+/* ===== v89 : encyclopédie des règles ===== */
+/* termes reconnus sur les fiches */
+.encu .enct,.encu .wzp,.encu .apn .an{cursor:pointer}
+.encu .enct{border-radius:4px;padding:0 1px}
+.encu .enc-ok{text-decoration:underline dotted 1.5px;text-decoration-color:color-mix(in srgb,var(--ac) 75%,transparent);text-underline-offset:3px}
+.encu .enc-amb{text-decoration:underline wavy 1.5px #d9a03a;text-underline-offset:3px}
+.encu .enc-miss{text-decoration:underline dashed 1px color-mix(in srgb,var(--mu) 70%,transparent);text-underline-offset:3px;opacity:.85}
+.encu .enc-off{opacity:.65}
+.encu .apn .an.enc-ok::after,.encu .encxr::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ac);margin-left:6px;vertical-align:middle;opacity:.8}
+.encu .apn .an.enc-amb::after{content:"?";margin-left:5px;font-size:11px;color:#d9a03a;font-weight:900}
+.encu .enct:focus-visible,.encu .wzp:focus-visible,.encu .an:focus-visible,.encxr:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.encxr{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:16px;border:1px solid color-mix(in srgb,var(--ac) 45%,var(--bd));background:color-mix(in srgb,var(--ac) 10%,var(--card));font-weight:700;font-size:13.5px;margin:0 6px 6px 0;cursor:pointer}
+/* bulle */
+.encb{position:fixed;z-index:60;max-height:min(62vh,520px);display:flex;flex-direction:column;border-radius:16px;background:var(--card);color:var(--tx);border:1px solid var(--bd);box-shadow:0 18px 48px rgba(0,0,0,.45);overflow:hidden;opacity:0;transform:translateY(-4px);transition:opacity .14s,transform .14s}
+.encb.in{opacity:1;transform:none}
+.encb.up{transform-origin:bottom}
+.encbh{display:flex;align-items:flex-start;gap:10px;padding:12px 10px 10px 14px;background:var(--felt);color:#fff;border-bottom:2px solid #0a110d;box-shadow:inset 0 -1px 0 rgba(227,189,98,.45)}
+.encbh>div{flex:1;min-width:0}
+.encbh b{display:block;font:800 21px/1.1 var(--fd);letter-spacing:.3px}
+.encbh small{display:block;font-size:12px;opacity:.8;margin-top:2px}
+.encx{flex:none;width:36px;height:36px;min-height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.25);color:inherit;font-size:15px;cursor:pointer;display:grid;place-items:center;padding:0}
+.encbb{padding:10px 14px 4px;overflow:auto;font-size:14.5px;line-height:1.45}
+.encbg{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.encst{display:inline-block;padding:2px 8px;border-radius:10px;font:700 11.5px/1.5 system-ui,-apple-system,sans-serif;white-space:nowrap}
+.encst.o{background:color-mix(in srgb,var(--ac) 18%,transparent);color:var(--ac)}
+.encst.v{background:rgba(217,160,58,.18);color:#c98a1a}
+.encst.p{background:rgba(80,140,230,.18);color:#4f8fe6}
+.encst.m{background:rgba(160,110,230,.18);color:#a274e6}
+.encst.u{background:rgba(220,80,70,.16);color:#e0584b}
+.encd{margin:0 0 8px;font-size:15px}
+.encp{margin:8px 0}.encp b{display:block;font-size:12px;color:var(--mu);font-weight:700;margin-bottom:1px}.encp p{margin:0}
+.encm{font-size:12px;color:var(--mu);margin:10px 0 6px;line-height:1.45}.encm a{color:var(--ac)}
+.encw{margin:4px 0 10px;color:var(--tx)}
+.encba{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 12px;border-top:1px solid var(--bd);background:color-mix(in srgb,var(--bd) 14%,var(--card))}
+.encbt{flex:1 1 auto;min-height:40px;padding:0 12px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:700 13.5px/1.2 system-ui,-apple-system,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;text-decoration:none;margin:0}
+.encbt.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.encbt.x{color:#d64541;border-color:color-mix(in srgb,#d64541 35%,var(--bd));background:transparent}
+.encch{display:grid;gap:6px}.encch .encbt{flex-direction:column;align-items:flex-start;padding:8px 12px;text-align:left}.encch small{font-weight:500;color:var(--mu)}
+/* écran */
+.encw0{max-width:760px;margin:0 auto}
+.enctop{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:12px}
+.encti h2{margin:0}.encti small{color:var(--mu)}
+.encsearch{position:sticky;top:calc(var(--hh,48px) + 6px);z-index:3;margin:0 0 10px}
+.encq{width:100%;min-height:50px!important;border-radius:25px!important;padding:0 18px 0 44px!important;font-size:16px;background:var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238fa398' stroke-width='2.4' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='M20 20l-4-4'/></svg>") no-repeat 16px 50%!important;box-shadow:0 4px 14px rgba(0,0,0,.18)!important}
+.encfil{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.encfil::-webkit-scrollbar{display:none}
+.encfil button{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:650 13.5px system-ui,-apple-system,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0}
+.encfil button small{font-size:11px;color:var(--mu);font-weight:700}
+.encfil button.on{background:radial-gradient(circle at 35% 25%,#fff3c4,#e3bd62 55%,#a37a2c);border-color:#d9b55a;color:#2b1d03}
+.encfil button.on small{color:#5a4310}
+.enctools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.enctools .b{margin:0;padding:0 6px;font-size:13px}
+.encstrip{margin:0 0 10px}.encstrip>b{display:block;font-size:12.5px;color:var(--mu);margin-bottom:5px}
+.encstrip>div{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.encchip{flex:none;min-height:36px;padding:0 12px;border-radius:18px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:650 13px system-ui,-apple-system,sans-serif;cursor:pointer;margin:0}
+.encalerts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:4px 0 14px}
+.encal{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;min-height:56px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer;margin:0}
+.encal b{font:900 26px/1 var(--fd);min-width:24px;text-align:center}
+.encal span{font-size:13px;font-weight:650;line-height:1.25}
+.encal.w{border-color:rgba(217,160,58,.55);background:color-mix(in srgb,#d9a03a 10%,var(--card))}.encal.w b{color:#d9a03a}
+.encal.u{border-color:rgba(220,80,70,.5)}.encal.u b{color:#e0584b}
+.encal.ok b{color:var(--ac)}
+.encsec{margin-bottom:16px}
+.encsec h3{display:flex;align-items:center;gap:8px;margin:0 0 8px;font:800 20px/1.1 var(--fd);letter-spacing:.3px}
+.encsec h3 small{margin-left:auto;font:700 12px system-ui,-apple-system,sans-serif;color:var(--mu);background:var(--tok);padding:2px 8px;border-radius:10px}
+.encn{color:var(--mu);font-size:13px;margin:0 0 8px}
+.encr{border:1px solid var(--bd);border-radius:14px;background:var(--card);margin-bottom:8px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.encr.open{border-color:color-mix(in srgb,var(--ac) 45%,var(--bd));box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.encrh{display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px 10px;width:100%;text-align:left;padding:12px;border:0;background:transparent;color:var(--tx);font:inherit;cursor:pointer;margin:0;min-height:56px;border-radius:0}
+.encri{font-size:18px;line-height:1.3;text-align:center}
+.encrn b{display:block;font:800 19px/1.15 var(--fd);letter-spacing:.3px}
+.encrn small{display:block;font-size:12px;color:var(--mu)}
+.encrd{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;color:var(--mu);margin-top:4px;line-height:1.35}
+.encrb{grid-column:2;display:flex;flex-wrap:wrap;gap:4px}
+.encrx{padding:0 14px 14px;border-top:1px solid var(--bd);padding-top:10px}
+.encra{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}.encra .b{margin:0;font-size:13.5px}
+.encupd{margin:10px 0;padding:10px 12px;border-radius:12px;border:1px solid rgba(220,80,70,.45);background:color-mix(in srgb,#e0584b 7%,var(--card))}
+.encdiff{display:grid;gap:8px;margin:8px 0}.encdiff>div{padding:8px 10px;border-radius:10px;background:var(--tok)}.encdiff i{display:block;font-style:normal;font-size:11.5px;font-weight:800;color:var(--mu)}.encdiff p{margin:2px 0 0}
+.encempty{text-align:center}
+.encfoot{font-size:12px;color:var(--mu);text-align:center;margin:18px 6px 0}
+.encdet{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+/* fenêtres */
+#encov .ov{z-index:61}
+.encpn{width:min(620px,100%)!important;max-height:92vh!important;border-radius:20px!important;padding:16px!important;margin:auto}
+@media(max-width:700px){#encov .ov{align-items:flex-end;padding:0}.encpn{border-radius:20px 20px 0 0!important;max-height:94vh!important;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))!important}}
+.ench{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:10px}.ench h2{font-size:24px;margin:0}
+.ench .encx{border-color:var(--bd);background:var(--tok);color:var(--tx)}
+.encf{display:grid;gap:10px}.encf label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mu)}.encf input,.encf textarea,.encf select{width:100%;color:var(--tx)}
+.enc2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.encft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.encft>span{flex:1}.encft .b{margin:0}
+.encerr{color:#e0584b;font-weight:600;margin:10px 0 0}
+.encck{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin-top:8px;color:var(--tx)!important;font-weight:600}
+.encpkl{display:grid;gap:6px;margin-top:10px;max-height:60vh;overflow:auto}
+.encrow{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;min-height:50px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer;margin:0}
+.encrow b{font-weight:700}.encrow small{color:var(--mu);font-size:12px}
+.ench1{border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;padding:0 12px}
+.ench1>summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:10px 0;cursor:pointer}
+.ench1>summary::-webkit-details-marker{display:none}
+.ench1>summary small{flex-basis:100%;color:var(--mu);font-size:12px}
+.ench1[open]{padding-bottom:12px}
+.encty{font:700 11px/1.6 system-ui,-apple-system,sans-serif;padding:1px 8px;border-radius:9px;background:var(--tok);color:var(--mu)}
+.encty.suppr{background:rgba(220,80,70,.15);color:#e0584b}.encty.ajout{background:color-mix(in srgb,var(--ac) 16%,transparent);color:var(--ac)}.encty.modif,.encty.restau{background:rgba(80,140,230,.16);color:#4f8fe6}
+.enc3{font:800 18px/1.2 var(--fd);margin:16px 0 4px}
+#encov textarea{width:100%}#encexp,#encimp{font:13px/1.35 ui-monospace,Menlo,Consolas,monospace}
+.encmiss{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;background:var(--card)}
+.encmiss small{display:block;color:var(--mu);font-size:12.5px;margin-top:2px}
+.encmb{display:flex;flex-wrap:wrap;gap:6px}.encmb .b{margin:0;min-height:40px;font-size:13px;text-decoration:none;display:inline-flex;align-items:center}
+.encok{color:var(--ac)!important}
+.encsum{padding:10px 12px;border-radius:12px;background:var(--tok);margin-top:10px}
+@media(prefers-reduced-motion:reduce){.encb{transition:none}}
+.encb[hidden],#encov[hidden]{display:none!important}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
 </head>
@@ -1000,11 +1112,11 @@ const WF=["name","range","a","hit","f","pa","d","caps"],WP=["Arme","Portée","A"
 const WI={r:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></svg>',m:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l9 9M19 3l-9 9M13 15l-8 6M11 15l8 6M3.5 19.5l2 2M20.5 19.5l-2 2"/></svg>'};
 const isMel=w=>/m[eê]l[eé]e|corps/i.test(String(w.range||""));
 const cpl=c=>{const o=[];let d=0,cur="";for(const ch of String(c)){if(ch==="("||ch==="[")d++;if(ch===")"||ch==="]")d=Math.max(0,d-1);if(ch===","&&!d){o.push(cur);cur=""}else cur+=ch}o.push(cur);return o.map(x=>x.trim()).filter(Boolean)};
-const wtbl=(ws,un)=>{if(!ws.length)return"";const row=(w,t)=>{const c=String(w.caps||"").trim();return `<tr class="wzr ${t}"><td class="wzn"><span class="wzi">${WI[t]}</span>${esc(w.name)}</td>${WF.slice(1,7).map(f=>f==="a"?`<td><button class="wza${String(w.a).length>2?" l":""}" data-dzw="${esc(JSON.stringify({u:un||"",n:w.name,t:t,a:w.a,ct:w.hit,f:w.f,pa:w.pa,d:w.d,c:c}))}" aria-label="Lancer ${esc(w.a)} dés">${esc(w.a)}</button></td>`:`<td>${esc(w[f])}</td>`).join("")}</tr>`+(c?`<tr class="wzc ${t}"><td colspan="7">${cpl(c).map(x=>`<span class="wzp">${esc(x)}</span>`).join("")}</td></tr>`:"")},
+const wtbl=(ws,un)=>{if(!ws.length)return"";const row=(w,t)=>{const c=String(w.caps||"").trim();return `<tr class="wzr ${t}"><td class="wzn"><span class="wzi">${WI[t]}</span>${esc(w.name)}</td>${WF.slice(1,7).map(f=>f==="a"?`<td><button class="wza${String(w.a).length>2?" l":""}" data-dzw="${esc(JSON.stringify({u:un||"",n:w.name,t:t,a:w.a,ct:w.hit,f:w.f,pa:w.pa,d:w.d,c:c}))}" aria-label="Lancer ${esc(w.a)} dés">${esc(w.a)}</button></td>`:`<td>${esc(w[f])}</td>`).join("")}</tr>`+(c?`<tr class="wzc ${t}"><td colspan="7">${cpl(c).map(x=>`<span class="wzp" data-encn="${esc(x)}">${esc(x)}</span>`).join("")}</td></tr>`:"")},
  gp=[["r","Armes à distance"],["m","Armes de corps à corps"]].map(([t,n])=>[t,n,ws.filter(w=>(isMel(w)?"m":"r")===t)]).filter(g=>g[2].length);
  return `<div class="w wz"><table><tr>${WP.slice(0,7).map(h=>`<th>${h}</th>`).join("")}</tr>${gp.map(([t,n,a],gi)=>(gi?`<tr class="wzs g"><td colspan="7"></td></tr>`:"")+`<tr class="wzg ${t}"><td colspan="7"><span class="wzi">${WI[t]}</span>${n} <span class="wzk">${a.length}</span></td></tr>`+a.map((w,i)=>(i?`<tr class="wzs"><td colspan="7"></td></tr>`:"")+row(w,t)).join("")).join("")}</table><div class="wzh">Touche le nombre d'attaques <b>(A)</b> pour lancer les dés</div></div>`};
 const sec=(t,b)=>b?`<div class="sech">${t}</div>${b}`:"";
-const prof=p=>stx(p.stats)+wtbl(p.weapons,p.name)+sec("Aptitudes",(apNames(p).length?`<p class="apn">${(a=>[...a.filter(x=>hlOn(p,x)),...a.filter(x=>!hlOn(p,x))])(apNames(p)).map(x=>`<span class="an${hlOn(p,x.trim())?" hl":""}${fdOn(p,x.trim())?" fold":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(x.trim())}">${esc(x.trim())}</span>`).join("")}</p>`:"")+abil(p))+(p.equip?(k=>`<details class="eq" data-pk="${k}" data-pd="${window.eqDef?1:0}"${(window.eqDef?!pop.has(k):pop.has(k))?" open":""}><summary>Équipement <span style="opacity:.8;font-weight:400">· ${String(p.equip).split(",").filter(x=>x.trim()).length}</span></summary><p>${esc(p.equip)}</p></details>`)("e:"+(p.ref||p.name)):"")+sec("Mots-clés",p.kw?`<p class="mu">${esc(p.kw)}${p.fkw?" · "+esc(p.fkw):""}</p>`:"");
+const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+stx(p.stats)+wtbl(p.weapons,p.name)+sec("Aptitudes",(apNames(p).length?`<p class="apn">${(a=>[...a.filter(x=>hlOn(p,x)),...a.filter(x=>!hlOn(p,x))])(apNames(p)).map(x=>`<span class="an${hlOn(p,x.trim())?" hl":""}${fdOn(p,x.trim())?" fold":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(x.trim())}">${esc(x.trim())}</span>`).join("")}</p>`:"")+abil(p))+(p.equip?(k=>`<details class="eq" data-pk="${k}" data-pd="${window.eqDef?1:0}"${(window.eqDef?!pop.has(k):pop.has(k))?" open":""}><summary>Équipement <span style="opacity:.8;font-weight:400">· ${String(p.equip).split(",").filter(x=>x.trim()).length}</span></summary><p>${esc(p.equip)}</p></details>`)("e:"+(p.ref||p.name)):"")+sec("Mots-clés",p.kw||p.fkw?`<p class="mu enckw">${window.encKw?window.encKw(p):esc(p.kw)+(p.fkw?" · "+esc(p.fkw):"")}</p>`:"")+(window.encXtra?window.encXtra(p):"")+`</div>`;
 const ei=(p,v,ph)=>`<input data-p="${p}" value="${esc(v)}" placeholder="${ph||""}">`;
 const xabE=(p,b)=>`<h4>Aptitudes ajoutées</h4>`+(p.xab||[]).map((x,i)=>`<details class="card xd" data-xk="${b}${i}"${window.xo===b+i?" open":""}><summary><b>${esc(x.n||"Sans nom")}</b> <span class="mu">· touche pour écrire la description</span></summary><label>Nom<input data-p="${b}xab.${i}.n" value="${esc(x.n||"")}"></label><label>Description<textarea data-p="${b}xab.${i}.d" rows="4">${esc(x.d||"")}</textarea></label><button class="b x" data-act="delab" data-b="${b}" data-k="${i}">Supprimer cette aptitude</button></details>`).join("")+`<p><button class="b" data-act="addab" data-b="${b}">+ Aptitude</button></p>`;
 const pe=(p,b)=>`<div class="sg">${K.map(k=>`<label>${k}${ei(b+"stats."+k,p.stats[k])}</label>`).join("")}</div><h4>Armes</h4><div class="w">${p.weapons.map((w,k)=>`<div class="wr">${WF.map((f,i)=>ei(`${b}weapons.${k}.${f}`,w[f],WP[i])).join("")}<button class="b x" data-act="delw" data-b="${b}" data-k="${k}">✕</button></div>`).join("")}</div><button class="b" data-act="addw" data-b="${b}">+ Arme</button>
@@ -1025,9 +1137,9 @@ const batTot=(i,u)=>S.bat.t.slice(0,u+1).reduce((a,r)=>a+r.p[i]+r.s[i]+(r.m?r.m[
 function miniBar(){const B=S.bat,c=B.cur||0,CL=["#3ddc97","#f0a54a"],cb=(i,v)=>`<button data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} un PC">${v>0?"+":"−"}</button>`;
  return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div></div>`}
 function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;B.sx=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
-function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat",run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
+function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat"||(tab==="enc"&&!!S.pm&&!S.mg),run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
  $("#bar").style.display=g?"flex":"none";$("#m").classList.toggle("gm",g);$("#fab").style.display=g?"none":"";$("#fab").textContent=run?"▶ Reprendre la partie":"🎲 Mode jeu";$("#fab").dataset.act=run?"gresume":"gpick";
- $("#bar").innerHTML=g?[["play","🛡","Unités",tab==="play"],["pst","⚡","Stratagèmes",tab==="pst"],["bat","🏆","Score",tab==="bat"]].map(([k,i,n,on])=>`<button data-tab="${k}" class="${on?"on":""}"><i>${i}</i>${n}</button>`).join("")+`<button data-act="gmg"><i>☰</i>Gestion</button><button class="end" data-act="gend"><i>⏹</i>Terminer</button>`:""}
+ $("#bar").innerHTML=g?[["play","🛡","Unités",tab==="play"],["pst","⚡","Stratagèmes",tab==="pst"],["bat","🏆","Score",tab==="bat"],["enc","📖","Règles",tab==="enc"]].map(([k,i,n,on])=>`<button data-tab="${k}" class="${on?"on":""}"><i>${i}</i>${n}</button>`).join("")+`<button data-act="gmg"><i>☰</i>Gestion</button><button class="end" data-act="gend"><i>⏹</i>Terminer</button>`:""}
 const pHay=p=>[p.name,p.kw,p.fkw,p.equip,p.apt,(p.weapons||[]).map(w=>w.name).join(" "),(p.text||[]).join(" "),(p.xab||[]).map(x=>(x.n||"")+" "+(x.d||"")).join(" ")].join(" ").toLowerCase();
 const pSearch=(L,extra)=>`<div class="card psb"><input id="ps" type="search" placeholder="Chercher unité, arme, aptitude, stratagème…" value="${esc(pq)}" autocomplete="off">${extra||""}</div>`;
 const pNone=()=>`<div class="card"><p>Aucune liste active.</p><p class="mu">Ouvre « Gestion » pour importer ou créer ta liste d’armée, puis touche « ▶ Jouer ».</p><button class="b p" data-tab="lists">Aller à Gestion</button></div>`;
@@ -1050,11 +1162,11 @@ function pstList(L){const q=pq.toLowerCase().trim(),names=[...L.dets.map(d=>d.na
   return `<details class="pg" data-pk="${k}" data-pd="${q?1:0}"${(q?!pop.has(k):pop.has(k))?" open":""}><summary><b>${esc(n||"Sans détachement")}</b> <span class="mu">${ss.length} stratagème${ss.length>1?"s":""}</span></summary>${d&&d.rule&&!re?`<details class="pr" data-pk="r:${esc(n)}" data-pd="${q?1:0}"${(q?!pop.has("r:"+n):pop.has("r:"+n))?" open":""}><summary>Règle du détachement</summary><p class="pre">${esc(d.rule)}</p></details>`:""}${ss.map(t=>`<div class="ps"><div class="psh"><b>${esc(t.name)}</b><span class="cpb">${esc(t.cp)} PC</span></div><p class="pre">${esc(t.body)}</p></div>`).join("")}</details>`}).join("");
  return out||`<p class="mu" style="text-align:center;margin:24px 0">${L.strats.length?"Aucun stratagème ne correspond.":"Aucun stratagème (Gestion → Mes listes → Gérer → Stratagèmes)."}</p>`}
 function pstView(L){if(!L)return pNone();return pSearch(L,`<div class="pph">${PH.map(([k,n])=>`<button class="${pph===k?"on":""}" data-act="pph" data-k="${k}">${n}</button>`).join("")}</div>`)+`<div id="pl">${pstList(L)}</div>`}
-function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===S.pm))S.pm=null;if(!S.pm)S.mg=false;if(S.pm&&!S.mg){S.cur=S.pm;if(!GM.includes(tab))tab="play"}else if(GM.includes(tab))tab="lists"}refreshVar();pushSubs();if(ded==null&&sed==null)libSync(cl());if(tab!=="dets")ded=null;if(tab!=="strats")sed=null;if(tab!=="units")led=false;const L=cl();{const b=$("#sb");b.style.cssText=S.sban?`height:170px;background:url(${S.sban}) ${bp("s")}/cover`:"display:none";$("#dsb").style.display=$("#fsb").style.display=S.sban?"":"none"}$("#cl").textContent=L&&["units","dets","strats","opti","play","pst"].includes(tab)?L.name:"";
+function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===S.pm))S.pm=null;if(!S.pm)S.mg=false;if(S.pm&&!S.mg){S.cur=S.pm;if(!GM.includes(tab)&&tab!=="enc")tab="play"}else if(GM.includes(tab))tab="lists"}refreshVar();pushSubs();if(ded==null&&sed==null)libSync(cl());if(tab!=="dets")ded=null;if(tab!=="strats")sed=null;if(tab!=="units")led=false;const L=cl();{const b=$("#sb");b.style.cssText=S.sban?`height:170px;background:url(${S.sban}) ${bp("s")}/cover`:"display:none";$("#dsb").style.display=$("#fsb").style.display=S.sban?"":"none"}$("#cl").textContent=L&&["units","dets","strats","opti","play","pst"].includes(tab)?L.name:"";
  const tabs=[["lists","Mes listes"],["coll","Collection"],...(L?[["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"]]:[]),["imp","Importer"]];
- $("#nav").innerHTML=tab==="play"||tab==="pst"?miniBar():tab==="bat"?"":(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"]]:[["lists","Mes listes"],["coll","Collection"],["gm","Parties"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
+ $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?"":(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["lists","Mes listes"],["coll","Collection"],["gm","Parties"],["enc","📖 Règles"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
  if(tab==="lists")h=`<div class="card row" style="justify-content:space-between"><b>${S.lists.length} liste(s)</b><button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?`<div class="grid">${S.lists.map(l=>`<div class="card"><b style="font-size:17px">${esc(l.name)}</b><div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""}${lpts(l)?" · "+lpts(l)+" pts":""} · ${l.dets.length} détachement(s)</div>${l.mission?`<div class="mu">${esc(misTag(l.mission,l.game))}</div>`:""}<p>${l.id===S.cur?'<span class="mu">● Liste ouverte</span>':""}</p><button class="b p" data-act="gstart" data-id="${l.id}">▶ Jouer</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button> <button class="b" data-act="ren" data-id="${l.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${l.id}">Supprimer</button></div>`).join("")}</div>`:"<p>Aucune liste pour l’instant. Crée-en une avec « + Nouvelle liste » ou importe ton armée.</p>");
- else if(tab==="play")h=playView(L);else if(tab==="pst")h=pstView(L);else if(tab==="coll")h=collView();else if(tab==="bat")h=batView2();else if(tab==="gm")h=gmView();else if(tab==="units"){h=`<div class="card row" style="justify-content:space-between"><span><b>${lcount(L)} unité${lcount(L)>1?"s":""}</b><span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?" · "+esc(misTag(L.mission,L.game)):""}</span></span><span><button class="b" data-act="ledit">Modifier la liste</button> <button class="b" data-act="ren" data-id="${L.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${L.id}">Supprimer la liste</button> <button class="b p" data-act="npick">+ Ajouter une figurine</button> <button class="b" data-act="nunit">Fiche vide</button></span></div>${led?ledForm(L):""}<div class="grid">${L.units.map((u,i)=>`<div class="card hv${S.coll[u.ref]&&S.coll[u.ref].var?" v":""}" data-act="view" data-i="${i}">${S.coll[u.ref]&&S.coll[u.ref].var?'<span class="vr">Variante d’arme</span>':""}<button class="xx" data-act="xunit" data-i="${i}" title="Retirer de la liste">✕</button><div class="row">${pimg(u)}<span><b class="cap">${esc(u.name)}</b>${u.qty>1?` <span class="mu">×${u.qty}</span>`:""}${S.coll[u.ref]&&S.coll[u.ref].var?' <span class="mu">· variante d’arme</span>':""}${mlead(u).length?'<span class="led">Unité menée</span>':""}${mlead(u).map(s=>`<br><span class="mu">${S.imgs[s.ref]?`<img src="${S.imgs[s.ref]}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:4px" alt="">`:""}+ ${esc(cap(s.name))}</span>`).join("")}</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}
+ else if(tab==="play")h=playView(L);else if(tab==="pst")h=pstView(L);else if(tab==="coll")h=collView();else if(tab==="bat")h=batView2();else if(tab==="gm")h=gmView();else if(tab==="enc")h=window.encView?window.encView():"";else if(tab==="units"){h=`<div class="card row" style="justify-content:space-between"><span><b>${lcount(L)} unité${lcount(L)>1?"s":""}</b><span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?" · "+esc(misTag(L.mission,L.game)):""}</span></span><span><button class="b" data-act="ledit">Modifier la liste</button> <button class="b" data-act="ren" data-id="${L.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${L.id}">Supprimer la liste</button> <button class="b p" data-act="npick">+ Ajouter une figurine</button> <button class="b" data-act="nunit">Fiche vide</button></span></div>${led?ledForm(L):""}<div class="grid">${L.units.map((u,i)=>`<div class="card hv${S.coll[u.ref]&&S.coll[u.ref].var?" v":""}" data-act="view" data-i="${i}">${S.coll[u.ref]&&S.coll[u.ref].var?'<span class="vr">Variante d’arme</span>':""}<button class="xx" data-act="xunit" data-i="${i}" title="Retirer de la liste">✕</button><div class="row">${pimg(u)}<span><b class="cap">${esc(u.name)}</b>${u.qty>1?` <span class="mu">×${u.qty}</span>`:""}${S.coll[u.ref]&&S.coll[u.ref].var?' <span class="mu">· variante d’arme</span>':""}${mlead(u).length?'<span class="led">Unité menée</span>':""}${mlead(u).map(s=>`<br><span class="mu">${S.imgs[s.ref]?`<img src="${S.imgs[s.ref]}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:4px" alt="">`:""}+ ${esc(cap(s.name))}</span>`).join("")}</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}
  else if(tab==="dets")h=detView(L);else if(tab==="dets0")h=L.dets.map(d=>`<div class="card"><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?d.cost+" pt(s)":""}</span><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement détecté.</p>";
  else if(tab==="strats")h=stView(L);else if(tab==="opti")h=optiView2(L);else if(tab==="strats0"){const g={};L.strats.forEach(s=>(g[s.det]=g[s.det]||[]).push(s));
   h=Object.entries(g).map(([d,a])=>`<details class="card" ${d===window.po?"open":""}><summary><b>${esc(d)}</b> <span class="mu">${a.length} stratagèmes</span></summary>${a.map(s=>`<div class="card"><b>${esc(s.name)}</b> <span class="mu">${s.cp} PC</span><p class="pre">${esc(s.body)}</p></div>`).join("")}</details>`).join("")||"<p>Aucun stratagème détecté.</p>"}
@@ -2499,6 +2611,442 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 /* le nom tapé dans le plateau met à jour les onglets en direct */
 document.addEventListener("input",e=>{const t=e.target,k=t&&t.dataset&&t.dataset.bn;if(k==null)return;const v=t.value||"Joueur "+(+k+1);document.querySelectorAll('[data-tbn="'+k+'"]').forEach(x=>{x.textContent=v});tbkH="";tbScroll()});
 })();
+</script>
+<script>
+/* ===== Encyclopédie V11 — base officielle intégrée (résumés reformulés, jamais le texte intégral) =====
+   st : "off" = officielle vérifiée (source officielle consultée) · "verif" = à vérifier
+   Chaque entrée garde un identifiant permanent : ne jamais le changer, même si le nom change. */
+const ENC_DATE="2026-11-10",ENC_VER="V11 (Core Rules, juin 2026)";
+const ENC_SRC={
+ terr:["Warhammer Community — « Tous à couvert avec de nouvelles règles de terrain »","https://www.warhammer-community.com/fr-fr/articles/xlppkx5s/new40k-tous-a-couvert-avec-de-nouvelles-regles-de-terrain/"],
+ obj:["Warhammer Community — « Avec les terrains pour objectifs, le champ de bataille devient votre mission »","https://www.warhammer-community.com/fr-fr/articles/lxzwueun/new40k-avec-les-terrains-pour-objectifs-le-champ-de-bataille-devient-votre-mission/"],
+ comb:["Warhammer Community — « Du changement pour des combats toujours plus dynamiques »","https://www.warhammer-community.com/fr-fr/articles/m3son4il/new40k-du-changement-pour-des-combats-toujours-plus-dynamiques/"],
+ t40:["Core Rules V11 (reproduction par section sur tactical40k.com — PDF officiel non consulté)","https://tactical40k.com/codex/rulebook"],
+ dd:["Analyse des Core Rules V11 (Sprues & Brews, source secondaire)","https://spruesandbrews.com/2026/06/01/warhammer-40000-11th-edition-core-rules-deep-dive/"],
+ v10:["Codex de faction V10 (toujours utilisables en V11 selon Games Workshop) — règle non revérifiée pour la V11",""]
+};
+/* r(id, nom, alias, catégorie, faction, définition, fonctionnement, conditions, restrictions, source, statut, version) */
+const ENC_BASE=(()=>{const r=(id,n,al,cat,fac,def,how,cond,rest,src,st,v)=>({id,n,al,cat,fac:fac||"",def,how:how||"",cond:cond||"",rest:rest||"",src:ENC_SRC[src][0],url:ENC_SRC[src][1],v0:v||ENC_VER,v:v||ENC_VER,chk:ENC_DATE,st});
+return[
+/* ---------- 1. Règles générales ---------- */
+r("gen-mesure","Mesurer les distances",["mesure","distance","distances"],"gen","","Les distances se mesurent en pouces (\"), entre les parties les plus proches des socles des figurines.","Pour une figurine sans socle, on mesure depuis son point le plus proche (le mot-clé CHÂSSIS renvoie à cette règle).","","","t40","verif"),
+r("gen-des","Dés (D6, D3)",["d6","d3","2d6","des"],"gen","","Le jeu utilise des dés à six faces. Un D3 se lance avec un D6 dont on divise le résultat par deux, arrondi au supérieur.","Les notations du type 2D6 ou D6+1 indiquent le nombre de dés et le modificateur à appliquer.","","","t40","verif"),
+r("gen-cd","Test de Commandement",["commandement","cd","leadership","test de commandement"],"gen","","On lance 2D6 : le test est réussi si le total est égal ou supérieur à la caractéristique de Commandement (CD) de l'unité.","Le test d'ébranlement est un test de Commandement.","","","t40","verif"),
+r("gen-ebranle","Ébranlé",["ebranle","ébranlée","test d'ebranlement","test d'ébranlement","battle-shock","battle-shocked","battleshock"],"gen","","Une unité ébranlée a une caractéristique de Contrôle d'objectif (CO) égale à « - » : ses figurines n'apportent rien au contrôle des objectifs.","Pendant la phase de Commandement, le joueur actif fait un test pour chaque unité ébranlée ou réduite à la moitié de son effectif ou moins. Échec : l'unité est (ou reste) ébranlée ; réussite : elle cesse de l'être. Une unité peut donc rester ébranlée plusieurs tours.","Unité ébranlée, ou à demi-effectif ou moins au moment du test.","Tant qu'elle est ébranlée : pas de stratagème sur elle, pas d'action, et sa Retraite devient une fuite risquée (jets de danger). Seule la partie « CO = - » est confirmée par un article officiel.","t40","verif"),
+r("gen-phases","Round de bataille et phases",["round","phases","tour de joueur","round de bataille"],"gen","","Chaque round de bataille se compose d'un tour par joueur. Chaque tour comporte 5 phases : Commandement, Mouvement, Tir, Charge, Combat.","","","","t40","verif"),
+r("gen-ph-cmd","Phase de Commandement",["phase de commandement","command phase"],"gen","","Phase de début de tour : les deux joueurs gagnent des points de commandement, puis les unités concernées font leurs tests d'ébranlement.","Ordre décrit : effets « au début de la phase », puis +1 PC pour chaque joueur, puis tests d'ébranlement, puis aptitudes de la phase de Commandement, puis effets « fin de phase », puis décompte des objectifs.","","","dd","verif"),
+r("gen-pc","Points de commandement (PC)",["pc","points de commandement","cp","command points"],"gen","","Ressource dépensée pour utiliser des stratagèmes.","Chaque joueur gagne 1 PC pendant chaque phase de Commandement.","","","dd","verif"),
+r("gen-ph-mvt","Phase de Mouvement",["phase de mouvement","movement phase","mouvement normal","immobile"],"gen","","Chaque unité peut rester immobile, faire un mouvement normal, avancer ou battre en retraite. Les unités en réserve peuvent arriver par un mouvement d'arrivée.","Le pivot est libre : une figurine tourne autour de son centre sans dépenser de mouvement.","On ne peut pas finir un mouvement à portée d'engagement d'un ennemi (sauf en chargeant), mais on peut traverser cette portée pendant le mouvement.","","comb","verif"),
+r("gen-avance","Avancer",["avance","advance"],"gen","","Mouvement amélioré : on ajoute 1D6\" au mouvement de l'unité.","","","Une unité qui a avancé ne peut pas tirer, sauf avec des armes Assaut, ni charger.","dd","verif"),
+r("gen-retraite","Retraite",["retraite","battre en retraite","fall back"],"gen","","Mouvement qui permet à une unité engagée de quitter le combat.","Si l'unité est ébranlée, sa retraite est une fuite désespérée qui impose des jets de danger.","","","t40","verif"),
+r("gen-ph-tir","Phase de Tir",["phase de tir","shooting phase","tir"],"gen","","Les unités éligibles choisissent leurs cibles visibles et résolvent leurs attaques : jet de touche, jet de blessure, sauvegarde, puis dégâts.","Les modificateurs de CT et du jet de touche peuvent se cumuler (par exemple +2 au total).","","Les MONSTRES et VÉHICULES engagés subissent -1 pour toucher quand ils tirent sur une autre unité que celle qui les engage.","dd","verif"),
+r("gen-touche","Jet de touche",["touche","jet de touche","hit roll","ct","cc","capacite de tir","capacite de combat"],"gen","","On lance un D6 par attaque : la touche est réussie si le résultat est égal ou supérieur à la CT (tir) ou CC (corps à corps).","Un 1 non modifié rate toujours. Un 6 non modifié est une touche critique.","","","t40","verif"),
+r("gen-crit","Touche et blessure critiques",["critique","touche critique","blessure critique","critical hit","critical wound"],"gen","","Un 6 non modifié au jet de touche est une touche critique ; un 6 non modifié au jet de blessure est une blessure critique (toujours réussie).","Plusieurs aptitudes d'armes se déclenchent sur un critique (Touches fatales, Touches soutenues, Blessures dévastatrices, Anti-).","","","t40","verif"),
+r("gen-blessure","Jet de blessure",["blessure","jet de blessure","wound roll","force","endurance"],"gen","","On compare la Force (F) de l'arme à l'Endurance (E) de la cible pour connaître le résultat à obtenir.","F ≥ 2×E : 2+ · F > E : 3+ · F = E : 4+ · F < E : 5+ · F ≤ E/2 : 6+.","","Un 6 non modifié blesse toujours (blessure critique).","t40","verif"),
+r("gen-svg","Sauvegarde d'armure",["sauvegarde","svg","sv","save","pa","armour save"],"gen","","Le défenseur lance un D6 : il doit obtenir au moins sa caractéristique de Sauvegarde (SV), modifiée par la Pénétration d'armure (PA) de l'arme.","La PA est un modificateur négatif appliqué au jet. Un 1 non modifié échoue toujours.","","","t40","verif"),
+r("gen-invu","Sauvegarde invulnérable",["invulnerable","invulnérable","svg invulnerable","sauvegarde invulnerable","invulnerable save"],"gen","","Sauvegarde à valeur fixe, que la PA de l'arme ne modifie pas.","Le défenseur utilise la meilleure de ses sauvegardes disponibles.","","","t40","verif"),
+r("gen-degats","Dégâts",["degats","dégât","damage"],"gen","","Chaque sauvegarde ratée fait perdre à la figurine un nombre de PV égal à la caractéristique Dégâts (D) de l'arme.","","","","t40","verif"),
+r("gen-bm","Blessures mortelles",["blessure mortelle","bm","mortal wound","mortal wounds"],"gen","","Chaque blessure mortelle fait perdre 1 PV, sans jet de sauvegarde possible.","Les dégâts normaux sont appliqués avant les blessures mortelles.","","","t40","verif"),
+r("gen-alloc","Allocation des attaques",["allocation","allouer","allocation des blessures"],"gen","","Le défenseur répartit les attaques sur ses figurines : les figurines déjà blessées d'abord, les groupes de PERSONNAGES en dernier.","Dans une unité attachée, on utilise l'Endurance la plus élevée des gardes du corps (celle des meneurs s'il n'en reste plus).","","L'aptitude Précision permet de viser directement un PERSONNAGE.","t40","verif"),
+r("gen-vis","Visibilité (ligne de vue)",["visibilite","ligne de vue","visible","line of sight"],"gen","","Une figurine est visible si une partie quelconque peut être vue ; entièrement visible si toute la partie tournée vers l'observateur peut l'être.","Les zones de terrain occultantes bloquent la vue à travers elles (voir Occultante).","","","t40","verif"),
+r("gen-engag","Portée d'engagement",["portee d'engagement","engagement range","engagement"],"gen","","Une unité située à 2\" ou moins d'une unité ennemie est engagée avec elle (1\" dans l'édition précédente).","Pendant la phase de Mouvement, une figurine peut traverser la portée d'engagement ennemie mais ne peut pas y terminer son mouvement, sauf en chargeant.","","Une source secondaire indique aussi une limite verticale de 5\" : à confirmer.","comb","off"),
+r("gen-engage","Engagé",["engage","engagée","engaged"],"gen","","État d'une unité située à portée d'engagement (2\") d'une unité ennemie.","Une unité engagée ne peut pas finir un mouvement à portée d'engagement d'un ennemi qu'elle ne charge pas.","","","comb","off"),
+r("gen-ph-charge","Phase de Charge",["phase de charge","charge","charger","jet de charge","charge phase"],"gen","","Une unité peut déclarer une charge si une unité ennemie se trouve à 12\" ou moins. On lance le jet de charge (distance maximale), puis on choisit les cibles.","Cibles : unités ennemies à 12\" ou moins et à la distance obtenue ou moins (mesure socle à socle). Chaque figurine doit finir plus près d'une cible, à 1\" si possible, sinon engagée. À la fin, l'unité doit être engagée avec toutes ses cibles et avec aucune autre unité ennemie.","Au moins un ennemi à 12\" ou moins.","Une unité qui a chargé gagne Combat en Premier jusqu'à la fin du tour.","comb","off"),
+r("gen-ph-combat","Phase de Combat",["phase de combat","fight phase","combat","corps a corps"],"gen","","Tous les mouvements d'insertion sont faits d'abord (joueur actif puis adversaire), puis les joueurs choisissent tour à tour une unité qui combat ; enfin toutes les consolidations sont faites ensemble.","Le joueur actif choisit en premier. Les unités avec Combat en Premier combattent avant les autres ; ensuite, le joueur qui devait jouer choisit parmi les unités restantes, quel que soit le tour.","","","comb","off"),
+r("gen-insertion","Mouvement d'insertion",["insertion","mouvement d'insertion","pile in","pile-in"],"gen","","Déplacement de 3\" maximum, fait au début de la phase de Combat, pour placer le plus d'unités possible à portée d'engagement.","Le joueur actif fait tous ses mouvements d'insertion, puis l'adversaire. Une unité peut engager des ennemis qui ne sont pas ses cibles.","","","comb","off"),
+r("gen-debord","Combat de débordement",["debordement","combat de debordement","overrun"],"gen","","Une unité éligible pour combattre mais qui n'est plus engagée (cibles détruites ou retirées) peut faire un mouvement d'insertion supplémentaire avant de choisir de nouvelles cibles.","","","","comb","off"),
+r("gen-consol","Consolidation",["consolider","consolidation","consolidate"],"gen","","Après les combats, chaque unité peut se déplacer de 3\" maximum vers une unité ennemie ou un objectif proche. Toutes les consolidations ont lieu à la même étape.","Une unité ennemie engagée ainsi qui n'a pas encore combattu pourra encore combattre.","","","comb","off"),
+r("gen-coherence","Cohésion d'unité",["cohesion","coherence","cohésion d'unité","unit coherency"],"gen","","Chaque figurine doit être à 2\" horizontalement (5\" verticalement) d'au moins une autre figurine de son unité, et à 9\" de toutes les autres.","Une partie du socle suffit à être dans la distance.","","Les figurines hors cohésion sont retirées à la fin du tour, sans déclencher les règles de destruction.","t40","verif"),
+r("gen-objectifs","Objectifs (zones de terrain)",["objectif","objectifs","pion objectif","objective"],"gen","","La plupart des objectifs se tiennent désormais en occupant une zone de terrain, et non plus un pion. Selon la mission, il y a 5 ou 6 objectifs.","Certains objectifs peuvent être représentés par des socles de 40 mm (par exemple une bombe à désamorcer ou une relique à transporter).","","","obj","off"),
+r("gen-controle","Niveau de contrôle",["niveau de controle","controle","controle d'objectif","co","oc","objective control"],"gen","","Chaque joueur additionne la caractéristique CO de ses figurines présentes dans la zone de l'objectif : c'est son niveau de contrôle. Le plus élevé contrôle l'objectif.","Exemple officiel : 6 contre 5, le joueur à 6 contrôle l'objectif. Une unité ébranlée a CO « - ».","","En cas d'égalité, les sources secondaires se contredisent : à vérifier.","obj","off"),
+r("gen-obj-sec","Objectif sécurisé",["objectif securise","securise","secured"],"gen","","Un objectif sécurisé reste contrôlé par son joueur même après le départ de ses unités, jusqu'à ce que l'adversaire ait un niveau de contrôle supérieur à la fin d'une phase.","","","","t40","verif"),
+r("gen-reserves","Réserves stratégiques",["reserve","reserves","reserves strategiques","strategic reserves"],"gen","","Unités gardées hors de la table au début de la partie, jusqu'à 50 % de la limite de points (fortifications exclues).","Elles arrivent généralement à partir du 2e round par un mouvement d'arrivée.","","Une unité en réserve qui n'est pas arrivée à la fin du 3e round est détruite.","t40","verif"),
+r("gen-arrivee","Mouvement d'arrivée",["arrivee","mouvement d'arrivee","ingress","ingress move","renforts"],"gen","","Placement d'une unité depuis la réserve : à 6\" ou moins d'un ou plusieurs bords de table et à plus de 8\" de toutes les unités ennemies.","Après ce mouvement, l'unité ne peut plus se déplacer autrement avant la phase de Charge suivante.","","Avant le 3e round, pas de placement dans la zone de déploiement adverse. Seule la distance de 8\" est confirmée officiellement.","t40","verif"),
+r("gen-transport","Embarquer dans un transport",["embarquer","embarque","transport embarquement","capacite de transport"],"gen","","La capacité d'un TRANSPORT figure sur sa fiche. Une unité peut embarquer après un mouvement normal, une avance ou une retraite si toutes ses figurines sont à 3\" du transport.","","À partir du 1er round, unité pas placée ce tour, place disponible.","","t40","verif"),
+r("gen-debarq","Débarquer",["debarquer","debarquement","disembark"],"gen","","Débarquement rapide ou tactique : placement à 3\" du transport. Débarquement de combat : placement à 6\", mais l'unité devient ébranlée et ne peut pas charger.","","","","t40","verif"),
+r("gen-debarq-urg","Débarquement d'urgence",["debarquement d'urgence","emergency disembark"],"gen","","Quand un transport est détruit, chaque unité embarquée se place à 6\" ou moins (après les jets de danger) et devient non engagée.","Les figurines qui ne peuvent pas être placées sont détruites.","","L'unité devient ébranlée et ne peut pas charger ce tour. Seul le fait de devenir « non engagée » est confirmé officiellement.","t40","verif"),
+r("gen-attachees","Unités attachées (meneur et soutien)",["unite attachee","unites attachees","attached unit","garde du corps","bodyguard"],"gen","","Avant la bataille, un PERSONNAGE meneur et une unité de soutien peuvent s'attacher à une unité de garde du corps pour ne former qu'une seule unité.","L'unité attachée possède tous les mots-clés de ses composantes. Pour cibler, on utilise l'Endurance la plus élevée des gardes du corps.","Une seule unité Meneur et une seule unité Soutien par garde du corps.","Les règles de destruction ne se déclenchent qu'à la mort de la dernière figurine présente au début de la bataille.","t40","verif"),
+r("gen-danger","Jet de danger",["danger","jet de danger","hazard","hazard roll"],"gen","","On lance un D6 par figurine concernée : sur 1 ou 2, l'unité subit 1 blessure mortelle (3 si toutes ses figurines sont MONSTRE ou VÉHICULE).","Utilisé par l'aptitude Dangereux et par certaines situations (fuite d'une unité ébranlée…).","","","t40","verif"),
+r("gen-doublons","Aptitudes identiques (cumul)",["cumul","aptitudes identiques","duplicates"],"gen","","Deux aptitudes de base ou d'armes identiques ne se cumulent pas, même si leurs valeurs diffèrent : le joueur choisit celle qui s'applique.","","","","t40","verif"),
+r("gen-aura","Aptitudes d'aura",["aura"],"gen","","Une aura affecte les unités situées dans la portée indiquée. Une figurine est toujours dans sa propre aura.","","","Plusieurs exemplaires de la même aura ne s'appliquent qu'une fois.","t40","verif"),
+r("gen-strat","Stratagèmes",["stratageme","stratagemes","stratagem"],"gen","","Règles spéciales activées en dépensant des PC.","","","Une unité ne peut être affectée que par un seul stratagème par phase. Une unité ébranlée ne peut pas être ciblée par un stratagème.","dd","verif"),
+/* ---------- 7. Terrain ---------- */
+r("ter-zone","Zone et élément de terrain",["zone de terrain","element de terrain","terrain","decor","décors"],"terr","","L'élément de terrain est le décor (ruine, barricade, arbre, rocher) ; la zone de terrain est son empreinte au sol, où s'appliquent ses effets.","Un élément est toujours posé sur une zone de terrain ou en délimite le bord.","","","terr","off"),
+r("ter-occ","Occultante",["occultant","occultante","obscuring"],"terr","","La plupart des zones de terrain sont occultantes : on ne voit pas à travers.","Les grosses unités peuvent s'en servir pour échapper aux tirs.","","Une source secondaire précise que la vue reste possible si les deux figurines sont dans la même zone : à confirmer.","terr","off"),
+r("ter-couvert","Couvert",["couvert","benefice du couvert","cover","benefit of cover"],"terr","","Les unités d'INFANTERIE, de BÊTES et de NUÉE situées dans une zone de terrain bénéficient du couvert : l'attaquant subit -1 à sa CT.","Remplace l'ancien +1 à la sauvegarde.","INFANTERIE, BÊTES ou NUÉE dans une zone de terrain.","Les VÉHICULES et MONSTRES ne profitent pas du couvert de la zone elle-même, mais peuvent se placer derrière ses décors. Le Tir Plongeant annule le couvert.","terr","off"),
+r("ter-cache","Caché",["cache","cachee","hidden"],"terr","","Les figurines d'INFANTERIE, de BÊTES ou de NUÉE dans une zone de terrain sont cachées si leur unité n'a pas tiré pendant le tour de joueur précédent ni pendant le tour en cours.","Une figurine cachée n'est visible des ennemis que dans leur portée de détection, généralement 15\". Vrai aussi au début de la partie.","Ne pas avoir tiré ce tour-ci ni au tour précédent.","","terr","off"),
+r("ter-plongeant","Tir plongeant",["tir plongeant","plunging fire"],"terr","","Une unité sur un élément de terrain d'au moins 3\" de haut gagne +1 à sa CT contre une cible au niveau du sol.","Les figurines IMPOSANTES en profitent même au sol, contre des cibles à 12\" ou moins. Il neutralise le bénéfice du couvert.","Cible au niveau du sol et visible.","","terr","off"),
+r("ter-leger","Obstacles légers",["obstacle leger","obstacles legers","mur bas","broussailles"],"terr","","Les véhicules traversent sans ralentir les obstacles légers (murs bas, broussailles, lignes d'arbres).","","","","obj","off"),
+r("ter-dense","Terrain dense (déplacement)",["terrain dense","dense"],"terr","","L'INFANTERIE, les BÊTES, les NUÉES et les unités MOBILES traversent horizontalement le terrain dense ; seules INFANTERIE, BÊTES et NUÉES le franchissent verticalement.","Les autres figurines ne peuvent franchir que les parties de 2\" de haut ou moins.","","","t40","verif"),
+r("ter-solide","Solide",["solide","solid"],"terr","","Le terrain dense bloque la ligne de vue à travers les ouvertures fermées situées à 3\" ou moins du sol.","","","","t40","verif"),
+/* ---------- 2. Mots-clés ---------- */
+r("kw-infanterie","Infanterie",["infanterie","infantry"],"kw","","Mot-clé des fantassins.","Profite du couvert et peut être Cachée dans une zone de terrain ; se déplace à travers le terrain dense, horizontalement et verticalement.","","","terr","off"),
+r("kw-betes","Bêtes",["bete","betes","beast","beasts"],"kw","","Mot-clé des créatures et cavaliers légers.","Comme l'INFANTERIE : couvert, Caché, déplacement dans le terrain dense.","","","terr","off"),
+r("kw-nuee","Nuée",["nuee","swarm"],"kw","","Mot-clé des essaims.","Comme l'INFANTERIE : couvert, Caché, déplacement dans le terrain dense.","","","terr","off"),
+r("kw-vehicule","Véhicule",["vehicule","vehicle"],"kw","","Mot-clé des engins et blindés.","Pendant un mouvement normal ou une avance, peut traverser les figurines (sauf autres MONSTRES/VÉHICULES). Traverse les obstacles légers sans ralentir. Peut rouler sur un décor s'il a assez de mouvement mais ne peut pas finir dessus.","","Ne profite pas du couvert de la zone de terrain elle-même. Engagé, il subit -1 pour toucher en tirant sur une autre unité.","t40","verif"),
+r("kw-monstre","Monstre",["monstre","monster"],"kw","","Mot-clé des grandes créatures.","Mêmes règles de déplacement et de tir engagé que les VÉHICULES. Un jet de danger raté inflige 3 blessures mortelles si toute l'unité est MONSTRE ou VÉHICULE.","","Ne profite pas du couvert de la zone de terrain elle-même.","t40","verif"),
+r("kw-personnage","Personnage",["personnage","character","heros","héros"],"kw","","Mot-clé des héros et chefs.","Peut être meneur d'une unité de garde du corps. Les attaques lui sont allouées en dernier, sauf avec Précision.","","","t40","verif"),
+r("kw-vol","Vol",["vol","fly"],"kw","","Lors d'un mouvement normal, d'une avance, d'une retraite ou d'une charge, l'unité peut « prendre les airs » : elle ignore la distance verticale et traverse toutes les figurines et tous les terrains.","Prendre les airs retire 2\" à la distance maximale (Stationnaire supprime cette pénalité).","","","t40","verif"),
+r("kw-aeronef","Aéronef",["aeronef","aircraft","avion"],"kw","","Doit commencer en réserve stratégique et n'entre en jeu que par un mouvement d'arrivée ; retourne en réserve à la fin du tour adverse.","Les autres unités peuvent le traverser. Il ne peut pas charger, ne combat que les unités qui VOLENT et ne peut être chargé ou combattu que par elles.","","Le Tir plongeant ne s'applique pas contre lui.","t40","verif"),
+r("kw-transport","Transport",["transport"],"kw","","Unité capable d'embarquer d'autres unités selon la capacité indiquée sur sa fiche.","Voir Embarquer, Débarquer et Débarquement d'urgence.","","","t40","verif"),
+r("kw-imposant","Imposant",["imposant","imposante","towering"],"kw","","Les figurines IMPOSANTES (par exemple les Chevaliers Impériaux) bénéficient du Tir plongeant même au niveau du sol, contre les cibles à 12\" ou moins.","","Cible visible au niveau du sol, à 12\" ou moins.","","terr","off"),
+r("kw-mobile","Mobile",["mobile"],"kw","","Les unités MOBILES traversent horizontalement le terrain dense.","","","","t40","verif"),
+r("kw-chassis","Châssis",["chassis","frame"],"kw","","Pour les figurines CHÂSSIS, les distances se mesurent depuis le point le plus proche de la figurine (pas de socle).","","","","t40","verif"),
+r("kw-fortif","Fortification",["fortification"],"kw","","Mot-clé des bâtiments jouables.","Les FORTIFICATIONS ne comptent pas dans la limite de points des réserves.","","","t40","verif"),
+r("kw-fumigenes","Fumigènes",["fumigene","fumigenes","smoke"],"kw","","Mot-clé utilisé par le stratagème Écran de fumée.","","","","t40","verif"),
+/* ---------- 6. Armes et équipements ---------- */
+r("arm-assaut","Assaut",["assaut","assault"],"arm","","L'arme peut tirer même si son unité a avancé ce tour.","","","","t40","verif"),
+r("arm-lourd","Lourd",["lourd","lourde","heavy"],"arm","","+1 au jet de touche si l'unité n'a pas bougé de plus de 3\" ce tour.","","Unité non engagée, pas placée ce tour, aucune figurine déplacée de plus de 3\".","Une autre source secondaire parle d'unité restée immobile : à confirmer.","t40","verif"),
+r("arm-tir-rapide","Tir rapide X",["tir rapide","rapid fire"],"arm","","+X attaques si la cible est à mi-portée ou moins.","","Cible à la moitié de la portée de l'arme ou moins.","","t40","verif"),
+r("arm-fuseur","Fuseur X",["fuseur","melta"],"arm","","+X à la caractéristique Dégâts si la cible est à mi-portée ou moins.","","Cible à la moitié de la portée de l'arme ou moins.","","t40","verif"),
+r("arm-ign-couvert","Ignore le couvert",["ignore le couvert","ignore couvert","ignores cover"],"arm","","La cible ne peut pas bénéficier du couvert contre ces attaques.","","","","t40","verif"),
+r("arm-jumele","Jumelé",["jumele","jumelee","jumelées","touches jumelees","twin-linked","twin linked"],"arm","","On peut relancer le jet de blessure.","","","","t40","verif"),
+r("arm-fatales","Touches fatales",["touches fatales","touche fatale","lethal hits"],"arm","","Une touche critique blesse automatiquement la cible.","","","","t40","verif"),
+r("arm-soutenues","Touches soutenues X",["touches soutenues","touche soutenue","sustained hits"],"arm","","Chaque touche critique inflige X touches supplémentaires.","","","","t40","verif"),
+r("arm-devast","Blessures dévastatrices",["blessures devastatrices","blessure devastatrice","devastating wounds"],"arm","","Une blessure critique met fin à la séquence d'attaque et inflige des blessures mortelles égales aux Dégâts de l'arme, après les dégâts normaux.","","","Chaque blessure critique ne touche qu'une seule figurine.","t40","verif"),
+r("arm-anti","Anti-[MOT-CLÉ] X+",["anti-*","anti"],"arm","","Contre une cible ayant le mot-clé indiqué, un jet de blessure non modifié de X+ est une blessure critique.","Exemple : Anti-Infanterie 4+.","Cible avec le mot-clé indiqué.","","t40","verif"),
+r("arm-deflagration","Déflagration",["deflagration","blast","explosion"],"arm","","+1 attaque (ou +X) par tranche de 5 figurines dans l'unité ciblée (arrondi à l'inférieur).","","","Ne peut pas cibler une unité engagée.","t40","verif"),
+r("arm-cleave","Cleave X (équivalent mêlée de Déflagration)",["cleave","fendoir"],"arm","","En corps à corps, si une seule unité est ciblée : +X dés d'attaque par tranche de 5 figurines dans l'unité ciblée.","","Une seule cible choisie.","Nom français officiel non vérifié.","t40","verif"),
+r("arm-torrent","Torrent",["torrent"],"arm","","Les attaques touchent automatiquement.","","","","t40","verif"),
+r("arm-dangereux","Dangereux",["dangereux","dangereuse","hazardous"],"arm","","Après le tir ou le combat de l'unité, on fait un jet de danger par arme Dangereuse utilisée.","Voir Jet de danger.","","","t40","verif"),
+r("arm-indirect","Tir indirect",["tir indirect","indirect fire","indirect"],"arm","","L'arme peut cibler une unité qui n'est pas visible. La cible bénéficie du couvert et les jets de touche ne peuvent pas être relancés.","Sans ligne de vue, seuls les 6 touchent ; si l'unité est restée immobile et qu'une unité amie voit la cible, il faut 4+ non modifié.","","Les sources secondaires diffèrent sur les seuils exacts : à confirmer.","t40","verif"),
+r("arm-pistolet","Pistolet / Combat rapproché",["pistolet","pistol","close-quarters","combat rapproche"],"arm","","Permet de tirer en étant engagé, uniquement sur l'unité qui engage.","Sinon, chaque figurine utilise soit ses armes de combat rapproché, soit ses autres armes de tir, pas les deux.","","","t40","verif"),
+r("arm-precision","Précision",["precision"],"arm","","Les attaques peuvent être allouées à un groupe de PERSONNAGES visible dans l'unité ciblée.","","","","t40","verif"),
+r("arm-bonus","Attaques bonus",["attaques bonus","attaque bonus","extra attacks"],"arm","","L'arme est utilisée en plus d'une autre arme de corps à corps (on la choisit obligatoirement).","","","","t40","verif"),
+r("arm-lance","Lance",["lance","lances"],"arm","","+1 au jet de blessure si l'unité a fait un mouvement de charge ce tour.","","","","t40","verif"),
+r("arm-psy","Psychique",["psychique","psychic","psy"],"arm","","Les attaques ignorent tous les modificateurs de CT/CC et du jet de touche. Les blessures infligées par une aptitude psychique sont des attaques psychiques.","","","","t40","verif"),
+r("arm-unique","Tir unique",["tir unique","one shot","usage unique"],"arm","","L'arme ne peut être utilisée qu'une fois par bataille.","","","","t40","verif"),
+/* ---------- 3. Aptitudes générales ---------- */
+r("apt-fep","Frappe en profondeur",["frappe en profondeur","fep","deep strike"],"apt","","Si toutes ses figurines l'ont, l'unité peut arriver de la réserve n'importe où sur la table à plus de 8\" des ennemis (9\" dans l'édition précédente), y compris dans la zone adverse.","Il faut toujours 9 au jet de charge pour charger depuis la Frappe en profondeur.","Toutes les figurines ont l'aptitude.","","comb","off"),
+r("apt-premier","Combat en premier",["combat en premier","frappe en premier","fights first"],"apt","","L'unité combat avant les unités qui n'ont pas cette aptitude.","Toute unité qui a chargé gagne Combat en Premier jusqu'à la fin du tour.","","","comb","off"),
+r("apt-fnp","Insensible à la douleur X+",["insensible a la douleur","fnp","feel no pain"],"apt","","Chaque fois que la figurine perdrait un PV, on lance un D6 : sur X+, ce PV n'est pas perdu.","","","","t40","verif"),
+r("apt-infiltr","Infiltrés",["infiltre","infiltres","infiltrateurs","infiltrators"],"apt","","Si toutes ses figurines l'ont, l'unité peut se déployer n'importe où à plus de 8\" des ennemis et de la zone de déploiement adverse.","","","","t40","verif"),
+r("apt-scouts","Scouts X\"",["scout","scouts"],"apt","","Avant la bataille, l'unité peut faire un mouvement de X\" maximum (en finissant à plus de 8\" des ennemis) ou se placer en réserve dans sa zone de déploiement.","","Toutes les figurines ont l'aptitude.","","t40","verif"),
+r("apt-discretion","Discrétion",["discretion","stealth","furtif"],"apt","","Si toutes ses figurines l'ont, l'unité bénéficie du couvert contre les attaques de tir.","","","","t40","verif"),
+r("apt-solitaire","Agent solitaire",["agent solitaire","solitaire","lone operative"],"apt","","Tant qu'elle n'est pas attachée, l'unité n'est pas visible des ennemis à plus de 12\" (ou X\") et ne peut pas être visée par un tir indirect au-delà.","","Unité non attachée.","","t40","verif"),
+r("apt-demise","Explosion fatale X",["explosion fatale","mort explosive","deadly demise"],"apt","","Quand la figurine est détruite (après le débarquement des unités embarquées), on lance un D6 : sur 6, chaque unité à 6\" subit X blessures mortelles.","","","Si X est aléatoire, on le lance séparément pour chaque unité. Nom français à confirmer.","t40","verif"),
+r("apt-poste-tir","Poste de tir X",["poste de tir","firing deck"],"apt","","Le transport peut choisir jusqu'à X figurines embarquées ; chacune lui prête une arme de tir (hors Tir unique).","","","Les unités embarquées ne peuvent pas tirer elles-mêmes ce tour. Nom français à confirmer.","t40","verif"),
+r("apt-stationnaire","Stationnaire",["stationnaire","hover"],"apt","","Quand l'unité prend les airs (Vol), elle ne subit pas la pénalité de 2\".","","","Nom français à confirmer.","t40","verif"),
+r("apt-meneur","Meneur",["meneur","leader"],"apt","","Avant la bataille, l'unité peut s'attacher à une unité amie de garde du corps autorisée.","Chaque garde du corps ne peut avoir qu'un meneur (et une unité de soutien).","","","t40","verif"),
+r("apt-soutien","Soutien",["soutien","support"],"apt","","Comme Meneur : l'unité peut s'attacher à une unité de garde du corps, en plus de son meneur éventuel.","Les associations possibles sont listées dans l'application Warhammer 40,000.","","Nom français à confirmer.","t40","verif"),
+r("apt-shw","Marcheur super-lourd",["marcheur super-lourd","super-heavy walker"],"apt","","Lors d'un mouvement normal, d'une avance ou d'une retraite, peut traverser les figurines (sauf TITANESQUES) et le terrain de 4\" de haut ou moins.","Peut gagner MOBILE pour ce mouvement ; sur 1 au D6 ensuite, l'unité devient ébranlée.","","","t40","verif"),
+/* ---------- 9. Autres mécaniques (stratagèmes de base) ---------- */
+r("str-relance","Relance de commandement",["relance de commandement","command re-roll"],"autre","","Stratagème de base : relancer un dé d'un jet ami (un jet de charge se relance en entier).","","","Nom français et coût en PC à confirmer.","t40","verif"),
+r("str-defi","Défi épique",["defi epique","epic challenge"],"autre","","Stratagème de base : les armes de corps à corps d'un PERSONNAGE gagnent Précision jusqu'à la fin de la phase.","","","Coût en PC à confirmer.","t40","verif"),
+r("str-bravoure","Bravoure insensée",["bravoure insensee","insane bravery"],"autre","","Stratagème de base : réussir automatiquement un test d'ébranlement. Une fois par bataille.","","","Coût en PC à confirmer.","t40","verif"),
+r("str-impact","Impact écrasant",["impact ecrasant","crushing impact","choc de char"],"autre","","Stratagème de base : un MONSTRE ou VÉHICULE qui vient de charger inflige des blessures mortelles à l'unité chargée (6 maximum par unité).","Remplace l'ancien Choc de char.","","Nom français et coût à confirmer.","t40","verif"),
+r("str-arrivee","Arrivée rapide",["arrivee rapide","rapid ingress"],"autre","","Stratagème de base : à la fin de la phase de Mouvement adverse, une unité en réserve stratégique (hors AÉRONEF) fait un mouvement d'arrivée.","","","Pas au 1er round. Nom français à confirmer.","t40","verif"),
+r("str-alerte","Tir en état d'alerte",["tir en etat d'alerte","tir en alerte","overwatch","fire overwatch"],"autre","","Stratagème de base : à la fin de la phase de Mouvement adverse, une unité tire sur une unité ennemie à 24\" ou moins ; seuls les 6 non modifiés touchent.","","","Nom français et coût à confirmer.","t40","verif"),
+r("str-fumee","Écran de fumée",["ecran de fumee","smokescreen"],"autre","","Stratagème de base : les unités FUMIGÈNES (et les unités derrière elles) obtiennent le bénéfice du couvert.","","","Coût à confirmer.","t40","verif"),
+r("str-heroique","Intervention héroïque",["intervention heroique","heroic intervention"],"autre","","Stratagème de base : une unité charge pendant le tour adverse. Normalement uniquement une unité qui vient de charger ; en payant 1 PC de plus, n'importe quelle unité à 6\".","","","Coût de base à confirmer.","dd","verif"),
+r("str-contre","Contre-offensive",["contre-offensive","contre offensive","counteroffensive"],"autre","","Stratagème de base : une unité amie éligible gagne Combat en Premier.","","","Coût à confirmer.","t40","verif"),
+/* ---------- 4. Aptitudes de faction (V10, à revérifier pour la V11) ---------- */
+r("fac-serment","Serment du Moment",["serment du moment","oath of moment"],"fac","Space Marines","Au début de votre phase de Commandement, choisissez une unité ennemie : jusqu'à votre prochaine phase de Commandement, les unités ADEPTUS ASTARTES peuvent relancer leurs jets de touche contre elle.","","Armée Adeptus Astartes.","Des mises à jour ultérieures ont pu ajouter des bonus : à vérifier pour la V11.","v10","verif","V10 (codex)"),
+r("fac-reanim","Protocoles de réanimation",["protocoles de reanimation","reanimation","reanimation protocols"],"fac","Nécrons","Pendant votre phase de Commandement, chaque unité NÉCRONS peut réanimer des figurines détruites (D3 PV de figurines par unité en règle générale).","","","Détails exacts à vérifier pour la V11.","v10","verif","V10 (codex)"),
+r("fac-synapse","Synapse",["synapse"],"fac","Tyranides","Les unités TYRANIDES proches d'une unité SYNAPSE font leurs tests d'ébranlement dans de meilleures conditions.","","À portée d'une unité SYNAPSE.","Valeurs exactes à vérifier pour la V11.","v10","verif","V10 (codex)"),
+r("fac-waaagh","Waaagh!",["waaagh","waaagh!","waagh"],"fac","Orks","Une fois par bataille, au début de votre phase de Commandement : jusqu'à votre prochaine phase de Commandement, les ORKS peuvent charger après avoir avancé, gagnent +1 en Force et en Attaques au corps à corps et une sauvegarde invulnérable de 5+.","","Une fois par bataille.","Valeurs à vérifier pour la V11.","v10","verif","V10 (codex)")
+]})();
+/* Anciennes versions officielles des entrées mises à jour (vide pour l'instant) :
+   ENC_PREV["id"]=[{h:"empreinte", def:"…", how:"…", …, v:"…"}]  — permet d'afficher l'ancienne définition lors d'une mise à jour */
+const ENC_PREV={};
+
+/* ================= v89 : Encyclopédie des règles V11 (base centrale) =================
+   Données utilisateur : S.enc = {
+     r:{id:règle complète}   règles ajoutées (own:"man") ou versions personnalisées d'une règle officielle (own:"perso")
+     del:{id:date}           règles supprimées (la base officielle reste dans le code, l'entrée est masquée)
+     as:{fiche:{terme:id|""}} correspondances choisies à la main ("" = association retirée)
+     ex:{fiche:[id]}         règles associées à une fiche sans apparaître dans son texte
+     h:[…]                   historique (ajout, modif, suppr, restau, maj, assoc, dissoc)
+     rv:[id]                 dernières règles consultées
+     ack:{id:empreinte}      version officielle acceptée par l'utilisateur
+     ign:{terme:1}           termes ignorés dans « Règles à compléter » }
+   Une fiche ne stocke jamais de définition : elle est reliée par identifiant (ou par nom contrôlé). */
+(()=>{
+
+const CATS=[["gen","Règles générales","📘"],["kw","Mots-clés","🏷"],["apt","Aptitudes générales","✦"],["fac","Aptitudes de factions","⚜"],["unit","Aptitudes d'unités","🛡"],["arm","Armes et équipements","⚔"],["terr","Terrain","🏚"],["det","Détachements","🚩"],["autre","Autres règles et mécaniques","⚙"]];
+const CATN=Object.fromEntries(CATS.map(c=>[c[0],c[1]])),CATI=Object.fromEntries(CATS.map(c=>[c[0],c[2]]));
+const ST={off:"Officielle vérifiée",verif:"À vérifier"},KIND={perso:"Personnalisée",man:"Ajoutée manuellement"};
+const FIELDS=["n","al","cat","fac","def","how","cond","rest","src","url","v0","v","chk","st"];
+const today=()=>new Date().toISOString().slice(0,10);
+const nk=s=>String(s==null?"":s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[’`]/g,"'").replace(/[«»"“”]/g,"").replace(/\s+/g," ").trim();
+/* clé de correspondance : nom sans paramètres (« Insensible à la douleur 5+ » → « insensible a la douleur ») */
+const bk=s=>{let k=nk(s).replace(/\([^)]*\)/g," ").replace(/\[[^\]]*\]/g," ").replace(/\s+/g," ").trim();
+ for(let i=0;i<3;i++)k=k.replace(/\s*[:\-–]?\s*(\d+\s*(\+|"|''|pouces?)?|\d*d\d+(\s*\+\s*\d+)?|x\+?|\d+\+)$/,"").trim();return k};
+const hsh=o=>{const s=JSON.stringify(FIELDS.filter(f=>f!=="chk").map(f=>o[f]==null?"":o[f]));let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)};
+const PREV=Object.assign({},ENC_PREV);
+/* crochet de test : simule une nouvelle version de la base officielle (l'ancienne est fournie comme version précédente) */
+const BASE0=window.__encMod?ENC_BASE.map(b=>{const m=window.__encMod[b.id];if(!m)return b;PREV[b.id]=[Object.assign({h:hsh(b)},b)];return Object.assign({},b,m)}):ENC_BASE;
+const BASE={};BASE0.forEach(b=>{BASE[b.id]=b});
+const E=()=>{const e=S.enc=S.enc&&typeof S.enc==="object"?S.enc:{};["r","del","as","ex","ack","ign"].forEach(k=>{if(!e[k]||typeof e[k]!=="object"||Array.isArray(e[k]))e[k]={}});["h","rv"].forEach(k=>{if(!Array.isArray(e[k]))e[k]=[]});return e};
+const clone=o=>JSON.parse(JSON.stringify(o));
+/* ----- mises à jour de la base officielle : jamais d'écrasement silencieux ----- */
+let UPD={};
+function encInit(){const e=E();let ch=false;UPD={};
+ for(const b of BASE0){const h=hsh(b);if(!(b.id in e.ack)){e.ack[b.id]=h;ch=true}else if(e.ack[b.id]!==h)UPD[b.id]=h}
+ if(ch)try{localStorage.setItem("armees40k",JSON.stringify(S))}catch(_){}}
+/* version officielle « affichée » : l'ancienne tant que l'utilisateur n'a pas validé la mise à jour */
+function baseShown(id){const b=BASE[id];if(!b)return null;if(!UPD[id])return b;const old=(PREV[id]||[]).find(p=>p.h===E().ack[id]);return old?Object.assign({},b,old,{id}):b}
+/* ----- index des règles effectives ----- */
+let IX=null;const dirty=()=>{IX=null};
+function rules(){if(IX)return IX;const e=E(),all={};
+ for(const id in BASE){if(e.del[id])continue;const u=e.r[id];all[id]=u?Object.assign({},u,{id,kind:"perso"}):Object.assign({},baseShown(id),{kind:"base"})}
+ for(const id in e.r){if(BASE[id]||e.del[id])continue;all[id]=Object.assign({},e.r[id],{id,kind:"man"})}
+ const key={},pre=[];
+ for(const id in all){const r=all[id];[r.n,...(Array.isArray(r.al)?r.al:[])].forEach(x=>{const s=String(x||"").trim();if(!s)return;
+   if(s.endsWith("*")){const p=bk(s.slice(0,-1));if(p&&!pre.some(z=>z[0]===p&&z[1]===id))pre.push([p,id]);return}
+   const k=bk(s);if(!k)return;(key[k]=key[k]||[]);if(!key[k].includes(id))key[k].push(id)})}
+ IX={all,key,pre};return IX}
+const R=id=>rules().all[id]||null;
+function cands(term){const k=bk(term),{key,pre}=rules();const a=(key[k]||[]).slice();if(!a.length)pre.forEach(([p,id])=>{if(k.startsWith(p)&&!a.includes(id))a.push(id)});return a}
+/* ----- fiches d'unités (réutilise les fiches existantes, rien n'est recopié) ----- */
+const ukey=p=>p&&p.ref?String(p.ref):"n:"+nk(p&&p.name);
+const splitC=s=>String(s||"").split(/[,;·]/).map(x=>x.trim()).filter(Boolean);
+function terms(p){const o=[];const add=(t,ty)=>{t=String(t||"").trim();if(t&&!o.some(x=>bk(x.t)===bk(t)))o.push({t,ty})};
+ apNames(p).forEach(t=>add(t,"apt"));splitC(p.kw).forEach(t=>add(t,"kw"));splitC(p.fkw).forEach(t=>add(t,"kw"));
+ (p.weapons||[]).forEach(w=>cpl(String(w.caps||"")).forEach(t=>add(t,"arm")));return o}
+function allUnits(){const m=new Map();const put=p=>{if(!p||!p.name)return;const k=ukey(p);if(!m.has(k))m.set(k,p);(p.subs||[]).forEach(put)};
+ Object.values(S.coll||{}).forEach(put);(S.lists||[]).forEach(l=>(l.units||[]).forEach(put));return m}
+function unitBy(k){return allUnits().get(k)||null}
+/* résolution d'un terme d'une fiche : identifiant choisi d'abord, puis nom contrôlé */
+function res(uk,term){const e=E(),tk=bk(term),a=e.as[uk];
+ if(a&&Object.prototype.hasOwnProperty.call(a,tk)){const id=a[tk];if(id==="")return{s:"off",tk};if(R(id))return{s:"ok",id,man:1,tk}}
+ const c=cands(term);if(c.length===1)return{s:"ok",id:c[0],tk};if(c.length>1)return{s:"amb",c,tk};return{s:"miss",tk}}
+function usage(id){const out=[],e=E();for(const [k,p] of allUnits()){const hit=terms(p).some(t=>{const x=res(k,t.t);return x.s==="ok"&&x.id===id})||(e.ex[k]||[]).includes(id);if(hit)out.push({k,n:p.name})}return out}
+function missing(){const e=E(),m={};for(const [k,p] of allUnits())for(const t of terms(p)){const x=res(k,t.t);if(x.s!=="miss"||e.ign[x.tk])continue;const g=m[x.tk]=m[x.tk]||{t:t.t,ty:t.ty,u:[],tk:x.tk,txt:""};
+  if(!g.u.some(z=>z.k===k))g.u.push({k,n:p.name});if(!g.txt){const xa=(p.xab||[]).find(z=>bk(z.n)===x.tk&&z.d);if(xa)g.txt=String(xa.d)}}
+ return Object.values(m).sort((a,b)=>b.u.length-a.u.length||a.t.localeCompare(b.t,"fr"))}
+function ambig(){const m={};for(const [k,p] of allUnits())for(const t of terms(p)){const x=res(k,t.t);if(x.s!=="amb")continue;const g=m[x.tk]=m[x.tk]||{t:t.t,c:x.c,u:[]};if(!g.u.some(z=>z.k===k))g.u.push({k,n:p.name})}return Object.values(m)}
+function dups(){const {key,all}=rules(),out=[],seen=new Set();
+ for(const k in key)if(key[k].length>1){const s=key[k].slice().sort().join("|");if(!seen.has(s)){seen.add(s);out.push({k,ids:key[k].slice()})}}
+ const lev=(a,b)=>{if(Math.abs(a.length-b.length)>2)return 9;const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
+ const ids=Object.keys(all);for(let i=0;i<ids.length;i++)for(let j=i+1;j<ids.length;j++){const a=bk(all[ids[i]].n),b=bk(all[ids[j]].n);if(a.length>5&&a!==b&&lev(a,b)<=2){const s=[ids[i],ids[j]].sort().join("|");if(!seen.has(s)){seen.add(s);out.push({k:a,ids:[ids[i],ids[j]],near:1})}}}
+ return out}
+/* ----- historique ----- */
+const snap=r=>{const o={};FIELDS.forEach(f=>{if(r&&r[f]!=null)o[f]=clone(r[f])});if(r&&r.kind)o.kind=r.kind;return o};
+function hist(ty,id,o,nw,x){const e=E();e.h.unshift(Object.assign({i:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t:Date.now(),ty,id,n:(nw&&nw.n)||(o&&o.n)||id,o:o?snap(o):null,nw:nw?snap(nw):null},x||{}));if(e.h.length>400)e.h.length=400}
+function seen(id){const e=E();e.rv=[id,...e.rv.filter(x=>x!==id)].slice(0,12)}
+function commit(){dirty();save();draw();deco()}
+/* ----- écritures ----- */
+function setRule(id,data){const e=E(),old=R(id),isBase=!!BASE[id];
+ const nr={};FIELDS.forEach(f=>{nr[f]=data[f]!=null?data[f]:(old?old[f]:"")});nr.al=Array.isArray(nr.al)?nr.al:splitC(nr.al);
+ if(old&&old.n&&nk(old.n)!==nk(nr.n)&&!nr.al.some(a=>nk(a)===nk(old.n)))nr.al.push(old.n); /* l'ancien nom reste reconnu */
+ nr.own=isBase?"perso":"man";nr.t=Date.now();if(isBase)nr.bh=hsh(BASE[id]);
+ e.r[id]=nr;hist(old?"modif":"ajout",id,old,Object.assign({},nr,{kind:isBase?"perso":"man"}));dirty()}
+function addRule(data){const slug=bk(data.n).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,24)||"regle";let id="u-"+slug;while(R(id)||BASE[id]||E().r[id])id="u-"+slug+"-"+Math.random().toString(36).slice(2,5);
+ setRule(id,Object.assign({v0:data.v||ENC_VER,chk:today()},data));return id}
+function delRule(id){const e=E(),old=R(id);if(!old)return;hist("suppr",id,old,null,{own:e.r[id]?clone(e.r[id]):null});
+ e.del[id]=Date.now();delete e.r[id];for(const k in e.as){for(const t in e.as[k])if(e.as[k][t]===id)delete e.as[k][t];if(!Object.keys(e.as[k]).length)delete e.as[k]}
+ for(const k in e.ex){e.ex[k]=e.ex[k].filter(x=>x!==id);if(!e.ex[k].length)delete e.ex[k]}e.rv=e.rv.filter(x=>x!==id);dirty()}
+function restoreH(hi){const e=E(),h=e.h.find(x=>x.i===hi);if(!h)return;const id=h.id;
+ if(h.ty==="suppr"){delete e.del[id];if(h.own)e.r[id]=clone(h.own);dirty();hist("restau",id,null,R(id),{de:"suppr"});return}
+ if(h.o){const cur=R(id);if(BASE[id]&&h.o.kind==="base"){delete e.r[id];dirty();hist("restau",id,cur,R(id),{de:h.ty});return}
+  const nr=clone(h.o);delete nr.kind;nr.own=BASE[id]?"perso":"man";nr.t=Date.now();if(BASE[id])nr.bh=hsh(BASE[id]);delete e.del[id];e.r[id]=nr;dirty();hist("restau",id,cur,R(id),{de:h.ty})}}
+function assoc(uk,term,id){const e=E(),tk=bk(term);(e.as[uk]=e.as[uk]||{})[tk]=id;const u=unitBy(uk);hist(id?"assoc":"dissoc",id||(res(uk,term).id||""),null,null,{n:term,u:u?u.name:uk});dirty()}
+function unassocReset(uk,term){const e=E(),tk=bk(term);if(e.as[uk]){delete e.as[uk][tk];if(!Object.keys(e.as[uk]).length)delete e.as[uk]}dirty()}
+/* =============== bulle explicative sur les fiches =============== */
+const pop=document.createElement("div");pop.id="encb";pop.className="encb";pop.hidden=true;pop.setAttribute("role","dialog");document.body.appendChild(pop);
+let popA=null,popCtx=null,popY=0;
+const badge=r=>r?(r.kind==="perso"?`<span class="encst p">${KIND.perso}</span>`:r.kind==="man"?`<span class="encst m">${KIND.man}</span>`:"")+(r.kind!=="man"||r.st==="verif"?`<span class="encst ${r.st==="off"?"o":"v"}">${ST[r.st]||ST.verif}</span>`:"")+(UPD[r.id]?`<span class="encst u">Mise à jour officielle</span>`:""):"";
+const para=(t,x)=>x?`<div class="encp"><b>${t}</b><p>${esc(x)}</p></div>`:"";
+const srcLine=r=>`<div class="encm">${esc(CATN[r.cat]||"")}${r.fac?" · "+esc(r.fac):""} · ${esc(r.v||"")}${r.src?`<br>Source : ${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.src)}</a>`:esc(r.src)}`:""}${r.chk?` · vérifiée le ${esc(r.chk)}`:""}</div>`;
+function ruleBody(r){return`<p class="encd">${esc(r.def)}</p>${para("Fonctionnement",r.how)}${para("Conditions d'application",r.cond)}${para("Restrictions",r.rest)}`}
+function popHtml(c){const r=c.id?R(c.id):null,hlb=c.hl?`<button type="button" class="encbt" data-act="hl" data-r="${esc(c.hl.r)}" data-n="${esc(c.hl.n)}">${c.hl.st===1?"▤ Replier sur la fiche":c.hl.st===2?"↺ Affichage normal":"★ Surligner sur la fiche"}</button>`:"";
+ let h=`<div class="encbh"><div><b>${esc(r?r.n:c.term)}</b>${r&&bk(r.n)!==bk(c.term)?`<small>sur la fiche : ${esc(c.term)}</small>`:""}</div><button type="button" class="encx" data-enc="pclose" aria-label="Fermer">✕</button></div><div class="encbb">`;
+ if(r){h+=`<div class="encbg">${badge(r)}</div>`+ruleBody(r)+srcLine(r)+`</div><div class="encba">${hlb}<button type="button" class="encbt" data-enc="open" data-id="${r.id}">📖 Encyclopédie</button><button type="button" class="encbt" data-enc="edit" data-id="${r.id}">✎ Modifier</button>${c.ex?`<button type="button" class="encbt x" data-enc="unex" data-id="${r.id}">⛓ Retirer de cette fiche</button>`:`<button type="button" class="encbt x" data-enc="unas">⛓ Retirer de cette fiche</button>`}${c.man?`<button type="button" class="encbt" data-enc="auto">↺ Correspondance auto</button>`:""}</div>`;return h}
+ if(c.s==="amb"){h+=`<p class="encw">Plusieurs règles correspondent à ce nom. Choisis celle qui s'applique à cette fiche :</p><div class="encch">${c.c.map(id=>{const x=R(id);return`<button type="button" class="encbt" data-enc="pick" data-id="${id}"><b>${esc(x.n)}</b><small>${esc(CATN[x.cat]||"")}${x.fac?" · "+esc(x.fac):""}</small></button>`}).join("")}</div></div><div class="encba">${hlb}</div>`;return h}
+ if(c.s==="off")return h+`<p class="encw">Ce terme n'est plus relié à l'encyclopédie sur cette fiche (association retirée). La règle centrale existe toujours.</p></div><div class="encba">${hlb}<button type="button" class="encbt" data-enc="auto">⛓ Relier de nouveau</button><button type="button" class="encbt" data-enc="link">Choisir une règle…</button></div>`;
+ return h+`<p class="encw">Règle non enregistrée dans l'encyclopédie. Aucune définition n'est inventée : crée l'entrée ou relie ce terme à une règle existante.</p></div><div class="encba">${hlb}<button type="button" class="encbt p" data-enc="create">＋ Créer l'entrée</button><a class="encbt" href="${gq(c.term)}" target="_blank" rel="noopener">🔎 Rechercher sur Internet</a><button type="button" class="encbt" data-enc="link">Relier à une règle…</button></div>`}
+const gq=t=>"https://www.google.com/search?q="+encodeURIComponent(`Warhammer 40000 V11 "${t}" règle`);
+function place(){if(pop.hidden||!popA)return;if(!document.contains(popA)){popClose();return}const a=popA.getBoundingClientRect(),W=innerWidth,H=innerHeight,w=Math.min(360,W-16);pop.style.width=w+"px";
+ const bar=document.getElementById("bar"),hd=document.querySelector("header"),bb=bar&&getComputedStyle(bar).display!=="none"?bar.offsetHeight:0,tp=hd?Math.max(0,hd.getBoundingClientRect().bottom):0,ph=pop.offsetHeight,below=H-bb-a.bottom,above=a.top-tp;let top=below>=ph+12||below>=above?a.bottom+8:a.top-ph-8;top=Math.max(tp+8,Math.min(top,H-bb-ph-8));pop.style.maxHeight=Math.max(220,H-bb-tp-16)+"px";
+ let left=a.left+a.width/2-w/2;left=Math.max(8,Math.min(left,W-w-8));pop.style.top=top+"px";pop.style.left=left+"px";const ax=Math.max(16,Math.min(w-16,a.left+a.width/2-left));pop.style.setProperty("--ax",ax+"px");pop.classList.toggle("up",top<a.top)}
+function popOpen(el){const u=el.closest("[data-encr]"),uk=u?(u.dataset.encr?u.dataset.encr:"n:"+nk(u.dataset.encn)):"",term=el.dataset.encn||el.dataset.n||el.textContent.trim();
+ let c;if(el.dataset.encid){c={id:el.dataset.encid,ex:1,s:"ok"}}else{const x=res(uk,term);c=Object.assign({},x)}
+ c.uk=uk;c.term=term;if(el.matches(".apn .an")&&el.dataset.r){const n=String(el.dataset.n||"").toLowerCase(),H=(S.hl[el.dataset.r]||[]),F=(S.fold[el.dataset.r]||[]);c.hl={r:el.dataset.r,n:el.dataset.n,st:F.includes(n)?2:H.includes(n)?1:0}}
+ if(c.id){seen(c.id);try{localStorage.setItem("armees40k",JSON.stringify(S))}catch(_){}}
+ popA=el;popCtx=c;popY=scrollY;pop.innerHTML=popHtml(c);pop.hidden=false;pop.classList.remove("in");void pop.offsetWidth;pop.classList.add("in");place();
+ const f=pop.querySelector(".encx");if(f)try{f.focus({preventScroll:true})}catch(_){}}
+function popClose(){pop.hidden=true;popA=null;popCtx=null}
+window.encPopClose=popClose;
+document.addEventListener("click",e=>{const el=e.target.closest&&e.target.closest(".encu .apn .an,.encu .wzp,.encu .enct,.encu .encxr");if(!el)return;e.stopPropagation();e.preventDefault();if(popA===el&&!pop.hidden){popClose();return}popOpen(el)},true);
+document.addEventListener("click",e=>{if(pop.hidden)return;if(pop.contains(e.target)){const b=e.target.closest("[data-act=hl]");if(b)setTimeout(popClose,0);return}if(e.target.closest&&e.target.closest(".encu .apn .an,.encu .wzp,.encu .enct,.encu .encxr"))return;popClose()},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!ov.hidden&&!dlg){e.stopPropagation();ovClose();return}if(!pop.hidden){e.stopPropagation();const a=popA;popClose();if(a)try{a.focus()}catch(_){}}}},true);
+window.addEventListener("scroll",()=>{if(!pop.hidden&&Math.abs(scrollY-popY)>40)popClose();else place()},{passive:true});
+window.addEventListener("resize",place);
+pop.addEventListener("click",e=>{const b=e.target.closest("[data-enc]");if(!b)return;e.stopPropagation();const c=popCtx;if(!c)return;const a=b.dataset.enc;
+ if(a==="pclose"){popClose();return}
+ if(a==="open"){popClose();goEnc(b.dataset.id);return}
+ if(a==="edit"){popClose();editor(b.dataset.id);return}
+ if(a==="unas"){assoc(c.uk,c.term,"");popClose();commit();toast("Règle retirée de cette fiche (elle reste dans l'encyclopédie)");return}
+ if(a==="unex"){const e2=E();e2.ex[c.uk]=(e2.ex[c.uk]||[]).filter(x=>x!==b.dataset.id);if(!e2.ex[c.uk].length)delete e2.ex[c.uk];hist("dissoc",b.dataset.id,null,null,{u:(unitBy(c.uk)||{}).name||""});popClose();commit();toast("Association retirée de cette fiche");return}
+ if(a==="auto"){unassocReset(c.uk,c.term);popClose();commit();return}
+ if(a==="pick"){assoc(c.uk,c.term,b.dataset.id);popClose();commit();toast("Correspondance enregistrée pour cette fiche");return}
+ if(a==="create"){popClose();const u=unitBy(c.uk),xa=u&&(u.xab||[]).find(z=>bk(z.n)===bk(c.term)&&z.d);editor(null,{n:c.term.replace(/\s+\d+\+?$/,"").trim(),cat:el2cat(c.term,u),fac:"",def:xa?String(xa.d):"",src:xa?"Fiche d'unité : "+u.name:"",st:"verif",_link:{uk:c.uk,term:c.term}});return}
+ if(a==="link"){popClose();picker("Relier « "+c.term+" » à…",id=>{assoc(c.uk,c.term,id);commit();toast("Terme relié à « "+R(id).n+" »")});return}});
+function el2cat(term,u){if(!u)return"unit";const t=bk(term);if(splitC(u.kw).concat(splitC(u.fkw)).some(x=>bk(x)===t))return"kw";if((u.weapons||[]).some(w=>cpl(String(w.caps||"")).some(x=>bk(x)===t)))return"arm";return"unit"}
+/* ----- décoration des fiches affichées (couleur selon l'état de la correspondance) ----- */
+let decoRaf=0;
+function deco(){decoRaf=0;document.querySelectorAll(".encu").forEach(u=>{const uk=u.dataset.encr||"n:"+nk(u.dataset.encn);
+ u.querySelectorAll(".apn .an,.wzp,.enct").forEach(el=>{const t=el.dataset.encn||el.dataset.n||el.textContent.trim(),x=res(uk,t);el.classList.remove("enc-ok","enc-amb","enc-miss","enc-off");el.classList.add("enc-"+x.s);el.setAttribute("aria-haspopup","dialog");if(!el.hasAttribute("tabindex"))el.tabIndex=0})});
+ if(!pop.hidden)place()}
+const mo=new MutationObserver(()=>{if(!decoRaf)decoRaf=requestAnimationFrame(deco)});
+["m","md"].forEach(i=>{const n=document.getElementById(i);if(n)mo.observe(n,{childList:true,subtree:true})});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".encu .wzp,.encu .enct,.encu .encxr,.encu .apn .an")){e.preventDefault();popOpen(e.target)}});
+/* mots-clés et règles associées sur les fiches (appelés par le gabarit des fiches) */
+window.encKw=p=>{const a=splitC(p.kw),b=splitC(p.fkw);if(!a.length&&!b.length)return"";const sp=x=>`<span class="enct" data-encn="${esc(x)}">${esc(x)}</span>`;return a.map(sp).join(", ")+(b.length?" · "+b.map(sp).join(", "):"")};
+window.encXtra=p=>{const ids=(E().ex[ukey(p)]||[]).filter(id=>R(id));if(!ids.length)return"";return`<div class="sech">Règles associées</div><p class="apn encxl">${ids.map(id=>`<span class="encxr enc-ok" data-encid="${id}" data-encn="${esc(R(id).n)}">📖 ${esc(R(id).n)}</span>`).join("")}</p>`};
+/* =============== fenêtres (éditeur, historique, sélecteurs, import/export) =============== */
+const ov=document.createElement("div");ov.id="encov";ov.hidden=true;document.body.appendChild(ov);
+let ovKind="",edCtx=null,ovBack=null;
+function ovOpen(kind,html){ovKind=kind;ov.innerHTML=`<div class="ov encovb" data-enc="ovbg"><div class="pn encpn" role="dialog" aria-modal="true">${html}</div></div>`;ov.hidden=false;document.body.classList.add("jclk");const f=ov.querySelector("[autofocus],input,textarea,button");if(f)try{f.focus({preventScroll:true})}catch(_){}}
+function ovClose(){ov.hidden=true;ov.innerHTML="";ovKind="";edCtx=null;if(!document.querySelector("#md .ov")&&!document.querySelector("#jc .jco")&&!document.querySelector("#sxcat .cat"))document.body.classList.remove("jclk")}
+const opt=(v,l,s)=>`<option value="${esc(v)}"${v===s?" selected":""}>${esc(l)}</option>`;
+function editor(id,pre){const r=id?R(id):null,d=r?Object.assign({},r):Object.assign({n:"",al:[],cat:"unit",fac:"",def:"",how:"",cond:"",rest:"",src:"Ajout manuel",url:"",v0:ENC_VER,v:ENC_VER,chk:today(),st:"verif"},pre||{});
+ edCtx={id,link:pre&&pre._link};
+ const f=(k,l,t,ph)=>`<label>${l}${t==="ta"?`<textarea data-ef="${k}" rows="${k==="def"?4:2}" placeholder="${ph||""}">${esc(d[k]||"")}</textarea>`:`<input data-ef="${k}" value="${esc(Array.isArray(d[k])?d[k].join(", "):d[k]||"")}" placeholder="${ph||""}"${k==="n"?" autofocus":""}>`}</label>`;
+ ovOpen("ed",`<div class="ench"><h2>${r?"Modifier la règle":"Ajouter une règle"}</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div>
+ ${r&&r.kind!=="man"?`<p class="encw">${r.kind==="base"?"Règle de la base officielle : ta modification devient une <b>version personnalisée</b>. Elle ne sera jamais écrasée par une mise à jour, et tu pourras revenir à l'officielle.":"Version personnalisée d'une règle officielle."}</p>`:""}
+ ${r?`<p class="mu">Utilisée par ${usage(r.id).length} fiche(s). La modification s'appliquera partout.</p>`:""}
+ <div class="encf">${f("n","Nom *")}${f("al","Autres noms reconnus (séparés par des virgules)","","ex. FNP, Feel No Pain")}
+ <label>Catégorie<select data-ef="cat">${CATS.map(c=>opt(c[0],c[1],d.cat)).join("")}</select></label>${f("fac","Faction (facultatif)","","ex. Nécrons")}
+ ${f("def","Définition *","ta","Résumé fidèle, avec tes mots")}${f("how","Fonctionnement / texte explicatif","ta")}${f("cond","Conditions d'application","ta")}${f("rest","Restrictions","ta")}
+ ${f("src","Source")}${f("url","Lien de la source","","https://…")}
+ <div class="enc2">${f("v0","Version d'origine")}${f("v","Version applicable")}</div>
+ <div class="enc2">${f("chk","Dernière vérification","","AAAA-MM-JJ")}<label>Statut<select data-ef="st">${opt("off",ST.off,d.st)}${opt("verif",ST.verif,d.st)}</select></label></div></div>
+ <p class="encerr" id="encerr" hidden></p>
+ <div class="encft">${r?`<button type="button" class="b x" data-enc="del" data-id="${r.id}">Supprimer</button>`:""}${r&&r.kind==="perso"?`<button type="button" class="b" data-enc="toOff" data-id="${r.id}">Revenir à l'officielle</button>`:""}<span></span><button type="button" class="b" data-enc="ovclose">Annuler</button><button type="button" class="b p" data-enc="esave">Enregistrer</button></div>`)}
+function edRead(){const o={};ov.querySelectorAll("[data-ef]").forEach(x=>{o[x.dataset.ef]=x.value.trim()});o.al=splitC(o.al);return o}
+function edSave(){const o=edRead(),er=ov.querySelector("#encerr");const bad=m=>{er.textContent=m;er.hidden=false};
+ if(!o.n)return bad("Le nom est obligatoire.");if(!o.def)return bad("La définition est obligatoire (aucune règle sans définition).");
+ const id=edCtx&&edCtx.id,clash=cands(o.n).filter(x=>x!==id);
+ if(clash.length&&!ov.querySelector("#encforce")){bad("");er.innerHTML=`Une règle porte déjà ce nom : <b>${esc(R(clash[0]).n)}</b> (${esc(CATN[R(clash[0]).cat]||"")}). Les fiches ne pourront pas choisir automatiquement entre les deux. <label class="encck"><input type="checkbox" id="encforce"> Enregistrer quand même (doublon assumé)</label>`;er.hidden=false;return}
+ if(clash.length&&!ov.querySelector("#encforce").checked)return;
+ const link=edCtx&&edCtx.link;let nid=id;if(id)setRule(id,o);else nid=addRule(o);
+ if(link)assoc(link.uk,link.term,nid);ovClose();commit();toast(id?"Règle modifiée : toutes les fiches associées sont à jour":"Règle ajoutée à l'encyclopédie")}
+function askDel(id){const r=R(id);if(!r)return;const u=usage(id);ovClose();popClose();
+ ask({t:"Supprimer « "+r.n+" » de l'encyclopédie ?",p:(u.length?`Cette règle est utilisée par ${u.length} fiche(s) : ${u.slice(0,6).map(x=>x.n).join(", ")}${u.length>6?"…":""}. Toutes ses associations seront retirées ; ces fiches gardent leur texte mais le terme apparaîtra dans « Règles à compléter ». `:"Aucune fiche n'utilise cette règle. ")+"La suppression reste dans l'historique : tu pourras restaurer la règle.",ok:u.length>1?`Supprimer et retirer ${u.length} associations`:"Supprimer",dg:1},()=>{delRule(id);encOpen=null;toast("Règle supprimée (restaurable depuis l'historique)")})}
+function toOff(id){const r=R(id),e=E();if(!r||!BASE[id])return;ovClose();ask({t:"Revenir à la version officielle ?",p:"Ta version personnalisée est conservée dans l'historique et pourra être restaurée.",ok:"Revenir à l'officielle"},()=>{hist("modif",id,r,Object.assign({},baseShown(id),{kind:"base"}),{off:1});delete e.r[id];dirty()})}
+function picker(title,cb,only){let q="";const list=()=>{const a=search(q,only?only:"").slice(0,40);return a.map(r=>`<button type="button" class="encrow" data-enc="pk" data-id="${r.id}"><b>${esc(r.n)}</b><small>${esc(CATN[r.cat]||"")}${r.fac?" · "+esc(r.fac):""}</small></button>`).join("")||`<p class="mu">Aucune règle trouvée.</p>`};
+ ovOpen("pk",`<div class="ench"><h2>${esc(title)}</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div><input type="search" class="encq" id="encpkq" placeholder="Chercher une règle…" autofocus><div id="encpkl" class="encpkl">${list()}</div>`);
+ ovBack=cb;ov.querySelector("#encpkq").addEventListener("input",ev=>{q=ev.target.value;ov.querySelector("#encpkl").innerHTML=list()})}
+function unitPicker(id){let q="";const all=[...allUnits()].map(([k,p])=>({k,n:p.name}));const list=()=>all.filter(x=>!q||nk(x.n).includes(nk(q))).slice(0,60).map(x=>`<button type="button" class="encrow" data-enc="upk" data-k="${esc(x.k)}"><b class="cap">${esc(x.n)}</b>${(E().ex[x.k]||[]).includes(id)?"<small>déjà associée</small>":""}</button>`).join("")||`<p class="mu">Aucune fiche.</p>`;
+ ovOpen("upk",`<div class="ench"><h2>Associer « ${esc(R(id).n)} » à une fiche</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div><input type="search" class="encq" id="encupq" placeholder="Chercher une fiche…" autofocus><div id="encupl" class="encpkl">${list()}</div>`);
+ edCtx={id};ov.querySelector("#encupq").addEventListener("input",ev=>{q=ev.target.value;ov.querySelector("#encupl").innerHTML=list()})}
+const TY={ajout:"Ajout",modif:"Modification",suppr:"Suppression",restau:"Restauration",maj:"Mise à jour officielle",assoc:"Association",dissoc:"Association retirée"};
+const dt=t=>new Date(t).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
+function histView(id){const e=E(),a=e.h.filter(h=>!id||h.id===id);
+ ovOpen("h",`<div class="ench"><h2>Historique${id&&(R(id)||{}).n?" — "+esc(R(id).n):""}</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div>
+ ${a.length?a.slice(0,150).map(h=>`<details class="ench1"><summary><span class="encty ${h.ty}">${TY[h.ty]||h.ty}</span><b>${esc(h.n||h.id)}</b><small>${dt(h.t)}${h.u?" · "+esc(h.u):""}</small></summary>
+ ${h.o?`<div class="encdiff"><div><i>Avant</i><p>${esc(h.o.def||"")}</p>${h.o.how?`<p class="mu">${esc(h.o.how)}</p>`:""}</div>${h.nw?`<div><i>Après</i><p>${esc(h.nw.def||"")}</p>${h.nw.how?`<p class="mu">${esc(h.nw.how)}</p>`:""}</div>`:""}</div>`:h.nw?`<div class="encdiff"><div><i>Contenu</i><p>${esc(h.nw.def||"")}</p></div></div>`:""}
+ ${(h.ty==="modif"&&h.o)||h.ty==="suppr"||(h.ty==="maj"&&h.o)?`<button type="button" class="b" data-enc="rest" data-h="${h.i}">${h.ty==="suppr"?"Restaurer la règle":"Restaurer la version « Avant »"}</button>`:""}</details>`).join(""):`<p class="mu">Aucune modification enregistrée pour l'instant.</p>`}`)}
+function ioView(){const e=E(),{all}=rules();const data={format:"hammer-encyclopedie",version:1,date:new Date().toISOString(),rules:Object.values(all).map(r=>{const o=snap(r);o.id=r.id;return o}),associations:e.as,extra:e.ex,deleted:Object.keys(e.del)};
+ ovOpen("io",`<div class="ench"><h2>Importer / exporter</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div>
+ <h3 class="enc3">Exporter l'encyclopédie</h3><p class="mu">Format JSON structuré : identifiants, catégories, sources, statuts et associations avec les fiches.</p>
+ <textarea id="encexp" rows="5" readonly>${esc(JSON.stringify(data))}</textarea><div class="encft"><button type="button" class="b" data-enc="copy">Copier</button><button type="button" class="b p" data-enc="dl">Télécharger le fichier</button></div>
+ <h3 class="enc3">Importer des règles</h3><p class="mu">Colle un export Hammer, ou une liste JSON de règles <code>[{"n":"…","def":"…","cat":"apt"}]</code>. Rien n'est écrasé sans confirmation ; les doublons sont signalés.</p>
+ <textarea id="encimp" rows="5" placeholder="Colle ici le JSON…"></textarea><div class="encft"><button type="button" class="b" data-enc="ana">Analyser</button></div><div id="encana"></div>`)}
+let IMP=null;
+function analyse(txt){let j;try{j=JSON.parse(txt)}catch(_){return{err:"Ce texte n'est pas un JSON valide."}}const arr=Array.isArray(j)?j:Array.isArray(j.rules)?j.rules:null;if(!arr)return{err:"Aucune liste de règles trouvée (champ « rules »)."};
+ const out={add:[],upd:[],dup:[],bad:[],as:j.associations||null,ex:j.extra||null};
+ for(const x of arr){if(!x||!String(x.n||"").trim()||!String(x.def||"").trim()){out.bad.push(x&&x.n||"(sans nom)");continue}
+  const cur=x.id?R(x.id):null;if(cur){if(hsh(cur)!==hsh(Object.assign({},cur,x)))out.upd.push(x);continue}
+  const c=cands(x.n);if(c.length)out.dup.push({x,c});else out.add.push(x)}
+ return out}
+function applyImp(withDup){const a=IMP;if(!a)return;let n=0;const norm=x=>{const o={};FIELDS.forEach(f=>{if(x[f]!=null)o[f]=x[f]});if(!CATN[o.cat])o.cat="autre";if(!ST[o.st])o.st="verif";return o};
+ a.upd.forEach(x=>{setRule(x.id,norm(x));n++});
+ a.add.forEach(x=>{const o=norm(x);if(x.id&&!R(x.id)&&!BASE[x.id]&&!E().del[x.id]){setRule(x.id,o)}else addRule(o);n++});
+ if(withDup)a.dup.forEach(d=>{addRule(norm(d.x));n++});
+ const e=E();if(a.as&&typeof a.as==="object")for(const k in a.as){e.as[k]=Object.assign(e.as[k]||{},a.as[k])}
+ if(a.ex&&typeof a.ex==="object")for(const k in a.ex){e.ex[k]=[...new Set([...(e.ex[k]||[]),...a.ex[k]])]}
+ IMP=null;dirty();ovClose();commit();toast(n+" règle(s) importée(s)")}
+function missView(){const m=missing(),a=ambig();
+ ovOpen("miss",`<div class="ench"><h2>Règles à compléter</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div>
+ <p class="mu">Termes trouvés dans tes fiches mais absents de l'encyclopédie. Aucune définition n'est inventée.</p>
+ ${m.length?m.map(g=>`<div class="encmiss"><div><b>${esc(g.t)}</b><small>${esc(g.ty==="kw"?"Mot-clé":g.ty==="arm"?"Aptitude d'arme":"Aptitude")} · ${g.u.length} fiche(s) : ${esc(g.u.slice(0,4).map(x=>x.n).join(", "))}${g.u.length>4?"…":""}</small>${g.txt?`<small class="encok">Le texte de la fiche peut servir de définition.</small>`:""}</div>
+ <div class="encmb"><button type="button" class="b p" data-enc="mcreate" data-tk="${esc(g.tk)}">＋ Créer</button><a class="b" href="${gq(g.t)}" target="_blank" rel="noopener">🔎 Rechercher</a><button type="button" class="b" data-enc="malias" data-tk="${esc(g.tk)}">Relier…</button><button type="button" class="b x" data-enc="mign" data-tk="${esc(g.tk)}">Ignorer</button></div></div>`).join(""):`<p class="encok">Tous les termes de tes fiches sont reliés à l'encyclopédie.</p>`}
+ ${a.length?`<h3 class="enc3">Correspondances ambiguës</h3><p class="mu">Plusieurs règles portent ce nom : rien n'est associé automatiquement. Choisis sur chaque fiche (touche le terme), ou fusionne les doublons.</p>`+a.map(g=>`<div class="encmiss"><div><b>${esc(g.t)}</b><small>${g.c.map(id=>esc(R(id).n+" ("+(CATN[R(id).cat]||"")+")")).join(" / ")} · ${g.u.length} fiche(s)</small></div></div>`).join(""):""}`)}
+ov.addEventListener("click",e=>{const b=e.target.closest("[data-enc]");if(!b)return;const a=b.dataset.enc;
+ if(a==="ovbg"){if(e.target===b&&ovKind!=="ed")ovClose();return}
+ e.stopPropagation();
+ if(a==="ovclose"){ovClose();return}
+ if(a==="esave"){edSave();return}
+ if(a==="del"){askDel(b.dataset.id);return}
+ if(a==="toOff"){toOff(b.dataset.id);return}
+ if(a==="pk"){const cb=ovBack;ovBack=null;ovClose();if(cb)cb(b.dataset.id);return}
+ if(a==="upk"){const id=edCtx.id,k=b.dataset.k,e2=E();const l=e2.ex[k]=e2.ex[k]||[];if(!l.includes(id)){l.push(id);hist("assoc",id,null,null,{u:(unitBy(k)||{}).name||k})}ovClose();commit();toast("Règle associée à la fiche");return}
+ if(a==="rest"){const h=E().h.find(x=>x.i===b.dataset.h);ovClose();ask({t:"Restaurer cette version ?",p:"La définition actuelle sera remplacée par celle de l'historique. La version actuelle reste elle aussi dans l'historique.",ok:"Restaurer"},()=>{restoreH(h.i);toast("Version restaurée")});return}
+ if(a==="copy"){const t=ov.querySelector("#encexp");t.select();try{navigator.clipboard.writeText(t.value).then(()=>toast("Copié"),()=>{document.execCommand("copy");toast("Copié")})}catch(_){document.execCommand("copy");toast("Copié")}return}
+ if(a==="dl"){const data=ov.querySelector("#encexp").value,fn="hammer-encyclopedie-"+today()+".json";(async()=>{let d=null;try{d=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(_){}
+  if(!d){toast("Téléchargement indisponible ici : utilise « Copier »");return}
+  try{await d.save({filename:fn,data})}catch(er){const c=er&&er.code;if(c!=="declined")toast(c==="rate_limited"?"Un téléchargement est déjà en cours, réessaie dans un instant":"Téléchargement impossible : utilise « Copier »")}})();return}
+ if(a==="ana"){const r=analyse(ov.querySelector("#encimp").value),z=ov.querySelector("#encana");if(r.err){z.innerHTML=`<p class="encerr">${esc(r.err)}</p>`;return}IMP=r;
+  z.innerHTML=`<div class="encsum"><p><b>${r.add.length}</b> nouvelle(s) règle(s) · <b>${r.upd.length}</b> mise(s) à jour · <b>${r.dup.length}</b> doublon(s) probable(s)${r.bad.length?` · <b>${r.bad.length}</b> ignorée(s) (nom ou définition manquant)`:""}</p>${r.dup.length?`<p class="mu">Doublons : ${r.dup.slice(0,8).map(d=>esc(d.x.n)+" ≈ "+esc(R(d.c[0]).n)).join(" · ")}</p><label class="encck"><input type="checkbox" id="encimpdup"> Importer aussi les doublons</label>`:""}${r.upd.length?`<p class="mu">Les règles mises à jour deviennent des versions personnalisées ; l'ancienne version reste dans l'historique.</p>`:""}<div class="encft"><button type="button" class="b p" data-enc="imp">Importer</button></div></div>`;return}
+ if(a==="imp"){const d=ov.querySelector("#encimpdup");applyImp(!!(d&&d.checked));return}
+ if(a==="mcreate"){const g=missing().find(x=>x.tk===b.dataset.tk);if(!g)return;const u=unitBy(g.u[0].k);ovClose();editor(null,{n:g.t.replace(/\s+\d+\+?$/,"").trim(),cat:g.ty==="kw"?"kw":g.ty==="arm"?"arm":"unit",def:g.txt||"",src:g.txt?"Fiche d'unité : "+(u?u.name:""):"",st:"verif"});return}
+ if(a==="malias"){const g=missing().find(x=>x.tk===b.dataset.tk);if(!g)return;ovClose();picker("Relier « "+g.t+" » à…",id=>{const r=R(id),al=(r.al||[]).concat([g.t]);setRule(id,Object.assign({},r,{al}));commit();toast("« "+g.t+" » est maintenant reconnu comme « "+r.n+" »")});return}
+ if(a==="mign"){E().ign[b.dataset.tk]=1;save();missView();return}});
+ov.addEventListener("keydown",e=>{if(e.key==="Enter"&&ovKind==="ed"&&e.target.tagName==="INPUT"){e.preventDefault();edSave()}});
+/* =============== écran Encyclopédie =============== */
+let encQ="",encCat="",encOpen=null,encSort="az";
+function search(q,cat){const {all}=rules(),k=nk(q),kb=bk(q),out=[];
+ for(const id in all){const r=all[id];if(cat&&r.cat!==cat)continue;let s=0;
+  if(!k)s=1;else{const n=nk(r.n),nb=bk(r.n),al=(r.al||[]).map(bk);
+   if(n===k||nb===kb)s=100;else if(al.includes(kb))s=90;else if(n.startsWith(k))s=80;else if(n.includes(k))s=60;else if(al.some(a=>a.includes(k)))s=50;
+   else if(nk(r.fac).includes(k)||nk(CATN[r.cat]).includes(k))s=30;else if(nk([r.def,r.how,r.cond,r.rest].join(" ")).includes(k))s=20}
+  if(s)out.push(Object.assign({_s:s},r))}
+ return out.sort((a,b)=>b._s-a._s||(encSort==="az"?a.n.localeCompare(b.n,"fr"):(b.t||0)-(a.t||0)))}
+function card(r,open){return`<article class="encr${open?" open":""}" data-id="${r.id}"><button type="button" class="encrh" data-enc2="tog" data-id="${r.id}" aria-expanded="${open}"><span class="encri">${CATI[r.cat]||"•"}</span><span class="encrn"><b>${esc(r.n)}</b><small>${esc(CATN[r.cat]||"")}${r.fac?" · "+esc(r.fac):""}</small>${open?"":`<span class="encrd">${esc(r.def)}</span>`}</span><span class="encrb">${badge(r)}</span></button>
+ ${open?`<div class="encrx">${ruleBody(r)}${srcLine(r)}${UPD[r.id]?updBox(r.id):""}${(r.al||[]).length?`<p class="encm">Aussi reconnu sous : ${esc(r.al.filter(a=>!a.endsWith("*")).join(", "))}</p>`:""}${useBox(r.id)}
+ <div class="encra"><button type="button" class="b" data-enc2="edit" data-id="${r.id}">✎ Modifier</button><button type="button" class="b" data-enc2="hist" data-id="${r.id}">🕓 Historique</button><button type="button" class="b" data-enc2="link" data-id="${r.id}">⛓ Associer à une fiche</button><button type="button" class="b x" data-enc2="del" data-id="${r.id}">Supprimer</button></div></div>`:""}</article>`}
+function useBox(id){const u=usage(id);return`<p class="encm">${u.length?`Utilisée par ${u.length} fiche(s) : ${esc(u.slice(0,8).map(x=>x.n).join(", "))}${u.length>8?"…":""}`:"Aucune fiche ne l'utilise pour l'instant."}</p>`}
+function updBox(id){const e=E(),cust=!!e.r[id],nb=BASE[id];return`<div class="encupd"><b>Mise à jour officielle disponible</b><p class="mu">${cust?"Tu utilises une version personnalisée : elle n'a pas été modifiée.":"L'ancienne définition reste affichée tant que tu n'as pas validé."}</p><div class="encdiff"><div><i>Nouvelle version officielle</i><p>${esc(nb.def)}</p></div></div><div class="encft">${cust?`<button type="button" class="b" data-enc2="keep" data-id="${id}">Garder ma version</button><button type="button" class="b p" data-enc2="adopt" data-id="${id}">Adopter l'officielle</button>`:`<button type="button" class="b p" data-enc2="adopt" data-id="${id}">Valider la mise à jour</button>`}</div></div>`}
+function results(){const list=search(encQ,encCat);if(!list.length)return`<div class="card encempty"><p>Aucune règle ne correspond à « ${esc(encQ)} ».</p><button type="button" class="b p" data-enc2="new" data-n="${esc(encQ)}">＋ Ajouter « ${esc(encQ||"une règle")} »</button></div>`;
+ if(!encQ&&!encCat&&encSort==="az"){return CATS.map(([c,n,i])=>{const a=list.filter(r=>r.cat===c);if(!a.length)return"";return`<section class="encsec"><h3><span>${i}</span>${n}<small>${a.length}</small></h3>${a.map(r=>card(r,r.id===encOpen)).join("")}</section>`}).join("")}
+ return`<p class="encn">${list.length} règle(s)</p>`+list.map(r=>card(r,r.id===encOpen)).join("")}
+function encHome(){const e=E(),rv=e.rv.filter(id=>R(id)).slice(0,8),rm=[...new Set(e.h.filter(h=>["ajout","modif","restau","maj"].includes(h.ty)).map(h=>h.id))].filter(id=>R(id)).slice(0,6),ms=missing(),am=ambig(),du=dups(),up=Object.keys(UPD).filter(id=>R(id));
+ return`${rv.length?`<div class="encstrip"><b>Consultées récemment</b><div>${rv.map(id=>`<button type="button" class="encchip" data-enc2="go" data-id="${id}">${esc(R(id).n)}</button>`).join("")}</div></div>`:""}
+ ${rm.length?`<div class="encstrip"><b>Modifiées récemment</b><div>${rm.map(id=>`<button type="button" class="encchip" data-enc2="go" data-id="${id}">${esc(R(id).n)}</button>`).join("")}</div></div>`:""}
+ <div class="encalerts">${ms.length||am.length?`<button type="button" class="encal w" data-enc2="miss"><b>${ms.length}</b><span>Règles à compléter${am.length?` · ${am.length} ambiguë(s)`:""}</span></button>`:`<div class="encal ok"><b>✓</b><span>Toutes les règles de tes fiches sont reliées</span></div>`}
+ ${du.length?`<button type="button" class="encal" data-enc2="dups"><b>${du.length}</b><span>Doublons ou variantes de noms</span></button>`:""}
+ ${up.length?`<button type="button" class="encal u" data-enc2="upds"><b>${up.length}</b><span>Mises à jour officielles à valider</span></button>`:""}</div>`}
+window.encView=()=>{const n=Object.keys(rules().all).length,c={};for(const r of Object.values(rules().all))c[r.cat]=(c[r.cat]||0)+1;
+ const dets=detSrc();
+ return`<div class="encw0"><div class="enctop"><div class="encti"><h2>Encyclopédie des règles</h2><small>Warhammer 40 000 V11 · ${n} entrées</small></div><button type="button" class="b p" data-enc2="new">＋ Ajouter une règle</button></div>
+ <div class="encsearch"><input type="search" id="encq" class="encq" placeholder="Chercher une règle, un mot-clé, une faction…" value="${esc(encQ)}" autocomplete="off" aria-label="Rechercher dans l'encyclopédie"></div>
+ <div class="encfil" role="group" aria-label="Catégories"><button type="button" class="${encCat?"":"on"}" data-enc2="cat" data-c="">Toutes</button>${CATS.map(([k,l,i])=>`<button type="button" class="${encCat===k?"on":""}" data-enc2="cat" data-c="${k}">${i} ${l}<small>${c[k]||0}</small></button>`).join("")}</div>
+ <div class="enctools"><button type="button" class="b" data-enc2="sort">${encSort==="az"?"Tri : A → Z":"Tri : récentes"}</button><button type="button" class="b" data-enc2="histall">🕓 Historique</button><button type="button" class="b" data-enc2="io">⇅ Import / export</button></div>
+ <div id="enchome">${encQ?"":encHome()}</div>
+ ${encCat==="det"&&dets.length?`<div class="card encdet"><p>${dets.length} détachement(s) de tes listes ne sont pas encore dans l'encyclopédie.</p><button type="button" class="b" data-enc2="impdet">Créer leurs entrées depuis mes listes</button></div>`:""}
+ <div id="encres">${results()}</div>
+ <p class="encfoot">Résumés reformulés, jamais le texte intégral des règles. « À vérifier » : source secondaire ou non confirmée. Le PDF officiel des Core Rules fait foi.</p></div>`};
+function detSrc(){const have=new Set(Object.values(rules().all).filter(r=>r.cat==="det").map(r=>bk(r.n))),m=new Map();
+ [...(S.dlib||[]),...(S.lists||[]).flatMap(l=>l.dets||[])].forEach(d=>{if(d&&d.name&&String(d.rule||"").trim()&&!have.has(bk(d.name))&&!m.has(bk(d.name)))m.set(bk(d.name),d)});return[...m.values()]}
+function goEnc(id){const o=document.querySelector("#md .ov");if(o)o.click();encOpen=id;encQ="";encCat="";tab="enc";window.po=null;if(id)seen(id);save();draw();setTimeout(()=>{const a=document.querySelector(`.encr[data-id="${id}"]`);if(a)a.scrollIntoView({block:"center"})},50)}
+window.encGo=goEnc;
+function refreshRes(){const r=document.getElementById("encres"),h=document.getElementById("enchome");if(r)r.innerHTML=results();if(h)h.innerHTML=encQ?"":encHome()}
+document.addEventListener("input",e=>{if(e.target.id!=="encq")return;encQ=e.target.value;refreshRes()});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-enc2]");if(!b||!document.getElementById("m").contains(b))return;e.stopPropagation();const a=b.dataset.enc2,id=b.dataset.id;
+ if(a==="tog"){encOpen=encOpen===id?null:id;if(encOpen){seen(id);save()}refreshRes();return}
+ if(a==="go"){encOpen=id;encQ="";seen(id);save();draw();setTimeout(()=>{const x=document.querySelector(`.encr[data-id="${id}"]`);if(x)x.scrollIntoView({block:"center"})},30);return}
+ if(a==="cat"){encCat=b.dataset.c;draw();return}
+ if(a==="sort"){encSort=encSort==="az"?"rec":"az";draw();return}
+ if(a==="new"){editor(null,b.dataset.n?{n:b.dataset.n}:null);return}
+ if(a==="edit"){editor(id);return}
+ if(a==="hist"){histView(id);return}
+ if(a==="histall"){histView(null);return}
+ if(a==="del"){askDel(id);return}
+ if(a==="link"){unitPicker(id);return}
+ if(a==="io"){ioView();return}
+ if(a==="miss"){missView();return}
+ if(a==="dups"){const d=dups();ovOpen("dup",`<div class="ench"><h2>Doublons et variantes</h2><button type="button" class="encx" data-enc="ovclose" aria-label="Fermer">✕</button></div><p class="mu">Ces règles partagent un nom (ou presque). Modifie ou supprime celle qui est en trop ; aucune fusion n'est faite automatiquement.</p>${d.map(x=>`<div class="encmiss"><div><b>${x.near?"Noms proches":"Même nom reconnu"} : ${esc(x.k)}</b><small>${x.ids.map(i=>esc(R(i).n)+" ("+esc(CATN[R(i).cat]||"")+")").join(" / ")}</small></div><div class="encmb">${x.ids.map(i=>`<button type="button" class="b" data-enc="pk2" data-id="${i}">Voir ${esc(R(i).n)}</button>`).join("")}</div></div>`).join("")}`);return}
+ if(a==="upds"){encQ="";encOpen=Object.keys(UPD)[0];draw();return}
+ if(a==="adopt"||a==="keep"){const e2=E(),old=R(id),h=hsh(BASE[id]);if(a==="adopt"){if(e2.r[id]){hist("maj",id,old,Object.assign({},BASE[id],{kind:"base"}));delete e2.r[id]}else hist("maj",id,old,Object.assign({},BASE[id],{kind:"base"}))}else hist("maj",id,null,null,{n:old.n,keep:1});e2.ack[id]=h;delete UPD[id];commit();toast(a==="adopt"?"Version officielle adoptée (l'ancienne est dans l'historique)":"Ta version est conservée");return}
+ if(a==="impdet"){const ds=detSrc();ds.forEach(d=>addRule({n:d.name,cat:"det",def:String(d.rule).trim(),src:"Mes listes (texte importé dans Hammer)",st:"verif"}));commit();toast(ds.length+" détachement(s) ajouté(s) à l'encyclopédie");return}},true);
+ov.addEventListener("click",e=>{const b=e.target.closest("[data-enc=pk2]");if(!b)return;e.stopPropagation();ovClose();goEnc(b.dataset.id)});
+encInit();
+window.__enc={rules,R,res,usage,missing,ambig,dups,bk,E,UPD:()=>UPD,setRule,addRule,delRule,restoreH};
+})();
+
 </script>
 </body>
 </html>
