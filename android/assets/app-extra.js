@@ -38,9 +38,9 @@ const sy=document.getElementById("sy");
 if(sy){sy.textContent="💾";sy.title="Sauvegarde";sy.style.opacity=".9";sy.onclick=backup;
  const up=document.createElement("span");up.textContent="⟳";up.title="Mise à jour";up.setAttribute("role","button");up.id="a40kup";
  up.style.cssText="font-size:15px;font-weight:700;margin-left:6px;cursor:pointer;vertical-align:middle;padding:2px 6px;background:rgba(255,255,255,.18);border-radius:10px";
- up.onclick=quick;let lp;up.addEventListener("touchstart",()=>{lp=setTimeout(()=>{lp=null;update()},650)},{passive:true});up.addEventListener("touchend",e=>{if(lp){clearTimeout(lp)}else e.preventDefault()});up.oncontextmenu=e=>{e.preventDefault();update()};sy.after(up)}
+ up.onclick=()=>quick(false);let lp;up.addEventListener("touchstart",()=>{lp=setTimeout(()=>{lp=null;update()},650)},{passive:true});up.addEventListener("touchend",e=>{if(lp){clearTimeout(lp)}else e.preventDefault()});up.oncontextmenu=e=>{e.preventDefault();update()};sy.after(up)}
 window.a40kBackup=backup;
-/* Vérification automatique à chaque ouverture de l'app (une fois par lancement). */
-try{if(A&&A.updateFromUrl&&!sessionStorage.getItem("a40kchk")){sessionStorage.setItem("a40kchk","1");setTimeout(()=>quick(true),1500)}}catch(e){}window.a40kUpdate=update;
+/* Mise à jour manuelle uniquement : au clic sur ⟳ (aucune vérification automatique au lancement). */
+window.a40kUpdate=update;
 })();
 </script>

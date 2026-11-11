@@ -82,6 +82,14 @@ public class MainActivity extends Activity {
                     File upd = new File(getFilesDir(), "index.html");
                     InputStream in = path.equals("/index.html") && upd.exists()
                         ? new FileInputStream(upd) : getAssets().open(path.substring(1));
+                    if (path.equals("/index.html")) {
+                        // La mise à jour ne se fait qu'au clic sur ⟳ : on neutralise l'ancienne vérification automatique au lancement
+                        ByteArrayOutputStream bo = new ByteArrayOutputStream(); byte[] bf = new byte[16384]; int rn;
+                        while ((rn = in.read(bf)) > 0) bo.write(bf, 0, rn);
+                        in.close();
+                        String pg = new String(bo.toByteArray(), StandardCharsets.UTF_8).replace("!sessionStorage.getItem(\"a40kchk\")", "false");
+                        in = new java.io.ByteArrayInputStream(pg.getBytes(StandardCharsets.UTF_8));
+                    }
                     WebResourceResponse res = new WebResourceResponse(mime(path), "utf-8", in);
                     Map<String, String> h = new HashMap<>();
                     h.put("Access-Control-Allow-Origin", "*");
