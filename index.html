@@ -1597,7 +1597,11 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data
  else if(a==="fdban")S.fac.find(x=>x.id===d.f).banner="";
  else if(a==="fnew"){ask({t:"Nouvelle faction",input:"",ok:"Créer"},v=>{if(v&&v.trim())S.fac.push({id:rid(),name:v.trim(),banner:""})});return}
  else if(a==="fren"){const f=S.fac.find(x=>x.id===d.f);ask({t:"Renommer la faction",input:f.name,ok:"Renommer"},v=>{if(v&&v.trim())f.name=v.trim()});return}
- else if(a==="fdel"){const f=S.fac.find(x=>x.id===d.f);ask({t:"Supprimer la faction ?",p:`« ${f.name} » sera supprimée. Ses figurines restent dans la collection, sans faction.`,ok:"Supprimer",dg:1},()=>{S.fac=S.fac.filter(x=>x!==f);Object.values(S.coll).forEach(m=>{if(m.fac===f.id)m.fac=""})});return}
+ else if(a==="fdel"){const f=folders().find(x=>x.id===id);if(!f)return;const own=!!f.own||f.k==="free",n=f.k==="free"?0:memberIds(f).filter(x=>homeOf(f.k,x)===f.id).length;
+  conf("Supprimer le dossier « "+f.nm+" » ?",own?(f.k==="free"?"Le dossier et son contenu seront supprimés.":"Le dossier sera supprimé avec les "+n+" élément"+(n>1?"s":"")+" que tu y as créés. Les éléments repris d'un autre dossier y restent.") :"Le dossier sera masqué. Son contenu reste utilisé dans l'appli et tu pourras le restaurer.","Supprimer",()=>{
+   if(f.k==="free"){S.mf=folders().filter(x=>x.id!==id);delete S.mfi[id]}
+   else if(f.own){const mm=mx();[mm.csx,mm.cms,mm.cly].forEach(a=>a.forEach(c=>{if(c.fid===id)c.off=1}));S.mf=folders().filter(x=>x.id!==id);if(S.mfm)delete S.mfm[id];try{applyMx()}catch(e){}}
+   else f.hid=1;GX.commit();say("Dossier supprimé")});return}
  else if(a==="bd"){const B=S.bat,v=+d.v,i=+d.i;if(d.k==="cp")B.cp[i]=Math.max(0,B.cp[i]+v);else{const r=B.t[+d.t];r[d.k][i]=Math.max(0,r[d.k][i]+v)}}
  else if(a==="brst"){ask({t:"Réinitialiser la bataille ?",p:"Les points, les PC, les validations de missions et les objectifs secondaires (cartes tirées, paquets, historique) repassent à 0. Les noms des joueurs et les missions choisies sont conservés.",ok:"Réinitialiser",dg:1},()=>{S.bat.cp=[0,0];S.bat.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));S.bat.sx=null;if(S.bat.ms&&window.msReset)window.msReset()});return}
  else if(a==="pick"&&pk&&pk.lead){const m=S.coll[d.r];if(m&&ed){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref};SH.forEach(f=>s[f]=clone(m[f]));ed.subs.push(s)}pk=null;pkDraw();toast("Meneur ajouté ✓")}
@@ -2138,10 +2142,10 @@ function wzData(k){try{window.applyMx&&window.applyMx()}catch(e){}
 const WZF={pri:["🎯","Missions primaires","#e0563f","mission"],sec:["⚡","Cartes secondaires","#ff7a45","carte"],lay:["🗺","Layouts de terrain","#4aa3ff","layout"]};
 function wzFolds(k){try{return(window.__mxFolders?window.__mxFolders():[]).filter(f=>f.k===k)}catch(e){return[]}}
 function wzIds(k){return wzData(k).flatMap(g=>g.it.map(x=>x.id))}
-function wzFSel(){const p=P();p.sel=p.sel||{pri:[],sec:[],lay:[]};p.fsel=p.fsel||{};WZK.forEach(k=>{p.sel[k]=p.fsel[k]?wzIds(k):[]})}
-function wzEnter(){const p=P();if((p.wz||1)<3)return;if(!p.fsel){p.fsel={};WZK.forEach(k=>{const f=wzFolds(k)[0];if(f)p.fsel[k]=f.id})}wzFSel()}
+function wzFSel(){const p=P();p.sel=p.sel||{pri:[],sec:[],lay:[]};p.fsel=p.fsel||{};WZK.forEach(k=>{p.sel[k]=p.fsel[k]?(window.__mxFolderIds?window.__mxFolderIds(p.fsel[k]):wzIds(k)):[]})}
+function wzEnter(){const p=P();if((p.wz||1)<3)return;if(!p.fsel){p.fsel={};WZK.forEach(k=>{const f=wzFolds(k).find(x=>x.n>0)||wzFolds(k)[0];if(f)p.fsel[k]=f.id})}wzFSel()}
 function wzFolders(){const p=P();wzEnter();const f=p.fsel||{},lp=window.__lay&&window.__lay.LP[window.__lay.key(eff1(),p.m2)]||null;
- const card=(k,fo)=>{const m=WZF[k],on=f[k]===fo.id;return`<button type="button" class="wzf2${on?" on":""}" style="--c:${esc(fo.c||m[2])}" data-gp="wfold" data-k="${k}" data-id="${esc(fo.id)}" aria-pressed="${on}"><span class="ic">${m[0]}</span><span class="tx"><b>${esc(fo.nm)}</b><small>${fo.n} ${m[3]}${fo.n>1?"s":""}</small></span><span class="rd"></span></button>`};
+ const card=(k,fo)=>{const m=WZF[k],on=f[k]===fo.id;return`<button type="button" class="wzf2${on?" on":""}" style="--c:${esc(fo.c||m[2])}" data-gp="wfold" data-k="${k}" data-id="${esc(fo.id)}" aria-pressed="${on}"><span class="ic">${m[0]}</span><span class="tx"><b>${esc(fo.nm)}</b><small>${fo.n?fo.n+" "+m[3]+(fo.n>1?"s":""):"vide"}</small></span><span class="rd"></span></button>`};
  return`<p class="gnote wzt">Choisis le dossier à utiliser pour chaque catégorie. Un appui le choisit en entier, sans l’ouvrir.</p>`+WZK.map(k=>{const m=WZF[k],fs=wzFolds(k);return`<div class="gps"><div class="gph">${m[1]}</div>${fs.length?fs.map(fo=>card(k,fo)).join(""):`<p class="gnote">Aucun dossier. Crées-en un dans Missions &amp; Layout.</p>`}${k==="lay"&&f.lay?`<p class="gnote">🎲 Un layout est tiré au hasard parmi les 3 qui correspondent à vos missions${lp?" (agencements "+["A","B","C"].filter(l=>lp[l]).join(", ")+")":""}.</p>`:""}</div>`}).join("")+`<p class="gnote">Touche un dossier déjà choisi pour ne rien restreindre.</p>`}
 function wzList(k){const p=P(),s=(p.sel&&p.sel[k])||[],q=wnk(p.wq||"");
  const gs=wzData(k).map(g=>({h:g.h,it:g.it.filter(x=>!q||wnk(x.n+" "+g.h).includes(q))})).filter(g=>g.it.length);
@@ -3818,30 +3822,47 @@ function applyMx(){snap();if(!OR)return;const m=mx(),A=sxd(),B=by(),SM=smap(),M=
  m.cms.forEach(c=>{if(!c.off)M.push(buildMs(c))})}
 window.applyMx=applyMx;
 window.__mxFolders=()=>folders().filter(f=>!f.hid).map(f=>({id:f.id,nm:f.nm,k:f.k,c:f.c,n:count(f)}));
+window.__mxFolderIds=fid=>{const f=folders().find(x=>x.id===fid);return f&&f.k!=="free"?memberIds(f):[]};
 window.__mxLay=()=>{const g={},ks=[];layAll().filter(l=>!l.off).forEach(l=>{const k=l.a?`${l.a} vs ${l.b}`:"Mes layouts";if(!g[k]){g[k]=[];ks.push(k)}g[k].push({id:l.id,n:l.nm||("Agencement "+l.L)})});return ks.map(h=>({h:"🗺 "+h,it:g[h]}))};
 const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
 const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
 let mOpen={"f-sec":1,"f-pri":1,"f-lay":1},mq="",mShowOff={},mTab="pri";
 const thumb=id=>{const u=(S.mimg&&S.mimg[id])||(/^lay-\d+$/.test(id)?"lay/p"+id.slice(4)+".webp":"");return u?`<span class="th" style="background-image:url('${u}')"></span>`:""};
-function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[];const all=[...OR.sx.map(o=>o.id),...m.csx.map(c=>c.id)];
- const off=all.filter(id=>(m.sx[id]&&m.sx[id].off)||(m.csx.find(c=>c.id===id&&c.off)));
- ["e","c","a"].forEach(g=>{const ids=all.filter(id=>!off.includes(id)&&B[id]&&B[id].g===g&&(!q||nk(B[id].nm+" "+B[id].d).includes(q)));if(!ids.length)return;const G=GR[g]||{nm:g,ic:"",c:"#d8b45e"};
-  out.push(`<div class="ggh" style="--gc:${G.c}">${G.ic} ${e2(G.nm)}<span>${ids.length}</span></div>`+ids.map(id=>{const c=B[id],cu=m.csx.some(x=>x.id===id),pe=!!m.sx[id];return`<button class="gmi" style="--gc:${G.c}" data-x="sxed" data-id="${id}">${thumb(id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}</b><small>${e2(smTxt(smap()[id])||c.d)}</small></span></button>`}).join(""))});
- return out.join("")+offList("sec",off.map(id=>[id,(B[id]||{}).nm]))+`<div class="gadd2"><button class="b p" data-x="sxnew">+ Nouvelle carte secondaire</button></div>`}
-function priItems(f,q){const m=mx(),out=[],all=[...OR.ms.map(o=>OR.mso[o.id]),...m.cms.map(buildMs)],off=all.filter(c=>(m.ms[c.id]&&m.ms[c.id].off)||m.cms.some(x=>x.id===c.id&&x.off));
- cats().forEach(ct=>{const a=all.filter(c=>c.cat===ct.id&&!off.includes(c)&&(!q||nk(c.nm+" "+c.d).includes(q)));if(!a.length)return;
-  out.push(`<div class="ggh" style="--gc:#e0563f">${ct.ic} ${e2(ct.fr)}<span>${a.length}</span></div>`+a.map(c=>{const cu=m.cms.some(x=>x.id===c.id),pe=!!m.ms[c.id];return`<button class="gmi" style="--gc:#e0563f" data-x="msed" data-id="${c.id}">${thumb(c.id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}</b><small>${e2(lineSum(c))}${c.d?" — "+e2(c.d.slice(0,90))+(c.d.length>90?"…":""):""}</small></span></button>`}).join(""))});
- return out.join("")+offList("pri",off.map(c=>[c.id,c.nm]))+`<div class="gadd2"><button class="b p" data-x="msnew">+ Nouvelle mission primaire</button></div>`}
-const layId=l=>"lay-"+l.p;
+function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[],mem=memberIds(f),refs=(S.mfm&&S.mfm[f.id])||[];
+ const offs=[...OR.sx.map(o=>o.id).filter(id=>m.sx[id]&&m.sx[id].off),...m.csx.filter(c=>c.off).map(c=>c.id)].filter(id=>homeOf("sec",id)===f.id);
+ ["e","c","a"].forEach(g=>{const ids=mem.filter(id=>B[id]&&B[id].g===g&&(!q||nk(B[id].nm+" "+B[id].d).includes(q)));if(!ids.length)return;const G=GR[g]||{nm:g,ic:"",c:"#d8b45e"};
+  out.push(`<div class="ggh" style="--gc:${G.c}">${G.ic} ${e2(G.nm)}<span>${ids.length}</span></div>`+ids.map(id=>{const c=B[id],cu=m.csx.some(x=>x.id===id),pe=!!m.sx[id],lk=refs.includes(id)&&homeOf("sec",id)!==f.id;return`<button class="gmi" style="--gc:${G.c}" data-x="sxed" data-f="${f.id}" data-id="${id}">${thumb(id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}${lk?'<span class="gbd u">Lié</span>':""}</b><small>${e2(smTxt(smap()[id])||c.d)}</small></span></button>`}).join(""))});
+ return(out.length?out.join(""):`<p class="mu">${KW.sec.empty}</p>`)+offList("sec"+f.id,offs.map(id=>[id,(B[id]||{}).nm]),"sec")+`<div class="gadd2"><button class="b p" data-x="sxnew" data-f="${f.id}">+ ${KW.sec.new}</button><button class="b" data-x="fadd" data-f="${f.id}">${KW.sec.add}</button></div>`}
+function priItems(f,q){const m=mx(),out=[],mem=new Set(memberIds(f)),refs=(S.mfm&&S.mfm[f.id])||[],all=[...OR.ms.map(o=>OR.mso[o.id]),...m.cms.map(buildMs)].filter(c=>mem.has(c.id));
+ const offs=[...OR.ms.map(o=>o.id).filter(id=>m.ms[id]&&m.ms[id].off),...m.cms.filter(c=>c.off).map(c=>c.id)].filter(id=>homeOf("pri",id)===f.id);
+ cats().forEach(ct=>{const a=all.filter(c=>c.cat===ct.id&&(!q||nk(c.nm+" "+c.d).includes(q)));if(!a.length)return;
+  out.push(`<div class="ggh" style="--gc:#e0563f">${ct.ic} ${e2(ct.fr)}<span>${a.length}</span></div>`+a.map(c=>{const cu=m.cms.some(x=>x.id===c.id),pe=!!m.ms[c.id],lk=refs.includes(c.id)&&homeOf("pri",c.id)!==f.id;return`<button class="gmi" style="--gc:#e0563f" data-x="msed" data-f="${f.id}" data-id="${c.id}">${thumb(c.id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}${lk?'<span class="gbd u">Lié</span>':""}</b><small>${e2(lineSum(c))}${c.d?" — "+e2(c.d.slice(0,90))+(c.d.length>90?"…":""):""}</small></span></button>`}).join(""))});
+ const nm=id=>{const o=OR.mso[id]||(m.cms.find(c=>c.id===id)?buildMs(m.cms.find(c=>c.id===id)):null);return o?o.nm:id};
+ return(out.length?out.join(""):`<p class="mu">${KW.pri.empty}</p>`)+offList("pri"+f.id,offs.map(id=>[id,nm(id)]),"pri")+`<div class="gadd2"><button class="b p" data-x="msnew" data-f="${f.id}">+ ${KW.pri.new}</button><button class="b" data-x="fadd" data-f="${f.id}">${KW.pri.add}</button></div>`}
 function layAll(){const m=mx();return[...LAY.map(l=>Object.assign({id:layId(l),off:!!(m.ly[layId(l)]||{}).off,nm:(m.ly[layId(l)]||{}).nm},l)),...m.cly]}
-function layItems(f,q){const m=mx(),all=layAll(),off=all.filter(l=>l.off),out=[],grp={};
- all.filter(l=>!l.off&&(!q||nk([l.nm,l.a,l.b,l.ma,l.mb,"agencement "+l.L].join(" ")).includes(q))).forEach(l=>{const g=l.a?`${l.a} vs ${l.b}`:"Mes layouts";(grp[g]=grp[g]||[]).push(l)});
- for(const g in grp)out.push(`<div class="ggh" style="--gc:#4aa3ff">🗺 ${e2(g)}<span>${grp[g].length}</span></div>`+grp[g].map(l=>`<button class="gmi" style="--gc:#4aa3ff" data-x="lyed" data-id="${l.id}">${thumb(l.id)}<span class="tx"><b>${e2(l.nm||("Agencement "+l.L))}${l.u?'<span class="gbd u">Mis à jour</span>':""}${l.cu?'<span class="gbd n">Créé</span>':""}</b><small>${l.ma?`Missions : ${e2(l.ma)} / ${e2(l.mb)} · page ${l.p}`:e2(l.note||"")}</small></span></button>`).join(""));
- return out.join("")+offList("lay",off.map(l=>[l.id,l.nm||(l.a+" vs "+l.b+" — "+l.L)]))+`<div class="gadd2"><button class="b p" data-x="lynew">+ Nouveau layout</button><button class="b" data-x="pdfimp">📄 Importer le PDF officiel</button><button class="b" data-x="pdfall">🖼 Préparer toutes les images</button></div>`}
+function layItems(f,q){const m=mx(),mem=new Set(memberIds(f)),refs=(S.mfm&&S.mfm[f.id])||[],all=layAll(),offs=all.filter(l=>l.off&&homeOf("lay",l.id)===f.id),out=[],grp={};
+ all.filter(l=>!l.off&&mem.has(l.id)&&(!q||nk([l.nm,l.a,l.b,l.ma,l.mb,"agencement "+l.L].join(" ")).includes(q))).forEach(l=>{const g=l.a?`${l.a} vs ${l.b}`:"Mes layouts";(grp[g]=grp[g]||[]).push(l)});
+ for(const g in grp)out.push(`<div class="ggh" style="--gc:#4aa3ff">🗺 ${e2(g)}<span>${grp[g].length}</span></div>`+grp[g].map(l=>`<button class="gmi" style="--gc:#4aa3ff" data-x="lyed" data-f="${f.id}" data-id="${l.id}">${thumb(l.id)}<span class="tx"><b>${e2(l.nm||("Agencement "+l.L))}${l.u?'<span class="gbd u">Mis à jour</span>':""}${l.cu?'<span class="gbd n">Créé</span>':""}${refs.includes(l.id)&&homeOf("lay",l.id)!==f.id?'<span class="gbd u">Lié</span>':""}</b><small>${l.ma?`Missions : ${e2(l.ma)} / ${e2(l.mb)} · page ${l.p}`:e2(l.note||"")}</small></span></button>`).join(""));
+ return(out.length?out.join(""):`<p class="mu">${KW.lay.empty}</p>`)+offList("lay"+f.id,offs.map(l=>[l.id,l.nm||(l.a?l.a+" vs "+l.b+" — "+l.L:"Layout")]),"lay")+`<div class="gadd2"><button class="b p" data-x="lynew" data-f="${f.id}">+ ${KW.lay.new}</button><button class="b" data-x="fadd" data-f="${f.id}">${KW.lay.add}</button>${f.id===DEF.lay?`<button class="b" data-x="pdfimp">📄 Importer le PDF officiel</button><button class="b" data-x="pdfall">🖼 Préparer toutes les images</button>`:""}</div>`}
 function freeItems(f,q){const a=(S.mfi[f.id]||[]).filter(n=>!q||nk(n.t+" "+n.d).includes(q));
  return(a.length?a.map(n=>`<button class="gmi" data-x="nted" data-f="${f.id}" data-id="${n.id}">${thumb(n.id)}<span class="tx"><b>${e2(n.t)}</b><small>${e2((n.d||"").slice(0,120))}</small></span></button>`).join(""):`<p class="mu">Dossier vide.</p>`)+`<div class="gadd2"><button class="b p" data-x="ntnew" data-f="${f.id}">+ Nouvel élément</button></div>`}
-function offList(k,a){if(!a.length)return"";return`<div class="gadd2"><button class="b" data-x="offtog" data-k="${k}">${mShowOff[k]?"Masquer":"Voir"} les éléments supprimés (${a.length})</button></div>`+(mShowOff[k]?a.map(([id,n])=>`<div class="gxl"><b>${e2(n||id)}</b><button class="b" data-x="restore" data-k="${k}" data-id="${id}">Restaurer</button></div>`).join(""):"")}
-function count(f){const m=mx();if(f.k==="sec")return sxd().length;if(f.k==="pri")return msd().length;if(f.k==="lay")return layAll().filter(l=>!l.off).length;return(S.mfi[f.id]||[]).length}
+const layId=l=>"lay-"+l.p;
+const DEF={sec:"f-sec",pri:"f-pri",lay:"f-lay"};
+const KW={pri:{one:"mission primaire",pl:"missions primaires",new:"Nouvelle mission primaire",dn:"dossier de primaires",ph:"ex. Primaire 2027",empty:"Ce dossier est vide : ajoute une mission primaire.",add:"🔗 Ajouter une mission existante"},
+ sec:{one:"carte secondaire",pl:"cartes secondaires",new:"Nouvelle carte secondaire",dn:"dossier de secondaires",ph:"ex. Secondaire 2027",empty:"Ce dossier est vide : ajoute une carte secondaire.",add:"🔗 Ajouter une carte existante"},
+ lay:{one:"layout",pl:"layouts",new:"Nouveau layout",dn:"dossier de layouts",ph:"ex. Layout 2027",empty:"Ce dossier est vide : ajoute un layout.",add:"🔗 Ajouter un layout existant"}};
+let CF="";
+const cOf=(k,id)=>{const m=mx();return(k==="sec"?m.csx:k==="pri"?m.cms:m.cly).find(x=>x.id===id)};
+const homeOf=(k,id)=>{const c=cOf(k,id);return(c&&c.fid)||DEF[k]};
+function itemIds(k){const m=mx();
+ if(k==="sec")return[...OR.sx.map(o=>o.id).filter(id=>!(m.sx[id]&&m.sx[id].off)),...m.csx.filter(c=>!c.off).map(c=>c.id)];
+ if(k==="pri")return[...OR.ms.map(o=>o.id).filter(id=>!(m.ms[id]&&m.ms[id].off)),...m.cms.filter(c=>!c.off).map(c=>c.id)];
+ return layAll().filter(l=>!l.off).map(l=>l.id)}
+function memberIds(f){if(!OR)snap();if(!OR)return[];const refs=(S.mfm&&S.mfm[f.id])||[];return itemIds(f.k).filter(id=>homeOf(f.k,id)===f.id||refs.includes(id))}
+const isLinked=(f,id)=>!!f&&homeOf(f.k,id)!==f.id&&((S.mfm&&S.mfm[f.id])||[]).includes(id);
+function itemName(k,id){if(k==="sec")return(by()[id]||{}).nm||id;if(k==="pri"){const m=msd().find(x=>x.id===id);return m?m.nm:id}const l=layAll().find(x=>x.id===id);return l?((l.nm||("Agencement "+l.L))+(l.a?" — "+l.a+" vs "+l.b:"")):id}
+function offList(tk,a,kind){if(!a.length)return"";return`<div class="gadd2"><button class="b" data-x="offtog" data-k="${tk}">${mShowOff[tk]?"Masquer":"Voir"} les éléments supprimés (${a.length})</button></div>`+(mShowOff[tk]?a.map(([id,n])=>`<div class="gxl"><b>${e2(n||id)}</b><button class="b" data-x="restore" data-k="${kind||tk}" data-id="${id}">Restaurer</button></div>`).join(""):"")}
+function count(f){if(f.k==="free")return(S.mfi[f.id]||[]).length;return memberIds(f).length}
 function folderHtml(f){const q=nk(mq),open=q||mOpen[f.id],[i,c]=KIND[f.k]||KIND.free;
  const body=open?(f.k==="sec"?secItems(f,q):f.k==="pri"?priItems(f,q):f.k==="lay"?layItems(f,q):freeItems(f,q)):"";
  return`<div class="gfd${open?" open":""}" style="--tc:${f.c||c}"><div class="gfh" data-x="ftog" data-id="${f.id}">${f.ic?icFor("x_"+f.id):ic(i)}<b>${e2(f.nm)}<small>${count(f)}</small></b><button class="b" data-x="fren" data-id="${f.id}" aria-label="Modifier le dossier">✎</button><button class="b x" data-x="fdel" data-id="${f.id}" aria-label="Supprimer le dossier">🗑</button><span class="car">▾</span></div>${open?`<div class="gfb">${body}</div>`:""}</div>`}
@@ -3849,11 +3870,11 @@ const mKind=f=>f.k==="pri"||f.k==="sec"||f.k==="lay"?f.k:"oth";
 function misBody(){const all=folders(),F=all.filter(f=>!f.hid&&(mq||mKind(f)===mTab)),H=all.filter(f=>f.hid&&(mq||mKind(f)===mTab));return F.map(folderHtml).join("")+(H.length?`<div class="gp"><h3>Dossiers supprimés</h3>${H.map(f=>`<div class="gxl"><b>${e2(f.nm)}</b><button class="b" data-x="frest" data-id="${f.id}">Restaurer</button></div>`).join("")}</div>`:"")}
 XV.mis=()=>{applyMx();folders();return`<div class="gxtitle" style="--tc:${col("mis")}">${icFor("mis")}<h2>Missions &amp; Layout<small>Tes modifications s'appliquent partout : tirage des cartes, missions de partie et score.</small></h2></div>
  <div class="ghtabs mtabs">${[["pri","🎯 Primaires"],["sec","⚡ Secondaires"],["lay","🗺 Layouts"],["oth","📁 Autres"]].map(([k,n])=>`<button class="${mTab===k?"on":""}" data-x="mtab" data-k="${k}">${n}<small>${folders().filter(f=>!f.hid&&mKind(f)===k).reduce((t,f)=>t+count(f),0)}</small></button>`).join("")}</div>
- <div class="gxtop"><input type="search" id="gxmq" placeholder="Chercher une carte, une mission, un layout…" value="${e2(mq)}" autocomplete="off">${({pri:["msnew","+ Ajouter une primaire"],sec:["sxnew","+ Ajouter une secondaire"],lay:["lynew","+ Ajouter un layout"],oth:["fnew","+ Nouveau dossier"]})[mTab]?`<button class="b p" data-x="${({pri:"msnew",sec:"sxnew",lay:"lynew",oth:"fnew"})[mTab]}">${({pri:"+ Primaire",sec:"+ Secondaire",lay:"+ Layout",oth:"+ Dossier"})[mTab]}</button>`:""}</div><div id="gxmb">${misBody()}</div>`};
+ <div class="gxtop"><input type="search" id="gxmq" placeholder="Chercher une carte, une mission, un layout…" value="${e2(mq)}" autocomplete="off">${mTab==="oth"?`<button class="b p" data-x="fnew" data-k="free">+ Dossier</button>`:`<button class="b p" data-x="fnew" data-k="${mTab}">+ ${(KW[mTab].dn).replace(/^./,c=>c.toUpperCase())}</button>`}</div><div id="gxmb">${misBody()}</div>`};
 /* --- fenêtres d'édition --- */
 const imgBlock=id=>`<label>Image (photo, capture du layout…)<input type="file" accept="image/*" data-xi="${id}"></label>${S.mimg[id]?`<img class="gimg" src="${S.mimg[id]}" alt=""><div class="gxbtn"><button class="b x" data-x="imgdel" data-id="${id}">Retirer l'image</button></div>`:""}`;
 let cur=null;
-function sxEdit(id){const m=mx(),c=by()[id],cu=m.csx.find(x=>x.id===id),o=OR.sx.find(x=>x.id===id),sm=smap()[id];cur={k:"sx",id};
+function sxEdit(id){const m=mx(),c=by()[id],cu=m.csx.find(x=>x.id===id),o=OR.sx.find(x=>x.id===id),sm=smap()[id];cur={k:"sx",id,f:CF};
  const lines=[];if(!cu)["o","f","t"].forEach(a=>(c[a]||[]).forEach((L,i)=>lines.push([a+"."+i,a,L])));
  const smF=typeof sm==="object"&&sm?`<label>Résumé (Fixe)<textarea rows="2" data-f="smf">${e2(sm.f||"")}</textarea></label><label>Résumé (Tactique)<textarea rows="2" data-f="smt">${e2(sm.t||"")}</textarea></label>`:`<label>Résumé<textarea rows="2" data-f="sm">${e2(sm||"")}</textarea></label>`;
  GX.open(`<div class="gxh">${ic("bolt")}<h2>${e2(c.nm)}</h2><button class="b" data-gx="close">✕</button></div>
@@ -3862,8 +3883,8 @@ function sxEdit(id){const m=mx(),c=by()[id],cu=m.csx.find(x=>x.id===id),o=OR.sx.
  ${cu?`<div class="gln"><label>Condition<textarea rows="2" data-f="tx">${e2(cu.tx||"")}</textarea></label><div class="r"><label>Décompte<select data-f="k"><option value="chk"${cu.k!=="cnt"?" selected":""}>Une fois si réussi</option><option value="cnt"${cu.k==="cnt"?" selected":""}>Par élément</option></select></label><label>PdV<input type="number" min="0" data-f="pts" value="${+cu.pts||0}"></label><label>Max<input type="number" min="0" data-f="cap" value="${+cu.cap||0}"></label></div></div>`:
  lines.map(([p,a,L])=>`<div class="gln"><label>${a==="f"?"Fixe — ":a==="t"?"Tactique — ":""}Condition<textarea rows="2" data-l="${p}">${e2(L.tx)}</textarea></label>${L.pts!=null?`<div class="r"><label>PdV<input type="number" min="0" data-lp="${p}" value="${L.pts}"></label></div>`:`<p class="mu">Paliers : ${e2((L.lv||[]).map(x=>x[0]+" = "+x[1]+" PdV").join(" · "))}</p>`}</div>`).join("")}
  ${imgBlock(id)}
- <div class="gxf">${cu?"":m.sx[id]&&!m.sx[id].off?`<button class="b" data-x="sxrst">Rétablir l'original</button>`:""}<button class="b x" data-x="sxdel">Supprimer</button><button class="b p" data-x="sxsave">Enregistrer</button></div>`)}
-function msEdit(id){const m=mx(),cu=m.cms.find(x=>x.id===id),c=cu?buildMs(cu):OR.mso[id];cur={k:"ms",id};
+ <div class="gxf">${cu?"":m.sx[id]&&!m.sx[id].off?`<button class="b" data-x="sxrst">Rétablir l'original</button>`:""}${isLinked(folders().find(x=>x.id===cur.f),cur.id)?`<button class="b x" data-x="funlink">Retirer du dossier</button>`:`<button class="b x" data-x="sxdel">Supprimer</button>`}<button class="b p" data-x="sxsave">Enregistrer</button></div>`)}
+function msEdit(id){const m=mx(),cu=m.cms.find(x=>x.id===id),c=cu?buildMs(cu):OR.mso[id];cur={k:"ms",id,f:CF};
  const lines=cu?(cu.lines&&cu.lines.length?cu.lines:[{tx:"",pts:0,k:"chk",mo:"tour"}]):c.cond;
  GX.open(`<div class="gxh">${ic("target")}<h2>${e2(c.nm)}</h2><button class="b" data-gx="close">✕</button></div>
  <label>Nom<input data-f="nm" value="${e2(c.nm)}"></label>${cu?`<label>Catégorie<select data-f="cat">${cats().map(ct=>`<option value="${ct.id}"${c.cat===ct.id?" selected":""}>${ct.ic} ${e2(ct.fr)}</option>`).join("")}</select></label>`:""}
@@ -3871,20 +3892,26 @@ function msEdit(id){const m=mx(),cu=m.cms.find(x=>x.id===id),c=cu?buildMs(cu):OR
  ${lines.map((L,i)=>`<div class="gln"><label>${e2(L.w||"Condition")}<textarea rows="2" data-l="${i}">${e2(L.tx)}</textarea></label><div class="r"><label>PdV<input type="number" min="0" data-lp="${i}" value="${+L.pts||0}"></label>${cu?`<label>Décompte<select data-lk="${i}"><option value="chk"${L.k!=="cnt"?" selected":""}>Une fois</option><option value="cnt"${L.k==="cnt"?" selected":""}>Par objectif</option></select></label><label>Moment<select data-lm="${i}"><option value="tour"${L.mo!=="cmd"?" selected":""}>Fin de tour</option><option value="cmd"${L.mo==="cmd"?" selected":""}>Phase de Commandement</option></select></label>`:""}</div></div>`).join("")}
  ${cu&&lines.length<3?`<div class="gxbtn"><button class="b" data-x="msline">+ Condition</button></div>`:""}
  ${imgBlock(id)}
- <div class="gxf">${cu?"":m.ms[id]&&!m.ms[id].off?`<button class="b" data-x="msrst">Rétablir l'original</button>`:""}<button class="b x" data-x="msdel">Supprimer</button><button class="b p" data-x="mssave">Enregistrer</button></div>`)}
-function lyEdit(id){const m=mx(),l=layAll().find(x=>x.id===id);if(!l)return;cur={k:"ly",id};const o=m.ly[id]||{},cu=!!l.cu;
+ <div class="gxf">${cu?"":m.ms[id]&&!m.ms[id].off?`<button class="b" data-x="msrst">Rétablir l'original</button>`:""}${isLinked(folders().find(x=>x.id===cur.f),cur.id)?`<button class="b x" data-x="funlink">Retirer du dossier</button>`:`<button class="b x" data-x="msdel">Supprimer</button>`}<button class="b p" data-x="mssave">Enregistrer</button></div>`)}
+function lyEdit(id){const m=mx(),l=layAll().find(x=>x.id===id);if(!l)return;cur={k:"ly",id,f:CF};const o=m.ly[id]||{},cu=!!l.cu;
  GX.open(`<div class="gxh">${ic("grid")}<h2>${e2(l.nm||("Agencement "+l.L))}</h2><button class="b" data-gx="close">✕</button></div>
  ${l.a?`<p><b>${e2(l.a)}</b> vs <b>${e2(l.b)}</b><br><span class="mu">Missions : ${e2(l.ma)} / ${e2(l.mb)} · Compagnon de Rencontre Warhammer, page ${l.p}${l.u?" · mis à jour en octobre 2026":""}</span></p>
  <div class="gxbtn"><a class="b" href="${PDFU}#page=${l.p}" target="_blank" rel="noopener">📄 Ouvrir la page officielle</a><button class="b p" data-x="pdfshow" data-p="${l.p}">🖼 Afficher le layout ici</button></div><div id="gxpdf"></div>`:""}
  <label>Nom${cu?"":" (facultatif)"}<input data-f="nm" value="${e2(l.nm||"")}" placeholder="${e2(l.a?"Agencement "+l.L:"Mon layout")}"></label>
  <label>Notes<textarea rows="3" data-f="note" placeholder="ex. table du club, décors utilisés…">${e2((cu?l.note:o.note)||"")}</textarea></label>
+ ${cu?`<div class="gln"><p class="mu" style="margin:0 0 4px">Missions concernées (facultatif) : le layout est tiré automatiquement quand les deux joueurs ont ces catégories.</p><div class="r"><label>Catégorie 1<select data-f="ck1"><option value="">—</option>${cats().map(ct=>`<option value="${ct.id}"${(l.ck||"").split("__")[0]===ct.id?" selected":""}>${ct.ic} ${e2(ct.fr)}</option>`).join("")}</select></label><label>Catégorie 2<select data-f="ck2"><option value="">—</option>${cats().map(ct=>`<option value="${ct.id}"${(l.ck||"").split("__")[1]===ct.id?" selected":""}>${ct.ic} ${e2(ct.fr)}</option>`).join("")}</select></label></div></div>`:""}
  ${imgBlock(id)}
- <div class="gxf"><button class="b x" data-x="lydel">Supprimer</button><button class="b p" data-x="lysave">Enregistrer</button></div>`);
+ <div class="gxf">${isLinked(folders().find(x=>x.id===cur.f),cur.id)?`<button class="b x" data-x="funlink">Retirer du dossier</button>`:`<button class="b x" data-x="lydel">Supprimer</button>`}<button class="b p" data-x="lysave">Enregistrer</button></div>`);
  if(l.p){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<img class="gimg" src="lay/p${l.p}.webp" alt="Layout officiel" loading="lazy">`}}
 function ntEdit(fid,id){const n=(S.mfi[fid]||[]).find(x=>x.id===id)||{id:uid("n"),t:"",d:""};cur={k:"nt",fid,id:n.id,isNew:!(S.mfi[fid]||[]).some(x=>x.id===id)};
  GX.open(`<div class="gxh">${ic("scroll")}<h2>${n.t?e2(n.t):"Nouvel élément"}</h2><button class="b" data-gx="close">✕</button></div><label>Titre<input data-f="t" value="${e2(n.t)}" autofocus></label><label>Texte<textarea rows="6" data-f="d">${e2(n.d)}</textarea></label>${imgBlock(n.id)}<div class="gxf">${cur.isNew?"":`<button class="b x" data-x="ntdel">Supprimer</button>`}<button class="b p" data-x="ntsave">Enregistrer</button></div>`)}
-function fEdit(id){const f=folders().find(x=>x.id===id)||{id:uid("f-"),nm:"",k:"free",c:"#d8b45e"};cur={k:"f",id:f.id,isNew:!folders().some(x=>x.id===id)};
- GX.open(`<div class="gxh">${ic("folder")}<h2>${cur.isNew?"Nouveau dossier":"Dossier"}</h2><button class="b" data-gx="close">✕</button></div><label>Nom<input data-f="nm" value="${e2(f.nm)}" autofocus></label><label>Couleur<input type="color" data-f="c" value="${f.c||(KIND[f.k]||KIND.free)[1]}"></label><div class="gxf"><button class="b p" data-x="fsave">Enregistrer</button></div>`)}
+function fEdit(id,kind){const ex=folders().find(x=>x.id===id),k=ex?ex.k:(kind||"free"),W=KW[k],f=ex||{id:uid("f-"),nm:"",k,c:(KIND[k]||KIND.free)[1],own:1};cur={k:"f",id:f.id,kd:k,isNew:!ex};
+ GX.open(`<div class="gxh">${ic("folder")}<h2>${cur.isNew?"Nouveau "+(W?W.dn:"dossier"):"Dossier"}</h2><button class="b" data-gx="close">✕</button></div><label>Nom du dossier<input data-f="nm" value="${e2(f.nm)}" placeholder="${W?W.ph:"ex. Mes notes"}" autofocus></label><label>Couleur<input type="color" data-f="c" value="${e2(f.c||"#d8b45e")}"></label>${W&&cur.isNew?`<p class="mu">Tu pourras ensuite y créer des ${W.pl}, en reprendre depuis un autre dossier, ou en retirer.</p>`:""}<div class="gxf"><button class="b p" data-x="fsave">Enregistrer</button></div>`)}
+function addFromOther(fid){const f=folders().find(x=>x.id===fid);if(!f)return;const k=f.k,W=KW[k],have=new Set(memberIds(f));
+ const groups=folders().filter(x=>x.k===k&&x.id!==fid&&!x.hid).map(x=>({f:x,ids:memberIds(x).filter(id=>!have.has(id))})).filter(g=>g.ids.length);
+ GX.open(`<div class="gxh">${ic("folder")}<h2>Ajouter à « ${e2(f.nm)} »</h2><button class="b" data-gx="close">✕</button></div><p class="mu">Coche les ${W.pl} à reprendre d'un autre dossier. Ils restent aussi dans leur dossier d'origine.</p>
+ ${groups.length?`<input type="search" id="gxfaq" placeholder="Chercher…" autocomplete="off">`+groups.map(g=>`<h4>${e2(g.f.nm)}</h4>`+g.ids.map(id=>`<label class="gfa"><input type="checkbox" data-fa="${e2(id)}"><span>${e2(itemName(k,id))}</span></label>`).join("")).join(""):`<p class="mu">Aucun autre élément disponible : crée d'abord un autre dossier ou de nouveaux éléments.</p>`}
+ <div class="gxf"><button class="b p" data-x="fadd2" data-f="${fid}">Ajouter la sélection</button></div>`)}
 const fv=k=>{const e=document.querySelector(`#gxo [data-f="${k}"]`);return e?e.value:null};
 const fvs=sel=>[...document.querySelectorAll("#gxo "+sel)];
 /* --- PDF officiel des layouts : gardé dans le téléphone (IndexedDB), jamais publié --- */
@@ -3976,7 +4003,7 @@ function ptEdit(id){const p=paintBy(id)||{id:uid("p"),n:"",b:"Citadel",t:"Base",
 /* ================= événements ================= */
 function rerender(){if(typeof tab!=="undefined"&&tab==="mis"){const z=document.getElementById("gxmb");if(z)z.innerHTML=misBody()}else if(typeof tab!=="undefined"&&tab==="paint"){const z=document.getElementById("gxhb");if(z)z.innerHTML=hList()}}
 function done(msg){GX.close();try{applyMx()}catch(_){}GX.commit();if(msg)say(msg)}
-document.addEventListener("input",e=>{if(e.target.id==="gxmq"){mq=e.target.value;rerender()}else if(e.target.id==="gxhq"){hq=e.target.value;rerender()}});
+document.addEventListener("input",e=>{if(e.target.id==="gxfaq"){const q=nk(e.target.value);document.querySelectorAll("#gxo .gfa").forEach(l=>{l.style.display=!q||nk(l.textContent).includes(q)?"":"none"});return}if(e.target.id==="gxmq"){mq=e.target.value;rerender()}else if(e.target.id==="gxhq"){hq=e.target.value;rerender()}});
 document.addEventListener("change",e=>{const t=e.target;
  if(t.dataset&&t.dataset.xi){const id=t.dataset.xi;GX.img(t.files[0],1400,d=>{folders();S.mimg[id]=d;try{save()}catch(_){}const box=t.closest(".gxp");const v=document.createElement("img");v.className="gimg";v.src=d;t.parentNode.after(v);say("Image ajoutée")});return}
  if(t.id==="gxschimg"){readSteps();GX.img(t.files[0],1200,d=>{wk.img=d;schEdit(cur.id,true)});return}
@@ -3985,17 +4012,20 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(b.tagName==="SELECT")return;e.preventDefault();e.stopPropagation();
  /* dossiers */
  if(a==="ftog"){if(e.target.closest("button"))return;mOpen[id]=!mOpen[id];rerender();return}
- if(a==="fnew"){fEdit(null);return}
+ if(a==="fnew"){fEdit(null,b.dataset.k);return}
+ if(a==="fadd"){addFromOther(b.dataset.f);return}
+ if(a==="fadd2"){const fid=b.dataset.f,ids=fvs("[data-fa]").filter(x=>x.checked).map(x=>x.dataset.fa);if(!ids.length){say("Coche au moins un élément");return}S.mfm=S.mfm&&typeof S.mfm==="object"?S.mfm:{};const L=S.mfm[fid]=S.mfm[fid]||[];ids.forEach(id=>{if(!L.includes(id))L.push(id)});done(ids.length+" ajouté"+(ids.length>1?"s":"")+" au dossier");return}
+ if(a==="funlink"){const fid=cur.f,id=cur.id;if(S.mfm&&S.mfm[fid])S.mfm[fid]=S.mfm[fid].filter(x=>x!==id);done("Retiré du dossier");return}
  if(a==="fren"){fEdit(id);return}
- if(a==="fsave"){const nm=(fv("nm")||"").trim();if(!nm){say("Donne un nom au dossier");return}const F=folders();let f=F.find(x=>x.id===cur.id);if(!f){f={id:cur.id,k:"free"};F.push(f);mOpen[f.id]=1}f.nm=nm;f.c=fv("c");done("Dossier enregistré");return}
+ if(a==="fsave"){const nm=(fv("nm")||"").trim();if(!nm){say("Donne un nom au dossier");return}const F=folders();let f=F.find(x=>x.id===cur.id);if(!f){f={id:cur.id,k:cur.kd||"free",own:1};F.push(f);mOpen[f.id]=1;if(cur.kd&&cur.kd!=="free")mTab=cur.kd}f.nm=nm;f.c=fv("c");done("Dossier enregistré");return}
  if(a==="fdel"){const f=folders().find(x=>x.id===id);if(!f)return;conf("Supprimer le dossier « "+f.nm+" » ?",f.k==="free"?"Le dossier et son contenu seront supprimés.":"Le dossier sera masqué. Son contenu reste utilisé dans l'appli et tu pourras le restaurer.","Supprimer",()=>{if(f.k==="free"){S.mf=folders().filter(x=>x.id!==id);delete S.mfi[id]}else f.hid=1;GX.commit();say("Dossier supprimé")});return}
  if(a==="frest"){const f=folders().find(x=>x.id===id);if(f)delete f.hid;GX.commit();return}
  if(a==="offtog"){mShowOff[b.dataset.k]=!mShowOff[b.dataset.k];rerender();return}
  if(a==="restore"){const k=b.dataset.k;if(k==="sec"){if(m.sx[id])delete m.sx[id].off;const c=m.csx.find(x=>x.id===id);if(c)delete c.off}else if(k==="pri"){if(m.ms[id])delete m.ms[id].off;const c=m.cms.find(x=>x.id===id);if(c)delete c.off}else{if(m.ly[id])delete m.ly[id].off;const c=m.cly.find(x=>x.id===id);if(c)delete c.off}done("Restauré");return}
  if(a==="imgdel"){delete S.mimg[id];try{save()}catch(_){}b.closest(".gxbtn").previousElementSibling.remove();b.closest(".gxbtn").remove();return}
  /* secondaires */
- if(a==="sxed"){sxEdit(id);return}
- if(a==="sxnew"){const c={id:uid("csx-"),nm:"Nouvelle carte",g:"c",d:"",tx:"",k:"chk",pts:5};m.csx.push(c);applyMx();sxEdit(c.id);return}
+ if(a==="sxed"){CF=b.dataset.f||"";sxEdit(id);return}
+ if(a==="sxnew"){const c={id:uid("csx-"),nm:"Nouvelle carte",g:"c",d:"",tx:"",k:"chk",pts:5,fid:b.dataset.f||undefined};m.csx.push(c);applyMx();CF=b.dataset.f||"";sxEdit(c.id);return}
  if(a==="sxsave"){const i=cur.id,cu=m.csx.find(x=>x.id===i);if(cu){Object.assign(cu,{nm:fv("nm")||cu.nm,g:fv("g")||cu.g,d:fv("d")||"",tx:fv("tx")||"",k:fv("k")||"chk",pts:+fv("pts")||0,cap:+fv("cap")||0});delete cu.sm;done("Carte enregistrée : elle est dans le paquet");return}
   const o=OR.sx.find(x=>x.id===i),v=Object.assign({},m.sx[i]||{}),osm=OR.sm[i];v.nm=fv("nm")!==o.nm?fv("nm"):undefined;v.d=fv("d")!==o.d?fv("d"):undefined;
   const nsm=fv("smf")!=null?{f:fv("smf"),t:fv("smt")}:fv("sm");v.sm=JSON.stringify(nsm)!==JSON.stringify(osm)?nsm:undefined;v.l={};
@@ -4004,8 +4034,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="sxrst"){conf("Rétablir la carte d'origine ?","Tes modifications de cette carte seront perdues.","Rétablir",()=>{delete m.sx[cur.id];done("Carte d'origine rétablie")});return}
  if(a==="sxdel"){const i=cur.id;conf("Supprimer cette carte ?","Elle sera retirée du paquet de cartes secondaires. Tu pourras la restaurer.","Supprimer",()=>{const cu=m.csx.find(x=>x.id===i);if(cu)cu.off=1;else(m.sx[i]=m.sx[i]||{}).off=1;done("Carte retirée du paquet")});return}
  /* primaires */
- if(a==="msed"){msEdit(id);return}
- if(a==="msnew"){const c={id:uid("cms-"),cat:(cats()[0]||{}).id,nm:"Nouvelle mission",d:"",lines:[{tx:"Pour chaque objectif que vous contrôlez.",pts:3,k:"cnt",mo:"cmd"}]};m.cms.push(c);applyMx();msEdit(c.id);return}
+ if(a==="msed"){CF=b.dataset.f||"";msEdit(id);return}
+ if(a==="msnew"){const c={id:uid("cms-"),cat:(cats()[0]||{}).id,nm:"Nouvelle mission",d:"",lines:[{tx:"Pour chaque objectif que vous contrôlez.",pts:3,k:"cnt",mo:"cmd"}],fid:b.dataset.f||undefined};m.cms.push(c);applyMx();CF=b.dataset.f||"";msEdit(c.id);return}
  if(a==="msline"){const cu=m.cms.find(x=>x.id===cur.id);if(cu){msRead(cu);cu.lines.push({tx:"",pts:0,k:"chk",mo:"tour"});msEdit(cu.id)}return}
  if(a==="mssave"){const i=cur.id,cu=m.cms.find(x=>x.id===i);if(cu){msRead(cu);done("Mission enregistrée : elle est proposée en partie");return}
   const o=OR.ms.find(x=>x.id===i),v=Object.assign({},m.ms[i]||{});v.nm=fv("nm")!==o.nm?fv("nm"):undefined;v.d=fv("d")!==o.d?fv("d"):undefined;v.l={};
@@ -4014,9 +4044,9 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="msrst"){conf("Rétablir la mission d'origine ?","Tes modifications de cette mission seront perdues.","Rétablir",()=>{delete m.ms[cur.id];done("Mission d'origine rétablie")});return}
  if(a==="msdel"){const i=cur.id;conf("Supprimer cette mission ?","Elle ne sera plus proposée en partie. Tu pourras la restaurer.","Supprimer",()=>{const cu=m.cms.find(x=>x.id===i);if(cu)cu.off=1;else(m.ms[i]=m.ms[i]||{}).off=1;done("Mission retirée")});return}
  /* layouts */
- if(a==="lyed"){lyEdit(id);return}
- if(a==="lynew"){const c={id:uid("cly-"),nm:"Mon layout",note:"",cu:1};m.cly.push(c);lyEdit(c.id);return}
- if(a==="lysave"){const i=cur.id,cu=m.cly.find(x=>x.id===i);if(cu){cu.nm=fv("nm")||cu.nm;cu.note=fv("note")||""}else{const v=Object.assign({},m.ly[i]||{});v.nm=fv("nm")||undefined;v.note=fv("note")||undefined;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.ly[i]=v;else delete m.ly[i]}done("Layout enregistré");return}
+ if(a==="lyed"){CF=b.dataset.f||"";lyEdit(id);return}
+ if(a==="lynew"){const c={id:uid("cly-"),nm:"Mon layout",note:"",cu:1,fid:b.dataset.f||undefined};m.cly.push(c);CF=b.dataset.f||"";lyEdit(c.id);return}
+ if(a==="lysave"){const i=cur.id,cu=m.cly.find(x=>x.id===i);if(cu){cu.nm=fv("nm")||cu.nm;cu.note=fv("note")||"";const a1=fv("ck1"),a2=fv("ck2");cu.ck=a1&&a2?[a1,a2].sort().join("__"):""}else{const v=Object.assign({},m.ly[i]||{});v.nm=fv("nm")||undefined;v.note=fv("note")||undefined;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.ly[i]=v;else delete m.ly[i]}done("Layout enregistré");return}
  if(a==="lydel"){const i=cur.id;conf("Supprimer ce layout ?","Tu pourras le restaurer depuis le dossier.","Supprimer",()=>{const cu=m.cly.find(x=>x.id===i);if(cu)cu.off=1;else(m.ly[i]=m.ly[i]||{}).off=1;done("Layout supprimé")});return}
  if(a==="pdfimp"){pdfPick();return}
  if(a==="pdfshow"){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<p class="mu">Préparation du layout…</p>`;try{const d="lay/p"+(+b.dataset.p)+".webp";if(!d){if(z)z.innerHTML=`<p class="mu">Pour afficher les layouts dans l'appli, importe une fois le PDF officiel « Compagnon de Rencontre Warhammer » (téléchargé depuis Warhammer Community). Il reste dans ton téléphone.</p><div class="gxbtn"><a class="b" href="${PDFU}" target="_blank" rel="noopener">⬇ Télécharger le PDF</a><button class="b p" data-x="pdfimp">📄 Importer le PDF</button></div>`;return}if(z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}catch(er){if(z)z.innerHTML=`<p class="mu">Affichage impossible : ${e2(er&&er.message||er)}</p>`}return}
@@ -4334,7 +4364,7 @@ const key=(a,b)=>[a,b].sort().join("__");
 const lid=p=>"lay-"+p;
 const REV={};Object.keys(LP).forEach(k=>LET.forEach(l=>{if(LP[k][l])REV[lid(LP[k][l])]={k,l,p:LP[k][l],id:lid(LP[k][l])}}));
 const mxo=()=>S.mx&&typeof S.mx==="object"?S.mx:{};
-const itemOf=id=>{const m=mxo();if(REV[id])return(m.ly&&m.ly[id]&&m.ly[id].off)?null:Object.assign({},REV[id]);const c=(m.cly||[]).find(x=>x.id===id&&!x.off);return c?{k:"custom",l:"★",p:0,id}:null};
+const itemOf=id=>{const m=mxo();if(REV[id])return(m.ly&&m.ly[id]&&m.ly[id].off)?null:Object.assign({},REV[id]);const c=(m.cly||[]).find(x=>x.id===id&&!x.off);return c?{k:c.ck||"custom",l:"★",p:0,id}:null};
 const nm=L=>{const m=mxo(),id=L.id||lid(L.p);if(L.k==="custom"){const c=(m.cly||[]).find(x=>x.id===id);return(c&&c.nm)||"Mon layout"}return((m.ly&&m.ly[id]||{}).nm)||"Agencement "+L.l};
 const img=L=>(S.mimg&&S.mimg[L.id||lid(L.p)])||(L.p?"lay/p"+L.p+".webp":"");
 const poolFor=(cs,sel)=>{let it;const k=cs?key(cs[0],cs[1]):null;
@@ -4443,6 +4473,7 @@ html{-webkit-tap-highlight-color:transparent}
  html.goth .gxp{border-radius:22px 22px 0 0!important;max-height:94vh!important;animation:gup .24s ease-out;border-bottom:0}
 }
 @media(min-width:900px){#gsheet{display:none!important}}
+.gfa{display:flex;gap:12px;align-items:center;min-height:46px;padding:6px 8px;border:1px solid var(--bd);border-radius:10px;margin:4px 0;cursor:pointer}.gfa input{width:22px;height:22px;flex:none}.gfa span{flex:1;min-width:0}
 </style>
 <script>
 (()=>{
