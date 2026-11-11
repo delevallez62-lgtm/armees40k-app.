@@ -1,0 +1,83 @@
+<!-- ===== v104 : refonte mobile (barre du bas, en-tête compact, feuille « Plus ») + étape « Dossiers » de l'assistant ===== -->
+<style id="phone">
+@keyframes gfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes gup{from{transform:translateY(100%)}to{transform:none}}
+html{-webkit-tap-highlight-color:transparent}
+#gbn,#gmore,#gsheet{display:none}
+/* ----- étape 3 de l'assistant : choisir un dossier, sans l'ouvrir ----- */
+.wzf2{display:flex;align-items:center;gap:12px;width:100%;min-height:70px;padding:10px 12px;margin:8px 0;border:2px solid var(--bd);border-left:6px solid var(--c);border-radius:14px;background:var(--card);color:inherit;font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+.wzf2 .ic{font-size:28px;width:40px;text-align:center;flex:none}
+.wzf2 .tx{flex:1;min-width:0}.wzf2 b{display:block;font-size:17px;line-height:1.2}.wzf2 small{display:block;color:var(--mu);font-size:13px;margin-top:2px}
+.wzf2 .rd{margin-left:auto;width:28px;height:28px;border-radius:50%;border:2px solid var(--mu);flex:none;box-sizing:border-box}
+.wzf2.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}.wzf2.on .rd{border-color:var(--c);background:radial-gradient(circle,var(--c) 45%,transparent 50%)}
+@media(max-width:899px){
+ html.goth body{overscroll-behavior-y:none}
+ button,.b,[data-act],[data-tab]{touch-action:manipulation}
+ #fab{display:none!important}
+ /* en-tête compact : logo, titre, bouton Plus */
+ html.goth body:not(.gmini) #nav{display:none}
+ html.goth body:not(.gmini) header .hbn{display:none!important}
+ html.goth body:not(.gmini) header{display:flex;align-items:center;gap:8px;min-height:56px;padding:6px 12px!important}
+ html.goth body:not(.gmini) header h1{flex:1;min-width:0;margin:0!important;padding-right:0!important;font-size:18px!important;flex-direction:row!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html.goth body:not(.gmini) header h1 small{display:none}
+ html.goth body:not(.gmini) .glogo{width:34px;height:34px}
+ #gmore{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:14px;border:1px solid rgba(216,180,94,.4);background:#1b1d21;color:var(--gold);font-size:22px;cursor:pointer;padding:0}
+ #gmore.on{background:linear-gradient(180deg,#e2c27a,#a77c2f);color:#1a1307}
+ body.gmini #gmore{display:none}
+ /* barre de navigation du bas */
+ #gbn{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:26;height:calc(64px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:linear-gradient(180deg,#191b1f,#0d0e10);border-top:1px solid rgba(216,180,94,.5);box-shadow:0 -6px 22px rgba(0,0,0,.6)}
+ body.gingame #gbn{display:none}
+ #gbn button{flex:1;min-width:0;border:0;background:none;color:#a89f8b;font:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;cursor:pointer;padding:6px 0 4px}
+ #gbn button .gi{width:26px;height:26px;color:inherit}#gbn button .gi svg{width:25px;height:25px}
+ #gbn button.on{color:var(--tc,var(--gold))}
+ #gbn button.on::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;border-radius:0 0 4px 4px;background:var(--tc,var(--gold));box-shadow:0 0 10px var(--tc,var(--gold))}
+ #gbn button.on .gi{color:var(--tc,var(--gold))}
+ #gbn .gjeu{flex:1.2}
+ #gbn .gjeu .gcirc{width:58px;height:58px;margin-top:-28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f0d58f,#a77c2f);color:#1a1307;border:3px solid #0d0e10;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 18px rgba(216,180,94,.45)}
+ #gbn .gjeu .gcirc .gi{color:#1a1307;width:30px;height:30px}#gbn .gjeu .gcirc .gi svg{width:30px;height:30px}
+ #gbn .gjeu .l{color:var(--gold);margin-top:-2px}
+ body:not(.gingame) main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+ body:not(.gingame) #ts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+ /* feuille « Plus » */
+ #gsheet.on{display:block;position:fixed;inset:0;z-index:48}
+ #gsheet .bd{position:absolute;inset:0;background:rgba(4,5,6,.66);backdrop-filter:blur(3px);animation:f .2s}
+ #gsheet .sh{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#1d1f23,#121316);border-radius:22px 22px 0 0;border-top:1px solid rgba(216,180,94,.5);padding:8px 14px calc(18px + env(safe-area-inset-bottom,0px));animation:gup .24s ease-out;max-height:80vh;overflow:auto}
+ #gsheet .gr{width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.25);margin:4px auto 10px}
+ #gsheet .row{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:8px 10px;border:0;border-bottom:1px solid rgba(216,180,94,.15);background:none;color:#ece4d2;font:inherit;font-family:var(--fs);font-size:18px;font-weight:700;text-align:left;cursor:pointer}
+ #gsheet .row:last-child{border-bottom:0}
+ #gsheet .row .gi{width:32px;height:32px;color:var(--tc,var(--gold))}#gsheet .row .gi svg{width:28px;height:28px}
+ /* fenêtres : feuilles qui montent du bas */
+ html.goth .gxo{align-items:flex-end!important;padding:0!important}
+ html.goth .gxp{border-radius:22px 22px 0 0!important;max-height:94vh!important;animation:gup .24s ease-out;border-bottom:0}
+}
+@media(min-width:900px){#gsheet{display:none!important}}
+</style>
+<script>
+(()=>{
+const G=window.G40;if(!G)return;const {ic,col}=G;
+const NAV=[["home","Accueil","home"],["lists","Armées","lists"],["jeu","Jeu",""],["mis","Missions","mis"],["paint","Peinture","paint"]];
+const ARM=["lists","units","dets","strats","opti"];
+let last="";
+function ensure(){
+ if(!document.getElementById("gbn")){const n=document.createElement("nav");n.id="gbn";n.setAttribute("aria-label","Navigation");document.body.appendChild(n)}
+ if(!document.getElementById("gmore")){const h=document.querySelector("header");if(h){const b=document.createElement("button");b.id="gmore";b.type="button";b.setAttribute("aria-label","Plus");b.textContent="☰";h.appendChild(b)}}
+ if(!document.getElementById("gsheet")){const s=document.createElement("div");s.id="gsheet";document.body.appendChild(s)}}
+function upd(){ensure();
+ const bar=document.getElementById("bar"),ing=!!bar&&getComputedStyle(bar).display!=="none";
+ document.body.classList.toggle("gingame",ing);document.body.classList.toggle("gmini",!!document.querySelector("#nav .mzb"));
+ const t=typeof tab!=="undefined"?tab:"home",run=!!(S&&S.pm),act=ARM.includes(t)?"lists":["home","mis","paint"].includes(t)?t:"more";
+ document.getElementById("gbn").innerHTML=NAV.map(([k,n,key])=>k==="jeu"?`<button class="gjeu" data-act="${run?"gresume":"gpick"}" aria-label="${run?"Reprendre la partie":"Mode jeu"}"><span class="gcirc">${ic("dice")}</span><span class="l">${run?"Reprendre":"Jeu"}</span></button>`:`<button data-tab="${k}" class="${act===k?"on":""}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("");
+ const mo=document.getElementById("gmore");if(mo)mo.classList.toggle("on",act==="more");
+ if(t!==last){last=t;const m=document.getElementById("m");if(m){m.style.animation="none";void m.offsetWidth;m.style.animation="gfade .22s ease"}try{window.scrollTo(0,0)}catch(_){}}}
+function sheet(){const s=document.getElementById("gsheet"),rows=[["coll","Collection","coll"],["gm","Parties","gm"],["enc","Règles V11","enc"],["imp","Importer","imp"]];
+ s.innerHTML=`<div class="bd" data-sh="x"></div><div class="sh" role="dialog" aria-label="Plus"><div class="gr"></div>${rows.map(([k,n,key])=>`<button class="row" data-tab="${k}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("")}<button class="row" data-g="gico" style="--tc:#ffd166">${ic("gear")}<span>Personnaliser</span></button></div>`;s.classList.add("on")}
+document.addEventListener("click",e=>{const t=e.target;if(!t.closest)return;
+ if(t.closest("#gmore")){e.preventDefault();e.stopPropagation();const s=document.getElementById("gsheet");if(s.classList.contains("on"))s.classList.remove("on");else sheet();return}
+ if(t.closest("#gsheet")){if(t.closest("[data-sh=x]")){document.getElementById("gsheet").classList.remove("on");return}if(t.closest(".row"))setTimeout(()=>{const s=document.getElementById("gsheet");if(s)s.classList.remove("on")},0);return}
+ if(t.closest("#gbn button")&&navigator.vibrate){try{navigator.vibrate(8)}catch(_){}}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const s=document.getElementById("gsheet");if(s&&s.classList.contains("on")){s.classList.remove("on");e.stopPropagation()}}},true);
+const old=window.tbPost;window.tbPost=()=>{try{upd()}catch(_){}if(old)old()};
+addEventListener("resize",()=>{try{upd()}catch(_){}});
+try{upd()}catch(_){}
+})();
+</script>

@@ -2130,15 +2130,19 @@ function autoBlk(n){const p=P(),c=n===1?eff1():p.m2,i=n===1?ind1():ind2(),m=mOf(
 
 /* ----- v94 : assistant joueur par joueur, puis choix des primaires / secondaires / layouts ----- */
 const wnk=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-const WZN=["Joueur 1","Joueur 2","Primaires","Secondaires","Layouts"],WZK=["pri","sec","lay"],WZT={pri:"Missions primaires",sec:"Cartes secondaires",lay:"Layouts"};
+const WZN=["Joueur 1","Joueur 2","Dossiers"],WZK=["pri","sec","lay"],WZT={pri:"Missions primaires",sec:"Cartes secondaires",lay:"Layouts"};
 function wzData(k){try{window.applyMx&&window.applyMx()}catch(e){}
  if(k==="pri")return misL("w40k").map(c=>({h:c.ic+" "+c.fr,it:(window.__msd||[]).filter(m=>m.cat===c.id).map(m=>({id:m.id,n:m.nm}))})).filter(x=>x.it.length);
  if(k==="sec"){const GR=window.__sxgr||{},o={},ks=[];(window.__sxd||[]).forEach(c=>{if(!o[c.g]){o[c.g]=[];ks.push(c.g)}o[c.g].push({id:c.id,n:c.nm})});return ks.map(g=>({h:GR[g]?GR[g].ic+" "+GR[g].nm:g,it:o[g]}))}
  return window.__mxLay?window.__mxLay():[]}
-function wzEnter(){const p=P(),k=WZK[(p.wz||1)-3];if(!k)return;p.sel=p.sel||{pri:[],sec:[],lay:[]};p.si=p.si||{};
- if(p.si[k])return;p.si[k]=1;
- if(k==="pri")p.sel.pri=[ind1(),ind2()].filter((x,i,a)=>x&&a.indexOf(x)===i);
- else if(k==="lay"&&window.__lay){const kk=window.__lay.key(eff1(),p.m2),L=window.__lay.LP[kk]||{};p.sel.lay=["A","B","C"].map(l=>L[l]&&"lay-"+L[l]).filter(Boolean)}}
+const WZF={pri:["🎯","Missions primaires","#e0563f","mission"],sec:["⚡","Cartes secondaires","#ff7a45","carte"],lay:["🗺","Layouts de terrain","#4aa3ff","layout"]};
+function wzFolds(k){try{return(window.__mxFolders?window.__mxFolders():[]).filter(f=>f.k===k)}catch(e){return[]}}
+function wzIds(k){return wzData(k).flatMap(g=>g.it.map(x=>x.id))}
+function wzFSel(){const p=P();p.sel=p.sel||{pri:[],sec:[],lay:[]};p.fsel=p.fsel||{};WZK.forEach(k=>{p.sel[k]=p.fsel[k]?wzIds(k):[]})}
+function wzEnter(){const p=P();if((p.wz||1)<3)return;if(!p.fsel){p.fsel={};WZK.forEach(k=>{const f=wzFolds(k)[0];if(f)p.fsel[k]=f.id})}wzFSel()}
+function wzFolders(){const p=P();wzEnter();const f=p.fsel||{},lp=window.__lay&&window.__lay.LP[window.__lay.key(eff1(),p.m2)]||null;
+ const card=(k,fo)=>{const m=WZF[k],on=f[k]===fo.id;return`<button type="button" class="wzf2${on?" on":""}" style="--c:${esc(fo.c||m[2])}" data-gp="wfold" data-k="${k}" data-id="${esc(fo.id)}" aria-pressed="${on}"><span class="ic">${m[0]}</span><span class="tx"><b>${esc(fo.nm)}</b><small>${fo.n} ${m[3]}${fo.n>1?"s":""}</small></span><span class="rd"></span></button>`};
+ return`<p class="gnote wzt">Choisis le dossier à utiliser pour chaque catégorie. Un appui le choisit en entier, sans l’ouvrir.</p>`+WZK.map(k=>{const m=WZF[k],fs=wzFolds(k);return`<div class="gps"><div class="gph">${m[1]}</div>${fs.length?fs.map(fo=>card(k,fo)).join(""):`<p class="gnote">Aucun dossier. Crées-en un dans Missions &amp; Layout.</p>`}${k==="lay"&&f.lay?`<p class="gnote">🎲 Un layout est tiré au hasard parmi les 3 qui correspondent à vos missions${lp?" (agencements "+["A","B","C"].filter(l=>lp[l]).join(", ")+")":""}.</p>`:""}</div>`}).join("")+`<p class="gnote">Touche un dossier déjà choisi pour ne rien restreindre.</p>`}
 function wzList(k){const p=P(),s=(p.sel&&p.sel[k])||[],q=wnk(p.wq||"");
  const gs=wzData(k).map(g=>({h:g.h,it:g.it.filter(x=>!q||wnk(x.n+" "+g.h).includes(q))})).filter(g=>g.it.length);
  return gs.length?gs.map(g=>`<div class="wzg">${esc(g.h)}</div>`+g.it.map(x=>`<button type="button" class="wzi${s.includes(x.id)?" on":""}" data-gp="wtog" data-k="${k}" data-id="${esc(x.id)}" aria-pressed="${s.includes(x.id)}"><span class="wzc"></span><span>${esc(x.n)}</span></button>`).join("")).join(""):`<p class="gnote">Aucun résultat.</p>`}
@@ -2153,7 +2157,7 @@ window.gSelF=(k,l,f)=>{const s=window.gSel(k);if(!s)return l;const o=l.filter(x=
 window.okSx=id=>{const s=window.gSel("sec");return!s||s.includes(id)};
 function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"";
  const opts=(sel,none)=>(none?`<option value="">${none}</option>`:"")+S.lists.map(l=>`<option value="${l.id}"${l.id===sel?" selected":""}>${esc(l.name)}</option>`).join("");
- const wz=p.wz||1,last=wz===5,s1=`<div class="gps"><div class="gph">Joueur 1 — Moi</div>
+ const wz=p.wz||1,last=wz>=3,s1=`<div class="gps"><div class="gph">Joueur 1 — Moi</div>
   <label>Mon nom<input data-gi="me" value="${esc(p.me)}" placeholder="Moi"></label>
   <label>Ma liste d’armée<select data-gs="l">${opts(L.id)}</select></label>
   <div class="gpi"><span>Faction</span><b>${esc(facOf(L)||"—")}</b><span>Détachement</span><b>${esc(detOf(L)||"—")}</b><span>Points</span><b>${ptsOf(L)?ptsOf(L)+" pts":"—"}</b></div>
@@ -2170,14 +2174,14 @@ function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff
  let body="";
  if(wz===1)body=`<p class="gnote wzt">🎲 Joueur 1 : choisis ton armée et ta mission, puis valide.</p>`+s1;
  else if(wz===2)body=`<p class="gnote wzt">Joueur 1 validé : <b>${esc(p.me||"Moi")}</b> · ${esc(misTag(e1,g)||"—")}. À toi, Joueur 2 : choisis ton armée et ta mission, puis valide.</p>`+s2;
- else body=wzBody(wz-2);
+ else body=wzFolders();
  el.innerHTML=`<div class="ov" id="gpo" style="z-index:39"><div class="pn gpn"><div class="top" style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Préparer la bataille</h3><button class="b cx" data-gp="x" aria-label="Fermer">✕</button></div><p class="gnote">${esc(SYS[g].name)} · ${esc(SYS[g].ed)}</p>${stp}${body}
  <div class="gpgo wzf">${wz>1?`<button class="b" data-gp="wprev">← Retour</button>`:""}<button class="b p" data-gp="${last?"go":"wnext"}">${last?"⚔ Lancer la partie":wz<3?"✔ Valider le joueur "+wz:"Suivant ▶"}</button></div></div></div>`;
  const n=el.querySelector(".pn");if(n)n.scrollTop=sc}
 function close(){open=false;if(el)el.innerHTML=""}
 function openP(id){const p=P(),b=S.bat;if(id&&S.lists.some(l=>l.id===id)){if(p.l!==id){p.m1="";p.i1=""}p.l=id}else if(!S.lists.some(l=>l.id===p.l))p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);
  if(!p.me)p.me=b.n[0]&&!/^Joueur \d$/.test(b.n[0])?b.n[0]:"Moi";if(!p.n&&b.n[1]&&!/^Joueur \d$/.test(b.n[1]))p.n=b.n[1];if(!p.f&&b.f[1])p.f=b.f[1];
- open=true;p.wz=1;p.sel=null;p.si=null;p.wq="";gpDraw()}
+ open=true;p.wz=1;p.sel=null;p.si=null;p.fsel=null;p.wq="";gpDraw()}
 window.gPrep=function(id){
  if(!S.lists.length){info("Crée ou importe d’abord une liste d’armée (Gestion → Importer).");return}
  if(S.pm&&S.lists.some(l=>l.id===S.pm)){ask({t:"Une partie est en cours",p:"Tu peux la reprendre, ou en démarrer une nouvelle (la partie en cours est alors abandonnée).",ok:"Reprendre la partie",alt:"Nouvelle partie",altcb:()=>{const gi=S.bat&&S.bat.gid,ix=gi?S.games.findIndex(g=>g.id===gi&&!g.fin):-1;if(ix>=0)S.games.splice(ix,1);gReset();openP(id)}},()=>{S.mg=false;tab="play";window.scrollTo(0,0)});return}
@@ -2186,7 +2190,7 @@ function launch(noMs){const p=P();wzApply();const L=mine(),O=opp(),g=p.g,[a,b]=s
  gReset();B.n=[a.name,b.name];B.f=[a.fac,b.fac];B.l=[L.id,O?O.id:""];
  const mk=(x,src)=>{const c=catG(x.m),m=x.i&&mOf(x.i);return{name:x.name,fac:x.fac||"",list:x.list?{id:x.list.id,name:x.list.name}:null,det:x.det||"",pts:x.pts||0,mission:c?{id:c.id,fr:c.fr,en:c.en,ic:c.ic,mid:m?m.id:"",mn:m?m.nm:""}:null,src}};
  const rec={id:rid(),d:Date.now(),title:"Partie du "+dn,sys:g,n:[a.name,b.name],f:[a.fac,b.fac],l:[snap(L.id),O?snap(O.id):null],tot:[0,0],cp:[0,0],t:clone(B.t),fin:false,p:[mk(a,p.m1&&p.m1!==(L.mission||"")?"temp":"liste"),mk(b,"adverse")]};
- rec.sel=p.sel?JSON.parse(JSON.stringify(p.sel)):null;rec.lay=window.layDraw?window.layDraw(a.m,b.m,rec.sel&&rec.sel.lay):null;S.games.unshift(rec);B.gid=rec.id;p.sel=null;p.si=null;p.wz=1;p.m1="";p.m2="";p.i1="";p.i2="";p.x1=p.x2=false;
+ rec.sel=p.sel?JSON.parse(JSON.stringify(p.sel)):null;rec.lay=window.layDraw?window.layDraw(a.m,b.m,rec.sel&&rec.sel.lay):null;S.games.unshift(rec);B.gid=rec.id;p.sel=null;p.si=null;p.fsel=null;p.wz=1;p.m1="";p.m2="";p.i1="";p.i2="";p.x1=p.x2=false;
  if(!noMs)msInit([[a.m||"",a.i||"",p.i1?1:0],[b.m||"",b.i||"",p.i2?1:0]]);
  S.cur=L.id;S.pm=L.id;S.mg=false;tab=noMs?"play":"bat";close();save();draw();window.scrollTo(0,0);toast("Partie lancée ✓")}
 function goNeed(k){const p=P();p.ex=true;gpDraw();const t=el.querySelector(`[data-need="${k}"]`);if(t)t.scrollIntoView({block:"center",behavior:"smooth"})}
@@ -2205,6 +2209,7 @@ document.addEventListener("click",e=>{if(!open)return;if(e.target.id==="gpo"){cl
  else if(a==="ex"){p.ex=!p.ex;sv();gpDraw()}
  else if(a==="wnext"){const w=p.wz||1;if(w===1&&!eff1()){toast("Choisis d’abord ta catégorie de mission");return}if(w===2&&!p.m2){toast("Choisis d’abord la catégorie de mission de l’adversaire");return}p.wz=w+1;p.wq="";wzEnter();sv();gpDraw();const n=el.querySelector(".pn");if(n)n.scrollTop=0}
  else if(a==="wprev"){p.wz=Math.max(1,(p.wz||1)-1);p.wq="";sv();gpDraw();const n=el.querySelector(".pn");if(n)n.scrollTop=0}
+ else if(a==="wfold"){const k=b.dataset.k,id=b.dataset.id;p.fsel=p.fsel||{};if(p.fsel[k]===id)delete p.fsel[k];else p.fsel[k]=id;wzFSel();sv();gpDraw()}
  else if(a==="wtog"){const k=b.dataset.k,id=b.dataset.id;p.sel=p.sel||{pri:[],sec:[],lay:[]};const l=p.sel[k]||(p.sel[k]=[]),x=l.indexOf(id);if(x>=0)l.splice(x,1);else l.push(id);sv();gpDraw()}
  else if(a==="wall"||a==="wnone"){const k=b.dataset.k,q=wnk(p.wq||"");p.sel=p.sel||{pri:[],sec:[],lay:[]};const ids=[];wzData(k).forEach(g=>g.it.forEach(x=>{if(!q||wnk(x.n+" "+g.h).includes(q))ids.push(x.id)}));const cur=new Set(p.sel[k]||[]);ids.forEach(id=>a==="wall"?cur.add(id):cur.delete(id));p.sel[k]=[...cur];sv();gpDraw()}
  else if(a==="goto")goNeed(b.dataset.k);
@@ -3812,6 +3817,7 @@ function applyMx(){snap();if(!OR)return;const m=mx(),A=sxd(),B=by(),SM=smap(),M=
  OR.ms.forEach(o=>{const c=OR.mso[o.id];reset(c,o);const v=m.ms[o.id];if(v){if(v.nm)c.nm=v.nm;if(v.d!=null)c.d=v.d;if(v.l)for(const i in v.l){const L=c.cond[+i];if(L){if(v.l[i].tx!=null)L.tx=v.l[i].tx;if(v.l[i].pts!=null)L.pts=+v.l[i].pts}}}if(!(v&&v.off))M.push(c)});
  m.cms.forEach(c=>{if(!c.off)M.push(buildMs(c))})}
 window.applyMx=applyMx;
+window.__mxFolders=()=>folders().filter(f=>!f.hid).map(f=>({id:f.id,nm:f.nm,k:f.k,c:f.c,n:count(f)}));
 window.__mxLay=()=>{const g={},ks=[];layAll().filter(l=>!l.off).forEach(l=>{const k=l.a?`${l.a} vs ${l.b}`:"Mes layouts";if(!g[k]){g[k]=[];ks.push(k)}g[k].push({id:l.id,n:l.nm||("Agencement "+l.L)})});return ks.map(h=>({h:"🗺 "+h,it:g[h]}))};
 const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
 const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
@@ -4384,4 +4390,88 @@ try{upd()}catch(e){}
 })();
 
 </script>
+<!-- ===== v104 : refonte mobile (barre du bas, en-tête compact, feuille « Plus ») + étape « Dossiers » de l'assistant ===== -->
+<style id="phone">
+@keyframes gfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes gup{from{transform:translateY(100%)}to{transform:none}}
+html{-webkit-tap-highlight-color:transparent}
+#gbn,#gmore,#gsheet{display:none}
+/* ----- étape 3 de l'assistant : choisir un dossier, sans l'ouvrir ----- */
+.wzf2{display:flex;align-items:center;gap:12px;width:100%;min-height:70px;padding:10px 12px;margin:8px 0;border:2px solid var(--bd);border-left:6px solid var(--c);border-radius:14px;background:var(--card);color:inherit;font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+.wzf2 .ic{font-size:28px;width:40px;text-align:center;flex:none}
+.wzf2 .tx{flex:1;min-width:0}.wzf2 b{display:block;font-size:17px;line-height:1.2}.wzf2 small{display:block;color:var(--mu);font-size:13px;margin-top:2px}
+.wzf2 .rd{margin-left:auto;width:28px;height:28px;border-radius:50%;border:2px solid var(--mu);flex:none;box-sizing:border-box}
+.wzf2.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}.wzf2.on .rd{border-color:var(--c);background:radial-gradient(circle,var(--c) 45%,transparent 50%)}
+@media(max-width:899px){
+ html.goth body{overscroll-behavior-y:none}
+ button,.b,[data-act],[data-tab]{touch-action:manipulation}
+ #fab{display:none!important}
+ /* en-tête compact : logo, titre, bouton Plus */
+ html.goth body:not(.gmini) #nav{display:none}
+ html.goth body:not(.gmini) header .hbn{display:none!important}
+ html.goth body:not(.gmini) header{display:flex;align-items:center;gap:8px;min-height:56px;padding:6px 12px!important}
+ html.goth body:not(.gmini) header h1{flex:1;min-width:0;margin:0!important;padding-right:0!important;font-size:18px!important;flex-direction:row!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ html.goth body:not(.gmini) header h1 small{display:none}
+ html.goth body:not(.gmini) .glogo{width:34px;height:34px}
+ #gmore{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:14px;border:1px solid rgba(216,180,94,.4);background:#1b1d21;color:var(--gold);font-size:22px;cursor:pointer;padding:0}
+ #gmore.on{background:linear-gradient(180deg,#e2c27a,#a77c2f);color:#1a1307}
+ body.gmini #gmore{display:none}
+ /* barre de navigation du bas */
+ #gbn{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:26;height:calc(64px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:linear-gradient(180deg,#191b1f,#0d0e10);border-top:1px solid rgba(216,180,94,.5);box-shadow:0 -6px 22px rgba(0,0,0,.6)}
+ body.gingame #gbn{display:none}
+ #gbn button{flex:1;min-width:0;border:0;background:none;color:#a89f8b;font:inherit;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;cursor:pointer;padding:6px 0 4px}
+ #gbn button .gi{width:26px;height:26px;color:inherit}#gbn button .gi svg{width:25px;height:25px}
+ #gbn button.on{color:var(--tc,var(--gold))}
+ #gbn button.on::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;border-radius:0 0 4px 4px;background:var(--tc,var(--gold));box-shadow:0 0 10px var(--tc,var(--gold))}
+ #gbn button.on .gi{color:var(--tc,var(--gold))}
+ #gbn .gjeu{flex:1.2}
+ #gbn .gjeu .gcirc{width:58px;height:58px;margin-top:-28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f0d58f,#a77c2f);color:#1a1307;border:3px solid #0d0e10;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 18px rgba(216,180,94,.45)}
+ #gbn .gjeu .gcirc .gi{color:#1a1307;width:30px;height:30px}#gbn .gjeu .gcirc .gi svg{width:30px;height:30px}
+ #gbn .gjeu .l{color:var(--gold);margin-top:-2px}
+ body:not(.gingame) main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
+ body:not(.gingame) #ts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+ /* feuille « Plus » */
+ #gsheet.on{display:block;position:fixed;inset:0;z-index:48}
+ #gsheet .bd{position:absolute;inset:0;background:rgba(4,5,6,.66);backdrop-filter:blur(3px);animation:f .2s}
+ #gsheet .sh{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#1d1f23,#121316);border-radius:22px 22px 0 0;border-top:1px solid rgba(216,180,94,.5);padding:8px 14px calc(18px + env(safe-area-inset-bottom,0px));animation:gup .24s ease-out;max-height:80vh;overflow:auto}
+ #gsheet .gr{width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.25);margin:4px auto 10px}
+ #gsheet .row{display:flex;align-items:center;gap:14px;width:100%;min-height:58px;padding:8px 10px;border:0;border-bottom:1px solid rgba(216,180,94,.15);background:none;color:#ece4d2;font:inherit;font-family:var(--fs);font-size:18px;font-weight:700;text-align:left;cursor:pointer}
+ #gsheet .row:last-child{border-bottom:0}
+ #gsheet .row .gi{width:32px;height:32px;color:var(--tc,var(--gold))}#gsheet .row .gi svg{width:28px;height:28px}
+ /* fenêtres : feuilles qui montent du bas */
+ html.goth .gxo{align-items:flex-end!important;padding:0!important}
+ html.goth .gxp{border-radius:22px 22px 0 0!important;max-height:94vh!important;animation:gup .24s ease-out;border-bottom:0}
+}
+@media(min-width:900px){#gsheet{display:none!important}}
+</style>
+<script>
+(()=>{
+const G=window.G40;if(!G)return;const {ic,col}=G;
+const NAV=[["home","Accueil","home"],["lists","Armées","lists"],["jeu","Jeu",""],["mis","Missions","mis"],["paint","Peinture","paint"]];
+const ARM=["lists","units","dets","strats","opti"];
+let last="";
+function ensure(){
+ if(!document.getElementById("gbn")){const n=document.createElement("nav");n.id="gbn";n.setAttribute("aria-label","Navigation");document.body.appendChild(n)}
+ if(!document.getElementById("gmore")){const h=document.querySelector("header");if(h){const b=document.createElement("button");b.id="gmore";b.type="button";b.setAttribute("aria-label","Plus");b.textContent="☰";h.appendChild(b)}}
+ if(!document.getElementById("gsheet")){const s=document.createElement("div");s.id="gsheet";document.body.appendChild(s)}}
+function upd(){ensure();
+ const bar=document.getElementById("bar"),ing=!!bar&&getComputedStyle(bar).display!=="none";
+ document.body.classList.toggle("gingame",ing);document.body.classList.toggle("gmini",!!document.querySelector("#nav .mzb"));
+ const t=typeof tab!=="undefined"?tab:"home",run=!!(S&&S.pm),act=ARM.includes(t)?"lists":["home","mis","paint"].includes(t)?t:"more";
+ document.getElementById("gbn").innerHTML=NAV.map(([k,n,key])=>k==="jeu"?`<button class="gjeu" data-act="${run?"gresume":"gpick"}" aria-label="${run?"Reprendre la partie":"Mode jeu"}"><span class="gcirc">${ic("dice")}</span><span class="l">${run?"Reprendre":"Jeu"}</span></button>`:`<button data-tab="${k}" class="${act===k?"on":""}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("");
+ const mo=document.getElementById("gmore");if(mo)mo.classList.toggle("on",act==="more");
+ if(t!==last){last=t;const m=document.getElementById("m");if(m){m.style.animation="none";void m.offsetWidth;m.style.animation="gfade .22s ease"}try{window.scrollTo(0,0)}catch(_){}}}
+function sheet(){const s=document.getElementById("gsheet"),rows=[["coll","Collection","coll"],["gm","Parties","gm"],["enc","Règles V11","enc"],["imp","Importer","imp"]];
+ s.innerHTML=`<div class="bd" data-sh="x"></div><div class="sh" role="dialog" aria-label="Plus"><div class="gr"></div>${rows.map(([k,n,key])=>`<button class="row" data-tab="${k}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("")}<button class="row" data-g="gico" style="--tc:#ffd166">${ic("gear")}<span>Personnaliser</span></button></div>`;s.classList.add("on")}
+document.addEventListener("click",e=>{const t=e.target;if(!t.closest)return;
+ if(t.closest("#gmore")){e.preventDefault();e.stopPropagation();const s=document.getElementById("gsheet");if(s.classList.contains("on"))s.classList.remove("on");else sheet();return}
+ if(t.closest("#gsheet")){if(t.closest("[data-sh=x]")){document.getElementById("gsheet").classList.remove("on");return}if(t.closest(".row"))setTimeout(()=>{const s=document.getElementById("gsheet");if(s)s.classList.remove("on")},0);return}
+ if(t.closest("#gbn button")&&navigator.vibrate){try{navigator.vibrate(8)}catch(_){}}},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const s=document.getElementById("gsheet");if(s&&s.classList.contains("on")){s.classList.remove("on");e.stopPropagation()}}},true);
+const old=window.tbPost;window.tbPost=()=>{try{upd()}catch(_){}if(old)old()};
+addEventListener("resize",()=>{try{upd()}catch(_){}});
+try{upd()}catch(_){}
+})();
+</script>
+
 </body></html>
