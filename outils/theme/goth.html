@@ -1,0 +1,131 @@
+<!-- ===== v92 : thème gothique (or et noir), accueil et menu latéral ===== -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap">
+<style id="goth">
+@font-face{font-family:"GNum";src:local("Roboto Medium"),local("Roboto-Medium"),local("Roboto"),local("Arial"),local("Helvetica"),local("Liberation Sans"),local("DejaVu Sans");unicode-range:U+0030-0039;font-weight:100 900}
+html.goth:root{--bg:#0b0c0d;--card:#16181b;--tx:#ece4d2;--mu:#a89f8b;--ac:#c9a24a;--ac2:#7a5b22;--bd:#3a3328;--sh:0 6px 22px rgba(0,0,0,.55);--gold:#d8b45e;--gold2:#8f6a26;--fc:"GNum","Cinzel",Georgia,"Times New Roman",serif;--fs:"GNum","Cormorant Garamond",Georgia,serif;--fd:var(--fs);--side:248px;--rim:linear-gradient(160deg,#3d3323 0%,#1c1a16 42%,#0d0c0b 100%);--felt:radial-gradient(120% 140% at 50% 0%,#2f2b23 0%,#1d1b17 55%,#121110 100%);color-scheme:dark;font-variant-numeric:lining-nums}
+html.goth body{background:#0b0c0d;background-image:radial-gradient(120% 70% at 50% -10%,rgba(201,162,74,.10),transparent 60%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .9 0 0 0 0 .7 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");color:var(--tx)}
+/* en-tête */
+html.goth header{background:linear-gradient(180deg,#17191c,#0e0f11);border-bottom:1px solid rgba(216,180,94,.45);box-shadow:0 6px 24px rgba(0,0,0,.6),inset 0 -1px 0 rgba(0,0,0,.8)}
+html.goth header h1{font-family:var(--fc);font-weight:800;letter-spacing:.06em;color:#f1e3bd;text-shadow:0 2px 0 #000,0 0 18px rgba(216,180,94,.25);display:flex;align-items:center;gap:10px}
+.glogo{width:40px;height:40px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))}
+html.goth nav button{background:linear-gradient(180deg,#202328,#15171a);border:1px solid rgba(216,180,94,.28);color:#e6dcc4;font-family:var(--fs);font-weight:700;font-size:16px;display:inline-flex;align-items:center;gap:7px}
+html.goth nav button.on{background:linear-gradient(180deg,#e2c27a,#b08637);color:#1a1307;border-color:#f0d58f;box-shadow:0 0 14px rgba(216,180,94,.35)}
+.gi{display:inline-grid;place-items:center;width:20px;height:20px;flex:none}.gi svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html.goth nav button:not(.on) .gi{color:var(--gold)}
+/* cartes, boutons, champs */
+html.goth .card,html.goth .pu,html.goth .pg,html.goth .bzcard,html.goth .pdw,html.goth .encr{background:linear-gradient(180deg,#1b1d21,#131417);border:1px solid rgba(216,180,94,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 8px 22px rgba(0,0,0,.5)}
+html.goth h2,html.goth h3,html.goth .fh h2{font-family:var(--fc);letter-spacing:.04em}
+html.goth h4{color:var(--gold);font-family:var(--fs);font-size:18px}
+html.goth .b{background:linear-gradient(180deg,#24272c,#17191c);border:1px solid rgba(216,180,94,.3);color:#ece4d2}
+html.goth .b.p,html.goth #fab{background:linear-gradient(180deg,#e2c27a,#a77c2f);border-color:#f0d58f;color:#1a1307;font-weight:700;text-shadow:none}
+html.goth .b.x{color:#ff7b6b}
+html.goth input,html.goth textarea,html.goth select{background:#0f1012;border-color:#3d3529;color:var(--tx)}
+html.goth .tc.on,html.goth .fc.on,html.goth .bzt button.on,html.goth .pph button.on,html.goth .mbt .mbtc.on,html.goth .dksg button.on,html.goth .vtag,html.goth .sech,html.goth .cpb,html.goth .mck.on,html.goth .dkb,html.goth .pdg i,html.goth .vr,html.goth .vb,html.goth .tile.sel .ck{color:#1a1307}
+html.goth .sech,html.goth details.eq>summary{font-family:var(--fs);font-size:15px}
+html.goth #bar{background:linear-gradient(180deg,#191b1f,#0e0f11);border-top:1px solid rgba(216,180,94,.45)}
+html.goth #bar button.on{color:var(--gold)}
+html.goth .xx{background:#1b1d21}
+/* menu latéral (écrans larges) */
+@media(min-width:900px){
+ body.gside header{position:fixed;left:0;top:0;bottom:0;width:var(--side);padding:16px 12px;overflow-y:auto;border-bottom:0;border-right:1px solid rgba(216,180,94,.45);z-index:6;display:flex;flex-direction:column;gap:14px}
+ body.gside header h1{flex-direction:column;text-align:center;font-size:21px;margin:0;padding-bottom:12px;border-bottom:1px solid rgba(216,180,94,.25)}
+ body.gside header h1 small{margin:0}
+ body.gside .glogo{width:92px;height:92px}
+ body.gside nav{flex-direction:column;overflow:visible;gap:4px}
+ body.gside nav button{width:100%;justify-content:flex-start;border-radius:10px;padding:10px 12px;font-size:18px}
+ body.gside .hbn{position:static;margin-top:auto;text-align:center}
+ body.gside main,body.gside #sb{margin-left:var(--side)}
+ body.gside main{max-width:1180px;padding:20px 24px 92px}
+ body.gside #bar{left:var(--side)}
+}
+/* ----- accueil ----- */
+.gnum,.gu .gbadge{font-family:var(--fs)!important;font-weight:700;letter-spacing:0}
+.ghero,.gt,.ga .gth{background-color:#8a7656!important;background-blend-mode:multiply}
+.gh{display:grid;gap:14px}
+.ghero{position:relative;min-height:190px;border-radius:16px;overflow:hidden;border:1px solid rgba(216,180,94,.4);background:#14161a center/cover no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.6);display:flex;align-items:flex-end}
+.ghero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,10,.9) 0%,rgba(8,9,10,.55) 45%,rgba(8,9,10,.05) 100%),linear-gradient(0deg,rgba(8,9,10,.7),transparent 50%)}
+.ghero>div{position:relative;padding:18px 20px}
+.ghero img{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 3px 8px #000)}
+.ghero h2{margin:6px 0 0;font-family:var(--fc);font-size:28px;line-height:1.1;color:#f3ead4;text-shadow:0 2px 8px #000}
+.ghero h2 b{display:block;font-size:38px;color:var(--gold);background:linear-gradient(180deg,#f3d88f,#b4893a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.ghero p{margin:6px 0 0;font-family:var(--fs);font-size:18px;color:#ddd2b8}
+.gtiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.gt{position:relative;min-height:128px;border-radius:14px;overflow:hidden;border:1px solid rgba(216,180,94,.32);background:linear-gradient(145deg,#23262b,#0f1012) center/cover;color:#f1e7cf;text-align:left;font:inherit;cursor:pointer;padding:0;display:flex;align-items:flex-end;box-shadow:0 8px 22px rgba(0,0,0,.55);transition:transform .15s,border-color .15s}
+.gt:hover,.gt:focus-visible{transform:translateY(-2px);border-color:rgba(240,213,143,.8)}
+.gt::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,9,10,.95) 0%,rgba(8,9,10,.45) 50%,rgba(8,9,10,.05) 100%)}
+.gt>span{position:relative;display:flex;gap:10px;align-items:center;padding:12px}
+.gt .gi{width:38px;height:38px;color:var(--gold)}.gt .gi svg{width:34px;height:34px;stroke-width:1.5}
+.gt b{display:block;font-family:var(--fc);font-size:18px;letter-spacing:.03em;line-height:1.15}
+.gt small{display:block;font-size:12.5px;color:#cfc4ab;line-height:1.3;margin-top:2px}
+.gt .gdeco{position:absolute;right:-10px;top:-10px;opacity:.12;width:120px;height:120px}.gt .gdeco svg{width:120px;height:120px;stroke:var(--gold);fill:none;stroke-width:1}
+.gp{background:linear-gradient(180deg,#1b1d21,#121316);border:1px solid rgba(216,180,94,.3);border-radius:14px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+.gp>h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-family:var(--fc);font-size:18px;color:#f1e3bd}
+.gp>h3 .gi{color:var(--gold)}.gp>h3 .gadd{margin-left:auto}
+.gq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gq button{display:flex;flex-direction:column;align-items:center;gap:6px;min-height:84px;padding:10px 4px;border-radius:12px;border:1px solid rgba(216,180,94,.28);background:linear-gradient(180deg,#22252a,#141518);color:#e8dec6;font:inherit;font-size:12.5px;line-height:1.2;cursor:pointer;text-align:center}
+.gq button .gi{width:30px;height:30px;color:var(--gold)}.gq button .gi svg{width:28px;height:28px}
+.gq button:hover{border-color:rgba(240,213,143,.7)}
+.ga{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;border:1px solid rgba(216,180,94,.18);background:#101113;margin-top:8px}
+.ga .gth{width:64px;height:48px;border-radius:8px;flex:none;background:#24272c center/cover;border:1px solid rgba(216,180,94,.25)}
+.ga .gn{flex:1;min-width:0}.ga .gn b{display:block;font-family:var(--fs);font-size:18px;color:#f1e3bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ga .gn small{color:var(--mu)}
+.ga button{min-width:40px;min-height:40px;border-radius:10px;border:1px solid rgba(216,180,94,.3);background:#1d2024;color:var(--gold);cursor:pointer;font:inherit;font-weight:700}
+.gu{display:flex;align-items:center;gap:12px;width:100%;padding:10px;border-radius:12px;border:1px solid rgba(216,180,94,.25);background:#101113;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.gu .gbadge{flex:none;width:52px;height:52px;border-radius:10px;display:grid;place-items:center;border:1px solid rgba(216,180,94,.4);background:radial-gradient(circle at 50% 30%,#2a2d33,#111214);font-family:var(--fd);font-weight:800;color:var(--gold);font-size:16px}
+.gu span{flex:1;min-width:0}.gu b{display:block;font-family:var(--fs);font-size:18px;color:#f1e3bd}.gu small{color:var(--mu)}
+.gu i{font-style:normal;color:var(--gold);font-size:22px}
+.gorn{display:flex;justify-content:center;opacity:.55;margin:4px 0 0}.gorn img{width:56px;height:56px;object-fit:contain}
+@media(min-width:900px){.gh{grid-template-columns:minmax(0,1.9fr) minmax(300px,1fr);align-items:start}.ghl,.ghr{display:grid;gap:14px}.ghero{min-height:240px}.ghero h2{font-size:34px}.ghero h2 b{font-size:48px}.gt{min-height:150px}}
+@media(max-width:420px){.gt{min-height:112px}.gt b{font-size:16px}.gt small{display:none}.ghero h2 b{font-size:32px}}
+</style>
+<script>
+(()=>{
+const LOGO="data:image/webp;base64,__LOGO__";
+document.documentElement.classList.add("goth");
+const P={home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ book:'<path d="M3 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0z"/><path d="M21 5c-3-1.5-6-1.5-9 0v15c3-1.5 6-1.5 9 0z"/>',
+ layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+ target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+ dice:'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="15" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="12" cy="12" r="1.2"/>',
+ download:'<path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/>',
+ play:'<path d="M7 4l13 8-13 8z"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 6H4v2a4 4 0 004 4M16 6h4v2a4 4 0 01-4 4"/><path d="M12 13v4M8 21h8M9 17h6"/>',
+ bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ image:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
+ news:'<path d="M4 9v6h3l6 4V5L7 9z"/><path d="M17 9a4 4 0 010 6"/>',
+ tools:'<path d="M14 6a4 4 0 00-5 5l-6 6 2 2 6-6a4 4 0 005-5l-2 2-2-2z"/>',
+ flag:'<path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>'};
+const ic=n=>`<i class="gi"><svg viewBox="0 0 24 24">${P[n]||""}</svg></i>`;
+const NI={home:"home",lists:"shield",coll:"layers",gm:"trophy",enc:"book",imp:"download",units:"shield",dets:"flag",strats:"bolt",opti:"plus"};
+const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function pics(){const out=[],seen=new Set(),add=v=>{if(v&&!seen.has(v)){seen.add(v);out.push(v)}};
+ try{(S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>add(S.imgs&&S.imgs[u.ref])));Object.values(S.imgs||{}).forEach(add)}catch(_){}return out}
+const bg=u=>u?` style="background-image:url('${u}')"`:"";
+const lpic=l=>{try{for(const u of l.units||[]){const v=S.imgs&&S.imgs[u.ref];if(v)return v}}catch(_){}return""};
+window.homeView=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
+ const tiles=[["tab","lists","Mes armées","Créer, gérer et jouer tes listes","shield",pk(0)],["tab","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés","book",""],["tab","coll","Collection","Toutes tes figurines et leurs fiches","layers",pk(1)],["tab","gm","Parties","Historique des batailles et scores","trophy",pk(2)],["act",run?"gresume":"gpick",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score","dice",""],["tab","imp","Importer","Ajouter une liste : texte, PDF ou lien","download",""]];
+ const tile=([k,v,t,s,i,p])=>`<button class="gt" data-${k}="${v}"${bg(p)}>${p?"":`<span class="gdeco">${ic(i).replace('class="gi"','')}</span>`}<span>${ic(i)}<span><b>${t}</b><small>${s}</small></span></span></button>`;
+ const quick=[["gdice","dice","Lancer<br>de dés"],["act:"+(run?"gresume":"gpick"),"play",run?"Reprendre<br>la partie":"Mode<br>jeu"],["tab:enc","book","Encyclopédie<br>des règles"],["act:nlist","plus","Nouvelle<br>liste"],["tab:gm","trophy","Historique<br>des parties"],["act:sban","image","Changer la<br>bannière"]];
+ const qb=([a,i,t])=>{const [k,v]=a.includes(":")?a.split(":"):["data-g",a];return`<button ${k==="data-g"?`data-g="${v}"`:`data-${k}="${v}"`}>${ic(i)}<span>${t}</span></button>`};
+ const armies=L.length?L.map(l=>{let n=0,pts=0;try{n=typeof lcount==="function"?lcount(l):(l.units||[]).length;pts=typeof lpts==="function"?lpts(l):0}catch(_){}return`<div class="ga"><span class="gth"${bg(lpic(l))}></span><span class="gn"><b>${e2(l.name)}</b><small>${n} unité${n>1?"s":""}${pts?" · "+pts+" pts":""}</small></span><button data-act="gstart" data-id="${l.id}" title="Jouer" aria-label="Jouer avec ${e2(l.name)}">▶</button><button data-act="open" data-id="${l.id}" title="Gérer" aria-label="Gérer ${e2(l.name)}">✎</button></div>`}).join(""):`<p class="mu">Aucune liste pour l'instant.</p>`;
+ return `<div class="gh"><div class="ghl">
+ <section class="ghero"${bg(S.sban||pk(3)||pk(0))}><div><img src="${LOGO}" alt=""><h2>Bienvenue,<b>${e2(nm)}</b></h2><p>Ton assistant Warhammer 40,000 – V11</p></div></section>
+ <div class="gtiles">${tiles.map(tile).join("")}</div></div>
+ <div class="ghr">
+ <section class="gp"><h3>${ic("tools")}Outils rapides</h3><div class="gq">${quick.map(qb).join("")}</div></section>
+ <section class="gp"><h3>${ic("shield")}Mes armées<button class="b gadd" data-act="nlist" aria-label="Nouvelle liste">+</button></h3>${armies}</section>
+ <section class="gp"><h3>${ic("news")}Actus &amp; mises à jour</h3><button class="gu" data-tab="enc"><span class="gbadge">V11</span><span><b>${nv?nv+" nouvelle"+(nv>1?"s":"")+" règle"+(nv>1?"s":"")+" à valider":"Règles à jour"}</b><small>Vérifiées sur Warhammer Community · chaque jeudi</small></span><i>›</i></button></section>
+ <div class="gorn"><img src="${LOGO}" alt=""></div>
+ </div></div>`};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;if(b.dataset.g==="gdice"){const f=document.getElementById("dzf");if(f)f.click()}});
+function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySelector(".glogo"))h1.insertAdjacentHTML("afterbegin",`<img class="glogo" src="${LOGO}" alt="">`);
+ document.querySelectorAll("#nav>button[data-tab]").forEach(b=>{if(b.querySelector(".gi"))return;const k=b.dataset.tab,n=NI[k];const back=/^←/.test(b.textContent);b.textContent=b.textContent.replace(/^[^\wÀ-ÿ]+/,"");if(n)b.insertAdjacentHTML("afterbegin",ic(back?"back":n))});
+ const hp=document.querySelector("header").classList.contains("hpl");document.body.classList.toggle("gside",innerWidth>=900&&!hp)}
+const old=window.tbPost;window.tbPost=()=>{try{deco()}catch(_){}if(old)old()};
+addEventListener("resize",()=>{try{deco()}catch(_){}});
+try{deco()}catch(_){}
+try{if(typeof tab!=="undefined"&&tab==="home"&&typeof draw==="function")draw()}catch(_){}
+})();
+</script>

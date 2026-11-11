@@ -1,0 +1,155 @@
+<style id="goth2">
+/* ----- couleurs par rubrique ----- */
+html.goth nav button[data-tab] .gi{color:var(--tc,var(--gold))}
+html.goth nav button.on .gi{color:#1a1307}
+.gt{--tc:var(--gold);border-color:color-mix(in srgb,var(--tc) 55%,transparent);box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.6) inset,0 0 18px color-mix(in srgb,var(--tc) 22%,transparent)}
+.gt::before{background:linear-gradient(0deg,rgba(8,9,10,.96) 0%,rgba(8,9,10,.55) 42%,color-mix(in srgb,var(--tc) 22%,transparent) 100%)!important}
+.gt.gnp{background:radial-gradient(120% 90% at 85% 0%,color-mix(in srgb,var(--tc) 55%,transparent),transparent 62%),radial-gradient(80% 60% at 0% 100%,color-mix(in srgb,var(--tc) 28%,transparent),transparent 70%),linear-gradient(145deg,#1e2024,#0c0d0f)!important}
+.gt .gi,.gt .gdeco svg{color:var(--tc);stroke:var(--tc)}.gt .gdeco{opacity:.28}
+.gt b{text-shadow:0 2px 6px #000,0 0 14px color-mix(in srgb,var(--tc) 45%,transparent)}
+.gt:hover,.gt:focus-visible{border-color:var(--tc);box-shadow:0 10px 26px rgba(0,0,0,.6),0 0 26px color-mix(in srgb,var(--tc) 45%,transparent)}
+.gq button{--tc:var(--gold)}.gq button .gi{color:var(--tc)}.gq button{box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--tc) 55%,transparent)}
+.gp{--tc:var(--gold);border-top:3px solid color-mix(in srgb,var(--tc) 75%,transparent)}.gp>h3 .gi{color:var(--tc)}
+.ghero{border-color:rgba(216,180,94,.55);box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 30px rgba(216,140,60,.18)}
+.ghero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(60% 80% at 85% 30%,rgba(255,140,40,.20),transparent 60%),radial-gradient(50% 60% at 15% 100%,rgba(80,200,120,.12),transparent 60%)}
+.gemo{font-style:normal;font-size:20px;line-height:1}.gt .gemo{font-size:30px}.gq .gemo{font-size:26px}
+.gi img{width:100%;height:100%;object-fit:contain;border-radius:4px}
+/* ----- décors latéraux ----- */
+html.goth body{--pw:10px}
+html.goth body::before,html.goth body::after{content:"";position:fixed;top:0;bottom:0;width:var(--pw);z-index:4;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='140'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23090a0b'/%3E%3Cstop offset='.5' stop-color='%23302d29'/%3E%3Cstop offset='1' stop-color='%23090a0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='26' height='140' fill='url(%23g)'/%3E%3Crect x='3' width='1.2' height='140' fill='%23a07a30' opacity='.75'/%3E%3Crect x='21.8' width='1.2' height='140' fill='%23a07a30' opacity='.75'/%3E%3Cpath d='M7 12h12l-6 13z' fill='none' stroke='%23d8b45e' stroke-width='1.2' opacity='.8'/%3E%3Ccircle cx='13' cy='62' r='4' fill='%23c9a24a' opacity='.9'/%3E%3Ccircle cx='13' cy='62' r='1.6' fill='%23140f06'/%3E%3Crect x='7' y='88' width='12' height='30' rx='6' fill='none' stroke='%23a07a30' opacity='.7'/%3E%3Cpath d='M13 92v22' stroke='%23d8b45e' opacity='.5'/%3E%3C/svg%3E") repeat-y center/100% auto;box-shadow:0 0 18px rgba(0,0,0,.8)}
+html.goth body::before{left:0;border-right:1px solid rgba(216,180,94,.35)}
+html.goth body::after{right:0;border-left:1px solid rgba(216,180,94,.35)}
+html.goth main,html.goth header{padding-left:calc(var(--pw) + 12px)!important;padding-right:calc(var(--pw) + 12px)!important}
+html.goth header{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='90' viewBox='0 0 420 90'%3E%3Cpath d='M0 90V70h20V50l8-22 8 22v20h18V40l10-30 10 30v30h16V55l6-15 6 15v15h22V30l12-28 12 28v40h16V48l7-18 7 18v22h20V58l5-10 5 10v12h24V36l11-26 11 26v34h18V52l7-16 7 16v18h20V44l9-24 9 24v26h22V60l5-9 5 9v10h20V90z' fill='%23d8b45e' opacity='.07'/%3E%3C/svg%3E") right bottom/auto 100% no-repeat,linear-gradient(180deg,#17191c,#0e0f11)!important}
+@media(min-width:900px){html.goth body{--pw:24px}body.gside header{left:var(--pw)!important;padding-left:14px!important;padding-right:14px!important}body.gside main,body.gside #sb{margin-left:calc(var(--side) + var(--pw))!important}body.gside #bar{left:calc(var(--side) + var(--pw))}}
+#dzf{display:none!important}
+.gfoot{position:relative;height:46px;margin:6px 0 0;display:flex;justify-content:center;align-items:center}
+.gfoot::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:linear-gradient(90deg,transparent,#a07a30 20%,#f0d58f 50%,#a07a30 80%,transparent)}
+.gfoot img{position:relative;width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(216,180,94,.4))}
+/* ----- fenêtres des modules ----- */
+.gxo{position:fixed;inset:0;z-index:45;background:rgba(4,5,6,.78);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:12px}
+.gxp{width:min(640px,100%);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#1b1d21,#111214);border:1px solid rgba(216,180,94,.45);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.7);padding:16px}
+.gxh{display:flex;align-items:center;gap:10px;margin:0 0 10px}.gxh h2{flex:1;margin:0;font-family:var(--fc);font-size:20px;color:#f1e3bd}
+.gxp label{display:block;margin:8px 0 0;font-size:13px;color:var(--mu)}.gxp label input,.gxp label textarea,.gxp label select{display:block;width:100%;margin-top:4px}
+.gxf{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:14px}.gxf .b{min-height:42px}
+.gxg{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;margin-top:8px}
+.gxg button{height:52px;border-radius:10px;border:1px solid rgba(216,180,94,.28);background:#15171a;color:var(--gold);cursor:pointer;display:grid;place-items:center}.gxg button .gi{width:28px;height:28px}.gxg button .gi svg{width:26px;height:26px}.gxg button.on{border-color:#f0d58f;box-shadow:0 0 10px rgba(216,180,94,.5)}
+.gxl{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid rgba(216,180,94,.18);border-radius:12px;margin:6px 0;background:#101113}
+.gxl .gi{width:30px;height:30px;color:var(--tc,var(--gold))}.gxl b{flex:1;font-family:var(--fs);font-size:17px}
+@media(max-width:700px){.gxo{padding:0;align-items:stretch}.gxp{max-height:none;border-radius:0}}
+</style>
+<script>
+(()=>{
+const LOGO="data:image/webp;base64,__LOGO__";
+document.documentElement.classList.add("goth");
+const P={home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+ book:'<path d="M3 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0z"/><path d="M21 5c-3-1.5-6-1.5-9 0v15c3-1.5 6-1.5 9 0z"/>',
+ layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+ target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+ dice:'<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2"/><circle cx="15" cy="15" r="1.2"/><circle cx="15" cy="9" r="1.2"/><circle cx="9" cy="15" r="1.2"/><circle cx="12" cy="12" r="1.2"/>',
+ download:'<path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/>',
+ play:'<path d="M7 4l13 8-13 8z"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 01-8 0z"/><path d="M8 6H4v2a4 4 0 004 4M16 6h4v2a4 4 0 01-4 4"/><path d="M12 13v4M8 21h8M9 17h6"/>',
+ bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ image:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>',
+ news:'<path d="M4 9v6h3l6 4V5L7 9z"/><path d="M17 9a4 4 0 010 6"/>',
+ tools:'<path d="M14 6a4 4 0 00-5 5l-6 6 2 2 6-6a4 4 0 005-5l-2 2-2-2z"/>',
+ flag:'<path d="M5 21V4"/><path d="M5 4h12l-2 4 2 4H5"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>',
+ brush:'<path d="M14 4l6 6-8 8-4 1 1-4z"/><path d="M4 20c1-3 3-4 5-3"/>',
+ palette:'<path d="M12 3a9 9 0 100 18c1.5 0 2-1 2-2s-1-2 0-3 2-1 3-1a4 4 0 004-4c0-4.5-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/>',
+ droplet:'<path d="M12 3s6 7 6 11a6 6 0 01-12 0c0-4 6-11 6-11z"/>',
+ map:'<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>',
+ grid:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>',
+ folder:'<path d="M3 6h6l2 2h10v11H3z"/>',
+ scroll:'<path d="M6 4h11a3 3 0 013 3v1h-4"/><path d="M6 4a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V8"/><path d="M8 9h6M8 13h6"/>',
+ skull:'<path d="M12 3c-4.5 0-7 3-7 7 0 2.5 1.2 4 2.5 5v3h9v-3c1.3-1 2.5-2.5 2.5-5 0-4-2.5-7-7-7z"/><circle cx="9.5" cy="10.5" r="1.6"/><circle cx="14.5" cy="10.5" r="1.6"/><path d="M10 18v3M14 18v3M12 14v1"/>',
+ sword:'<path d="M14 4h6v6L9 21l-3-3z"/><path d="M5 14l5 5M3 21l3-3"/>',
+ axe:'<path d="M14 3c4 1 7 4 7 8-3 0-6-2-7-5"/><path d="M14 6L4 20"/>',
+ crown:'<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>',
+ flame:'<path d="M12 3c1 4 6 5 6 11a6 6 0 01-12 0c0-3 2-4 3-6 0 2 1 3 2 3 0-3-1-5 1-8z"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ castle:'<path d="M4 21V8h3v3h3V8h4v3h3V8h3v13z"/><path d="M10 21v-5h4v5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+ compass:'<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5z"/>',
+ star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+ users:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 15c3 0 5 2 5 4"/>',
+ helm:'<path d="M5 13a7 7 0 0114 0v5h-4l-1-3h-4l-1 3H5z"/><path d="M8 13h8"/>',
+ hammer:'<path d="M5 3h9l2 3-2 3H5z"/><path d="M10 9v12"/>',
+ cube:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+ pin:'<path d="M12 21s-7-6-7-11a7 7 0 0114 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>',
+ heart:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 018-3 4.5 4.5 0 018 3c0 6-8 11-8 11z"/>',
+ cross:'<path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/>',
+ rocket:'<path d="M12 2c4 3 5 8 3 13H9C7 10 8 5 12 2z"/><path d="M9 15l-3 4h4M15 15l3 4h-4"/><circle cx="12" cy="9" r="1.6"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
+const ICON_NAMES=Object.keys(P).filter(k=>!["back","plus","edit","trash"].includes(k));
+const ic=n=>`<i class="gi"><svg viewBox="0 0 24 24">${P[n]||""}</svg></i>`;
+const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* rubriques : icône par défaut et couleur (comme l'exemple : chaque rubrique a sa teinte) */
+const SEC={home:["home","Accueil","#d8b45e"],lists:["shield","Mes armées","#55c46e"],coll:["layers","Collection","#3fc1b5"],paint:["brush","Peinture & Hobby","#c46be0"],mis:["map","Missions & Layout","#4aa3ff"],gm:["trophy","Parties","#e0563f"],enc:["book","Règles V11","#e8a43c"],imp:["download","Importer","#7f9cff"],play:["dice","Mode jeu","#a77bff"],
+ q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["star","Icônes","#ffd166"],
+ units:["shield","Unités","#55c46e"],dets:["flag","Détachements","#e0563f"],strats:["bolt","Stratagèmes","#ffd166"],opti:["star","Optimisations","#4aa3ff"]};
+const icons=()=>{try{if(!S.icons||typeof S.icons!=="object")S.icons={};return S.icons}catch(_){return{}}};
+function icFor(key){const c=icons()[key],d=SEC[key];if(c&&c.t==="svg"&&P[c.v])return ic(c.v);if(c&&c.t==="emo"&&c.v)return`<i class="gi gemo">${e2(c.v)}</i>`;if(c&&c.t==="img"&&c.v)return`<i class="gi"><img src="${c.v}" alt=""></i>`;return ic(d?d[0]:"star")}
+const col=k=>(SEC[k]||[])[2]||"#d8b45e";
+window.G40={P,ic,icFor,col,SEC,e2,LOGO,ICON_NAMES};
+function pics(){const out=[],seen=new Set(),add=v=>{if(v&&!seen.has(v)){seen.add(v);out.push(v)}};
+ try{(S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>add(S.imgs&&S.imgs[u.ref])));Object.values(S.imgs||{}).forEach(add)}catch(_){}return out}
+const bg=u=>u?`background-image:url('${u}');`:"";
+const lpic=l=>{try{for(const u of l.units||[]){const v=S.imgs&&S.imgs[u.ref];if(v)return v}}catch(_){}return""};
+const XV=window.XV=window.XV||{};
+XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
+ const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
+ const tile=([k,v,key,t,s,p])=>`<button class="gt${p?"":" gnp"}" data-${k}="${v}" style="--tc:${col(key)};${bg(p)}">${p?"":`<span class="gdeco">${icFor(key).replace('class="gi','class="gi gbig')}</span>`}<span>${icFor(key)}<span><b>${t}</b><small>${s}</small></span></span></button>`;
+ const quick=[["q_dice","data-g","gdice"],["q_play","data-act",run?"gresume":"gpick"],["q_enc","data-tab","enc"],["q_new","data-act","nlist"],["q_paint","data-tab","paint"],["q_ico","data-g","gico"]];
+ const qb=([key,a,v])=>`<button ${a}="${v}" style="--tc:${col(key)}">${icFor(key)}<span>${key==="q_play"&&run?"Reprendre":SEC[key][1]}</span></button>`;
+ const armies=L.length?L.map(l=>{let n=0,pts=0;try{n=typeof lcount==="function"?lcount(l):(l.units||[]).length;pts=typeof lpts==="function"?lpts(l):0}catch(_){}return`<div class="ga"><span class="gth" style="${bg(lpic(l))}"></span><span class="gn"><b>${e2(l.name)}</b><small>${n} unité${n>1?"s":""}${pts?" · "+pts+" pts":""}</small></span><button data-act="gstart" data-id="${l.id}" title="Jouer" aria-label="Jouer avec ${e2(l.name)}">▶</button><button data-act="open" data-id="${l.id}" title="Gérer" aria-label="Gérer ${e2(l.name)}">✎</button></div>`}).join(""):`<p class="mu">Aucune liste pour l'instant.</p>`;
+ let hb="";try{const h=S.hobby||{},us=Object.values(S.coll||{}),done=us.filter(u=>((h.sch||{})[u.ref]||{}).st==="fini").length;hb=`<section class="gp" style="--tc:${col("paint")}"><h3>${icFor("paint")}Peinture &amp; Hobby</h3><button class="gu" data-tab="paint"><span class="gbadge" style="color:${col("paint")}">${us.length?Math.round(done*100/us.length):0}%</span><span><b>${done} / ${us.length} figurines terminées</b><small>${(h.paints||[]).length} peinture${(h.paints||[]).length>1?"s":""} dans ta collection</small></span><i>›</i></button></section>`}catch(_){}
+ return `<div class="gh"><div class="ghl">
+ <section class="ghero" style="${bg(S.sban||pk(4)||pk(0))}"><div><img src="${LOGO}" alt=""><h2>Bienvenue,<b>${e2(nm)}</b></h2><p>Ton assistant Warhammer 40,000 – V11</p></div></section>
+ <div class="gtiles">${tiles.map(tile).join("")}</div></div>
+ <div class="ghr">
+ <section class="gp" style="--tc:#ff7a45"><h3>${ic("tools")}Outils rapides</h3><div class="gq">${quick.map(qb).join("")}</div></section>
+ <section class="gp" style="--tc:${col("lists")}"><h3>${icFor("lists")}Mes armées<button class="b gadd" data-act="nlist" aria-label="Nouvelle liste">+</button></h3>${armies}</section>
+ ${hb}
+ <section class="gp" style="--tc:${col("enc")}"><h3>${ic("news")}Actus &amp; mises à jour</h3><button class="gu" data-tab="enc"><span class="gbadge">V11</span><span><b>${nv?nv+" nouvelle"+(nv>1?"s":"")+" règle"+(nv>1?"s":"")+" à valider":"Règles à jour"}</b><small>Vérifiées sur Warhammer Community · chaque jeudi</small></span><i>›</i></button></section>
+ </div></div><div class="gfoot"><img src="${LOGO}" alt=""></div>`};
+/* ----- personnalisation des icônes ----- */
+const GX=window.GX={open(html){let o=document.getElementById("gxo");if(!o){o=document.createElement("div");o.id="gxo";document.body.appendChild(o)}o.innerHTML=`<div class="gxo" data-gx="bg"><div class="gxp" role="dialog" aria-modal="true">${html}</div></div>`;document.body.classList.add("jclk");const f=o.querySelector("[autofocus]");if(f)try{f.focus()}catch(_){}},
+ close(){const o=document.getElementById("gxo");if(o)o.innerHTML="";document.body.classList.remove("jclk")},
+ img(file,max,cb){if(!file)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.78))};im.src=r.result};r.readAsDataURL(file)},
+ commit(){try{save()}catch(_){}try{draw()}catch(_){}}};
+let icKey=null;
+function icList(){const keys=["home","lists","coll","paint","mis","gm","enc","imp","play","q_dice","q_enc","q_new","q_paint","q_ico"];
+ GX.open(`<div class="gxh"><h2>Icônes</h2><button class="b" data-gx="close" aria-label="Fermer">✕</button></div><p class="mu">Touche une rubrique pour changer son icône : symbole, emoji ou image de ton téléphone.</p>${keys.map(k=>`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b><button class="b" data-gx="icpick" data-k="${k}">Changer</button></div>`).join("")}<div class="gxf"><button class="b" data-gx="icreset">Tout remettre par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
+function icPick(k){icKey=k;const c=icons()[k]||{};
+ GX.open(`<div class="gxh"><h2>${SEC[k][1]}</h2><button class="b" data-gx="iclist">← Retour</button></div><p class="mu">Symboles</p><div class="gxg">${ICON_NAMES.map(n=>`<button class="${c.t==="svg"&&c.v===n?"on":""}" data-gx="icset" data-v="${n}" aria-label="${n}" style="color:${col(k)}">${ic(n)}</button>`).join("")}</div>
+ <label>Ou un emoji<input id="gxemo" maxlength="4" placeholder="ex. 🐉" value="${c.t==="emo"?e2(c.v):""}"></label><div class="gxf"><button class="b" data-gx="icemo">Utiliser cet emoji</button></div>
+ <label>Ou une image de ton téléphone<input type="file" id="gxicf" accept="image/*"></label>
+ <div class="gxf"><button class="b" data-gx="icdef">Icône par défaut</button><button class="b p" data-gx="iclist">Terminé</button></div>`)}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;const g=b.dataset.g;if(g==="gdice"){const f=document.getElementById("dzf");if(f)f.click()}else if(g==="gico")icList()});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-gx]");if(!b)return;const a=b.dataset.gx;
+ if(a==="bg"){if(e.target===b)GX.close();return}
+ if(a==="close"){GX.close();return}
+ if(a==="iclist"){GX.commit();icList();return}
+ if(a==="icpick"){icPick(b.dataset.k);return}
+ if(a==="icset"){icons()[icKey]={t:"svg",v:b.dataset.v};GX.commit();icPick(icKey);return}
+ if(a==="icemo"){const v=(document.getElementById("gxemo").value||"").trim();if(v){icons()[icKey]={t:"emo",v};GX.commit();icPick(icKey)}return}
+ if(a==="icdef"){delete icons()[icKey];GX.commit();icPick(icKey);return}
+ if(a==="icreset"){S.icons={};GX.commit();icList();return}});
+document.addEventListener("change",e=>{if(e.target.id==="gxicf"){GX.img(e.target.files[0],96,d=>{icons()[icKey]={t:"img",v:d};GX.commit();icPick(icKey)})}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.querySelector("#gxo .gxo"))GX.close()});
+/* ----- en-tête, menu, menu latéral ----- */
+function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySelector(".glogo"))h1.insertAdjacentHTML("afterbegin",`<img class="glogo" src="${LOGO}" alt="">`);
+ document.querySelectorAll("#nav>button[data-tab]").forEach(b=>{if(b.dataset.gd===JSON.stringify(icons()[b.dataset.tab]||0))return;const k=b.dataset.tab,old=b.querySelector(".gi");if(old)old.remove();const back=/^←/.test(b.textContent);b.textContent=b.textContent.replace(/^[^\wÀ-ÿ]+/,"");b.style.setProperty("--tc",col(k));b.insertAdjacentHTML("afterbegin",back?ic("back"):icFor(k));b.dataset.gd=JSON.stringify(icons()[k]||0)});
+ const hd=document.querySelector("header"),hp=hd&&hd.classList.contains("hpl");document.body.classList.toggle("gside",innerWidth>=900&&!hp)}
+const old=window.tbPost;window.tbPost=()=>{try{deco()}catch(_){}if(old)old()};
+addEventListener("resize",()=>{try{deco()}catch(_){}});
+try{deco()}catch(_){}
+setTimeout(()=>{try{if(typeof tab!=="undefined"&&XV[tab]&&typeof draw==="function")draw()}catch(_){}},0);
+})();
+</script>

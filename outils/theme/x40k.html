@@ -1,0 +1,275 @@
+<!-- ===== v93 : Missions & Layout, Peinture & Hobby ===== -->
+<style id="x40k">
+#dg .ov,#dg>div{z-index:60!important}
+.gxtop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}.gxtop input[type=search]{flex:1;min-width:180px;min-height:42px}
+.gxtitle{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--tc) 55%,transparent);background:radial-gradient(90% 120% at 100% 0%,color-mix(in srgb,var(--tc) 35%,transparent),transparent 60%),linear-gradient(180deg,#1b1d21,#111214)}
+.gxtitle .gi{width:34px;height:34px;color:var(--tc)}.gxtitle .gi svg{width:32px;height:32px}.gxtitle h2{flex:1;margin:0;font-family:var(--fc);font-size:22px;color:#f1e3bd}.gxtitle small{display:block;font-family:var(--fs);font-size:15px;color:var(--mu);letter-spacing:0}
+.gfd{border:1px solid color-mix(in srgb,var(--tc) 45%,rgba(216,180,94,.25));border-left:4px solid var(--tc);border-radius:14px;margin:0 0 12px;background:linear-gradient(180deg,#191b1f,#111214);overflow:hidden}
+.gfh{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer}.gfh .gi{width:28px;height:28px;color:var(--tc)}.gfh .gi svg{width:26px;height:26px}
+.gfh b{flex:1;min-width:0;font-family:var(--fc);font-size:17px;color:#f1e3bd}.gfh small{color:var(--mu);font-family:var(--fs);font-size:15px;margin-left:6px}
+.gfh .b{min-width:38px;min-height:38px;padding:0 8px}.gfh .car{color:var(--mu);transition:transform .15s}.gfd.open .gfh .car{transform:rotate(180deg)}
+.gfb{padding:0 12px 12px;border-top:1px solid rgba(216,180,94,.18)}
+.ggh{display:flex;align-items:center;gap:8px;margin:14px 0 6px;font-family:var(--fs);font-weight:700;font-size:16px;color:var(--gc,var(--gold));border-bottom:1px solid color-mix(in srgb,var(--gc,#d8b45e) 45%,transparent);padding-bottom:4px}.ggh span{margin-left:auto;font-size:13px;color:var(--mu)}
+.gmi{display:flex;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;color:inherit;padding:9px 10px;margin:6px 0;border-radius:12px;border:1px solid rgba(216,180,94,.16);border-left:3px solid var(--gc,var(--gold));background:#101113;cursor:pointer}
+.gmi:hover{border-color:color-mix(in srgb,var(--gc,#d8b45e) 70%,transparent)}
+.gmi .th{flex:none;width:54px;height:42px;border-radius:8px;background:#22252a center/cover;border:1px solid rgba(216,180,94,.25)}
+.gmi .tx{flex:1;min-width:0}.gmi b{display:block;font-family:var(--fs);font-size:17px;color:#f1e3bd}.gmi small{display:block;color:var(--mu);font-size:12.5px;line-height:1.35;margin-top:2px}
+.gbd{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px;margin-left:6px;vertical-align:2px;border:1px solid currentColor}
+.gbd.u{color:#4aa3ff}.gbd.p{color:#c46be0}.gbd.n{color:#55c46e}
+.gadd2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.gadd2 .b{min-height:40px}
+.gln{border:1px solid rgba(216,180,94,.18);border-radius:10px;padding:8px;margin:8px 0;background:#0f1012}.gln .r{display:flex;gap:8px;align-items:flex-end}.gln .r label{margin:0}.gln .r label:first-child{flex:1}.gln .r input[type=number]{width:80px}
+.gimg{display:block;width:100%;max-height:60vh;object-fit:contain;border-radius:10px;border:1px solid rgba(216,180,94,.3);margin:8px 0;background:#0b0c0d}
+.gxbtn{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.gxbtn .b,.gxbtn a.b{min-height:42px;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+/* Peinture & Hobby */
+.ghtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 12px}.ghtabs button{min-height:46px;border-radius:12px;border:1px solid rgba(196,107,224,.4);background:#15171a;color:#e8dec6;font:inherit;font-family:var(--fs);font-weight:700;font-size:17px;cursor:pointer}.ghtabs button.on{background:linear-gradient(180deg,#d38cf0,#8c3fae);color:#1a0d22;border-color:#e6b3f7}
+.gprog{height:10px;border-radius:6px;background:#22252a;overflow:hidden;margin:6px 0 12px;border:1px solid rgba(216,180,94,.2)}.gprog i{display:block;height:100%;background:linear-gradient(90deg,#8c3fae,#c46be0,#55c46e)}
+.gchips{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px}.gchips button{flex:none;border-radius:99px;border:1px solid rgba(216,180,94,.3);background:#15171a;color:#e6dcc4;font:inherit;font-size:13px;padding:6px 12px;cursor:pointer}.gchips button.on{background:var(--gold);color:#1a1307;border-color:#f0d58f}
+.ghg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ghu{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(216,180,94,.25);border-top:3px solid var(--sc);background:#121316;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column}
+.ghu .ph{height:110px;background:#3a3226 center/cover;background-blend-mode:multiply;background-color:#8a7656}
+.ghu .ph{position:relative}.ghu .ph.no::after{content:"🖌";position:absolute;inset:0;display:grid;place-items:center;font-size:34px;opacity:.55}.ghu .ph.no{background:radial-gradient(circle at 50% 40%,rgba(196,107,224,.35),transparent 70%),#15171a}
+.ghu .in{padding:8px 10px}.ghu b{display:block;font-family:var(--fs);font-size:16px;line-height:1.15;color:#f1e3bd;text-transform:capitalize}.ghu small{color:var(--mu);font-size:12px}
+.ghu .st{display:inline-block;margin-top:5px;font-size:11.5px;font-weight:700;border-radius:99px;padding:1px 8px;color:#111;background:var(--sc)}
+.ghu .sw{display:flex;gap:3px;margin-top:6px}.ghu .sw i,.gsw{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.35);flex:none}
+.gpt{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border-radius:12px;border:1px solid rgba(216,180,94,.18);background:#101113;margin:6px 0;cursor:pointer;font:inherit;color:inherit;text-align:left}
+.gpt .gsw{width:34px;height:34px;box-shadow:inset 0 -6px 10px rgba(0,0,0,.35),0 0 10px color-mix(in srgb,var(--pc) 45%,transparent)}
+.gpt .tx{flex:1;min-width:0}.gpt b{display:block;font-family:var(--fs);font-size:17px;color:#f1e3bd}.gpt small{color:var(--mu);font-size:12.5px}
+.gpt .stk{font-size:11.5px;font-weight:700;border-radius:99px;padding:2px 8px;border:1px solid currentColor}.stk.ok{color:#55c46e}.stk.bas{color:#e8a43c}.stk.achat{color:#e0563f}
+.gstep{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:start;border:1px solid rgba(196,107,224,.25);border-radius:12px;padding:8px;margin:8px 0;background:#0f1012}
+.gstep .no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#c46be0;color:#1a0d22;font-weight:800}
+.gstep .f{display:grid;grid-template-columns:1fr 1fr;gap:6px}.gstep .f label{margin:0}.gstep .f .w2{grid-column:1/-1}
+.gstep .mv{display:flex;flex-direction:column;gap:4px}.gstep .mv button{min-width:34px;min-height:32px;border-radius:8px;border:1px solid rgba(216,180,94,.3);background:#1b1d21;color:var(--gold);cursor:pointer}
+@media(max-width:420px){.gstep .f{grid-template-columns:1fr}.ghg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script>
+(()=>{
+const G=window.G40,XV=window.XV,GX=window.GX;if(!G||!XV||!GX)return;
+const {ic,icFor,col,e2}=G;
+const clone=o=>o==null?o:JSON.parse(JSON.stringify(o));
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const nk=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[’']/g,"'").trim();
+const say=m=>{try{toast(m)}catch(_){}};
+const conf=(t,p,ok,cb)=>{try{ask({t,p,ok,dg:1},cb)}catch(_){if(confirm(t))cb()}};
+/* ================= MISSIONS & LAYOUT ================= */
+const LAY=__LAYOUTS__;
+const PDFU="https://assets.warhammer-community.com/fre_14-10_wh40k_event_companion-wb5phj6fmn-crcrxvr2qx.pdf";
+const sxd=()=>window.__sxd||[],by=()=>window.__sxby||{},smap=()=>window.__sxsm||{},msd=()=>window.__msd||[],gr=()=>window.__sxgr||{};
+const cats=()=>{try{return SYS.w40k.missions}catch(_){return[]}};
+const KIND={sec:["bolt","#ff7a45"],pri:["target","#e0563f"],lay:["grid","#4aa3ff"],free:["folder","#d8b45e"]};
+function mx(){if(!S.mx||typeof S.mx!=="object")S.mx={};const m=S.mx;["sx","ms","ly"].forEach(k=>{if(!m[k]||typeof m[k]!=="object"||Array.isArray(m[k]))m[k]={}});["csx","cms","cly"].forEach(k=>{if(!Array.isArray(m[k]))m[k]=[]});return m}
+function folders(){if(!Array.isArray(S.mf))S.mf=[{id:"f-sec",nm:"Secondaire Armageddon",k:"sec"},{id:"f-pri",nm:"Primaire Armageddon",k:"pri"},{id:"f-lay",nm:"Layout Armageddon",k:"lay"}];
+ if(!S.mfi||typeof S.mfi!=="object")S.mfi={};if(!S.mimg||typeof S.mimg!=="object")S.mimg={};return S.mf}
+/* --- copie d'origine, puis application des modifications partout dans l'appli --- */
+let OR=null;
+function snap(){if(OR||!window.__sxd||!window.__msd)return;OR={sx:sxd().map(c=>clone(c)),sm:clone(smap()),ms:msd().map(m=>clone(m)),mso:{}};msd().forEach(m=>{OR.mso[m.id]=m})}
+function reset(o,src){Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,clone(src))}
+const T_F="À la fin de votre tour.",T_C="À la fin de votre phase de Commandement (ou à la fin de votre tour au cinquième round de bataille).";
+function buildSx(c){const ln=c.k==="cnt"?{tx:c.tx||"",k:"cnt",pts:+c.pts||0,u:"fois",w:T_F}:{tx:c.tx||"",k:"chk",pts:+c.pts||0,w:T_F};if(c.k==="cnt"&&+c.cap)ln.cap=+c.cap;return{id:c.id,nm:c.nm||"Carte",en:"",g:c.g||"c",d:c.d||"",o:[ln],cust:1}}
+const autoSm=c=>c.k==="cnt"?`${+c.pts||0} PdV par fois : ${c.tx||""}${+c.cap?` — maximum ${+c.cap} PdV`:""}`:`${+c.pts||0} PdV : ${c.tx||""}`;
+function buildMs(c){return{id:c.id,cat:c.cat,nm:c.nm||"Mission",d:c.d||"",setup:[],cond:(c.lines||[]).filter(l=>l.tx).map(l=>({rd:l.mo==="cmd"?[2,3,4,5]:[1,2,3,4,5],w:l.mo==="cmd"?T_C:T_F,mo:l.mo==="cmd"?"cmd":"tour",r5:l.mo==="cmd",tx:l.tx,pts:+l.pts||0,k:l.k==="cnt"?"cnt":"chk"})),act:[],rules:[],cust:1}}
+function applyMx(){snap();if(!OR)return;const m=mx(),A=sxd(),B=by(),SM=smap(),M=msd();
+ A.length=0;Object.keys(SM).forEach(k=>delete SM[k]);Object.assign(SM,clone(OR.sm));
+ OR.sx.forEach(o=>{const c=B[o.id];if(!c)return;reset(c,o);const v=m.sx[o.id];if(v){if(v.nm)c.nm=v.nm;if(v.d!=null)c.d=v.d;if(v.l)for(const p in v.l){const [a,i]=p.split("."),L=c[a]&&c[a][+i];if(L){if(v.l[p].tx!=null)L.tx=v.l[p].tx;if(v.l[p].pts!=null&&L.pts!=null)L.pts=+v.l[p].pts}}if(v.sm!=null)SM[o.id]=v.sm}if(!(v&&v.off))A.push(c)});
+ m.csx.forEach(cc=>{const c=B[cc.id]||(B[cc.id]={});reset(c,buildSx(cc));SM[cc.id]=cc.sm||autoSm(cc);if(!cc.off)A.push(c)});
+ M.length=0;
+ OR.ms.forEach(o=>{const c=OR.mso[o.id];reset(c,o);const v=m.ms[o.id];if(v){if(v.nm)c.nm=v.nm;if(v.d!=null)c.d=v.d;if(v.l)for(const i in v.l){const L=c.cond[+i];if(L){if(v.l[i].tx!=null)L.tx=v.l[i].tx;if(v.l[i].pts!=null)L.pts=+v.l[i].pts}}}if(!(v&&v.off))M.push(c)});
+ m.cms.forEach(c=>{if(!c.off)M.push(buildMs(c))})}
+window.applyMx=applyMx;
+const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
+const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
+let mOpen={"f-sec":1},mq="",mShowOff={};
+const thumb=id=>S.mimg&&S.mimg[id]?`<span class="th" style="background-image:url('${S.mimg[id]}')"></span>`:"";
+function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[];const all=[...OR.sx.map(o=>o.id),...m.csx.map(c=>c.id)];
+ const off=all.filter(id=>(m.sx[id]&&m.sx[id].off)||(m.csx.find(c=>c.id===id&&c.off)));
+ ["e","c","a"].forEach(g=>{const ids=all.filter(id=>!off.includes(id)&&B[id]&&B[id].g===g&&(!q||nk(B[id].nm+" "+B[id].d).includes(q)));if(!ids.length)return;const G=GR[g]||{nm:g,ic:"",c:"#d8b45e"};
+  out.push(`<div class="ggh" style="--gc:${G.c}">${G.ic} ${e2(G.nm)}<span>${ids.length}</span></div>`+ids.map(id=>{const c=B[id],cu=m.csx.some(x=>x.id===id),pe=!!m.sx[id];return`<button class="gmi" style="--gc:${G.c}" data-x="sxed" data-id="${id}">${thumb(id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}</b><small>${e2(smTxt(smap()[id])||c.d)}</small></span></button>`}).join(""))});
+ return out.join("")+offList("sec",off.map(id=>[id,(B[id]||{}).nm]))+`<div class="gadd2"><button class="b p" data-x="sxnew">+ Nouvelle carte secondaire</button></div>`}
+function priItems(f,q){const m=mx(),out=[],all=[...OR.ms.map(o=>OR.mso[o.id]),...m.cms.map(buildMs)],off=all.filter(c=>(m.ms[c.id]&&m.ms[c.id].off)||m.cms.some(x=>x.id===c.id&&x.off));
+ cats().forEach(ct=>{const a=all.filter(c=>c.cat===ct.id&&!off.includes(c)&&(!q||nk(c.nm+" "+c.d).includes(q)));if(!a.length)return;
+  out.push(`<div class="ggh" style="--gc:#e0563f">${ct.ic} ${e2(ct.fr)}<span>${a.length}</span></div>`+a.map(c=>{const cu=m.cms.some(x=>x.id===c.id),pe=!!m.ms[c.id];return`<button class="gmi" style="--gc:#e0563f" data-x="msed" data-id="${c.id}">${thumb(c.id)}<span class="tx"><b>${e2(c.nm)}${cu?'<span class="gbd n">Créée</span>':pe?'<span class="gbd p">Modifiée</span>':""}</b><small>${e2(lineSum(c))}${c.d?" — "+e2(c.d.slice(0,90))+(c.d.length>90?"…":""):""}</small></span></button>`}).join(""))});
+ return out.join("")+offList("pri",off.map(c=>[c.id,c.nm]))+`<div class="gadd2"><button class="b p" data-x="msnew">+ Nouvelle mission primaire</button></div>`}
+const layId=l=>"lay-"+l.p;
+function layAll(){const m=mx();return[...LAY.map(l=>Object.assign({id:layId(l),off:!!(m.ly[layId(l)]||{}).off,nm:(m.ly[layId(l)]||{}).nm},l)),...m.cly]}
+function layItems(f,q){const m=mx(),all=layAll(),off=all.filter(l=>l.off),out=[],grp={};
+ all.filter(l=>!l.off&&(!q||nk([l.nm,l.a,l.b,l.ma,l.mb,"agencement "+l.L].join(" ")).includes(q))).forEach(l=>{const g=l.a?`${l.a} vs ${l.b}`:"Mes layouts";(grp[g]=grp[g]||[]).push(l)});
+ for(const g in grp)out.push(`<div class="ggh" style="--gc:#4aa3ff">🗺 ${e2(g)}<span>${grp[g].length}</span></div>`+grp[g].map(l=>`<button class="gmi" style="--gc:#4aa3ff" data-x="lyed" data-id="${l.id}">${thumb(l.id)}<span class="tx"><b>${e2(l.nm||("Agencement "+l.L))}${l.u?'<span class="gbd u">Mis à jour</span>':""}${l.cu?'<span class="gbd n">Créé</span>':""}</b><small>${l.ma?`Missions : ${e2(l.ma)} / ${e2(l.mb)} · page ${l.p}`:e2(l.note||"")}</small></span></button>`).join(""));
+ return out.join("")+offList("lay",off.map(l=>[l.id,l.nm||(l.a+" vs "+l.b+" — "+l.L)]))+`<div class="gadd2"><button class="b p" data-x="lynew">+ Nouveau layout</button><button class="b" data-x="pdfimp">📄 Importer le PDF officiel</button><button class="b" data-x="pdfall">🖼 Préparer toutes les images</button></div>`}
+function freeItems(f,q){const a=(S.mfi[f.id]||[]).filter(n=>!q||nk(n.t+" "+n.d).includes(q));
+ return(a.length?a.map(n=>`<button class="gmi" data-x="nted" data-f="${f.id}" data-id="${n.id}">${thumb(n.id)}<span class="tx"><b>${e2(n.t)}</b><small>${e2((n.d||"").slice(0,120))}</small></span></button>`).join(""):`<p class="mu">Dossier vide.</p>`)+`<div class="gadd2"><button class="b p" data-x="ntnew" data-f="${f.id}">+ Nouvel élément</button></div>`}
+function offList(k,a){if(!a.length)return"";return`<div class="gadd2"><button class="b" data-x="offtog" data-k="${k}">${mShowOff[k]?"Masquer":"Voir"} les éléments supprimés (${a.length})</button></div>`+(mShowOff[k]?a.map(([id,n])=>`<div class="gxl"><b>${e2(n||id)}</b><button class="b" data-x="restore" data-k="${k}" data-id="${id}">Restaurer</button></div>`).join(""):"")}
+function count(f){const m=mx();if(f.k==="sec")return sxd().length;if(f.k==="pri")return msd().length;if(f.k==="lay")return layAll().filter(l=>!l.off).length;return(S.mfi[f.id]||[]).length}
+function folderHtml(f){const q=nk(mq),open=q||mOpen[f.id],[i,c]=KIND[f.k]||KIND.free;
+ const body=open?(f.k==="sec"?secItems(f,q):f.k==="pri"?priItems(f,q):f.k==="lay"?layItems(f,q):freeItems(f,q)):"";
+ return`<div class="gfd${open?" open":""}" style="--tc:${f.c||c}"><div class="gfh" data-x="ftog" data-id="${f.id}">${f.ic?icFor("x_"+f.id):ic(i)}<b>${e2(f.nm)}<small>${count(f)}</small></b><button class="b" data-x="fren" data-id="${f.id}" aria-label="Modifier le dossier">✎</button><button class="b x" data-x="fdel" data-id="${f.id}" aria-label="Supprimer le dossier">🗑</button><span class="car">▾</span></div>${open?`<div class="gfb">${body}</div>`:""}</div>`}
+function misBody(){const F=folders().filter(f=>!f.hid),H=folders().filter(f=>f.hid);return F.map(folderHtml).join("")+(H.length?`<div class="gp"><h3>Dossiers supprimés</h3>${H.map(f=>`<div class="gxl"><b>${e2(f.nm)}</b><button class="b" data-x="frest" data-id="${f.id}">Restaurer</button></div>`).join("")}</div>`:"")}
+XV.mis=()=>{applyMx();folders();return`<div class="gxtitle" style="--tc:${col("mis")}">${icFor("mis")}<h2>Missions &amp; Layout<small>Tes modifications s'appliquent partout : tirage des cartes, missions de partie et score.</small></h2></div>
+ <div class="gxtop"><input type="search" id="gxmq" placeholder="Chercher une carte, une mission, un layout…" value="${e2(mq)}" autocomplete="off"><button class="b p" data-x="fnew">+ Nouveau dossier</button></div><div id="gxmb">${misBody()}</div>`};
+/* --- fenêtres d'édition --- */
+const imgBlock=id=>`<label>Image (photo, capture du layout…)<input type="file" accept="image/*" data-xi="${id}"></label>${S.mimg[id]?`<img class="gimg" src="${S.mimg[id]}" alt=""><div class="gxbtn"><button class="b x" data-x="imgdel" data-id="${id}">Retirer l'image</button></div>`:""}`;
+let cur=null;
+function sxEdit(id){const m=mx(),c=by()[id],cu=m.csx.find(x=>x.id===id),o=OR.sx.find(x=>x.id===id),sm=smap()[id];cur={k:"sx",id};
+ const lines=[];if(!cu)["o","f","t"].forEach(a=>(c[a]||[]).forEach((L,i)=>lines.push([a+"."+i,a,L])));
+ const smF=typeof sm==="object"&&sm?`<label>Résumé (Fixe)<textarea rows="2" data-f="smf">${e2(sm.f||"")}</textarea></label><label>Résumé (Tactique)<textarea rows="2" data-f="smt">${e2(sm.t||"")}</textarea></label>`:`<label>Résumé<textarea rows="2" data-f="sm">${e2(sm||"")}</textarea></label>`;
+ GX.open(`<div class="gxh">${ic("bolt")}<h2>${e2(c.nm)}</h2><button class="b" data-gx="close">✕</button></div>
+ <label>Nom<input data-f="nm" value="${e2(c.nm)}"></label>${cu?`<label>Type<select data-f="g">${Object.entries(gr()).map(([k,g])=>`<option value="${k}"${c.g===k?" selected":""}>${g.ic} ${e2(g.nm)}</option>`).join("")}</select></label>`:""}
+ <label>Description<textarea rows="3" data-f="d">${e2(c.d)}</textarea></label>${cu?"":smF}
+ ${cu?`<div class="gln"><label>Condition<textarea rows="2" data-f="tx">${e2(cu.tx||"")}</textarea></label><div class="r"><label>Décompte<select data-f="k"><option value="chk"${cu.k!=="cnt"?" selected":""}>Une fois si réussi</option><option value="cnt"${cu.k==="cnt"?" selected":""}>Par élément</option></select></label><label>PdV<input type="number" min="0" data-f="pts" value="${+cu.pts||0}"></label><label>Max<input type="number" min="0" data-f="cap" value="${+cu.cap||0}"></label></div></div>`:
+ lines.map(([p,a,L])=>`<div class="gln"><label>${a==="f"?"Fixe — ":a==="t"?"Tactique — ":""}Condition<textarea rows="2" data-l="${p}">${e2(L.tx)}</textarea></label>${L.pts!=null?`<div class="r"><label>PdV<input type="number" min="0" data-lp="${p}" value="${L.pts}"></label></div>`:`<p class="mu">Paliers : ${e2((L.lv||[]).map(x=>x[0]+" = "+x[1]+" PdV").join(" · "))}</p>`}</div>`).join("")}
+ ${imgBlock(id)}
+ <div class="gxf">${cu?"":m.sx[id]&&!m.sx[id].off?`<button class="b" data-x="sxrst">Rétablir l'original</button>`:""}<button class="b x" data-x="sxdel">Supprimer</button><button class="b p" data-x="sxsave">Enregistrer</button></div>`)}
+function msEdit(id){const m=mx(),cu=m.cms.find(x=>x.id===id),c=cu?buildMs(cu):OR.mso[id];cur={k:"ms",id};
+ const lines=cu?(cu.lines&&cu.lines.length?cu.lines:[{tx:"",pts:0,k:"chk",mo:"tour"}]):c.cond;
+ GX.open(`<div class="gxh">${ic("target")}<h2>${e2(c.nm)}</h2><button class="b" data-gx="close">✕</button></div>
+ <label>Nom<input data-f="nm" value="${e2(c.nm)}"></label>${cu?`<label>Catégorie<select data-f="cat">${cats().map(ct=>`<option value="${ct.id}"${c.cat===ct.id?" selected":""}>${ct.ic} ${e2(ct.fr)}</option>`).join("")}</select></label>`:""}
+ <label>Description<textarea rows="3" data-f="d">${e2(c.d)}</textarea></label>
+ ${lines.map((L,i)=>`<div class="gln"><label>${e2(L.w||"Condition")}<textarea rows="2" data-l="${i}">${e2(L.tx)}</textarea></label><div class="r"><label>PdV<input type="number" min="0" data-lp="${i}" value="${+L.pts||0}"></label>${cu?`<label>Décompte<select data-lk="${i}"><option value="chk"${L.k!=="cnt"?" selected":""}>Une fois</option><option value="cnt"${L.k==="cnt"?" selected":""}>Par objectif</option></select></label><label>Moment<select data-lm="${i}"><option value="tour"${L.mo!=="cmd"?" selected":""}>Fin de tour</option><option value="cmd"${L.mo==="cmd"?" selected":""}>Phase de Commandement</option></select></label>`:""}</div></div>`).join("")}
+ ${cu&&lines.length<3?`<div class="gxbtn"><button class="b" data-x="msline">+ Condition</button></div>`:""}
+ ${imgBlock(id)}
+ <div class="gxf">${cu?"":m.ms[id]&&!m.ms[id].off?`<button class="b" data-x="msrst">Rétablir l'original</button>`:""}<button class="b x" data-x="msdel">Supprimer</button><button class="b p" data-x="mssave">Enregistrer</button></div>`)}
+function lyEdit(id){const m=mx(),l=layAll().find(x=>x.id===id);if(!l)return;cur={k:"ly",id};const o=m.ly[id]||{},cu=!!l.cu;
+ GX.open(`<div class="gxh">${ic("grid")}<h2>${e2(l.nm||("Agencement "+l.L))}</h2><button class="b" data-gx="close">✕</button></div>
+ ${l.a?`<p><b>${e2(l.a)}</b> vs <b>${e2(l.b)}</b><br><span class="mu">Missions : ${e2(l.ma)} / ${e2(l.mb)} · Compagnon de Rencontre Warhammer, page ${l.p}${l.u?" · mis à jour en octobre 2026":""}</span></p>
+ <div class="gxbtn"><a class="b" href="${PDFU}#page=${l.p}" target="_blank" rel="noopener">📄 Ouvrir la page officielle</a><button class="b p" data-x="pdfshow" data-p="${l.p}">🖼 Afficher le layout ici</button></div><div id="gxpdf"></div>`:""}
+ <label>Nom${cu?"":" (facultatif)"}<input data-f="nm" value="${e2(l.nm||"")}" placeholder="${e2(l.a?"Agencement "+l.L:"Mon layout")}"></label>
+ <label>Notes<textarea rows="3" data-f="note" placeholder="ex. table du club, décors utilisés…">${e2((cu?l.note:o.note)||"")}</textarea></label>
+ ${imgBlock(id)}
+ <div class="gxf"><button class="b x" data-x="lydel">Supprimer</button><button class="b p" data-x="lysave">Enregistrer</button></div>`);
+ if(l.p)IDB.get("lay:"+l.p).then(d=>{const z=document.getElementById("gxpdf");if(d&&z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}).catch(()=>{})}
+function ntEdit(fid,id){const n=(S.mfi[fid]||[]).find(x=>x.id===id)||{id:uid("n"),t:"",d:""};cur={k:"nt",fid,id:n.id,isNew:!(S.mfi[fid]||[]).some(x=>x.id===id)};
+ GX.open(`<div class="gxh">${ic("scroll")}<h2>${n.t?e2(n.t):"Nouvel élément"}</h2><button class="b" data-gx="close">✕</button></div><label>Titre<input data-f="t" value="${e2(n.t)}" autofocus></label><label>Texte<textarea rows="6" data-f="d">${e2(n.d)}</textarea></label>${imgBlock(n.id)}<div class="gxf">${cur.isNew?"":`<button class="b x" data-x="ntdel">Supprimer</button>`}<button class="b p" data-x="ntsave">Enregistrer</button></div>`)}
+function fEdit(id){const f=folders().find(x=>x.id===id)||{id:uid("f-"),nm:"",k:"free",c:"#d8b45e"};cur={k:"f",id:f.id,isNew:!folders().some(x=>x.id===id)};
+ GX.open(`<div class="gxh">${ic("folder")}<h2>${cur.isNew?"Nouveau dossier":"Dossier"}</h2><button class="b" data-gx="close">✕</button></div><label>Nom<input data-f="nm" value="${e2(f.nm)}" autofocus></label><label>Couleur<input type="color" data-f="c" value="${f.c||(KIND[f.k]||KIND.free)[1]}"></label><div class="gxf"><button class="b p" data-x="fsave">Enregistrer</button></div>`)}
+const fv=k=>{const e=document.querySelector(`#gxo [data-f="${k}"]`);return e?e.value:null};
+const fvs=sel=>[...document.querySelectorAll("#gxo "+sel)];
+/* --- PDF officiel des layouts : gardé dans le téléphone (IndexedDB), jamais publié --- */
+const IDB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open("a40k-fichiers",1);r.onupgradeneeded=()=>r.result.createObjectStore("f");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+ async get(k){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f").objectStore("f").get(k);t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error)})},
+ async set(k,v){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f","readwrite");t.objectStore("f").put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}};
+let DOC=null;
+async function pdfDoc(){if(DOC)return DOC;const buf=await IDB.get("companion");if(!buf)return null;const lib=await pdfLib();DOC=await lib.getDocument({data:new Uint8Array(buf)}).promise;return DOC}
+async function renderPage(p){const k="lay:"+p,c0=await IDB.get(k);if(c0)return c0;const doc=await pdfDoc();if(!doc)return null;const pg=await doc.getPage(p),vp0=pg.getViewport({scale:1}),sc=1100/vp0.width,vp=pg.getViewport({scale:sc}),cv=document.createElement("canvas");cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;const d=cv.toDataURL("image/jpeg",.8);await IDB.set(k,d);return d}
+function pdfPick(){let i=document.getElementById("gxpdff");if(!i){i=document.createElement("input");i.type="file";i.accept="application/pdf";i.id="gxpdff";i.hidden=true;document.body.appendChild(i)}i.value="";i.click()}
+document.addEventListener("change",async e=>{if(e.target.id!=="gxpdff")return;const f=e.target.files[0];if(!f)return;say("Lecture du PDF…");try{const buf=await f.arrayBuffer(),lib=await pdfLib(),doc=await lib.getDocument({data:new Uint8Array(buf.slice(0))}).promise;if(doc.numPages<53){say("Ce n'est pas le Compagnon de Rencontre Warhammer (53 pages minimum)");return}await IDB.set("companion",buf);DOC=doc;say("PDF officiel importé : les layouts s'affichent maintenant dans l'appli")}catch(er){say("Import impossible : "+(er&&er.message||er))}});
+/* ================= PEINTURE & HOBBY ================= */
+const STS=[["monter","À monter","#8a8f98"],["monte","Monté","#b08a5a"],["sous","Sous-couché","#9aa3b5"],["cours","En peinture","#4aa3ff"],["fini","Terminé","#55c46e"]],STM=Object.fromEntries(STS.map(s=>[s[0],s]));
+const TYPES=["Base","Layer","Lavis (Shade)","Contraste","Sec (Dry)","Technique","Air","Spray / Sous-couche","Vernis","Autre"];
+const TECH=["Sous-couche","Aplat","Lavis","Contraste","Brossage à sec","Éclaircissement","Liseré","Glacis","Effet / Texture","Vernis","Autre"];
+const BRANDS=["Citadel","Vallejo","The Army Painter","AK Interactive","Scale75","Pro Acryl","Autre"];
+const STARTER=[["Abaddon Black","Base","#231f20"],["Corax White","Base","#f2f2f2"],["Mephiston Red","Base","#9a1115"],["Macragge Blue","Base","#0d407f"],["Caliban Green","Base","#00401f"],["Leadbelcher","Base","#888d8f"],["Retributor Armour","Base","#c39e4b"],["Balthasar Gold","Base","#a47552"],["Rhinox Hide","Base","#493435"],["Zandri Dust","Base","#9e915c"],["Mechanicus Standard Grey","Base","#3d4b4d"],["Averland Sunset","Base","#fbb81c"],["Jokaero Orange","Base","#ee3823"],["Naggaroth Night","Base","#3d3354"],["Bugman's Glow","Base","#834f44"],["Castellan Green","Base","#314821"],["Ushabti Bone","Layer","#aba173"],["Evil Sunz Scarlet","Layer","#c01411"],["Calgar Blue","Layer","#2a497f"],["Warpstone Glow","Layer","#1e7331"],["Stormhost Silver","Layer","#bbc6c9"],["Auric Armour Gold","Layer","#e8bc6d"],["Kislev Flesh","Layer","#d1a570"],["Nuln Oil","Lavis (Shade)","#14100e"],["Agrax Earthshade","Lavis (Shade)","#5a3a20"],["Reikland Fleshshade","Lavis (Shade)","#ca6c4d"],["Druchii Violet","Lavis (Shade)","#7a468c"],["Nihilakh Oxide","Technique","#66b39e"],["Typhus Corrosion","Technique","#3b342e"],["Black Templar","Contraste","#2a2a2a"]];
+function hob(){if(!S.hobby||typeof S.hobby!=="object")S.hobby={};const h=S.hobby;if(!Array.isArray(h.paints))h.paints=[];if(!h.sch||typeof h.sch!=="object"||Array.isArray(h.sch))h.sch={};return h}
+let hTab="sch",hq="",hst="",hty="";
+const units=()=>Object.values(S.coll||{}).filter(u=>u&&u.ref&&u.name).sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr"));
+const facN=id=>{try{const f=(S.fac||[]).find(x=>x.id===id);return f?f.name:""}catch(_){return""}};
+const uimg=u=>(S.imgs&&S.imgs[u.ref])||"";
+const paintBy=id=>hob().paints.find(p=>p.id===id);
+function schOf(ref){const h=hob();return h.sch[ref]||{st:"monter",steps:[],note:""}}
+function hList(){const h=hob(),q=nk(hq);
+ if(hTab==="sch"){const us=units().filter(u=>(!hst||schOf(u.ref).st===hst)&&(!q||nk(u.name+" "+facN(u.fac)).includes(q)));if(!us.length)return`<p class="mu">Aucune figurine ne correspond.</p>`;
+  return`<div class="ghg">${us.map(u=>{const s=schOf(u.ref),st=STM[s.st]||STS[0],sw=[...new Set((s.steps||[]).map(x=>x.p).filter(Boolean))].slice(0,7).map(pid=>{const p=paintBy(pid);return p?`<i style="background:${p.c}" title="${e2(p.n)}"></i>`:""}).join("");const im=s.img||uimg(u);
+   return`<button class="ghu" style="--sc:${st[2]}" data-x="sched" data-id="${u.ref}"><span class="ph${im?"":" no"}" style="${im?`background-image:url('${im}')`:""}"></span><span class="in"><b>${e2(u.name)}</b><small>${e2(facN(u.fac))}${(s.steps||[]).length?` · ${s.steps.length} étape${s.steps.length>1?"s":""}`:""}</small><span class="st">${st[1]}</span>${sw?`<span class="sw">${sw}</span>`:""}</span></button>`}).join("")}</div>`}
+ const ps=h.paints.filter(p=>(!hty||p.t===hty)&&(!q||nk(p.n+" "+p.b+" "+p.t).includes(q))).sort((a,b)=>a.n.localeCompare(b.n,"fr"));
+ if(!ps.length)return`<p class="mu">${h.paints.length?"Aucune peinture ne correspond.":"Ta collection de peintures est vide."}</p>${h.paints.length?"":`<div class="gadd2"><button class="b" data-x="pstarter">Ajouter 30 peintures Citadel courantes</button></div>`}`;
+ return ps.map(p=>{const used=Object.values(h.sch).filter(s=>(s.steps||[]).some(x=>x.p===p.id)).length;return`<button class="gpt" style="--pc:${p.c}" data-x="pted" data-id="${p.id}"><span class="gsw" style="background:${p.c}"></span><span class="tx"><b>${e2(p.n)}</b><small>${e2([p.b,p.t].filter(Boolean).join(" · "))}${used?` · utilisée dans ${used} schéma${used>1?"s":""}`:""}</small></span><span class="stk ${p.s||"ok"}">${p.s==="bas"?"Presque vide":p.s==="achat"?"À racheter":"En stock"}</span></button>`}).join("")}
+XV.paint=()=>{const h=hob(),us=units(),done=us.filter(u=>schOf(u.ref).st==="fini").length,pc=us.length?Math.round(done*100/us.length):0;
+ const chips=hTab==="sch"?[["","Toutes"],...STS.map(s=>[s[0],s[1]])].map(([k,n])=>`<button class="${hst===k?"on":""}" data-x="hst" data-k="${k}">${n}</button>`).join(""):[["","Tous les types"],...TYPES.map(t=>[t,t])].map(([k,n])=>`<button class="${hty===k?"on":""}" data-x="hty" data-k="${e2(k)}">${e2(n)}</button>`).join("");
+ return`<div class="gxtitle" style="--tc:${col("paint")}">${icFor("paint")}<h2>Peinture &amp; Hobby<small>${done} / ${us.length} figurines terminées · ${h.paints.length} peinture${h.paints.length>1?"s":""}</small></h2></div>
+ <div class="gprog" title="${pc} %"><i style="width:${pc}%"></i></div>
+ <div class="ghtabs"><button class="${hTab==="sch"?"on":""}" data-x="htab" data-k="sch">🖌 Schémas par figurine</button><button class="${hTab==="pt"?"on":""}" data-x="htab" data-k="pt">🎨 Mes peintures</button></div>
+ <div class="gxtop"><input type="search" id="gxhq" placeholder="${hTab==="sch"?"Chercher une figurine ou une faction…":"Chercher une peinture, une marque…"}" value="${e2(hq)}" autocomplete="off">${hTab==="pt"?`<button class="b p" data-x="ptnew">+ Peinture</button>`:""}</div>
+ <div class="gchips">${chips}</div><div id="gxhb">${hList()}</div>`};
+let wk=null;
+function paintOpts(sel){return`<option value="">— choisir —</option>`+hob().paints.slice().sort((a,b)=>a.n.localeCompare(b.n,"fr")).map(p=>`<option value="${p.id}"${p.id===sel?" selected":""}>${e2(p.n)}${p.b?" ("+e2(p.b)+")":""}</option>`).join("")}
+function readSteps(){if(!wk)return;const rows=fvs(".gstep");wk.steps=rows.map(r=>({z:r.querySelector("[data-s=z]").value,p:r.querySelector("[data-s=p]").value,px:r.querySelector("[data-s=px]").value,t:r.querySelector("[data-s=t]").value,n:r.querySelector("[data-s=n]").value}));const st=fv("st");if(st!=null)wk.st=st;const no=fv("note");if(no!=null)wk.note=no}
+function schEdit(ref,keep){const u=(S.coll||{})[ref];if(!u)return;if(!keep)wk=clone(schOf(ref));cur={k:"sch",id:ref};
+ const others=units().filter(x=>x.ref!==ref&&(hob().sch[x.ref]||{}).steps&&(hob().sch[x.ref].steps||[]).length);
+ GX.open(`<div class="gxh">${ic("brush")}<h2 style="text-transform:capitalize">${e2(u.name)}</h2><button class="b" data-gx="close">✕</button></div>
+ ${wk.img||uimg(u)?`<img class="gimg" src="${wk.img||uimg(u)}" alt="" style="max-height:220px">`:""}
+ <label>Avancement<select data-f="st">${STS.map(s=>`<option value="${s[0]}"${wk.st===s[0]?" selected":""}>${s[1]}</option>`).join("")}</select></label>
+ <h4>Schéma de peinture</h4>${(wk.steps||[]).map((s,i)=>{const p=paintBy(s.p);return`<div class="gstep"><span class="no" style="${p?`background:${p.c};color:${luma(p.c)>140?"#111":"#fff"}`:""}">${i+1}</span><div class="f"><label>Zone<input data-s="z" value="${e2(s.z||"")}" placeholder="ex. armure, arme, socle"></label><label>Technique<select data-s="t">${TECH.map(t=>`<option${s.t===t?" selected":""}>${t}</option>`).join("")}</select></label><label>Peinture<select data-s="p">${paintOpts(s.p)}</select></label><label>…ou autre peinture<input data-s="px" value="${e2(s.px||"")}" placeholder="nom libre"></label><label class="w2">Note<input data-s="n" value="${e2(s.n||"")}" placeholder="ex. 2 couches fines, pinceau sec"></label></div><div class="mv"><button data-x="stup" data-i="${i}" aria-label="Monter">↑</button><button data-x="stdn" data-i="${i}" aria-label="Descendre">↓</button><button data-x="stdel" data-i="${i}" aria-label="Retirer">✕</button></div></div>`}).join("")||`<p class="mu">Aucune étape pour l'instant.</p>`}
+ <div class="gxbtn"><button class="b p" data-x="stadd">+ Étape</button>${others.length?`<select id="gxcopy"><option value="">Copier le schéma de…</option>${others.map(o=>`<option value="${o.ref}">${e2(o.name)}</option>`).join("")}</select>`:""}</div>
+ <label>Notes<textarea rows="3" data-f="note" placeholder="couleurs du chapitre, idées, matériel…">${e2(wk.note||"")}</textarea></label>
+ <label>Photo de la figurine peinte<input type="file" accept="image/*" id="gxschimg"></label>${wk.img?`<div class="gxbtn"><button class="b x" data-x="schimgdel">Retirer la photo</button></div>`:""}
+ <div class="gxf"><button class="b" data-gx="close">Annuler</button><button class="b p" data-x="schsave">Enregistrer</button></div>`)}
+function luma(h){const m=/^#?([0-9a-f]{6})$/i.exec(h||"");if(!m)return 0;const n=parseInt(m[1],16);return .299*(n>>16)+.587*(n>>8&255)+.114*(n&255)}
+function ptEdit(id){const p=paintBy(id)||{id:uid("p"),n:"",b:"Citadel",t:"Base",c:"#7a5b22",s:"ok",note:""};cur={k:"pt",id:p.id,isNew:!paintBy(id)};
+ const used=units().filter(u=>(schOf(u.ref).steps||[]).some(s=>s.p===p.id));
+ GX.open(`<div class="gxh"><span class="gsw" style="width:30px;height:30px;background:${p.c}"></span><h2>${p.n?e2(p.n):"Nouvelle peinture"}</h2><button class="b" data-gx="close">✕</button></div>
+ <label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque<input data-f="b" list="gxbr" value="${e2(p.b)}"><datalist id="gxbr">${BRANDS.map(b=>`<option value="${b}">`).join("")}</datalist></label>
+ <label>Type<select data-f="t">${TYPES.map(t=>`<option${p.t===t?" selected":""}>${t}</option>`).join("")}</select></label><label>Couleur<input type="color" data-f="c" value="${p.c}"></label>
+ <label>Stock<select data-f="s"><option value="ok"${p.s==="ok"?" selected":""}>En stock</option><option value="bas"${p.s==="bas"?" selected":""}>Presque vide</option><option value="achat"${p.s==="achat"?" selected":""}>À racheter</option></select></label>
+ <label>Notes<textarea rows="2" data-f="note">${e2(p.note||"")}</textarea></label>
+ ${used.length?`<p class="mu">Utilisée sur : ${used.map(u=>e2(u.name)).join(", ")}</p>`:""}
+ <div class="gxf">${cur.isNew?"":`<button class="b x" data-x="ptdel">Supprimer</button>`}<button class="b p" data-x="ptsave">Enregistrer</button></div>`)}
+/* ================= événements ================= */
+function rerender(){if(typeof tab!=="undefined"&&tab==="mis"){const z=document.getElementById("gxmb");if(z)z.innerHTML=misBody()}else if(typeof tab!=="undefined"&&tab==="paint"){const z=document.getElementById("gxhb");if(z)z.innerHTML=hList()}}
+function done(msg){GX.close();try{applyMx()}catch(_){}GX.commit();if(msg)say(msg)}
+document.addEventListener("input",e=>{if(e.target.id==="gxmq"){mq=e.target.value;rerender()}else if(e.target.id==="gxhq"){hq=e.target.value;rerender()}});
+document.addEventListener("change",e=>{const t=e.target;
+ if(t.dataset&&t.dataset.xi){const id=t.dataset.xi;GX.img(t.files[0],1400,d=>{folders();S.mimg[id]=d;try{save()}catch(_){}const box=t.closest(".gxp");const v=document.createElement("img");v.className="gimg";v.src=d;t.parentNode.after(v);say("Image ajoutée")});return}
+ if(t.id==="gxschimg"){readSteps();GX.img(t.files[0],1200,d=>{wk.img=d;schEdit(cur.id,true)});return}
+ if(t.id==="gxcopy"&&t.value){readSteps();const o=schOf(t.value);wk.steps=[...(wk.steps||[]),...clone(o.steps||[])];schEdit(cur.id,true)}});
+document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-x]");if(!b)return;const a=b.dataset.x,id=b.dataset.id,m=mx();
+ if(b.tagName==="SELECT")return;e.preventDefault();e.stopPropagation();
+ /* dossiers */
+ if(a==="ftog"){if(e.target.closest("button"))return;mOpen[id]=!mOpen[id];rerender();return}
+ if(a==="fnew"){fEdit(null);return}
+ if(a==="fren"){fEdit(id);return}
+ if(a==="fsave"){const nm=(fv("nm")||"").trim();if(!nm){say("Donne un nom au dossier");return}const F=folders();let f=F.find(x=>x.id===cur.id);if(!f){f={id:cur.id,k:"free"};F.push(f);mOpen[f.id]=1}f.nm=nm;f.c=fv("c");done("Dossier enregistré");return}
+ if(a==="fdel"){const f=folders().find(x=>x.id===id);if(!f)return;conf("Supprimer le dossier « "+f.nm+" » ?",f.k==="free"?"Le dossier et son contenu seront supprimés.":"Le dossier sera masqué. Son contenu reste utilisé dans l'appli et tu pourras le restaurer.","Supprimer",()=>{if(f.k==="free"){S.mf=folders().filter(x=>x.id!==id);delete S.mfi[id]}else f.hid=1;GX.commit();say("Dossier supprimé")});return}
+ if(a==="frest"){const f=folders().find(x=>x.id===id);if(f)delete f.hid;GX.commit();return}
+ if(a==="offtog"){mShowOff[b.dataset.k]=!mShowOff[b.dataset.k];rerender();return}
+ if(a==="restore"){const k=b.dataset.k;if(k==="sec"){if(m.sx[id])delete m.sx[id].off;const c=m.csx.find(x=>x.id===id);if(c)delete c.off}else if(k==="pri"){if(m.ms[id])delete m.ms[id].off;const c=m.cms.find(x=>x.id===id);if(c)delete c.off}else{if(m.ly[id])delete m.ly[id].off;const c=m.cly.find(x=>x.id===id);if(c)delete c.off}done("Restauré");return}
+ if(a==="imgdel"){delete S.mimg[id];try{save()}catch(_){}b.closest(".gxbtn").previousElementSibling.remove();b.closest(".gxbtn").remove();return}
+ /* secondaires */
+ if(a==="sxed"){sxEdit(id);return}
+ if(a==="sxnew"){const c={id:uid("csx-"),nm:"Nouvelle carte",g:"c",d:"",tx:"",k:"chk",pts:5};m.csx.push(c);applyMx();sxEdit(c.id);return}
+ if(a==="sxsave"){const i=cur.id,cu=m.csx.find(x=>x.id===i);if(cu){Object.assign(cu,{nm:fv("nm")||cu.nm,g:fv("g")||cu.g,d:fv("d")||"",tx:fv("tx")||"",k:fv("k")||"chk",pts:+fv("pts")||0,cap:+fv("cap")||0});delete cu.sm;done("Carte enregistrée : elle est dans le paquet");return}
+  const o=OR.sx.find(x=>x.id===i),v=Object.assign({},m.sx[i]||{}),osm=OR.sm[i];v.nm=fv("nm")!==o.nm?fv("nm"):undefined;v.d=fv("d")!==o.d?fv("d"):undefined;
+  const nsm=fv("smf")!=null?{f:fv("smf"),t:fv("smt")}:fv("sm");v.sm=JSON.stringify(nsm)!==JSON.stringify(osm)?nsm:undefined;v.l={};
+  fvs("[data-l]").forEach(t=>{const p=t.dataset.l,[x,j]=p.split("."),L=o[x][+j],pe=document.querySelector(`#gxo [data-lp="${p}"]`),ch={};if(t.value!==L.tx)ch.tx=t.value;if(pe&&+pe.value!==L.pts)ch.pts=+pe.value;if(Object.keys(ch).length)v.l[p]=ch});
+  if(!Object.keys(v.l).length)delete v.l;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.sx[i]=v;else delete m.sx[i];done("Carte modifiée partout dans l'appli");return}
+ if(a==="sxrst"){conf("Rétablir la carte d'origine ?","Tes modifications de cette carte seront perdues.","Rétablir",()=>{delete m.sx[cur.id];done("Carte d'origine rétablie")});return}
+ if(a==="sxdel"){const i=cur.id;conf("Supprimer cette carte ?","Elle sera retirée du paquet de cartes secondaires. Tu pourras la restaurer.","Supprimer",()=>{const cu=m.csx.find(x=>x.id===i);if(cu)cu.off=1;else(m.sx[i]=m.sx[i]||{}).off=1;done("Carte retirée du paquet")});return}
+ /* primaires */
+ if(a==="msed"){msEdit(id);return}
+ if(a==="msnew"){const c={id:uid("cms-"),cat:(cats()[0]||{}).id,nm:"Nouvelle mission",d:"",lines:[{tx:"Pour chaque objectif que vous contrôlez.",pts:3,k:"cnt",mo:"cmd"}]};m.cms.push(c);applyMx();msEdit(c.id);return}
+ if(a==="msline"){const cu=m.cms.find(x=>x.id===cur.id);if(cu){msRead(cu);cu.lines.push({tx:"",pts:0,k:"chk",mo:"tour"});msEdit(cu.id)}return}
+ if(a==="mssave"){const i=cur.id,cu=m.cms.find(x=>x.id===i);if(cu){msRead(cu);done("Mission enregistrée : elle est proposée en partie");return}
+  const o=OR.ms.find(x=>x.id===i),v=Object.assign({},m.ms[i]||{});v.nm=fv("nm")!==o.nm?fv("nm"):undefined;v.d=fv("d")!==o.d?fv("d"):undefined;v.l={};
+  fvs("[data-l]").forEach(t=>{const j=t.dataset.l,L=o.cond[+j],pe=document.querySelector(`#gxo [data-lp="${j}"]`),ch={};if(t.value!==L.tx)ch.tx=t.value;if(pe&&+pe.value!==L.pts)ch.pts=+pe.value;if(Object.keys(ch).length)v.l[j]=ch});
+  if(!Object.keys(v.l).length)delete v.l;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.ms[i]=v;else delete m.ms[i];done("Mission modifiée partout dans l'appli");return}
+ if(a==="msrst"){conf("Rétablir la mission d'origine ?","Tes modifications de cette mission seront perdues.","Rétablir",()=>{delete m.ms[cur.id];done("Mission d'origine rétablie")});return}
+ if(a==="msdel"){const i=cur.id;conf("Supprimer cette mission ?","Elle ne sera plus proposée en partie. Tu pourras la restaurer.","Supprimer",()=>{const cu=m.cms.find(x=>x.id===i);if(cu)cu.off=1;else(m.ms[i]=m.ms[i]||{}).off=1;done("Mission retirée")});return}
+ /* layouts */
+ if(a==="lyed"){lyEdit(id);return}
+ if(a==="lynew"){const c={id:uid("cly-"),nm:"Mon layout",note:"",cu:1};m.cly.push(c);lyEdit(c.id);return}
+ if(a==="lysave"){const i=cur.id,cu=m.cly.find(x=>x.id===i);if(cu){cu.nm=fv("nm")||cu.nm;cu.note=fv("note")||""}else{const v=Object.assign({},m.ly[i]||{});v.nm=fv("nm")||undefined;v.note=fv("note")||undefined;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.ly[i]=v;else delete m.ly[i]}done("Layout enregistré");return}
+ if(a==="lydel"){const i=cur.id;conf("Supprimer ce layout ?","Tu pourras le restaurer depuis le dossier.","Supprimer",()=>{const cu=m.cly.find(x=>x.id===i);if(cu)cu.off=1;else(m.ly[i]=m.ly[i]||{}).off=1;done("Layout supprimé")});return}
+ if(a==="pdfimp"){pdfPick();return}
+ if(a==="pdfshow"){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<p class="mu">Préparation du layout…</p>`;try{const d=await renderPage(+b.dataset.p);if(!d){if(z)z.innerHTML=`<p class="mu">Pour afficher les layouts dans l'appli, importe une fois le PDF officiel « Compagnon de Rencontre Warhammer » (téléchargé depuis Warhammer Community). Il reste dans ton téléphone.</p><div class="gxbtn"><a class="b" href="${PDFU}" target="_blank" rel="noopener">⬇ Télécharger le PDF</a><button class="b p" data-x="pdfimp">📄 Importer le PDF</button></div>`;return}if(z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}catch(er){if(z)z.innerHTML=`<p class="mu">Affichage impossible : ${e2(er&&er.message||er)}</p>`}return}
+ if(a==="pdfall"){try{if(!await pdfDoc()){say("Importe d'abord le PDF officiel");pdfPick();return}let n=0;for(const l of LAY){await renderPage(l.p);n++;if(n%5===0)say(`Images des layouts : ${n} / ${LAY.length}`)}say("Les 45 layouts sont prêts, même hors connexion")}catch(er){say("Erreur : "+(er&&er.message||er))}return}
+ /* éléments libres */
+ if(a==="nted"){ntEdit(b.dataset.f,id);return}
+ if(a==="ntnew"){ntEdit(b.dataset.f,null);return}
+ if(a==="ntsave"){const t=(fv("t")||"").trim();if(!t){say("Donne un titre");return}const L=S.mfi[cur.fid]=S.mfi[cur.fid]||[];let n=L.find(x=>x.id===cur.id);if(!n){n={id:cur.id};L.push(n)}n.t=t;n.d=fv("d")||"";done("Enregistré");return}
+ if(a==="ntdel"){conf("Supprimer cet élément ?","","Supprimer",()=>{S.mfi[cur.fid]=(S.mfi[cur.fid]||[]).filter(x=>x.id!==cur.id);delete S.mimg[cur.id];done("Supprimé")});return}
+ /* peinture */
+ if(a==="htab"){hTab=b.dataset.k;hq="";GX.commit();return}
+ if(a==="hst"){hst=b.dataset.k;GX.commit();return}
+ if(a==="hty"){hty=b.dataset.k;GX.commit();return}
+ if(a==="pstarter"){const h=hob();STARTER.forEach(([n,t,c])=>h.paints.push({id:uid("p"),n,b:"Citadel",t,c,s:"ok"}));GX.commit();say("30 peintures ajoutées : retire celles que tu n'as pas");return}
+ if(a==="ptnew"){ptEdit(null);return}
+ if(a==="pted"){ptEdit(id);return}
+ if(a==="ptsave"){const n=(fv("n")||"").trim();if(!n){say("Donne un nom à la peinture");return}const h=hob();let p=h.paints.find(x=>x.id===cur.id);if(!p){p={id:cur.id};h.paints.push(p)}Object.assign(p,{n,b:fv("b")||"",t:fv("t"),c:fv("c"),s:fv("s"),note:fv("note")||""});done("Peinture enregistrée");return}
+ if(a==="ptdel"){conf("Supprimer cette peinture ?","Elle sera retirée des schémas qui l'utilisent.","Supprimer",()=>{const h=hob();h.paints=h.paints.filter(x=>x.id!==cur.id);Object.values(h.sch).forEach(s=>(s.steps||[]).forEach(x=>{if(x.p===cur.id)x.p=""}));done("Peinture supprimée")});return}
+ if(a==="sched"){schEdit(id);return}
+ if(a==="stadd"){readSteps();wk.steps=wk.steps||[];wk.steps.push({z:"",p:"",px:"",t:wk.steps.length?"Aplat":"Sous-couche",n:""});schEdit(cur.id,true);return}
+ if(a==="stdel"||a==="stup"||a==="stdn"){readSteps();const i=+b.dataset.i,s=wk.steps;if(a==="stdel")s.splice(i,1);else{const j=a==="stup"?i-1:i+1;if(j>=0&&j<s.length)[s[i],s[j]]=[s[j],s[i]]}schEdit(cur.id,true);return}
+ if(a==="schimgdel"){readSteps();delete wk.img;schEdit(cur.id,true);return}
+ if(a==="schsave"){readSteps();wk.steps=(wk.steps||[]).filter(s=>s.z||s.p||s.px||s.n);hob().sch[cur.id]=wk;wk=null;done("Schéma enregistré");return}
+},true);
+function msRead(cu){cu.nm=fv("nm")||cu.nm;cu.cat=fv("cat")||cu.cat;cu.d=fv("d")||"";cu.lines=fvs("[data-l]").map(t=>{const j=t.dataset.l,g=s=>document.querySelector(`#gxo [${s}="${j}"]`);return{tx:t.value,pts:+(g("data-lp")||{}).value||0,k:(g("data-lk")||{}).value||"chk",mo:(g("data-lm")||{}).value||"tour"}})}
+G40.SEC.x_f=["folder","Dossier","#d8b45e"];
+try{applyMx()}catch(_){}
+})();
+</script>
