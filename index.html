@@ -4050,5 +4050,35 @@ const mo=new MutationObserver(()=>{try{addBars()}catch(_){}});
 try{addBars()}catch(_){}
 })();
 </script>
+<!-- ===== v101 : aptitudes grisées réversibles, bulles de définition fiables ===== -->
+<style>html.goth .sech{background:linear-gradient(90deg,rgba(216,180,94,.28),rgba(216,180,94,.04))!important;color:#f1e3bd!important;border-left:3px solid var(--gold)}</style>
+<script>
+(()=>{
+const low=s=>String(s||"").toLowerCase();
+const nk=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[’']/g,"'").replace(/\s+/g," ").trim();
+const base=s=>nk(s).replace(/\[[^\]]*\]/g," ").replace(/\s*[:\-–]?\s*(\d+\s*(\+|"|'')?|\d*d\d+(\s*\+\s*\d+)?|x\+?)$/,"").replace(/\s+/g," ").trim();
+function cycle(r,n,mode){if(!S.hl)S.hl={};if(!S.fold)S.fold={};const k=low(n),H=S.hl[r]=S.hl[r]||[],F=S.fold[r]=S.fold[r]||[],fi=F.indexOf(k),hi=H.indexOf(k);
+ if(mode==="restore"||fi>=0){if(fi>=0)F.splice(fi,1);if(hi>=0)H.splice(hi,1)}else if(hi>=0){H.splice(hi,1);F.push(k)}else H.push(k);
+ if(!F.length)delete S.fold[r];if(!H.length)delete S.hl[r];try{save()}catch(_){}try{draw()}catch(_){}}
+/* capté avant tout le reste (fenêtre, phase de capture) pour qu'un seul traitement s'applique */
+window.addEventListener("click",e=>{const t=e.target;if(!t||!t.closest)return;
+ const g=t.closest(".apn .an.fold[data-r]");
+ if(g){e.preventDefault();e.stopImmediatePropagation();try{window.encPopClose&&encPopClose()}catch(_){}cycle(g.dataset.r,g.dataset.n,"restore");try{toast("« "+g.dataset.n+" » réaffichée")}catch(_){}return}
+ const hb=t.closest("#encb [data-act=\"hl\"]");
+ if(hb){e.preventDefault();e.stopImmediatePropagation();try{window.encPopClose&&encPopClose()}catch(_){}cycle(hb.dataset.r,hb.dataset.n);return}},true);
+/* bulle : si la règle n'est pas dans l'encyclopédie, afficher la définition écrite sur la fiche */
+function sheetDef(el){const u=el.closest("[data-encr]"),ref=u&&u.dataset.encr,term=el.dataset.encn||el.dataset.n||el.textContent.trim(),t=base(term);if(!t)return null;
+ const units=[];try{if(ref&&S.coll&&S.coll[ref])units.push(S.coll[ref]);(S.lists||[]).forEach(l=>(l.units||[]).forEach(x=>{if(x.ref===ref){units.push(x);(x.subs||[]).forEach(s=>units.push(s))}}))}catch(_){}
+ for(const x of units){for(const a of x.xab||[]){if(a&&a.d&&base(a.n)===t)return{n:a.n,d:a.d}}
+  const full=(x.text||[]).join(" ").replace(/\s+/g," "),lf=full.toLowerCase(),names=String(x.apt||"").split(",").map(z=>z.trim()).filter(Boolean),pos=[];
+  names.forEach(nm=>{let i=lf.indexOf(nm.toLowerCase());if(i<0)i=lf.indexOf(base(nm));if(i>=0)pos.push([i,nm])});pos.sort((u,v)=>u[0]-v[0]);
+  for(let j=0;j<pos.length;j++){const [i,nm]=pos[j];if(base(nm)!==t)continue;const d=full.slice(i+nm.length,j+1<pos.length?pos[j+1][0]:full.length).replace(/^[\s:：\t-]+/,"").trim();if(d.length>3)return{n:nm,d}}}
+ return null}
+const esc2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+window.addEventListener("click",e=>{const el=e.target.closest&&e.target.closest(".encu .apn .an,.encu .wzp,.encu .enct");if(!el)return;
+ setTimeout(()=>{const pop=document.getElementById("encb");if(!pop||pop.hidden||pop.querySelector(".gsheetdef"))return;const w=pop.querySelector(".encw");if(!w||!/non enregistrée/.test(w.textContent))return;
+  const d=sheetDef(el);if(!d)return;w.insertAdjacentHTML("beforebegin",`<div class="encp gsheetdef"><b>Définition sur la fiche</b><p style="white-space:pre-wrap">${esc2(d.d)}</p></div>`);w.textContent="Cette règle n'est pas encore dans l'encyclopédie : la définition ci-dessus vient de la fiche de l'unité.";try{window.dispatchEvent(new Event("resize"))}catch(_){}},30)},true);
+})();
+</script>
 
 </body></html>
