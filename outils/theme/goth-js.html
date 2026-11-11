@@ -37,6 +37,10 @@ html.goth header{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.
 .gopt .sw{width:40px;height:40px;padding:0;border-radius:50%}.gopt .sw.on{outline:3px solid #fff;outline-offset:2px}
 .gcorner{position:fixed;z-index:5;width:var(--cw,34px);height:var(--cw,34px);pointer-events:none;display:grid;place-items:center}.gcorner img,.gcorner svg{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px #000)}.gcorner svg{stroke:var(--fcol);fill:rgba(10,11,12,.85);stroke-width:1.4}
 @media(max-width:899px){html.gco header h1{margin-left:calc(var(--cw) - var(--pw) - 4px)}html.gco header .hbn{right:calc(var(--cw) - var(--pw) + 6px)}}
+#gwall{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;display:none}#gwall img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#gwall i{position:absolute;inset:0;background:#000}
+html.gwl #gwall{display:block}html.gwl main,html.gwl #sb,html.gwl #nav{position:relative;z-index:1}html.gwl body{background:#000!important}
+html.gfull main{max-width:none!important}
+.gcrop.tall{aspect-ratio:9/16;max-height:52vh;margin-left:auto;margin-right:auto}
 .gcorner.tl{left:0;top:0}.gcorner.tr{right:0;top:0;transform:scaleX(-1)}.gcorner.bl{left:0;bottom:0}.gcorner.br{right:0;bottom:0;transform:scaleX(-1)}
 .gfoot{position:relative;height:46px;margin:6px 0 0;display:flex;justify-content:center;align-items:center}
 .gfoot::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:linear-gradient(90deg,transparent,#a07a30 20%,#f0d58f 50%,#a07a30 80%,transparent)}
@@ -147,7 +151,7 @@ function imgDraw(){const k=imKey;GX.open(`<div class="gxh"><h2>Image — ${SEC[k
  <label>📷 Choisir une photo<input type="file" id="gximf" accept="image/*"></label>
  <div class="gxf"><button class="b x" data-gx="imdel">Supprimer l'image</button>${k==="home"||IMKEYS.includes(k)?`<button class="b" data-gx="imnone">Aucune image</button>`:""}<button class="b p" data-gx="imsave">Enregistrer</button></div>`)}
 function imgLive(){const i=document.querySelector("#gcrop img");if(i){i.style.objectPosition=W.x+"% "+W.y+"%";i.style.transform="scale("+W.z/100+")";i.style.transformOrigin=W.x+"% "+W.y+"%"}const sx=document.getElementById("gcx"),sy=document.getElementById("gcy");if(sx)sx.value=W.x;if(sy)sy.value=W.y}
-document.addEventListener("input",e=>{const id=e.target.id;if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
+document.addEventListener("input",e=>{const id=e.target.id;if(id==="gwd"){WD=+e.target.value;const k=document.getElementById("gwdk");if(k)k.style.opacity=WD/100;return}if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
 let cdrag=null;
 document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#gcrop");if(!c||!W||!W.src)return;cdrag={x:e.clientX,y:e.clientY,ox:W.x,oy:W.y,w:c.clientWidth,h:c.clientHeight};try{c.setPointerCapture(e.pointerId)}catch(_){}});
 document.addEventListener("pointermove",e=>{if(!cdrag)return;const k=W.z/100;W.x=Math.max(0,Math.min(100,Math.round(cdrag.ox-(e.clientX-cdrag.x)*100/(cdrag.w*k))));W.y=Math.max(0,Math.min(100,Math.round(cdrag.oy-(e.clientY-cdrag.y)*100/(cdrag.h*k))));imgLive()});
@@ -175,6 +179,20 @@ function applyFrame(){const F=frame(),C=(FCOL[F.c]||FCOL.or)[1],w=FW[F.w]||FW.mo
  document.documentElement.classList.toggle("gco",F.co!=="none");const sk=`<svg viewBox="0 0 24 24">${P.skull}</svg>`;["tl","tr","bl","br"].forEach(p=>{let d=document.querySelector(".gcorner."+p);if(!d){d=document.createElement("div");d.className="gcorner "+p;document.body.appendChild(d)}d.style.display=F.co==="none"?"none":"grid";d.innerHTML=F.co==="logo"?`<img src="${LOGO}" alt="">`:F.co==="skull"?sk:""});
  document.querySelectorAll(".gfoot img").forEach(i=>{i.style.display=F.co==="none"?"":""})}
 window.applyFrame=applyFrame;
+const wall=()=>{try{return S.wall&&typeof S.wall==="object"?S.wall:null}catch(_){return null}};
+function applyWall(){const w=wall(),on=!!(w&&w.src);document.documentElement.classList.toggle("gwl",on);let d=document.getElementById("gwall");if(!d){d=document.createElement("div");d.id="gwall";document.body.prepend(d)}
+ d.innerHTML=on?imgTag({src:w.src,x:w.x==null?50:+w.x,y:w.y==null?50:+w.y,z:+w.z||100},"")+`<i style="opacity:${(w.dk==null?45:+w.dk)/100}"></i>`:"";
+ let full=false;try{full=!!(S.wfull)}catch(_){}document.documentElement.classList.toggle("gfull",full)}
+window.applyWall=applyWall;
+let WD=45;
+function wallEdit(keep){const w=wall()||{};if(!keep){W=w.src?{src:w.src,x:w.x==null?50:+w.x,y:w.y==null?50:+w.y,z:+w.z||100}:{src:"",x:50,y:50,z:100};WD=w.dk==null?45:+w.dk}imKey="wall";
+ GX.open(`<div class="gxh"><h2>Fond d'écran</h2><button class="b" data-gx="iclist">← Retour</button></div>
+ <p class="mu">L'image remplit tout l'arrière-plan de l'appli, derrière les menus et les cadres.${W.src?" Fais-la glisser pour la cadrer.":""}</p>
+ <div class="gcrop tall" id="gcrop">${W.src?imgTag(W,"gcimg")+`<i id="gwdk" style="position:absolute;inset:0;background:#000;opacity:${WD/100};pointer-events:none"></i>`:"<p>Aucune image</p>"}</div>
+ ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="100" max="300" value="${W.z}"></label><label>Assombrir (lisibilité)<input type="range" id="gwd" min="0" max="85" value="${WD}"></label>`:""}
+ <label>📷 Choisir une photo<input type="file" id="gxwf" accept="image/*"></label>
+ <div class="gopt"><button class="${S.wfull?"on":""}" data-gx="wfull">${S.wfull?"✓ ":""}Pleine largeur (tablette, grand écran)</button></div>
+ <div class="gxf"><button class="b x" data-gx="wdel">Supprimer le fond</button><button class="b p" data-gx="wsave">Enregistrer</button></div>`)}
 function frameEdit(){const F=frame();
  GX.open(`<div class="gxh"><h2>Contour de l'appli</h2><button class="b" data-gx="iclist">← Retour</button></div><p class="mu">Chaque choix s'applique tout de suite.</p>
  <h4>Style</h4><div class="gopt">${FST.map(([k,n])=>`<button class="${F.st===k?"on":""}" data-gx="frs" data-v="${k}">${n}</button>`).join("")}</div>
@@ -193,6 +211,7 @@ let icKey=null;
 function icList(){const keys=["home","lists","coll","paint","mis","gm","enc","imp","play","q_dice","q_enc","q_new","q_paint","q_ico"];
  const F=frame();GX.open(`<div class="gxh"><h2>Personnaliser</h2><button class="b" data-gx="close" aria-label="Fermer">✕</button></div>
  <div class="gxl" style="--tc:${(FCOL[F.c]||FCOL.or)[1]}">${ic("castle")}<b>Contour de l'appli<br><small class="mu">${(FST.find(x=>x[0]===F.st)||FST[0])[1]} · ${(FCOL[F.c]||FCOL.or)[0]} · ${(FW[F.w]||FW.moyen)[0]}</small></b><span class="bt"><button class="b p" data-gx="frame">Modifier</button></span></div>
+ <div class="gxl" style="--tc:#4aa3ff">${ic("image")}<b>Fond d'écran<br><small class="mu">${wall()&&wall().src?"Image personnelle":"Aucun"}${S.wfull?" · pleine largeur":""}</small></b>${wall()&&wall().src?`<span class="gthb"><img src="${wall().src}" alt=""></span>`:""}<span class="bt"><button class="b p" data-gx="wall">Modifier</button></span></div>
  <h4>Icônes et images des menus</h4><p class="mu">« Icône » change le symbole ; « Image » change, recadre ou supprime la photo du menu (tuile de l'accueil et bandeau en haut du menu).</p>
  ${keys.map(k=>{const mi=IMKEYS.includes(k)?menuImg(k):null;return`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b>${IMKEYS.includes(k)?`<span class="gthb">${mi?imgTag(mi,""):""}</span>`:""}<span class="bt"><button class="b" data-gx="icpick" data-k="${k}">Icône</button>${IMKEYS.includes(k)?`<button class="b" data-g="gimg" data-k="${k}">Image</button>`:""}</span></div>`}).join("")}
  <div class="gxf"><button class="b" data-gx="icreset">Icônes par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
@@ -212,12 +231,16 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="icdef"){delete icons()[icKey];GX.commit();icPick(icKey);return}
  if(a==="icreset"){S.icons={};GX.commit();icList();return}
  if(a==="frame"){frameEdit();return}
+ if(a==="wall"){wallEdit();return}
+ if(a==="wfull"){S.wfull=!S.wfull;try{save()}catch(_){}applyWall();wallEdit(true);return}
+ if(a==="wsave"){if(W&&W.src){S.wall={src:W.src,x:W.x,y:W.y,z:W.z,dk:WD}}try{save()}catch(_){}applyWall();icList();return}
+ if(a==="wdel"){delete S.wall;W={src:"",x:50,y:50,z:100};try{save()}catch(_){}applyWall();wallEdit(true);return}
  if(a==="frs"){frameSet("st",b.dataset.v);return}if(a==="frc"){frameSet("c",b.dataset.v);return}if(a==="frw"){frameSet("w",b.dataset.v);return}if(a==="frco"){frameSet("co",b.dataset.v);return}
  if(a==="frdef"){S.frame={};try{save()}catch(_){}applyFrame();frameEdit();return}
  if(a==="imsave"){if(!W.src){GX.commit();icList();return}MI()[imKey]={src:W.src,x:W.x,y:W.y,z:W.z};GX.commit();icList();return}
  if(a==="imdel"){delete MI()[imKey];W=null;GX.commit();icList();return}
  if(a==="imnone"){MI()[imKey]={none:1};W=null;GX.commit();icList();return}});
-document.addEventListener("change",e=>{if(e.target.id==="gximf"){GX.img(e.target.files[0],1600,d=>{W={src:d,x:50,y:50,z:100};imgDraw()});return}if(e.target.id==="gxfrf"){GX.img(e.target.files[0],300,d=>{if(!S.frame||typeof S.frame!=="object")S.frame={};S.frame.img=d;try{save()}catch(_){}applyFrame();frameEdit()});return}if(e.target.id==="gxicf"){GX.img(e.target.files[0],96,d=>{icons()[icKey]={t:"img",v:d};GX.commit();icPick(icKey)})}});
+document.addEventListener("change",e=>{if(e.target.id==="gxwf"){GX.img(e.target.files[0],1600,d=>{W={src:d,x:50,y:50,z:100};wallEdit(true)});return}if(e.target.id==="gximf"){GX.img(e.target.files[0],1600,d=>{W={src:d,x:50,y:50,z:100};imgDraw()});return}if(e.target.id==="gxfrf"){GX.img(e.target.files[0],300,d=>{if(!S.frame||typeof S.frame!=="object")S.frame={};S.frame.img=d;try{save()}catch(_){}applyFrame();frameEdit()});return}if(e.target.id==="gxicf"){GX.img(e.target.files[0],96,d=>{icons()[icKey]={t:"img",v:d};GX.commit();icPick(icKey)})}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.querySelector("#gxo .gxo"))GX.close()});
 /* ----- en-tête, menu, menu latéral ----- */
 function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySelector(".glogo"))h1.insertAdjacentHTML("afterbegin",`<img class="glogo" src="${LOGO}" alt="">`);
@@ -228,6 +251,7 @@ const old=window.tbPost;window.tbPost=()=>{try{deco()}catch(_){}if(old)old()};
 addEventListener("resize",()=>{try{deco()}catch(_){}});
 try{deco()}catch(_){}
 try{applyFrame()}catch(_){}
+try{applyWall()}catch(_){}
 setTimeout(()=>{try{if(typeof tab!=="undefined"&&XV[tab]&&typeof draw==="function")draw()}catch(_){}},0);
 })();
 </script>
