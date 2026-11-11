@@ -1,0 +1,118 @@
+<!-- ===== v103 : import des peintures depuis des captures d'écran (lecture du texte et de la couleur) ===== -->
+<style id="ocrcss">
+.gocr{border:1px solid rgba(196,107,224,.3);border-radius:12px;padding:8px;margin:8px 0;background:#0f1012}
+.gocr.dup{opacity:.6;border-style:dashed}
+.gocr .top{display:flex;align-items:center;gap:8px}.gocr .top input[type=checkbox]{width:24px;height:24px;flex:none}
+.gocr .top input[type=color]{width:46px;height:40px;padding:0;border-radius:50%;flex:none;border:2px solid rgba(255,255,255,.4)}
+.gocr .top input[data-oc=n]{flex:1;min-width:0;font-weight:700}
+.gocr .f{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.gocr .f label{margin:0}.gocr .f .w2{grid-column:1/-1}
+.gocr .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px;border:1px solid currentColor;color:#e8a43c;margin-top:6px}
+.gocrp{text-align:center;padding:18px 6px}.gocrp .bar{height:10px;border-radius:6px;background:#22252a;overflow:hidden;margin:10px 0}.gocrp .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8c3fae,#c46be0);transition:width .2s}
+.gocrs{position:sticky;bottom:-16px;background:linear-gradient(180deg,rgba(17,18,20,0),#111214 30%);padding:12px 0 2px;margin-top:8px}.gocrs .b{width:100%;min-height:48px;font-size:16px}
+</style>
+<script>
+(()=>{
+const H=window.HOBX,GX=window.GX;if(!H||!GX)return;
+const {hob,uid,brands,nk,TYPES,say,e2,DEFB}=H;
+const LOC=new URL("lib/ocr/",location.href).href;
+let T=null,mode="";
+async function lib(){if(T)return T;
+ const tries=[[LOC+"tesseract.min.js","local"],["https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js","cdn"],["https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js","cdn"]];
+ for(const [u,m] of tries){try{if(!window.Tesseract)await loadJs(u);if(window.Tesseract){T=window.Tesseract;mode=m;return T}}catch(_){}}
+ throw new Error("lib")}
+const CDNLANG="https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng/4.0.0_best_int";
+async function worker(logger){const Tz=await lib();const cdn=()=>Tz.createWorker(["eng"],1,{langPath:CDNLANG,logger});
+ if(mode!=="local")return cdn();
+ try{return await Promise.race([Tz.createWorker(["eng","fra"],1,{workerPath:LOC+"worker.min.js",corePath:LOC+"core",langPath:LOC+"lang",workerBlobURL:false,logger}),new Promise((_,r)=>setTimeout(()=>r(new Error("delai")),30000))])}catch(e){return await cdn()}}
+/* ---------- image -> canvas ---------- */
+function loadCanvas(file){return new Promise((res,rej)=>{const r=new FileReader();r.onerror=()=>rej(new Error("img"));r.onload=()=>{const im=new Image();im.onerror=()=>rej(new Error("img"));im.onload=()=>{let k=Math.max(1,Math.min(2.5,1100/im.width));const mx=Math.min(1,3200/Math.max(im.width,im.height));k=Math.min(k,mx*Math.max(1,k));const cv=document.createElement("canvas");cv.width=Math.round(im.width*k);cv.height=Math.round(im.height*k);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);res(cv)};im.src=r.result};r.readAsDataURL(file)})}
+/* ---------- lignes ---------- */
+function lines(d){let L=d.lines;if(!L||!L.length){L=[];(d.blocks||[]).forEach(b=>(b.paragraphs||[]).forEach(p=>(p.lines||[]).forEach(l=>L.push(l))))}
+ return L.map(l=>({t:String(l.text||"").replace(/[|]/g,"I").replace(/\s+/g," ").trim(),x0:l.bbox.x0,y0:l.bbox.y0,x1:l.bbox.x1,y1:l.bbox.y1,c:l.confidence==null?100:l.confidence})).filter(l=>l.t&&l.c>20&&l.x1-l.x0>8&&l.y1-l.y0>6).sort((a,b)=>a.y0-b.y0)}
+/* ---------- marques ---------- */
+const EXTRA=["Citadel","Games Workshop","Vallejo","The Army Painter","Army Painter","AK Interactive","Scale75","Scale 75","Pro Acryl","Monument Hobbies","Green Stuff World","Kimera","Tamiya","Warcolours","Two Thin Coats","Mr. Hobby","Revell","Humbrol","Lifecolor","Reaper","Privateer Press","Golden","Liquitex","Winsor & Newton","AMMO","Ammo by Mig","Mig","Hataka","Badger","Createx","Wargames Foundry","Coat d'Arms","Fireforge","Redgrass"];
+const lev=(a,b)=>{const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,i)=>i);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]};
+function knownBrands(){const seen=new Set(),o=[];[...brands(),...EXTRA].forEach(b=>{const k=nk(b);if(k&&!seen.has(k)){seen.add(k);o.push(b)}});return o.sort((a,b)=>b.length-a.length)}
+function brandOf(txt,KB){const t=nk(txt);if(!t)return null;let best=null;
+ for(const b of KB){const k=nk(b);if(t===k||(t.startsWith(k+" ")&&k.length>=4))return{b,rest:txt.slice(k.length).replace(/^[\s\-–—:·|]+/,"")};
+  if(!best&&k.length>=4&&lev(t.slice(0,k.length),k)<=Math.floor(k.length/5)&&t.length>=k.length)best={b,rest:txt.slice(k.length).replace(/^[\s\-–—:·|]+/,"")}}
+ return best}
+const SEP=/\s+[-–—·|]\s+/;
+function cleanLead(txt,KB){const tk=txt.split(" ");for(let d=0;d<=2&&d<tk.length;d++){const sub=tk.slice(d).join(" ");if(d===0||tk.slice(0,d).every(x=>x.length<=2)){if(brandOf(sub,KB))return sub}}return txt}
+function splitBrand(txt0,KB){const txt=cleanLead(txt0,KB);const kb=brandOf(txt,KB);if(kb)return{b:kb.b,r:kb.rest};const m=SEP.exec(txt);if(m){const l=txt.slice(0,m.index).trim(),r=txt.slice(m.index+m[0].length).trim();if(l.length<=28)return{b:l.replace(/^./,c=>c.toUpperCase()),r}}return{b:"",r:txt}}
+const isBrandLine=(t,KB)=>!!brandOf(t,KB)||SEP.test(t);
+/* ---------- entrées ---------- */
+const SKU=/^(?:sku|ref|réf|référence|reference|code|item|art)\b\.?\s*[:：#.]?\s*(.+)$/i;
+const close=(a,b)=>b.y0-a.y1<1.3*Math.max(a.y1-a.y0,12);
+function entries(L,KB){const out=[];const anch=[];L.forEach((l,i)=>{if(SKU.test(l.t))anch.push(i)});
+ if(anch.length){anch.forEach(i=>{const sk=SKU.exec(L[i].t)[1].replace(/\s+/g,"").replace(/^[:：#.]+/,"");let k=i-1;if(k<0)return;
+   let brandL=null;if(isBrandLine(L[k].t,KB)&&close(L[k],L[i])){brandL=L[k];k--}
+   const nl=[];let ref=brandL||L[i];
+   while(k>=0&&nl.length<2){const l=L[k];if(!close(l,ref)||Math.abs(l.x0-L[i].x0)>1.6*Math.max(l.y1-l.y0,14))break;if(nl.length&&isBrandLine(l.t,KB))break;nl.unshift(l);ref=l;k--}
+   if(!nl.length&&brandL){nl.push(brandL);brandL=null}
+   if(!nl.length)return;
+   out.push({nl,lines:[...nl,...(brandL?[brandL]:[]),L[i]],name:nl.map(l=>l.t).join(" "),brandTxt:brandL?brandL.t:"",sku:sk})});
+  return out}
+ for(let i=1;i<L.length;i++){if(!isBrandLine(L[i].t,KB))continue;const n=L[i-1];if(!close(n,L[i])||isBrandLine(n.t,KB))continue;out.push({nl:[n],lines:[n,L[i]],name:n.t,brandTxt:L[i].t,sku:""})}
+ return out}
+/* ---------- couleur ---------- */
+function sample(cv,e){const y0=Math.min(...e.lines.map(l=>l.y0)),y1=Math.max(...e.lines.map(l=>l.y1)),tl=Math.min(...e.nl.map(l=>l.x0)),cy=(y0+y1)/2;
+ if(tl<30)return null;const cx=tl/2,r=Math.max(6,tl*0.17),ctx=cv.getContext("2d"),px=[];
+ for(let a=0;a<12;a++){const x=Math.round(cx+Math.cos(a*Math.PI/6)*r),y=Math.round(cy+Math.sin(a*Math.PI/6)*r-tl*0.02);if(x<2||y<2||x>cv.width-3||y>cv.height-3)continue;const d=ctx.getImageData(x-2,y-2,5,5).data;let R=0,G=0,B=0,n=0;for(let i=0;i<d.length;i+=4){R+=d[i];G+=d[i+1];B+=d[i+2];n++}px.push([R/n,G/n,B/n])}
+ if(px.length<4)return null;const med=k=>{const v=px.map(p=>p[k]).sort((a,b)=>a-b);return v[v.length>>1]};
+ const h=v=>Math.round(v).toString(16).padStart(2,"0");return"#"+h(med(0))+h(med(1))+h(med(2))}
+/* ---------- type ---------- */
+function typeOf(rg,name){const s=nk(rg||name);
+ if(/\b(wash|shade|lavis|ink|encre)\b/.test(s))return"Lavis (Shade)";
+ if(/(contrast|contraste|speed ?paint|xpress|ultra ?pigment)/.test(s))return"Contraste";
+ if(/(dry ?brush|\bdry\b|brossage)/.test(s))return"Sec (Dry)";
+ if(/\bair\b/.test(s))return"Air";
+ if(/(spray|primer|sous-couche|undercoat)/.test(s))return"Spray / Sous-couche";
+ if(/(varnish|vernis)/.test(s))return"Vernis";
+ if(/(technical|technique|texture|effect|effet|weathering|medium|stipple|rust|rouille|pigment|crackle|paste|blood|slime)/.test(s))return"Technique";
+ if(/\blayer\b/.test(s))return"Layer";
+ return"Base"}
+/* ---------- traitement ---------- */
+async function readFiles(files,upd){const KB=knownBrands(),all=[];let w=null;
+ try{w=await worker(m=>{if(m&&m.status==="recognizing text")upd(m.progress)});
+  for(let i=0;i<files.length;i++){upd(0,i+1,files.length);const cv=await loadCanvas(files[i]);const {data}=await w.recognize(cv,{},{blocks:true,text:true});const L=lines(data);(window.__ocrL=window.__ocrL||[]).push(L);
+   entries(L,KB).forEach(e=>{const sb=splitBrand(e.brandTxt,KB),nm=e.name.replace(/^[\s\W_]+|[\s]+$/g,"").replace(/\s{2,}/g," ");if(nm.length<2)return;
+    const col=sample(cv,e);all.push({n:nm,b:sb.b||"",rg:sb.r||"",sku:e.sku,c:col||"#7a5b22",t:typeOf(sb.r||"",nm),noc:!col})})}}
+ finally{try{if(w)await w.terminate()}catch(_){}}
+ const seen=new Set(),out=[];all.forEach(p=>{const k=nk(p.b)+"|"+(p.sku?nk(p.sku):nk(p.n));if(seen.has(k))return;seen.add(k);out.push(p)});return out}
+function isDup(p){const h=hob();return h.paints.some(x=>nk(x.b)===nk(p.b)&&((p.sku&&x.sku&&nk(x.sku)===nk(p.sku))||nk(x.n)===nk(p.n)))}
+let RES=[];
+function review(){const n=RES.filter(p=>p.on).length;
+ GX.open(`<div class="gxh"><h2>Peintures trouvées</h2><button class="b" data-gx="close">✕</button></div>
+ <p class="mu">${RES.length} peinture${RES.length>1?"s":""} reconnue${RES.length>1?"s":""} dans tes captures. Vérifie chaque ligne : tu peux corriger le nom, la marque, la référence et la couleur avant d'importer.</p>
+ <div class="gxbtn"><button class="b" data-ocr="all">Tout cocher</button><button class="b" data-ocr="none">Tout décocher</button></div>
+ ${RES.map((p,i)=>`<div class="gocr${p.dup?" dup":""}" data-i="${i}"><div class="top"><input type="checkbox" data-oc="on"${p.on?" checked":""} aria-label="Importer"><input type="color" data-oc="c" value="${p.c}" aria-label="Couleur"><input data-oc="n" value="${e2(p.n)}" aria-label="Nom"></div>
+  <div class="f"><label>Marque<input data-oc="b" list="gxbr2" value="${e2(p.b)}"></label><label>Réf. (SKU)<input data-oc="sku" value="${e2(p.sku)}"></label><label class="w2">Gamme<input data-oc="rg" value="${e2(p.rg)}"></label><label class="w2">Type<select data-oc="t">${TYPES.map(t=>`<option${p.t===t?" selected":""}>${t}</option>`).join("")}</select></label></div>
+  ${p.dup?`<span class="tag">Déjà dans ta collection</span>`:""}${p.noc?`<span class="tag">Couleur à choisir</span>`:""}</div>`).join("")}
+ <datalist id="gxbr2">${brands().map(b=>`<option value="${e2(b)}">`).join("")}</datalist>
+ <div class="gocrs"><button class="b p" data-ocr="save" id="gocrsave">Importer ${n} peinture${n>1?"s":""}</button></div>`)}
+function readRows(){document.querySelectorAll("#gxo .gocr").forEach(r=>{const p=RES[+r.dataset.i];if(!p)return;const g=k=>{const e=r.querySelector(`[data-oc="${k}"]`);return e?(e.type==="checkbox"?e.checked:e.value):""};p.on=g("on");p.n=g("n").trim();p.b=g("b").trim();p.sku=g("sku").trim();p.rg=g("rg").trim();p.t=g("t");p.c=g("c")})}
+function count(){readRows();const n=RES.filter(p=>p.on&&p.n).length,b=document.getElementById("gocrsave");if(b)b.textContent="Importer "+n+" peinture"+(n>1?"s":"")}
+document.addEventListener("change",e=>{if(e.target.closest&&e.target.closest("#gxo .gocr"))count()});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.oc==="n"&&t.closest("#gxo .gocr"))count()});
+function pick(){let i=document.getElementById("gocrf");if(!i){i=document.createElement("input");i.type="file";i.accept="image/*";i.multiple=true;i.id="gocrf";i.hidden=true;document.body.appendChild(i)}i.value="";i.click()}
+document.addEventListener("change",async e=>{if(e.target.id!=="gocrf")return;const fs=[...e.target.files];if(!fs.length)return;
+ GX.open(`<div class="gxh"><h2>Lecture des captures</h2><button class="b" data-gx="close">✕</button></div><div class="gocrp"><p id="gocrt">Préparation du lecteur de texte…</p><div class="bar"><i id="gocrb"></i></div><p class="mu">La première fois, le lecteur de texte peut prendre quelques secondes à se charger.</p></div>`);
+ const upd=(p,i,n)=>{const t=document.getElementById("gocrt"),b=document.getElementById("gocrb");if(t&&i)t.textContent="Lecture de la capture "+i+" sur "+n+"…";if(b&&p!=null)b.style.width=Math.round(p*100)+"%"};
+ try{const r=await readFiles(fs,upd);
+  if(!r.length){GX.open(`<div class="gxh"><h2>Aucune peinture reconnue</h2><button class="b" data-gx="close">✕</button></div><p>Je n'ai pas trouvé de peinture dans cette image. Essaie avec une capture où le nom, la marque et la référence sont bien lisibles (liste de ta collection, fiche de peinture…), ou ajoute-les à la main avec « + Peinture ».</p><div class="gxf"><button class="b p" data-ocr="again">Choisir une autre capture</button></div>`);return}
+  RES=r.map(p=>{const d=isDup(p);return Object.assign(p,{dup:d,on:!d})});review()}
+ catch(er){GX.open(`<div class="gxh"><h2>Lecture impossible</h2><button class="b" data-gx="close">✕</button></div><p>${er&&er.message==="lib"?"Le lecteur de texte n'a pas pu se charger (connexion ?). Réessaie quand tu es connecté à Internet.":"Cette image n'a pas pu être lue : "+e2(er&&er.message||er)}</p><div class="gxf"><button class="b p" data-ocr="again">Réessayer</button></div>`)}});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-x=ocr],[data-ocr]");if(!b)return;
+ if(b.dataset.x==="ocr"){e.preventDefault();e.stopImmediatePropagation();pick();return}
+ e.preventDefault();e.stopPropagation();const a=b.dataset.ocr;
+ if(a==="again"){pick();return}
+ if(a==="all"||a==="none"){readRows();RES.forEach(p=>p.on=a==="all");review();return}
+ if(a==="save"){readRows();const h=hob(),sel=RES.filter(p=>p.on&&p.n);let nb=0;
+  sel.forEach(p=>{if(p.b&&!brands().some(x=>nk(x)===nk(p.b))){h.brands=h.brands||[];h.brands.push(p.b)}
+   const ex=h.paints.find(x=>nk(x.b)===nk(p.b)&&((p.sku&&x.sku&&nk(x.sku)===nk(p.sku))||nk(x.n)===nk(p.n)));
+   if(ex){Object.assign(ex,{c:p.c,rg:p.rg||ex.rg,sku:p.sku||ex.sku,t:p.t||ex.t})}else{h.paints.push({id:uid("p"),n:p.n,b:p.b,rg:p.rg,sku:p.sku,t:p.t,c:p.c,s:"ok"});nb++}});
+  GX.close();try{save()}catch(_){}GX.commit();say(nb+" peinture"+(nb>1?"s":"")+" ajoutée"+(nb>1?"s":"")+(sel.length>nb?" · "+(sel.length-nb)+" mise"+(sel.length-nb>1?"s":"")+" à jour":""));return}},true);
+window.PAINTOCR={pick,readFiles,entries,splitBrand};
+})();
+</script>
