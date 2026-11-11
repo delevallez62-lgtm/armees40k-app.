@@ -2077,7 +2077,7 @@ function plBody(ms,pl,R,man,rr){const m=CO(ms,pl);
  const fin=!bats.length?"":R===5?`<div class="msg"><div class="msgh">🏁 ${MOL.bat}</div>${bats.map(([c,i])=>condRow(ms,pl,m,c,i,"F")).join("")}</div>`:`<p class="mu mfin">🏁 ${bats.length} condition${bats.length>1?"s":""} de fin de bataille : à valider au round 5.</p>`;
  const rules=`<details class="pdx"${dd("ms:r"+pl,0)}><summary>📜 Description et règles</summary><p class="msru">${esc(m.d)}</p>${m.setup.map(x=>`<p class="msru"><b>${esc(x.w)}.</b> ${esc(x.t)}</p>`).join("")}${m.rules.map(x=>`<p class="msru">${esc(x)}</p>`).join("")}</details>`;
  const manual=`<details class="pdx"${dd("ms:g"+pl,0)}><summary>✎ Points manuels<span class="pdv">P ${rr.p[pl]} · S ${rr.s[pl]}</span></summary>${man}</details>`;
- return`<div class="msh"><span class="mi">${ct?ct.ic:""}</span><div><div class="ml" style="margin:0">${esc(ct?ct.fr:"")}${oc?" × "+esc(oc.fr):""}</div><b class="msn1">${esc(m.nm)}${m.edm?` <i class="tbmk" title="Mission modifiée">✎</i>`:""}</b></div></div><div class="mstb"><button type="button" class="tbbt" data-jc="open" data-pl="${pl}">📜 Carte</button><button type="button" class="tbbt" data-jc="edit0" data-pl="${pl}">✎ Modifier</button><button type="button" class="tbbt" data-ms="chg" data-pl="${pl}">↻ Changer</button></div>${groups||'<p class="mu">Aucune condition à valider ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}${rules}${manual}`}
+ return`<div class="msh"><span class="mi">${ct?ct.ic:""}</span><div><div class="ml" style="margin:0">${esc(ct?ct.fr:"")}${oc?" × "+esc(oc.fr):""}</div><b class="msn1">${esc(m.nm)}${m.edm?` <i class="tbmk" title="Mission modifiée">✎</i>`:""}</b></div></div><div class="mstb"><button type="button" class="tbbt" data-jc="open" data-pl="${pl}">📜 Carte</button><button type="button" class="tbbt" data-jc="edit0" data-pl="${pl}">✎ Modifier</button><button type="button" class="tbbt" data-ms="chg" data-pl="${pl}">↻ Changer</button></div>${groups||'<p class="mu">Aucune condition à valider ce round.</p>'}${fin}${actHtml(ms,pl,m,R)}${manual}`}
 window.msDrawers=function(man){const B=S.bat,ms=B.ms,R=(B.cur||0)+1,rr=B.t[R-1],XS=!!window.sxView;
  const one=pl=>{const open=dw===pl,m=ms?CO(ms,pl):null,ct=ms?catG((ms.sel[pl]||[])[0]):null,tot=rr.p[pl]+rr.s[pl]+(rr.m?rr.m[pl]:0)+(rr.x?rr.x[pl]:0),nA=XS?window.sxCount(pl):0,sg=XS?window.sxSeg(pl):0;
   const sub=!ms?esc(B.f[pl]||""):m?`${ct?esc(ct.ic)+" ":""}${esc(m.nm)}`:`<em>Mission à choisir</em>`;
@@ -2512,7 +2512,6 @@ window.sxView=(pl,R)=>{
  h+=st.ac.length?st.ac.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""):(exh?"":`<p class="dkx">Aucun objectif actif. Tire 2 secondaires, ou ajoute-en une à la main avec l’icône « Toutes ».</p>`);
  const dp=(k,l,n,body)=>{const kk="dk:"+k+":"+pl;return`<details class="pdx" data-pk="${kk}" data-pd="0"${pop.has(kk)?" open":""}><summary>${l}<span class="pdv">${n}</span></summary>${body}</details>`};
  if(st.ar.length)h+=dp("ar","🗂 Cartes archivées",st.ar.length,st.ar.map(d=>cardHtml(pl,d,cs[d.id],R,sx)).join(""));
- if(st.av.length)h+=dp("av","🂠 Paquet restant",st.av.length+" cartes",`<div class="dkch">${st.av.map(d=>`<span style="--g:${GR[d.g].c}">${GR[d.g].ic} ${esc(d.nm)}</span>`).join("")}</div>`);
  const lg=sx.log.filter(e=>e.k==="md"||e.pl===pl);
  if(lg.length)h+=dp("lg","🕘 Historique de "+esc(nm),lg.length,`<div class="mslg">${[...lg].reverse().map(e=>logHtml1(e,B.n)).join("")}</div>`);
  return h+`</div>`};
@@ -3830,7 +3829,7 @@ window.__mxFolderIds=fid=>{const f=folders().find(x=>x.id===fid);return f&&f.k!=
 window.__mxLay=()=>{const g={},ks=[];layAll().filter(l=>!l.off).forEach(l=>{const k=l.a?`${l.a} vs ${l.b}`:"Mes layouts";if(!g[k]){g[k]=[];ks.push(k)}g[k].push({id:l.id,n:l.nm||("Agencement "+l.L)})});return ks.map(h=>({h:"🗺 "+h,it:g[h]}))};
 const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
 const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
-let mOpen={"f-sec":1,"f-pri":1,"f-lay":1},mq="",mShowOff={},mTab="pri";
+let mOpen={},mq="",mShowOff={},mTab="pri";
 const thumb=id=>{const u=(S.mimg&&S.mimg[id])||(/^lay-\d+$/.test(id)?"lay/p"+id.slice(4)+".webp":"");return u?`<span class="th" style="background-image:url('${u}')"></span>`:""};
 function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[],mem=memberIds(f),refs=(S.mfm&&S.mfm[f.id])||[];
  const offs=[...OR.sx.map(o=>o.id).filter(id=>m.sx[id]&&m.sx[id].off),...m.csx.filter(c=>c.off).map(c=>c.id)].filter(id=>homeOf("sec",id)===f.id);
