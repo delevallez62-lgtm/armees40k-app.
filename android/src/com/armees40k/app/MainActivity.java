@@ -170,6 +170,9 @@ public class MainActivity extends Activity {
         if (p.endsWith(".json")) return "application/json";
         if (p.endsWith(".png")) return "image/png";
         if (p.endsWith(".svg")) return "image/svg+xml";
+        if (p.endsWith(".webp")) return "image/webp";
+        if (p.endsWith(".jpg") || p.endsWith(".jpeg")) return "image/jpeg";
+        if (p.endsWith(".gz")) return "application/gzip";
         return "application/octet-stream";
     }
 
