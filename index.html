@@ -3601,6 +3601,7 @@ function icList(){const keys=["home","lists","coll","paint","mis","gm","enc","im
  <div class="gxl" style="--tc:#4aa3ff">${ic("image")}<b>Fond d'écran<br><small class="mu">${wall()&&wall().src?"Image personnelle":"Aucun"}${S.wfull?" · pleine largeur":""}</small></b>${wall()&&wall().src?`<span class="gthb"><img src="${wall().src}" alt=""></span>`:""}<span class="bt"><button class="b p" data-gx="wall">Modifier</button></span></div>
  <div class="gxl" style="--tc:#c46be0">${ic("layers")}<b>Menu de gauche<br><small class="mu">${{noir:"Noir",transp:"Transparent",img:"Ma photo",col:"Couleur"}[side().mode]}</small></b><span class="bt"><button class="b p" data-gx="side">Modifier</button></span></div>
  <div class="gxl" style="--tc:#d8b45e">${ic("image")}<b>Grande bannière<br><small class="mu">${S.sban?"En haut de l'appli · hauteur "+sbc().h+" px":"Aucune"}</small></b>${S.sban?`<span class="gthb">${imgTag(Object.assign({src:S.sban},sbc()),"")}</span>`:""}<span class="bt"><button class="b p" data-g="gimg" data-k="sb">Modifier</button></span></div>
+ <div class="gxl" style="--tc:#55c46e">${ic("home")}<b>Page de démarrage<br><small class="mu">${S.start==="last"?"Reprend la partie en cours":"Toujours le menu d'Accueil"}</small></b><span class="bt"><button class="b${S.start==="last"?"":" p"}" data-gx="start" data-v="home">Menu</button><button class="b${S.start==="last"?" p":""}" data-gx="start" data-v="last">Partie</button></span></div>
  <h4>Icônes et images des menus</h4><p class="mu">« Icône » change le symbole ; « Image » change, recadre ou supprime la photo du menu (tuile de l'accueil et bandeau en haut du menu).</p>
  ${keys.map(k=>{const mi=IMKEYS.includes(k)?menuImg(k):null;return`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b>${IMKEYS.includes(k)?`<span class="gthb">${mi?imgTag(mi,""):""}</span>`:""}<span class="bt"><button class="b" data-gx="icpick" data-k="${k}">Icône</button>${IMKEYS.includes(k)?`<button class="b" data-g="gimg" data-k="${k}">Image</button>`:""}</span></div>`}).join("")}
  <div class="gxf"><button class="b" data-gx="icreset">Icônes par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
@@ -3623,6 +3624,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="zm"&&W){W.z=Math.max(30,Math.min(300,W.z+ +b.dataset.v));imgLive();return}
  if(a==="zcov"&&W){W.z=100;W.x=50;W.y=50;imgLive();return}
  if(a==="zfit"&&W){const c=document.getElementById("gcrop"),i=c&&c.querySelector(".gfr>img");if(i&&i.naturalWidth){const cw=c.clientWidth,ch=c.clientHeight,iw=i.naturalWidth,ih=i.naturalHeight,sc=Math.max(cw/iw,ch/ih),sf=Math.min(cw/iw,ch/ih);W.z=Math.max(30,Math.round(100*sf/sc));W.x=50;W.y=50;imgLive()}return}
+ if(a==="start"){S.start=b.dataset.v;try{save()}catch(_){}icList();return}
  if(a==="frame"){frameEdit();return}
  if(a==="wall"){wallEdit();return}
  if(a==="wsc"){if(!S.wall||typeof S.wall!=="object")S.wall={};if(W&&W.src&&!S.wall.src)Object.assign(S.wall,{src:W.src,x:W.x,y:W.y,z:W.z,dk:WD});S.wall.sc=b.dataset.v;try{save()}catch(_){}applyWall();wallEdit(true);return}
@@ -3656,6 +3658,7 @@ addEventListener("resize",()=>{try{deco()}catch(_){}});
 try{deco()}catch(_){}
 try{applyFrame()}catch(_){}
 try{applyWall()}catch(_){}
+try{if(S.start!=="last"){if(S.pm&&!S.mg)S.mg=true;tab="home";draw()}}catch(_){}
 setTimeout(()=>{try{if(typeof tab!=="undefined"&&XV[tab]&&typeof draw==="function")draw()}catch(_){}},0);
 })();
 </script>
@@ -3815,10 +3818,12 @@ document.addEventListener("change",async e=>{if(e.target.id!=="gxpdff")return;co
 const STS=[["monter","À monter","#8a8f98"],["monte","Monté","#b08a5a"],["sous","Sous-couché","#9aa3b5"],["cours","En peinture","#4aa3ff"],["fini","Terminé","#55c46e"]],STM=Object.fromEntries(STS.map(s=>[s[0],s]));
 const TYPES=["Base","Layer","Lavis (Shade)","Contraste","Sec (Dry)","Technique","Air","Spray / Sous-couche","Vernis","Autre"];
 const TECH=["Sous-couche","Aplat","Lavis","Contraste","Brossage à sec","Éclaircissement","Liseré","Glacis","Effet / Texture","Vernis","Autre"];
-const BRANDS=["Citadel","Vallejo","The Army Painter","AK Interactive","Scale75","Pro Acryl","Autre"];
+const DEFB=["Citadel","Vallejo","The Army Painter","AK Interactive","Scale75","Pro Acryl","Green Stuff World","Monument Hobbies","Kimera","Tamiya","Autre"];
+function brands(){const h=hob(),seen=new Set(),out=[];[...DEFB.filter(b=>!(h.bdel||[]).includes(b)),...(h.brands||[]),...h.paints.map(p=>p.b)].forEach(b=>{b=String(b||"").trim();const k=nk(b);if(b&&!seen.has(k)){seen.add(k);out.push(b)}});return out}
+const bUse=b=>hob().paints.filter(p=>nk(p.b)===nk(b)).length;
 const STARTER=[["Abaddon Black","Base","#231f20"],["Corax White","Base","#f2f2f2"],["Mephiston Red","Base","#9a1115"],["Macragge Blue","Base","#0d407f"],["Caliban Green","Base","#00401f"],["Leadbelcher","Base","#888d8f"],["Retributor Armour","Base","#c39e4b"],["Balthasar Gold","Base","#a47552"],["Rhinox Hide","Base","#493435"],["Zandri Dust","Base","#9e915c"],["Mechanicus Standard Grey","Base","#3d4b4d"],["Averland Sunset","Base","#fbb81c"],["Jokaero Orange","Base","#ee3823"],["Naggaroth Night","Base","#3d3354"],["Bugman's Glow","Base","#834f44"],["Castellan Green","Base","#314821"],["Ushabti Bone","Layer","#aba173"],["Evil Sunz Scarlet","Layer","#c01411"],["Calgar Blue","Layer","#2a497f"],["Warpstone Glow","Layer","#1e7331"],["Stormhost Silver","Layer","#bbc6c9"],["Auric Armour Gold","Layer","#e8bc6d"],["Kislev Flesh","Layer","#d1a570"],["Nuln Oil","Lavis (Shade)","#14100e"],["Agrax Earthshade","Lavis (Shade)","#5a3a20"],["Reikland Fleshshade","Lavis (Shade)","#ca6c4d"],["Druchii Violet","Lavis (Shade)","#7a468c"],["Nihilakh Oxide","Technique","#66b39e"],["Typhus Corrosion","Technique","#3b342e"],["Black Templar","Contraste","#2a2a2a"]];
 function hob(){if(!S.hobby||typeof S.hobby!=="object")S.hobby={};const h=S.hobby;if(!Array.isArray(h.paints))h.paints=[];if(!h.sch||typeof h.sch!=="object"||Array.isArray(h.sch))h.sch={};return h}
-let hTab="sch",hq="",hst="",hty="";
+let hTab="sch",hq="",hst="",hty="",hbr="";
 const units=()=>Object.values(S.coll||{}).filter(u=>u&&u.ref&&u.name).sort((a,b)=>String(a.name).localeCompare(String(b.name),"fr"));
 const facN=id=>{try{const f=(S.fac||[]).find(x=>x.id===id);return f?f.name:""}catch(_){return""}};
 const uimg=u=>(S.imgs&&S.imgs[u.ref])||"";
@@ -3828,7 +3833,7 @@ function hList(){const h=hob(),q=nk(hq);
  if(hTab==="sch"){const us=units().filter(u=>(!hst||schOf(u.ref).st===hst)&&(!q||nk(u.name+" "+facN(u.fac)).includes(q)));if(!us.length)return`<p class="mu">Aucune figurine ne correspond.</p>`;
   return`<div class="ghg">${us.map(u=>{const s=schOf(u.ref),st=STM[s.st]||STS[0],sw=[...new Set((s.steps||[]).map(x=>x.p).filter(Boolean))].slice(0,7).map(pid=>{const p=paintBy(pid);return p?`<i style="background:${p.c}" title="${e2(p.n)}"></i>`:""}).join("");const im=s.img||uimg(u);
    return`<button class="ghu" style="--sc:${st[2]}" data-x="sched" data-id="${u.ref}"><span class="ph${im?"":" no"}" style="${im?`background-image:url('${im}')`:""}"></span><span class="in"><b>${e2(u.name)}</b><small>${e2(facN(u.fac))}${(s.steps||[]).length?` · ${s.steps.length} étape${s.steps.length>1?"s":""}`:""}</small><span class="st">${st[1]}</span>${sw?`<span class="sw">${sw}</span>`:""}</span></button>`}).join("")}</div>`}
- const ps=h.paints.filter(p=>(!hty||p.t===hty)&&(!q||nk(p.n+" "+p.b+" "+p.t).includes(q))).sort((a,b)=>a.n.localeCompare(b.n,"fr"));
+ const ps=h.paints.filter(p=>(!hty||p.t===hty)&&(!hbr||nk(p.b)===nk(hbr))&&(!q||nk(p.n+" "+p.b+" "+p.t).includes(q))).sort((a,b)=>a.n.localeCompare(b.n,"fr"));
  if(!ps.length)return`<p class="mu">${h.paints.length?"Aucune peinture ne correspond.":"Ta collection de peintures est vide."}</p>${h.paints.length?"":`<div class="gadd2"><button class="b" data-x="pstarter">Ajouter 30 peintures Citadel courantes</button></div>`}`;
  return ps.map(p=>{const used=Object.values(h.sch).filter(s=>(s.steps||[]).some(x=>x.p===p.id)).length;return`<button class="gpt" style="--pc:${p.c}" data-x="pted" data-id="${p.id}"><span class="gsw" style="background:${p.c}"></span><span class="tx"><b>${e2(p.n)}</b><small>${e2([p.b,p.t].filter(Boolean).join(" · "))}${used?` · utilisée dans ${used} schéma${used>1?"s":""}`:""}</small></span><span class="stk ${p.s||"ok"}">${p.s==="bas"?"Presque vide":p.s==="achat"?"À racheter":"En stock"}</span></button>`}).join("")}
 XV.paint=()=>{const h=hob(),us=units(),done=us.filter(u=>schOf(u.ref).st==="fini").length,pc=us.length?Math.round(done*100/us.length):0;
@@ -3837,7 +3842,7 @@ XV.paint=()=>{const h=hob(),us=units(),done=us.filter(u=>schOf(u.ref).st==="fini
  <div class="gprog" title="${pc} %"><i style="width:${pc}%"></i></div>
  <div class="ghtabs"><button class="${hTab==="sch"?"on":""}" data-x="htab" data-k="sch">🖌 Schémas par figurine</button><button class="${hTab==="pt"?"on":""}" data-x="htab" data-k="pt">🎨 Mes peintures</button></div>
  <div class="gxtop"><input type="search" id="gxhq" placeholder="${hTab==="sch"?"Chercher une figurine ou une faction…":"Chercher une peinture, une marque…"}" value="${e2(hq)}" autocomplete="off">${hTab==="pt"?`<button class="b p" data-x="ptnew">+ Peinture</button>`:""}</div>
- <div class="gchips">${chips}</div><div id="gxhb">${hList()}</div>`};
+ <div class="gchips">${chips}</div>${hTab==="pt"?`<div class="gchips">${[["","Toutes marques"],...brands().map(b=>[b,b])].map(([k,n])=>`<button class="${hbr===k?"on":""}" data-x="hbr" data-k="${e2(k)}">${e2(n)}</button>`).join("")}<button data-x="bmgr">🏷 Gérer les marques</button></div>`:""}<div id="gxhb">${hList()}</div>`};
 let wk=null;
 function paintOpts(sel){return`<option value="">— choisir —</option>`+hob().paints.slice().sort((a,b)=>a.n.localeCompare(b.n,"fr")).map(p=>`<option value="${p.id}"${p.id===sel?" selected":""}>${e2(p.n)}${p.b?" ("+e2(p.b)+")":""}</option>`).join("")}
 function readSteps(){if(!wk)return;const rows=fvs(".gstep");wk.steps=rows.map(r=>({z:r.querySelector("[data-s=z]").value,p:r.querySelector("[data-s=p]").value,px:r.querySelector("[data-s=px]").value,t:r.querySelector("[data-s=t]").value,n:r.querySelector("[data-s=n]").value}));const st=fv("st");if(st!=null)wk.st=st;const no=fv("note");if(no!=null)wk.note=no}
@@ -3852,10 +3857,15 @@ function schEdit(ref,keep){const u=(S.coll||{})[ref];if(!u)return;if(!keep)wk=cl
  <label>Photo de la figurine peinte<input type="file" accept="image/*" id="gxschimg"></label>${wk.img?`<div class="gxbtn"><button class="b x" data-x="schimgdel">Retirer la photo</button></div>`:""}
  <div class="gxf"><button class="b" data-gx="close">Annuler</button><button class="b p" data-x="schsave">Enregistrer</button></div>`)}
 function luma(h){const m=/^#?([0-9a-f]{6})$/i.exec(h||"");if(!m)return 0;const n=parseInt(m[1],16);return .299*(n>>16)+.587*(n>>8&255)+.114*(n&255)}
+function brandMgr(msg){const h=hob(),L=brands();
+ GX.open(`<div class="gxh"><h2>Marques de peinture</h2><button class="b" data-gx="close">✕</button></div><p class="mu">${msg?e2(msg):"Ajoute tes marques, renomme-les ou retire celles que tu n'utilises pas."}</p>
+ ${L.map((b,i)=>`<div class="gln"><div class="r"><label>${bUse(b)} peinture${bUse(b)>1?"s":""}<input data-bn="${i}" value="${e2(b)}"></label><button class="b" data-x="bren" data-i="${i}">Renommer</button><button class="b x" data-x="bdel" data-i="${i}" aria-label="Supprimer la marque">🗑</button></div></div>`).join("")}
+ <div class="gln"><div class="r"><label>Nouvelle marque<input id="gxnb" placeholder="ex. Warcolours, Two Thin Coats…"></label><button class="b p" data-x="badd">+ Ajouter</button></div></div>
+ <div class="gxf"><button class="b p" data-gx="close">Terminé</button></div>`)}
 function ptEdit(id){const p=paintBy(id)||{id:uid("p"),n:"",b:"Citadel",t:"Base",c:"#7a5b22",s:"ok",note:""};cur={k:"pt",id:p.id,isNew:!paintBy(id)};
  const used=units().filter(u=>(schOf(u.ref).steps||[]).some(s=>s.p===p.id));
  GX.open(`<div class="gxh"><span class="gsw" style="width:30px;height:30px;background:${p.c}"></span><h2>${p.n?e2(p.n):"Nouvelle peinture"}</h2><button class="b" data-gx="close">✕</button></div>
- <label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque<input data-f="b" list="gxbr" value="${e2(p.b)}"><datalist id="gxbr">${BRANDS.map(b=>`<option value="${b}">`).join("")}</datalist></label>
+ <label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque<input data-f="b" list="gxbr" value="${e2(p.b)}" placeholder="Choisis ou écris une nouvelle marque"><datalist id="gxbr">${brands().map(b=>`<option value="${e2(b)}">`).join("")}</datalist></label>
  <label>Type<select data-f="t">${TYPES.map(t=>`<option${p.t===t?" selected":""}>${t}</option>`).join("")}</select></label><label>Couleur<input type="color" data-f="c" value="${p.c}"></label>
  <label>Stock<select data-f="s"><option value="ok"${p.s==="ok"?" selected":""}>En stock</option><option value="bas"${p.s==="bas"?" selected":""}>Presque vide</option><option value="achat"${p.s==="achat"?" selected":""}>À racheter</option></select></label>
  <label>Notes<textarea rows="2" data-f="note">${e2(p.note||"")}</textarea></label>
@@ -3919,9 +3929,14 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="hst"){hst=b.dataset.k;GX.commit();return}
  if(a==="hty"){hty=b.dataset.k;GX.commit();return}
  if(a==="pstarter"){const h=hob();STARTER.forEach(([n,t,c])=>h.paints.push({id:uid("p"),n,b:"Citadel",t,c,s:"ok"}));GX.commit();say("30 peintures ajoutées : retire celles que tu n'as pas");return}
+ if(a==="hbr"){hbr=b.dataset.k;GX.commit();return}
+ if(a==="bmgr"){brandMgr();return}
+ if(a==="badd"){const v=(document.getElementById("gxnb").value||"").trim();if(!v){say("Écris le nom de la marque");return}if(brands().some(x=>nk(x)===nk(v))){brandMgr("Cette marque existe déjà");return}const h=hob();h.brands=h.brands||[];h.brands.push(v);if((h.bdel||[]).includes(v))h.bdel=h.bdel.filter(x=>x!==v);try{save()}catch(_){}brandMgr("Marque « "+v+" » ajoutée");return}
+ if(a==="bren"){const L=brands(),old=L[+b.dataset.i],nv=(document.querySelector(`#gxo [data-bn="${b.dataset.i}"]`).value||"").trim();if(!nv||nv===old)return;if(L.some(x=>nk(x)===nk(nv)&&x!==old)){brandMgr("Une marque porte déjà ce nom");return}const h=hob();h.paints.forEach(p=>{if(nk(p.b)===nk(old))p.b=nv});if(DEFB.includes(old)){h.bdel=h.bdel||[];if(!h.bdel.includes(old))h.bdel.push(old)}h.brands=(h.brands||[]).filter(x=>nk(x)!==nk(old));h.brands.push(nv);if(nk(hbr)===nk(old))hbr=nv;try{save()}catch(_){}brandMgr("Renommée en « "+nv+" »");return}
+ if(a==="bdel"){const L=brands(),old=L[+b.dataset.i];if(bUse(old)){brandMgr("« "+old+" » est utilisée par "+bUse(old)+" peinture(s) : change leur marque avant de la supprimer");return}const h=hob();if(DEFB.includes(old)){h.bdel=h.bdel||[];if(!h.bdel.includes(old))h.bdel.push(old)}h.brands=(h.brands||[]).filter(x=>nk(x)!==nk(old));try{save()}catch(_){}brandMgr("Marque supprimée");return}
  if(a==="ptnew"){ptEdit(null);return}
  if(a==="pted"){ptEdit(id);return}
- if(a==="ptsave"){const n=(fv("n")||"").trim();if(!n){say("Donne un nom à la peinture");return}const h=hob();let p=h.paints.find(x=>x.id===cur.id);if(!p){p={id:cur.id};h.paints.push(p)}Object.assign(p,{n,b:fv("b")||"",t:fv("t"),c:fv("c"),s:fv("s"),note:fv("note")||""});done("Peinture enregistrée");return}
+ if(a==="ptsave"){const n=(fv("n")||"").trim();if(!n){say("Donne un nom à la peinture");return}const h=hob();let p=h.paints.find(x=>x.id===cur.id);if(!p){p={id:cur.id};h.paints.push(p)}{const nb=(fv("b")||"").trim();if(nb&&!brands().some(x=>nk(x)===nk(nb))){const h2=hob();h2.brands=h2.brands||[];h2.brands.push(nb)}}Object.assign(p,{n,b:(fv("b")||"").trim(),t:fv("t"),c:fv("c"),s:fv("s"),note:fv("note")||""});done("Peinture enregistrée");return}
  if(a==="ptdel"){conf("Supprimer cette peinture ?","Elle sera retirée des schémas qui l'utilisent.","Supprimer",()=>{const h=hob();h.paints=h.paints.filter(x=>x.id!==cur.id);Object.values(h.sch).forEach(s=>(s.steps||[]).forEach(x=>{if(x.p===cur.id)x.p=""}));done("Peinture supprimée")});return}
  if(a==="sched"){schEdit(id);return}
  if(a==="stadd"){readSteps();wk.steps=wk.steps||[];wk.steps.push({z:"",p:"",px:"",t:wk.steps.length?"Aplat":"Sous-couche",n:""});schEdit(cur.id,true);return}
