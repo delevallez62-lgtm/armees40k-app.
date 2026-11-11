@@ -11,6 +11,8 @@ def r(a,b):
 r('[["lists","Mes listes"],["coll","Collection"],["gm","Parties"],["enc","📖 Règles"],["imp","Importer"]]','[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["gm","Parties"],["enc","Règles V11"],["imp","Importer"]]')
 r('else if(tab==="gm")h=gmView();','else if(window.XV&&XV[tab])h=XV[tab]();else if(tab==="gm")h=gmView();')
 r(',tab="lists",ed=null',',tab="home",ed=null')
+r('alt:"Quitter sans sauvegarder",altcb:()=>{gReset();tab="lists"}','alt:"Quitter sans sauvegarder",altcb:()=>{const gi=S.bat&&S.bat.gid,ix=gi?S.games.findIndex(g=>g.id===gi&&!g.fin):-1;if(ix>=0)S.games.splice(ix,1);gReset();tab="home";save()}')
+r('altcb:()=>{gReset();openP(id)}','altcb:()=>{const gi=S.bat&&S.bat.gid,ix=gi?S.games.findIndex(g=>g.id===gi&&!g.fin):-1;if(ix>=0)S.games.splice(ix,1);gReset();openP(id)}')
 r('const SXD=[','const SXD=window.__sxd=[')
 r('const BY={};','const BY=window.__sxby={};')
 r('const SM={','const SM=window.__sxsm={')
