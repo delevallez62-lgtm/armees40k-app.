@@ -1030,46 +1030,50 @@ main>.card:has(>[data-act=gdel])>details[open]{padding-bottom:12px}
 .pph.sseg{margin-top:2px}
 @media(max-width:370px){.sc-n{font-size:18px}.scp{width:50px;height:46px}.scp b{font-size:20px}}
 
+
+/* ===== v93 layouts + sélecteur ===== */
+/* ===== v92 layouts de terrain ===== */
+#layt{position:fixed;right:0;top:calc(var(--hh,48px) + 120px);z-index:37;width:40px;min-height:52px;padding:6px 0;border:1px solid var(--bd);border-right:0;border-radius:12px 0 0 12px;background:var(--card);color:var(--tx);box-shadow:-3px 4px 14px rgba(0,0,0,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;font:inherit}
+#layt span{font-size:18px;line-height:1}#layt b{font:800 14px/1 var(--fd,system-ui);color:var(--ac)}
+#layt.on{background:var(--ac);color:#fff}#layt.on b{color:#fff}
+#layt[hidden],#layp[hidden]{display:none!important}
+#layp{position:fixed;left:8px;right:48px;margin-left:auto;top:calc(var(--hh,48px) + 6px);bottom:calc(var(--bh,70px) + 6px);z-index:38;max-width:430px;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 14px;border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);box-shadow:-8px 0 26px rgba(0,0,0,.4);text-align:left}
+.lyh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.lyh b{font:800 20px/1.1 var(--fd,system-ui)}
+.lyx{flex:none;width:44px;height:44px;border:1px solid var(--bd);border-radius:12px;background:transparent;color:var(--tx);font-size:18px;cursor:pointer}
+.lyn{margin:4px 0;font-size:13.5px;line-height:1.4}.lym{display:flex;flex-direction:column;gap:2px}
+.lyc{display:flex;gap:8px;margin:8px 0}
+.lyc button{flex:1;min-height:44px;border:1px solid var(--bd);border-radius:12px;background:transparent;color:var(--tx);font:700 16px system-ui;cursor:pointer}
+.lyc button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.lyc button:last-child{flex:1.6;font-size:14px}
+.lyi{margin:6px 0;border-radius:10px;overflow:auto;border:1px solid var(--bd);background:#e9e6dc}
+.lyi img{display:block;width:100%;height:auto}.lyi.z img{width:220%;max-width:none}
+#layp .b{width:100%;margin-top:4px}
+
+#layt.new{animation:lypulse 1.1s ease-out 3;box-shadow:-3px 4px 14px rgba(0,0,0,.28),0 0 0 3px rgba(227,189,98,.7)}
+@keyframes lypulse{0%{transform:translateX(0)}30%{transform:translateX(-8px)}60%{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){#layt.new{animation:none}}
+
+/* ===== v93 sélecteur de peinture ===== */
+.ppbtn{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:6px 10px;border:1px solid rgba(216,180,94,.35);border-radius:10px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.ppbtn .gsw{flex:none;width:22px;height:22px;border-radius:50%}
+.ppbtn b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ppbtn small{opacity:.7;margin-left:auto;white-space:nowrap}
+.gpt.on{outline:2px solid var(--ac,#d8b45e)}.pph{margin:2px 0 0}
+#ppq{width:100%;min-height:44px}
+
+
+/* ===== v94 assistant + onglets missions ===== */
+.wzs{display:flex;gap:4px;margin:8px 0 10px}.wzs span{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border:1px solid var(--bd);border-radius:10px;font:800 14px/1 system-ui;opacity:.55}
+.wzs span small{font:600 10px/1.1 system-ui}.wzs span.on{opacity:1;background:var(--ac);color:#fff;border-color:var(--ac)}.wzs span.ok{opacity:.9;color:var(--ac)}
+.wzt{margin:4px 0 8px}.wzf{display:flex;gap:8px;position:sticky;bottom:-1px;z-index:6;padding:8px 0;background:var(--card);border-top:1px solid var(--bd)}.wzf .b{flex:1;min-height:48px}
+.wzq{width:100%;min-height:44px;margin:6px 0}.wzb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0}.wzb b{margin-left:auto;font-size:13px}
+.wzg{margin:12px 0 4px;font:800 13px system-ui;opacity:.8}
+.wzi{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:8px 10px;margin:4px 0;border:1px solid var(--bd);border-radius:10px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.wzc{flex:none;width:22px;height:22px;border:2px solid currentColor;border-radius:6px;opacity:.6;display:inline-flex;align-items:center;justify-content:center}
+.wzi.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 16%,transparent)}.wzi.on .wzc{background:var(--ac);border-color:var(--ac);opacity:1;color:#fff}.wzi.on .wzc::after{content:"✓";font-size:15px;font-weight:900}
+.mtabs button small{margin-left:6px;opacity:.7}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
-<style id="v94">
-/* v94 : étape 3 (dossiers) + interface téléphone façon application */
-.gs3 .s3{margin:10px 0}.s3t{font-weight:700;margin-bottom:6px}
-.s3l{display:flex;flex-direction:column;gap:8px}
-.s3b{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:56px;text-align:left;padding:10px 14px;border-radius:14px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
-.s3b b{font-size:16px}.s3b small{color:var(--mu);font-size:12.5px}
-.s3b.on{border-color:var(--ac);background:rgba(61,220,151,.12);box-shadow:0 0 0 1px var(--ac) inset}
-.s3b.on b::before{content:"✓ ";color:var(--ac)}
-.s3r,.mxb{display:flex;align-items:center;gap:10px;border:1px solid var(--bd);border-radius:14px;padding:10px 12px;margin:10px 0;background:var(--card)}
-.s3r>div:nth-child(2),.mxt{flex:1;min-width:0;display:flex;flex-direction:column}.s3r small,.mxt small{color:var(--mu);font-size:12px}
-.s3d,.mxi{font-size:26px}.s3a{display:flex;flex-direction:column;gap:6px}
-.mxb{margin:0 0 12px}
-@media(max-width:700px){
- html{-webkit-tap-highlight-color:transparent}
- body{overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
- input,select,textarea{font-size:16px!important}
- .b,button.b{min-height:44px;padding:8px 14px;border-radius:12px}
- main{padding:12px 12px calc(96px + env(safe-area-inset-bottom,0px))}
- .grid{grid-template-columns:1fr}
- .card{border-radius:16px}
- header:not(.hpl){padding:10px 14px 10px!important}
- header:not(.hpl) h1{font-size:21px!important;margin:0!important}
- /* barre d'onglets en bas */
- body header:not(.hpl) nav#nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:0;margin:0;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));overflow-x:auto;scroll-snap-type:x proximity;-webkit-mask-image:none;mask-image:none;background:rgba(14,20,17,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,.12);box-shadow:0 -6px 24px rgba(0,0,0,.45)}
- body header:not(.hpl) nav#nav>button{flex:0 0 21%;scroll-snap-align:start;min-height:58px!important;padding:6px 2px 4px!important;margin:0 2px!important;border:0!important;border-radius:14px!important;background:transparent!important;box-shadow:none!important;color:#a9bdb1!important;font:600 11px/1.15 system-ui,-apple-system,sans-serif!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px!important;white-space:normal;text-align:center}
- body header:not(.hpl) nav#nav>button .gi{width:24px;height:24px;font-size:22px;color:var(--tc,#d8b45e)}
- body header:not(.hpl) nav#nav>button.on{background:rgba(227,189,98,.16)!important;color:#f3dc9a!important;box-shadow:inset 0 0 0 1px rgba(227,189,98,.4)!important}
- body header:not(.hpl) nav#nav>button:last-child{margin-right:4px!important}
- #fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
- /* fenêtres : feuilles qui montent du bas */
- .ov{align-items:flex-end;padding:0}
- .ov .pn{width:100%;max-height:92vh;border-radius:22px 22px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom,0px));animation:sheet .28s cubic-bezier(.2,.8,.2,1)}
- .ov .pn::before{content:"";display:block;width:42px;height:5px;border-radius:3px;background:var(--bd);margin:-6px auto 10px}
- .gpgo2 .b,.gpgo .b{width:100%;min-height:52px;font-size:17px}
- .mpk .mo{min-height:48px}
-}
-@keyframes sheet{from{transform:translateY(100%)}}
-</style>
 </head>
 <body>
 <div id="sb"></div><header><h1>Mes armées 40k<small id="cl"></small><span id="sy" data-s="loc" role="button">💾</span></h1><nav id="nav"></nav><span class="hbn"><button data-act="sban" title="Changer la bannière du site">🖼</button><button data-act="frm" data-k="s" id="fsb" title="Cadrer la bannière">✥</button><button data-act="dsban" id="dsb" title="Retirer la bannière">✕</button></span></header>
@@ -1214,7 +1218,7 @@ function modal(){const u=ed==null?null:cl().units[ed];if(!u){$("#md").innerHTML=
 const batTot=(i,u)=>S.bat.t.slice(0,u+1).reduce((a,r)=>a+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0);
 function miniBar(){const B=S.bat,c=B.cur||0,CL=["#3ddc97","#f0a54a"],cb=(i,v)=>`<button data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} un PC">${v>0?"+":"−"}</button>`;
  return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div></div>`}
-function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;B.sx=null;B.lay=null;B.src=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
+function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;B.sx=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
 function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat"||(tab==="enc"&&!!S.pm&&!S.mg),run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
  $("#bar").style.display=g?"flex":"none";$("#m").classList.toggle("gm",g);$("#fab").style.display=g?"none":"";$("#fab").textContent=run?"▶ Reprendre la partie":"🎲 Mode jeu";$("#fab").dataset.act=run?"gresume":"gpick";
  $("#bar").innerHTML=g?[["play","🛡","Unités",tab==="play"],["pst","⚡","Stratagèmes",tab==="pst"],["bat","🏆","Score",tab==="bat"],["enc","📖","Règles",tab==="enc"]].map(([k,i,n,on])=>`<button data-tab="${k}" class="${on?"on":""}"><i>${i}</i>${n}</button>`).join("")+`<button data-act="gmg"><i>☰</i>Gestion</button><button class="end" data-act="gend"><i>⏹</i>Terminer</button>`:""}
@@ -1304,7 +1308,7 @@ Object.values(S.coll).forEach(m=>{if(m.nb==null)m.nb=(S.lists.flatMap(l=>l.units
 const bp=k=>{const p=S.bpos[k]||{};return(p.x??50)+"% "+(p.y??50)+"%"};
 let frk=null;
 function frDraw(){const ph=!!frk&&frk.slice(0,2)==="p:",img=!frk?"":frk==="s"?S.sban:ph?S.imgs[frk.slice(2)]:frk[0]==="u"?S.ban[frk.slice(2)]:(S.fac.find(f=>f.id===frk.slice(2))||{}).banner;if(!img){frk=null;$("#dg").innerHTML="";return}const p=S.bpos[frk]||{};$("#dg").innerHTML=`<div class="ov ovd" style="z-index:40" data-act="frx"><div class="pn dlgp"><div class="top"><h3 style="margin:0 0 8px">${ph?"Recadrer la photo":"Cadrer la bannière"}</h3><button class="b cx" data-act="frx" aria-label="Fermer">✕</button></div>${ph?`<div id="frp" class="frs"><img src="${img}" style="${pstK(frk)}" alt=""></div>`:`<div id="frp" style="height:120px;border-radius:10px;background:url(${img}) ${bp(frk)}/cover"></div>`}<label>Gauche ↔ droite<input type="range" min="0" max="100" value="${p.x??50}" data-fr="x" style="width:100%"></label><label>Haut ↕ bas<input type="range" min="0" max="100" value="${p.y??50}" data-fr="y" style="width:100%"></label>${ph?`<label>Zoom<input type="range" min="100" max="300" value="${Math.round((p.z??1)*100)}" data-fr="z" style="width:100%"></label>`:""}</div></div>`}
-function gRec(title){const B=S.bat,tt=i=>B.t.reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0),r={title,n:[...B.n],f:[...B.f],l:[0,1].map(i=>snap(B.l[i])),tot:[tt(0),tt(1)],cp:[...B.cp],t:clone(B.t),fin:true,ms:B.ms?clone(B.ms):null,sx:B.sx?clone(B.sx):null,lay:B.lay?clone(B.lay):null,src:B.src?clone(B.src):null,ed:S.ed&&(Object.keys(S.ed.mi||{}).length||Object.keys(S.ed.sx||{}).length)?clone(S.ed):null},g=B.gid&&S.games.find(x=>x.id===B.gid);if(g)Object.assign(g,r);else S.games.unshift(Object.assign({id:rid(),d:Date.now()},r))}
+function gRec(title){const B=S.bat,tt=i=>B.t.reduce((x,r)=>x+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0),r={title,n:[...B.n],f:[...B.f],l:[0,1].map(i=>snap(B.l[i])),tot:[tt(0),tt(1)],cp:[...B.cp],t:clone(B.t),fin:true,ms:B.ms?clone(B.ms):null,sx:B.sx?clone(B.sx):null,ed:S.ed&&(Object.keys(S.ed.mi||{}).length||Object.keys(S.ed.sx||{}).length)?clone(S.ed):null},g=B.gid&&S.games.find(x=>x.id===B.gid);if(g)Object.assign(g,r);else S.games.unshift(Object.assign({id:rid(),d:Date.now()},r))}
 function gMis(g){if(!g.p)return"";return`<div class="gmm">${g.p.map(x=>x.mission&&x.mission.id?`<div class="mu">${esc(x.mission.ic||"")} <b>${esc(x.name)}</b> · ${esc(x.mission.fr)}${x.mission.mn?" — "+esc(x.mission.mn):""}${x.src==="temp"?" (choisie pour la partie)":""}</div>`:`<div class="mu"><b>${esc(x.name)}</b> · mission non choisie</div>`).join("")}</div><details style="margin-top:6px"><summary class="mu">Infos de la partie</summary>${g.p.map(x=>`<div style="margin-top:6px"><b>${esc(x.name)}</b><div class="mu">${[x.fac&&"Faction : "+esc(x.fac),x.list&&"Liste : "+esc(x.list.name),x.det&&"Détachement : "+esc(x.det),x.pts&&"Points : "+x.pts].filter(Boolean).join(" · ")||"Aucune autre information"}</div></div>`).join("")}</details>`}
 function gmView(){return S.games.length?S.games.map(g=>{const w=g.tot[0]===g.tot[1]?-1:g.tot[0]>g.tot[1]?0:1,nm=i=>`<b${w===i?' style="color:var(--ac)"':""}>${esc(g.n[i])}</b>${g.f[i]?` <span class="mu">(${esc(g.f[i])})</span>`:""}`;return`<div class="card" style="position:relative"><button class="xx" data-act="gdel" data-g="${g.id}" aria-label="Supprimer">✕</button><div class="mu">${esc(g.title)} · ${new Date(g.d).toLocaleDateString("fr-FR")}</div>${g.fin===false?`<div style="margin:6px 0;padding-right:30px">${nm(0)} <span class="mu">contre</span> ${nm(1)}</div><div class="mu">Partie non terminée · score non enregistré</div>`:`<div style="margin:6px 0;padding-right:30px">${nm(0)} <b style="font-size:22px">${g.tot[0]}</b> – <b style="font-size:22px">${g.tot[1]}</b> ${nm(1)}</div><div class="mu">PC restants : ${g.cp[0]} – ${g.cp[1]}</div>`}${gMis(g)}${window.msGameHtml?window.msGameHtml(g):""}${(g.l||[]).some(x=>x)?`<details style="margin-top:6px"><summary class="mu">Armées jouées</summary>${[0,1].map(i=>g.l[i]?`<div style="margin-top:4px"><b>${esc(g.n[i])}</b> — ${esc(g.l[i].name)} ${g.l[i].units.map(u=>`<div class="mu">• ${esc(cap(u.name))}${u.subs.length?" + "+u.subs.map(s=>esc(cap(s))).join(", "):""}</div>`).join("")}</div>`:"").join("")}</details>`:""}<details style="margin-top:6px"><summary class="mu">Détail par tour</summary>${g.t.map((r,t)=>`<div class="mu">Tour ${t+1} : ${r.p[0]+r.s[0]+(r.m?r.m[0]:0)} (P ${r.p[0]} / S ${r.s[0]}${r.m?" / M "+r.m[0]:""}${r.x?" / O "+r.x[0]:""}) – ${r.p[1]+r.s[1]+(r.m?r.m[1]:0)} (P ${r.p[1]} / S ${r.s[1]}${r.m?" / M "+r.m[1]:""}${r.x?" / O "+r.x[1]:""})</div>`).join("")}</details></div>`}).join(""):"<p>Aucune partie enregistrée. Termine une bataille avec « Enregistrer la partie ».</p>"}
 function upsert(p,facFn,x){const k=nn(p.name),same=Object.values(S.coll).filter(y=>nn(y.name)===k);let m=same.find(y=>wsig(y)===wsig(p));
@@ -1476,7 +1480,7 @@ function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],xx=(r,i)=>
  nc=hasX?5:4,
  tbl=dp("b:t","📊 Détail par round")+`<div class="w bzw"><table><tr><th>Round</th><th colspan="${nc}" style="color:${CL[0]}">${esc(B.n[0])}</th><th colspan="${nc}" style="color:${CL[1]}">${esc(B.n[1])}</th></tr><tr><th></th>${[0,1].map(()=>`<th>P</th><th>S</th><th>M</th>${hasX?"<th>O</th>":""}<th>Σ</th>`).join("")}</tr>${B.t.map((x,t)=>`<tr${t===c?' style="background:var(--bg)"':""}><td>R${t+1}</td>${[0,1].map(i=>`<td>${x.p[i]}</td><td>${x.s[i]}</td><td>${x.m?x.m[i]:0}</td>${hasX?`<td>${xx(x,i)}</td>`:""}<td><b>${tt(i,t)}</b></td>`).join("")}</tr>`).join("")}</table><div class="mu">P = primaire · S = secondaire · M = missions (auto)${hasX?" · O = objectifs secondaires (cartes)":""} · Σ = cumul</div></div></details>`,
  set=dp("b:s","👥 Joueurs · factions · listes")+[0,1].map(i=>`<div style="margin:10px 0;border-left:5px solid ${CL[i]};padding-left:10px"><b>${esc(B.n[i])}</b><input data-bf="${i}" list="fl" value="${esc(B.f[i])}" placeholder="Faction jouée" style="width:100%;margin-top:6px"><select data-bl="${i}" style="width:100%;margin-top:6px">${lopts(i)}</select></div>`).join("")+`</details>`;
- return`<div class="tbw">${window.tbScene?window.tbScene(dr):""}`+(window.mxBanner?window.mxBanner():"")+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p></div>`}
+ return`<div class="tbw">${window.tbScene?window.tbScene(dr):""}`+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p></div>`}
 let ftab=0,fedLast=null;
 function cutDet(p,dn){const t=(p.text||[]).join(" ");if(!t)return"";const x=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),re=new RegExp("((?:[\\p{L}'’]+\\s-\\s)?(?:"+dn.map(x).join("|")+"))\\s*\\[([^\\]]+)\\]","giu"),tags=[];let m;while(m=re.exec(t))tags.push({i:m.index,l:m[0].length});if(!tags.length)return"";const names=[...(p.equip||"").split(",").map(s=>s.trim()).filter(s=>/\(Aura\)/.test(s)),...(p.apt||"").split(",").map(s=>s.trim())].filter(Boolean),out=[];let keep=t.slice(0,tags[0].i);tags.forEach((g,k)=>{const from=g.i+g.l,nx=k+1<tags.length?tags[k+1].i:t.length;let end=nx;names.forEach(n=>{const j=t.indexOf(n,from);if(j>=0&&j<end)end=j});out.push(t.slice(g.i,end).trim());keep+=" "+t.slice(end,nx)});p.text=[keep.replace(/\s+/g," ").trim()].filter(Boolean);return out.join("\n")}
 const octot=u=>(u.optc||0)+(u.subs||[]).reduce((a,x)=>a+(x.optc||0),0);
@@ -2012,7 +2016,7 @@ const ORD=W.missions.map(c=>c.id),mOf=id=>effM(MSD.find(m=>m.id===id)||null),mIn
 const autoM=(me,op)=>{const i=ORD.indexOf(op),l=mIn(me);return me&&op&&i>=0&&l[i]?l[i].id:""};
 const CL=["#1fae7c","#e08a2c"];
 const MOL={cmd:"Fin de votre phase de Commandement",tour:"Fin de votre tour",tourany:"Fin d’un tour",bat:"Fin de la bataille"};
-window.misM=(sel,t,cat)=>cat?`<div class="mpk" data-mt="${t}">${mIn(cat).map(m=>`<button type="button" class="mo sm${m.id===sel?" on":""}" data-m="${m.id}" aria-pressed="${m.id===sel}"><span class="mt"><b>${esc(m.nm)}</b>${m.id===sel?`<span class="md">${esc(m.d)}</span>`:""}</span></button>`).join("")}</div>`:`<p class="gnote">Choisis d’abord une catégorie.</p>`;
+window.misM=(sel,t,cat)=>cat?`<div class="mpk" data-mt="${t}">${(window.gSelF?window.gSelF("pri",mIn(cat),x=>x.id):mIn(cat)).map(m=>`<button type="button" class="mo sm${m.id===sel?" on":""}" data-m="${m.id}" aria-pressed="${m.id===sel}"><span class="mt"><b>${esc(m.nm)}</b>${m.id===sel?`<span class="md">${esc(m.d)}</span>`:""}</span></button>`).join("")}</div>`:`<p class="gnote">Choisis d’abord une catégorie.</p>`;
 
 /* ================= Suivi des missions pendant la bataille ================= */
 const MS=()=>S.bat.ms;
@@ -2116,54 +2120,73 @@ const row=(l,v)=>v?`<div class="r"><span>${l}</span><b>${esc(v)}</b></div>`:"";
 function sum(){const p=P(),L=mine(),O=opp();return[
  {name:p.me||"Moi",fac:facOf(L),list:L,det:detOf(L),pts:ptsOf(L),m:eff1(),i:ind1()},
  {name:p.n||"Adversaire",fac:p.f||(O?facOf(O):""),list:O,det:O?detOf(O):p.od,pts:O?ptsOf(O):(+String(p.op).replace(/\D/g,"")||0),m:p.m2,i:ind2()}]}
-const CATFR=id=>{const c=catG(id);return c?c.fr:""};
-function fsel(k){const a=window.mxFolders?window.mxFolders(k):[],p=P();return{a,cur:a.find(f=>f.id===p["f"+k])||a[0]||null}}
-function layRoll(force){const p=P(),c1=eff1(),c2=p.m2;if(!c1||!c2||!window.mxLayCands)return null;const cand=window.mxLayCands(CATFR(c1),CATFR(c2));if(!cand.length)return null;let cur=cand.find(l=>l.id===p.ly);if(!cur||force){const pool=force&&cand.length>1?cand.filter(l=>l.id!==p.ly):cand;cur=pool[Math.floor(Math.random()*pool.length)];p.ly=cur.id;sv()}return{cur,cand}}
-const lyNm=l=>l.nm||("Agencement "+l.L);
-function step3(){if(miss().length)return"";const r=layRoll(false);
- const blk=([k,t,h])=>{const{a,cur}=fsel(k);return`<div class="s3"><div class="s3t">${t}</div><div class="s3l">${a.length?a.map(f=>`<button type="button" class="s3b${cur&&cur.id===f.id?" on":""}" data-gp="fo" data-k="${k}" data-id="${f.id}" aria-pressed="${!!cur&&cur.id===f.id}"><b>${esc(f.nm)}</b><small>${h(f)}</small></button>`).join(""):'<p class="gnote">Aucun dossier.</p>'}</div></div>`};
- return`<div class="gps gs3"><div class="gph">Étape 3 — Choisis tes dossiers</div><p class="gnote">Touche un dossier : tout son contenu est utilisé, sans l’ouvrir.</p>${[["pri","🎯 Missions primaires",f=>f.n+" mission"+(f.n>1?"s":"")],["sec","⚡ Objectifs secondaires",f=>f.n+" carte"+(f.n>1?"s":"")],["lay","🗺 Layouts",f=>r?"3 agencements pour tes missions · 1 tiré au hasard":f.n+" layouts"]].map(blk).join("")}${r?`<div class="s3r"><span class="s3d">🎲</span><div><b>${esc(lyNm(r.cur))}</b><small>Tiré au hasard parmi ${r.cand.length} agencements (${esc(r.cand.map(lyNm).join(", "))}) · page ${r.cur.p}</small></div><div class="s3a"><button type="button" class="b" data-gp="lyshow">Voir</button><button type="button" class="b" data-gp="lyroll">Retirer</button></div></div>`:""}</div>`}
 function miss(){const p=P(),a=[];if(!eff1())a.push(["c1","Ma catégorie de mission"]);if(!p.m2)a.push(["c2","Catégorie de l’adversaire"]);return a}
 const mline=x=>{const c=catG(x.m),m=x.i&&mOf(x.i);return c?`${esc(c.ic+" "+c.fr)}${m?` · <b>${esc(m.nm)}</b>`:` · <i>mission selon la catégorie adverse</i>`}`:"<i>catégorie à choisir</i>"};
 function sumHtml(){return`<div class="gsum">${sum().map((x,i)=>`<div class="gsc"><h5>Joueur ${i+1}</h5><div class="n">${esc(x.name)}</div>${row("Faction",x.fac)}${row("Liste",x.list&&x.list.name)}${row("Détachement",x.det)}${row("Points",x.pts?x.pts+" pts":"")}<div class="r"><span>Mission</span><b>${mline(x)}</b></div></div>`).join("")}</div>`}
-function topHtml(){const ms=miss(),s=sum();return`<div class="gps gtop"><div class="gph">Commencer avec les forces actuelles</div>${s.map((x,i)=>`<div class="gfc" style="--c:${CL[i]}"><div class="gfn"><b>${esc(x.name)}</b><span class="gnote">${[x.fac,x.list&&x.list.name,x.det,x.pts?x.pts+" pts":""].filter(Boolean).map(esc).join(" · ")}</span></div><div class="gfm">${mline(x)}</div></div>`).join("")}${ms.length?`<p class="gnote need">Il manque : ${ms.map(([k,l])=>`<button type="button" class="gch" data-gp="goto" data-k="${k}">${l}</button>`).join(" ")}</p>`:""}${step3()}<div class="gpgo2"><button class="b p" data-gp="go">▶ Commencer la partie</button></div>${ms.length?`<p class="gnote"><button type="button" class="gch" data-gp="go0">Lancer sans suivi de mission</button></p>`:""}${ms.length?"":`<p class="gnote"><button type="button" class="gch" data-gp="ex">${P().ex?"Masquer les réglages":"Modifier les forces et missions"}</button></p>`}</div>`}
+function topHtml(){const ms=miss(),s=sum();return`<div class="gps gtop"><div class="gph">Commencer avec les forces actuelles</div>${s.map((x,i)=>`<div class="gfc" style="--c:${CL[i]}"><div class="gfn"><b>${esc(x.name)}</b><span class="gnote">${[x.fac,x.list&&x.list.name,x.det,x.pts?x.pts+" pts":""].filter(Boolean).map(esc).join(" · ")}</span></div><div class="gfm">${mline(x)}</div></div>`).join("")}${ms.length?`<p class="gnote need">Il manque : ${ms.map(([k,l])=>`<button type="button" class="gch" data-gp="goto" data-k="${k}">${l}</button>`).join(" ")}</p>`:""}<div class="gpgo2"><button class="b p" data-gp="go">▶ Commencer la partie</button></div>${ms.length?`<p class="gnote"><button type="button" class="gch" data-gp="go0">Lancer sans suivi de mission</button></p>`:""}${ms.length?"":`<p class="gnote"><button type="button" class="gch" data-gp="ex">${P().ex?"Masquer les réglages":"Modifier les forces et missions"}</button></p>`}</div>`}
 function autoBlk(n){const p=P(),c=n===1?eff1():p.m2,i=n===1?ind1():ind2(),m=mOf(i),man=n===1?p.i1:p.i2,x=n===1?p.x1:p.x2,o=n===1?p.m2:eff1();
  if(!c)return"";if(!m)return`<p class="gnote">Mission déterminée dès que la catégorie ${n===1?"adverse":"de ton armée"} est choisie (règle V11 : ta catégorie × celle de l’adversaire).</p>`;
  return`<div class="gmauto"><div class="ml" style="margin-top:10px">${n===1?"Ma mission":"Mission de l’adversaire"} (V11)</div><b>${esc(m.nm)}</b><p class="gnote">${esc(m.d)}</p><p class="gnote">${man?"Choisie manuellement.":"Déterminée automatiquement : "+esc(catG(c).fr)+" × "+esc(catG(o).fr)+"."} <button type="button" class="gch" data-gp="man${n}">${man||x?"Revenir à l’automatique":"Choisir une autre mission"}</button></p>${man||x?misM(i,"q"+n,c):""}</div>`}
-function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"",showEd=(mi.length&&(p.ex=true),p.ex);
+
+/* ----- v94 : assistant joueur par joueur, puis choix des primaires / secondaires / layouts ----- */
+const wnk=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const WZN=["Joueur 1","Joueur 2","Primaires","Secondaires","Layouts"],WZK=["pri","sec","lay"],WZT={pri:"Missions primaires",sec:"Cartes secondaires",lay:"Layouts"};
+function wzData(k){try{window.applyMx&&window.applyMx()}catch(e){}
+ if(k==="pri")return misL("w40k").map(c=>({h:c.ic+" "+c.fr,it:(window.__msd||[]).filter(m=>m.cat===c.id).map(m=>({id:m.id,n:m.nm}))})).filter(x=>x.it.length);
+ if(k==="sec"){const GR=window.__sxgr||{},o={},ks=[];(window.__sxd||[]).forEach(c=>{if(!o[c.g]){o[c.g]=[];ks.push(c.g)}o[c.g].push({id:c.id,n:c.nm})});return ks.map(g=>({h:GR[g]?GR[g].ic+" "+GR[g].nm:g,it:o[g]}))}
+ return window.__mxLay?window.__mxLay():[]}
+function wzEnter(){const p=P(),k=WZK[(p.wz||1)-3];if(!k)return;p.sel=p.sel||{pri:[],sec:[],lay:[]};p.si=p.si||{};
+ if(p.si[k])return;p.si[k]=1;
+ if(k==="pri")p.sel.pri=[ind1(),ind2()].filter((x,i,a)=>x&&a.indexOf(x)===i);
+ else if(k==="lay"&&window.__lay){const kk=window.__lay.key(eff1(),p.m2),L=window.__lay.LP[kk]||{};p.sel.lay=["A","B","C"].map(l=>L[l]&&"lay-"+L[l]).filter(Boolean)}}
+function wzList(k){const p=P(),s=(p.sel&&p.sel[k])||[],q=wnk(p.wq||"");
+ const gs=wzData(k).map(g=>({h:g.h,it:g.it.filter(x=>!q||wnk(x.n+" "+g.h).includes(q))})).filter(g=>g.it.length);
+ return gs.length?gs.map(g=>`<div class="wzg">${esc(g.h)}</div>`+g.it.map(x=>`<button type="button" class="wzi${s.includes(x.id)?" on":""}" data-gp="wtog" data-k="${k}" data-id="${esc(x.id)}" aria-pressed="${s.includes(x.id)}"><span class="wzc"></span><span>${esc(x.n)}</span></button>`).join("")).join(""):`<p class="gnote">Aucun résultat.</p>`}
+function wzBody(n){const k=WZK[n-1],p=P(),c=((p.sel||{})[k]||[]).length;wzEnter();
+ return`<div class="gps"><div class="gph">${WZT[k]} utilisables dans cette partie</div><p class="gnote">Touche les noms à retenir. Rien de coché = tout reste utilisable.</p>
+ <input type="search" data-gi="wq" class="wzq" placeholder="Chercher un nom…" value="${esc(p.wq||"")}" autocomplete="off">
+ <div class="wzb"><button type="button" class="gch" data-gp="wall" data-k="${k}">Tout cocher</button><button type="button" class="gch" data-gp="wnone" data-k="${k}">Tout décocher</button><b id="wzn">${c} choisi${c>1?"s":""}</b></div><div id="wzl">${wzList(k)}</div></div>`}
+function wzApply(){const p=P();if(!p.sel||!p.sel.pri||!p.sel.pri.length)return;
+ [1,2].forEach(n=>{const cat=n===1?eff1():p.m2;if(!cat)return;const sl=p.sel.pri.filter(id=>{const m=mOf(id);return m&&m.cat===cat});if(sl.length&&!sl.includes(n===1?ind1():ind2()))p["i"+n]=sl[0]})}
+window.gSel=k=>{const r=S.games&&S.bat&&S.bat.gid&&S.games.find(g=>g.id===S.bat.gid&&!g.fin);const s=r?r.sel:(open?P().sel:null);return s&&s[k]&&s[k].length?s[k]:null};
+window.gSelF=(k,l,f)=>{const s=window.gSel(k);if(!s)return l;const o=l.filter(x=>s.includes(f(x)));return o.length?o:l};
+window.okSx=id=>{const s=window.gSel("sec");return!s||s.includes(id)};
+function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"";
  const opts=(sel,none)=>(none?`<option value="">${none}</option>`:"")+S.lists.map(l=>`<option value="${l.id}"${l.id===sel?" selected":""}>${esc(l.name)}</option>`).join("");
- el.innerHTML=`<div class="ov" id="gpo" style="z-index:39"><div class="pn gpn"><div class="top" style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Préparer la bataille</h3><button class="b cx" data-gp="x" aria-label="Fermer">✕</button></div><p class="gnote">${esc(SYS[g].name)} · ${esc(SYS[g].ed)}</p>${topHtml()}
- ${showEd?`<div class="gps"><div class="gph">Joueur 1 — Moi</div>
+ const wz=p.wz||1,last=wz===5,s1=`<div class="gps"><div class="gph">Joueur 1 — Moi</div>
   <label>Mon nom<input data-gi="me" value="${esc(p.me)}" placeholder="Moi"></label>
   <label>Ma liste d’armée<select data-gs="l">${opts(L.id)}</select></label>
   <div class="gpi"><span>Faction</span><b>${esc(facOf(L)||"—")}</b><span>Détachement</span><b>${esc(detOf(L)||"—")}</b><span>Points</span><b>${ptsOf(L)?ptsOf(L)+" pts":"—"}</b></div>
   <div class="ml${need("c1")}" data-need="c1">Ma catégorie de mission</div>${misPick(e1,"p1",false,g)}
   <p class="gnote">${tmp?`Choix pour cette partie uniquement. Catégorie de ta liste : ${esc(lm)}. <button class="b" data-gp="rm1" style="margin-left:4px">Remettre celle de ma liste</button>`:`Reprise de ta liste : ${esc(lm)}. Tu peux la changer pour cette partie sans modifier ta liste.`}</p>
-  ${autoBlk(1)}</div>
- <div class="gps"><div class="gph">Joueur 2 — Adversaire</div>
+  ${autoBlk(1)}</div>`,s2=`<div class="gps"><div class="gph">Joueur 2 — Adversaire</div>
   <label>Nom de l’adversaire<input data-gi="n" value="${esc(p.n)}" placeholder="Adversaire"></label>
   <label>Faction adverse<input data-gi="f" list="gpfl" value="${esc(p.f)}" placeholder="${O&&facOf(O)?esc(facOf(O)):"ex. Tyranides"}"></label><datalist id="gpfl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist>
   <label>Liste adverse<select data-gs="ol">${opts(O?O.id:"","Aucune (adversaire sans Hammer)")}</select></label>
   ${O?`<div class="gpi"><span>Détachement</span><b>${esc(detOf(O)||"—")}</b><span>Points</span><b>${ptsOf(O)?ptsOf(O)+" pts":"—"}</b></div>`:`<label>Détachement (facultatif)<input data-gi="od" value="${esc(p.od)}"></label><label>Points (facultatif)<input data-gi="op" inputmode="numeric" value="${esc(p.op)}" placeholder="ex. 2000"></label>`}
   <div class="ml${need("c2")}" data-need="c2">Catégorie de mission de l’adversaire</div>${misPick(p.m2,"p2",false,g)}
-  ${autoBlk(2)}</div>`:""}
- <div class="gps"><div class="gph">Résumé</div><div id="gpsum">${sumHtml()}</div></div>
- <div class="gpgo"><button class="b p" data-gp="go">⚔ Lancer la partie</button></div></div></div>`;
+  ${autoBlk(2)}</div>`;
+ const stp=`<div class="wzs">${WZN.map((n,i)=>`<span class="${i+1===wz?"on":i+1<wz?"ok":""}">${i+1<wz?"✓":i+1}<small>${n}</small></span>`).join("")}</div>`;
+ let body="";
+ if(wz===1)body=`<p class="gnote wzt">🎲 Joueur 1 : choisis ton armée et ta mission, puis valide.</p>`+s1;
+ else if(wz===2)body=`<p class="gnote wzt">Joueur 1 validé : <b>${esc(p.me||"Moi")}</b> · ${esc(misTag(e1,g)||"—")}. À toi, Joueur 2 : choisis ton armée et ta mission, puis valide.</p>`+s2;
+ else body=wzBody(wz-2);
+ el.innerHTML=`<div class="ov" id="gpo" style="z-index:39"><div class="pn gpn"><div class="top" style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Préparer la bataille</h3><button class="b cx" data-gp="x" aria-label="Fermer">✕</button></div><p class="gnote">${esc(SYS[g].name)} · ${esc(SYS[g].ed)}</p>${stp}${body}
+ <div class="gpgo wzf">${wz>1?`<button class="b" data-gp="wprev">← Retour</button>`:""}<button class="b p" data-gp="${last?"go":"wnext"}">${last?"⚔ Lancer la partie":wz<3?"✔ Valider le joueur "+wz:"Suivant ▶"}</button></div></div></div>`;
  const n=el.querySelector(".pn");if(n)n.scrollTop=sc}
 function close(){open=false;if(el)el.innerHTML=""}
 function openP(id){const p=P(),b=S.bat;if(id&&S.lists.some(l=>l.id===id)){if(p.l!==id){p.m1="";p.i1=""}p.l=id}else if(!S.lists.some(l=>l.id===p.l))p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);
  if(!p.me)p.me=b.n[0]&&!/^Joueur \d$/.test(b.n[0])?b.n[0]:"Moi";if(!p.n&&b.n[1]&&!/^Joueur \d$/.test(b.n[1]))p.n=b.n[1];if(!p.f&&b.f[1])p.f=b.f[1];
- open=true;gpDraw()}
+ open=true;p.wz=1;p.sel=null;p.si=null;p.wq="";gpDraw()}
 window.gPrep=function(id){
  if(!S.lists.length){info("Crée ou importe d’abord une liste d’armée (Gestion → Importer).");return}
  if(S.pm&&S.lists.some(l=>l.id===S.pm)){ask({t:"Une partie est en cours",p:"Tu peux la reprendre, ou en démarrer une nouvelle (la partie en cours est alors abandonnée).",ok:"Reprendre la partie",alt:"Nouvelle partie",altcb:()=>{const gi=S.bat&&S.bat.gid,ix=gi?S.games.findIndex(g=>g.id===gi&&!g.fin):-1;if(ix>=0)S.games.splice(ix,1);gReset();openP(id)}},()=>{S.mg=false;tab="play";window.scrollTo(0,0)});return}
  openP(id)};
-function launch(noMs){const p=P(),L=mine(),O=opp(),g=p.g,[a,b]=sum(),B=S.bat,dn=new Date().toLocaleDateString("fr-FR");
- const r3=noMs?null:layRoll(false),sr=k=>{const f=fsel(k).cur;return f?{id:f.id,nm:f.nm}:null};
- gReset();B.n=[a.name,b.name];B.f=[a.fac,b.fac];B.l=[L.id,O?O.id:""];B.lay=r3?{id:r3.cur.id,L:r3.cur.L,p:r3.cur.p,nm:lyNm(r3.cur)}:null;B.src=noMs?null:{pri:sr("pri"),sec:sr("sec"),lay:sr("lay")};
+function launch(noMs){const p=P();wzApply();const L=mine(),O=opp(),g=p.g,[a,b]=sum(),B=S.bat,dn=new Date().toLocaleDateString("fr-FR");
+ gReset();B.n=[a.name,b.name];B.f=[a.fac,b.fac];B.l=[L.id,O?O.id:""];
  const mk=(x,src)=>{const c=catG(x.m),m=x.i&&mOf(x.i);return{name:x.name,fac:x.fac||"",list:x.list?{id:x.list.id,name:x.list.name}:null,det:x.det||"",pts:x.pts||0,mission:c?{id:c.id,fr:c.fr,en:c.en,ic:c.ic,mid:m?m.id:"",mn:m?m.nm:""}:null,src}};
  const rec={id:rid(),d:Date.now(),title:"Partie du "+dn,sys:g,n:[a.name,b.name],f:[a.fac,b.fac],l:[snap(L.id),O?snap(O.id):null],tot:[0,0],cp:[0,0],t:clone(B.t),fin:false,p:[mk(a,p.m1&&p.m1!==(L.mission||"")?"temp":"liste"),mk(b,"adverse")]};
- S.games.unshift(rec);B.gid=rec.id;p.m1="";p.m2="";p.i1="";p.i2="";p.x1=p.x2=false;
+ rec.sel=p.sel?JSON.parse(JSON.stringify(p.sel)):null;rec.lay=window.layDraw?window.layDraw(a.m,b.m,rec.sel&&rec.sel.lay):null;S.games.unshift(rec);B.gid=rec.id;p.sel=null;p.si=null;p.wz=1;p.m1="";p.m2="";p.i1="";p.i2="";p.x1=p.x2=false;
  if(!noMs)msInit([[a.m||"",a.i||"",p.i1?1:0],[b.m||"",b.i||"",p.i2?1:0]]);
  S.cur=L.id;S.pm=L.id;S.mg=false;tab=noMs?"play":"bat";close();save();draw();window.scrollTo(0,0);toast("Partie lancée ✓")}
 function goNeed(k){const p=P();p.ex=true;gpDraw();const t=el.querySelector(`[data-need="${k}"]`);if(t)t.scrollIntoView({block:"center",behavior:"smooth"})}
@@ -2180,17 +2203,16 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 document.addEventListener("click",e=>{if(!open)return;if(e.target.id==="gpo"){close();return}const b=e.target.closest&&e.target.closest("[data-gp]");if(!b||!el.contains(b))return;const a=b.dataset.gp,p=P();
  if(a==="x")close();else if(a==="rm1"){p.m1="";p.i1="";sv();gpDraw()}
  else if(a==="ex"){p.ex=!p.ex;sv();gpDraw()}
- else if(a==="fo"){p["f"+b.dataset.k]=b.dataset.id;sv();gpDraw()}
- else if(a==="lyroll"){layRoll(true);gpDraw()}
- else if(a==="lyshow"){const r=layRoll(false);if(r&&window.mxLayShow)window.mxLayShow(r.cur.p,lyNm(r.cur))}
+ else if(a==="wnext"){const w=p.wz||1;if(w===1&&!eff1()){toast("Choisis d’abord ta catégorie de mission");return}if(w===2&&!p.m2){toast("Choisis d’abord la catégorie de mission de l’adversaire");return}p.wz=w+1;p.wq="";wzEnter();sv();gpDraw();const n=el.querySelector(".pn");if(n)n.scrollTop=0}
+ else if(a==="wprev"){p.wz=Math.max(1,(p.wz||1)-1);p.wq="";sv();gpDraw();const n=el.querySelector(".pn");if(n)n.scrollTop=0}
+ else if(a==="wtog"){const k=b.dataset.k,id=b.dataset.id;p.sel=p.sel||{pri:[],sec:[],lay:[]};const l=p.sel[k]||(p.sel[k]=[]),x=l.indexOf(id);if(x>=0)l.splice(x,1);else l.push(id);sv();gpDraw()}
+ else if(a==="wall"||a==="wnone"){const k=b.dataset.k,q=wnk(p.wq||"");p.sel=p.sel||{pri:[],sec:[],lay:[]};const ids=[];wzData(k).forEach(g=>g.it.forEach(x=>{if(!q||wnk(x.n+" "+g.h).includes(q))ids.push(x.id)}));const cur=new Set(p.sel[k]||[]);ids.forEach(id=>a==="wall"?cur.add(id):cur.delete(id));p.sel[k]=[...cur];sv();gpDraw()}
  else if(a==="goto")goNeed(b.dataset.k);
  else if(a==="man1"||a==="man2"){const n=a[3];if(p["i"+n]||p["x"+n]){p["i"+n]="";p["x"+n]=false}else p["x"+n]=true;sv();gpDraw()}
  else if(a==="go0")launch(true);
  else if(a==="go"){const m=miss();if(m.length){goNeed(m[0][0]);toast("Complète d’abord : "+m.map(x=>x[1].toLowerCase()).join(", "))}else launch(false)}});
-document.addEventListener("input",e=>{const k=open&&e.target.dataset&&e.target.dataset.gi;if(!k)return;P()[k]=e.target.value;sv();const s=document.getElementById("gpsum");if(s)s.innerHTML=sumHtml()});
+document.addEventListener("input",e=>{const k=open&&e.target.dataset&&e.target.dataset.gi;if(!k)return;P()[k]=e.target.value;sv();if(k==="wq"){const z=document.getElementById("wzl"),kk=WZK[(P().wz||1)-3];if(z&&kk)z.innerHTML=wzList(kk);return}const s=document.getElementById("gpsum");if(s)s.innerHTML=sumHtml()});
 document.addEventListener("change",e=>{const k=open&&e.target.dataset&&e.target.dataset.gs;if(!k)return;const p=P();if(k==="l"){p.l=e.target.value;p.m1="";p.i1=""}else p.ol=e.target.value;save();gpDraw()});
-window.mxBanner=()=>{const B=S.bat;if(!B||(!B.lay&&!B.src))return"";const s=B.src||{},nm=x=>x?esc(x.nm):"—";return`<div class="mxb"><span class="mxi">🗺</span><div class="mxt"><b>${B.lay?esc(B.lay.nm):"Layout non choisi"}</b><small>Primaires : ${nm(s.pri)} · Secondaires : ${nm(s.sec)}</small></div>${B.lay?'<button type="button" class="b" data-mxl="1">Voir</button>':""}</div>`};
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-mxl]");if(b&&S.bat&&S.bat.lay&&window.mxLayShow)window.mxLayShow(S.bat.lay.p,S.bat.lay.nm)});
 window.msGameHtml=g=>{if(!g.ms)return"";const o=sumsOf(g.ms),t=[0,1].map(i=>o[i].reduce((a,b)=>a+b,0));return`<div class="mu">Points de mission : ${t[0]} – ${t[1]}</div>${g.ms.log&&g.ms.log.length?`<details style="margin-top:6px"><summary class="mu">Validations de missions (${g.ms.log.length})</summary><div class="mslg">${msLogHtml(g.ms.log,g.n)}</div></details>`:""}`};
 window.__ms={mOf,catG,momentOf,CL,MOL,CO,sumsOf,logLine,popScore,dd,wRed,msSync,setDw:p=>{dw=p},getDw:()=>dw,seeDw,plBody};
 el=document.createElement("div");el.id="gp";document.body.appendChild(el);
@@ -2308,7 +2330,7 @@ const short=s=>{s=String(s||"");return s.length>46?s.slice(0,44)+"…":s};
 
 /* ---------- actions ---------- */
 function doDraw(pl){
- const sx=ens(),cs=sx.pl[pl].cards,pool=SXD.filter(d=>!cs[d.id]);
+ const sx=ens(),cs=sx.pl[pl].cards,pool=SXD.filter(d=>!cs[d.id]&&(!window.okSx||window.okSx(d.id)));
  if(!pool.length){toast("Pioche vide : plus aucune carte à tirer");return}
  const R=rdNow(),ts=Date.now(),got=[];
  for(let i=0;i<2&&pool.length;i++)got.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
@@ -2326,12 +2348,12 @@ function normOpen(pl,list){let k=0;list.forEach(d=>{const key="dk:"+pl+":"+d.id;
 /* renvoyer une carte active dans la pioche et en repiocher une autre au hasard */
 function askRet(pl,id){
  const sx=view(),c=sx.pl[pl].cards[id],d=BY[id];if(!c||!d||c.st!=="a")return;
- if(!SXD.some(x=>x.id!==id&&!sx.pl[pl].cards[x.id])){toast("Aucune autre carte à repiocher : la pioche est vide");return}
+ if(!SXD.some(x=>x.id!==id&&!sx.pl[pl].cards[x.id]&&(!window.okSx||window.okSx(x.id)))){toast("Aucune autre carte à repiocher : la pioche est vide");return}
  const n=cardPts(c,d,sx.mode).tot,nm=S.bat.n[pl];
  ask({t:"Renvoyer « "+d.nm+" » dans la pioche ?",p:`« ${d.nm} » retourne dans la pioche de ${nm} (elle pourra être tirée de nouveau plus tard) et ${nm} repioche 1 carte au hasard, au round ${rdNow()}.${n?` Les ${n} PdV marqués avec cette carte seront retirés du score.`:" Aucun point n’a été marqué avec cette carte."}`,ok:"Renvoyer et repiocher 1",dg:n?1:0},()=>doReturn(pl,id))}
 function doReturn(pl,id){
  const sx=ens(),cs=sx.pl[pl].cards,c=cs[id],d=BY[id];if(!c||!d||c.st!=="a")return;
- const pool=SXD.filter(x=>x.id!==id&&!cs[x.id]);if(!pool.length){toast("Aucune autre carte à repiocher : la pioche est vide");return}
+ const pool=SXD.filter(x=>x.id!==id&&!cs[x.id]&&(!window.okSx||window.okSx(x.id)));if(!pool.length){toast("Aucune autre carte à repiocher : la pioche est vide");return}
  const nd=pool[Math.floor(Math.random()*pool.length)],R=rdNow(),ts=Date.now(),pts=cardPts(c,d,sx.mode).tot;
  delete cs[id];cs[nd.id]={st:"a",rd:R,t:ts,i:0,v:{},d:{},rp:id};
  sx.log.push({t:ts,pl,id,to:nd.id,rd:R,k:"rp",d:-pts});
@@ -3790,10 +3812,11 @@ function applyMx(){snap();if(!OR)return;const m=mx(),A=sxd(),B=by(),SM=smap(),M=
  OR.ms.forEach(o=>{const c=OR.mso[o.id];reset(c,o);const v=m.ms[o.id];if(v){if(v.nm)c.nm=v.nm;if(v.d!=null)c.d=v.d;if(v.l)for(const i in v.l){const L=c.cond[+i];if(L){if(v.l[i].tx!=null)L.tx=v.l[i].tx;if(v.l[i].pts!=null)L.pts=+v.l[i].pts}}}if(!(v&&v.off))M.push(c)});
  m.cms.forEach(c=>{if(!c.off)M.push(buildMs(c))})}
 window.applyMx=applyMx;
+window.__mxLay=()=>{const g={},ks=[];layAll().filter(l=>!l.off).forEach(l=>{const k=l.a?`${l.a} vs ${l.b}`:"Mes layouts";if(!g[k]){g[k]=[];ks.push(k)}g[k].push({id:l.id,n:l.nm||("Agencement "+l.L)})});return ks.map(h=>({h:"🗺 "+h,it:g[h]}))};
 const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
 const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
-let mOpen={"f-sec":1},mq="",mShowOff={};
-const thumb=id=>S.mimg&&S.mimg[id]?`<span class="th" style="background-image:url('${S.mimg[id]}')"></span>`:"";
+let mOpen={"f-sec":1,"f-pri":1,"f-lay":1},mq="",mShowOff={},mTab="pri";
+const thumb=id=>{const u=(S.mimg&&S.mimg[id])||(/^lay-\d+$/.test(id)?"lay/p"+id.slice(4)+".webp":"");return u?`<span class="th" style="background-image:url('${u}')"></span>`:""};
 function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[];const all=[...OR.sx.map(o=>o.id),...m.csx.map(c=>c.id)];
  const off=all.filter(id=>(m.sx[id]&&m.sx[id].off)||(m.csx.find(c=>c.id===id&&c.off)));
  ["e","c","a"].forEach(g=>{const ids=all.filter(id=>!off.includes(id)&&B[id]&&B[id].g===g&&(!q||nk(B[id].nm+" "+B[id].d).includes(q)));if(!ids.length)return;const G=GR[g]||{nm:g,ic:"",c:"#d8b45e"};
@@ -3816,13 +3839,11 @@ function count(f){const m=mx();if(f.k==="sec")return sxd().length;if(f.k==="pri"
 function folderHtml(f){const q=nk(mq),open=q||mOpen[f.id],[i,c]=KIND[f.k]||KIND.free;
  const body=open?(f.k==="sec"?secItems(f,q):f.k==="pri"?priItems(f,q):f.k==="lay"?layItems(f,q):freeItems(f,q)):"";
  return`<div class="gfd${open?" open":""}" style="--tc:${f.c||c}"><div class="gfh" data-x="ftog" data-id="${f.id}">${f.ic?icFor("x_"+f.id):ic(i)}<b>${e2(f.nm)}<small>${count(f)}</small></b><button class="b" data-x="fren" data-id="${f.id}" aria-label="Modifier le dossier">✎</button><button class="b x" data-x="fdel" data-id="${f.id}" aria-label="Supprimer le dossier">🗑</button><span class="car">▾</span></div>${open?`<div class="gfb">${body}</div>`:""}</div>`}
-function misBody(){const F=folders().filter(f=>!f.hid),H=folders().filter(f=>f.hid);return F.map(folderHtml).join("")+(H.length?`<div class="gp"><h3>Dossiers supprimés</h3>${H.map(f=>`<div class="gxl"><b>${e2(f.nm)}</b><button class="b" data-x="frest" data-id="${f.id}">Restaurer</button></div>`).join("")}</div>`:"")}
-window.mxFolders=k=>folders().filter(f=>!f.hid&&f.k===k).map(f=>({id:f.id,nm:f.nm,n:count(f)}));
-const nq=s=>String(s||"").replace(/[’‘]/g,"'").toLowerCase();
-window.mxLayCands=(a,b)=>{a=nq(a);b=nq(b);return layAll().filter(l=>!l.off&&l.a&&((nq(l.a)===a&&nq(l.b)===b)||(nq(l.a)===b&&nq(l.b)===a)))};
-window.mxLayShow=async(p,t)=>{const o=document.createElement("div");o.className="ov";o.style.zIndex=60;o.innerHTML=`<div class="pn" style="text-align:center"><div class="top"><h3 style="margin:0">${e2(t||"Layout")}</h3><button class="b cx" aria-label="Fermer">✕</button></div><div class="mxz"><p class="mu">Chargement…</p></div></div>`;document.body.appendChild(o);o.addEventListener("click",e=>{if(e.target===o||e.target.closest(".cx"))o.remove()});const z=o.querySelector(".mxz"),lk=`<p><a class="b" href="${PDFU}#page=${p}" target="_blank" rel="noopener">📄 Ouvrir la page officielle</a></p>`;try{const d=await renderPage(p);z.innerHTML=d?`<img class="gimg" src="${d}" alt="Layout">`+lk:`<p class="mu">Pour voir l'image ici, importe une fois le PDF officiel (Missions &amp; Layout → Layout → Importer le PDF).</p>`+lk}catch(er){z.innerHTML=lk}};
+const mKind=f=>f.k==="pri"||f.k==="sec"||f.k==="lay"?f.k:"oth";
+function misBody(){const all=folders(),F=all.filter(f=>!f.hid&&(mq||mKind(f)===mTab)),H=all.filter(f=>f.hid&&(mq||mKind(f)===mTab));return F.map(folderHtml).join("")+(H.length?`<div class="gp"><h3>Dossiers supprimés</h3>${H.map(f=>`<div class="gxl"><b>${e2(f.nm)}</b><button class="b" data-x="frest" data-id="${f.id}">Restaurer</button></div>`).join("")}</div>`:"")}
 XV.mis=()=>{applyMx();folders();return`<div class="gxtitle" style="--tc:${col("mis")}">${icFor("mis")}<h2>Missions &amp; Layout<small>Tes modifications s'appliquent partout : tirage des cartes, missions de partie et score.</small></h2></div>
- <div class="gxtop"><input type="search" id="gxmq" placeholder="Chercher une carte, une mission, un layout…" value="${e2(mq)}" autocomplete="off"><button class="b p" data-x="fnew">+ Nouveau dossier</button></div><div id="gxmb">${misBody()}</div>`};
+ <div class="ghtabs mtabs">${[["pri","🎯 Primaires"],["sec","⚡ Secondaires"],["lay","🗺 Layouts"],["oth","📁 Autres"]].map(([k,n])=>`<button class="${mTab===k?"on":""}" data-x="mtab" data-k="${k}">${n}<small>${folders().filter(f=>!f.hid&&mKind(f)===k).reduce((t,f)=>t+count(f),0)}</small></button>`).join("")}</div>
+ <div class="gxtop"><input type="search" id="gxmq" placeholder="Chercher une carte, une mission, un layout…" value="${e2(mq)}" autocomplete="off">${({pri:["msnew","+ Ajouter une primaire"],sec:["sxnew","+ Ajouter une secondaire"],lay:["lynew","+ Ajouter un layout"],oth:["fnew","+ Nouveau dossier"]})[mTab]?`<button class="b p" data-x="${({pri:"msnew",sec:"sxnew",lay:"lynew",oth:"fnew"})[mTab]}">${({pri:"+ Primaire",sec:"+ Secondaire",lay:"+ Layout",oth:"+ Dossier"})[mTab]}</button>`:""}</div><div id="gxmb">${misBody()}</div>`};
 /* --- fenêtres d'édition --- */
 const imgBlock=id=>`<label>Image (photo, capture du layout…)<input type="file" accept="image/*" data-xi="${id}"></label>${S.mimg[id]?`<img class="gimg" src="${S.mimg[id]}" alt=""><div class="gxbtn"><button class="b x" data-x="imgdel" data-id="${id}">Retirer l'image</button></div>`:""}`;
 let cur=null;
@@ -3853,7 +3874,7 @@ function lyEdit(id){const m=mx(),l=layAll().find(x=>x.id===id);if(!l)return;cur=
  <label>Notes<textarea rows="3" data-f="note" placeholder="ex. table du club, décors utilisés…">${e2((cu?l.note:o.note)||"")}</textarea></label>
  ${imgBlock(id)}
  <div class="gxf"><button class="b x" data-x="lydel">Supprimer</button><button class="b p" data-x="lysave">Enregistrer</button></div>`);
- if(l.p)IDB.get("lay:"+l.p).then(d=>{const z=document.getElementById("gxpdf");if(d&&z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}).catch(()=>{})}
+ if(l.p){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<img class="gimg" src="lay/p${l.p}.webp" alt="Layout officiel" loading="lazy">`}}
 function ntEdit(fid,id){const n=(S.mfi[fid]||[]).find(x=>x.id===id)||{id:uid("n"),t:"",d:""};cur={k:"nt",fid,id:n.id,isNew:!(S.mfi[fid]||[]).some(x=>x.id===id)};
  GX.open(`<div class="gxh">${ic("scroll")}<h2>${n.t?e2(n.t):"Nouvel élément"}</h2><button class="b" data-gx="close">✕</button></div><label>Titre<input data-f="t" value="${e2(n.t)}" autofocus></label><label>Texte<textarea rows="6" data-f="d">${e2(n.d)}</textarea></label>${imgBlock(n.id)}<div class="gxf">${cur.isNew?"":`<button class="b x" data-x="ntdel">Supprimer</button>`}<button class="b p" data-x="ntsave">Enregistrer</button></div>`)}
 function fEdit(id){const f=folders().find(x=>x.id===id)||{id:uid("f-"),nm:"",k:"free",c:"#d8b45e"};cur={k:"f",id:f.id,isNew:!folders().some(x=>x.id===id)};
@@ -3906,11 +3927,30 @@ function schEdit(ref,keep){const u=(S.coll||{})[ref];if(!u)return;if(!keep)wk=cl
  GX.open(`<div class="gxh">${ic("brush")}<h2 style="text-transform:capitalize">${e2(u.name)}</h2><button class="b" data-gx="close">✕</button></div>
  ${wk.img||uimg(u)?`<img class="gimg" src="${wk.img||uimg(u)}" alt="" style="max-height:220px">`:""}
  <label>Avancement<select data-f="st">${STS.map(s=>`<option value="${s[0]}"${wk.st===s[0]?" selected":""}>${s[1]}</option>`).join("")}</select></label>
- <h4>Schéma de peinture</h4>${(wk.steps||[]).map((s,i)=>{const p=paintBy(s.p);return`<div class="gstep"><span class="no" style="${p?`background:${p.c};color:${luma(p.c)>140?"#111":"#fff"}`:""}">${i+1}</span><div class="f"><label>Zone<input data-s="z" value="${e2(s.z||"")}" placeholder="ex. armure, arme, socle"></label><label>Technique<select data-s="t">${TECH.map(t=>`<option${s.t===t?" selected":""}>${t}</option>`).join("")}</select></label><label>Peinture<select data-s="p">${paintOpts(s.p)}</select></label><label>…ou autre peinture<input data-s="px" value="${e2(s.px||"")}" placeholder="nom libre"></label><label class="w2">Note<input data-s="n" value="${e2(s.n||"")}" placeholder="ex. 2 couches fines, pinceau sec"></label></div><div class="mv"><button data-x="stup" data-i="${i}" aria-label="Monter">↑</button><button data-x="stdn" data-i="${i}" aria-label="Descendre">↓</button><button data-x="stdel" data-i="${i}" aria-label="Retirer">✕</button></div></div>`}).join("")||`<p class="mu">Aucune étape pour l'instant.</p>`}
+ <h4>Schéma de peinture</h4>${(wk.steps||[]).map((s,i)=>{const p=paintBy(s.p);return`<div class="gstep"><span class="no" style="${p?`background:${p.c};color:${luma(p.c)>140?"#111":"#fff"}`:""}">${i+1}</span><div class="f"><label>Zone<input data-s="z" value="${e2(s.z||"")}" placeholder="ex. armure, arme, socle"></label><label>Technique<select data-s="t">${TECH.map(t=>`<option${s.t===t?" selected":""}>${t}</option>`).join("")}</select></label><label>Peinture<button type="button" class="ppbtn" data-x="ppopen" data-i="${i}">${p?`<span class="gsw" style="background:${p.c}"></span><b>${e2(p.n)}</b><small>${e2(p.b||"")}</small>`:"🔍 Choisir une peinture"}</button><input type="hidden" data-s="p" value="${e2(s.p||"")}"></label><label>…ou autre peinture<input data-s="px" value="${e2(s.px||"")}" placeholder="nom libre"></label><label class="w2">Note<input data-s="n" value="${e2(s.n||"")}" placeholder="ex. 2 couches fines, pinceau sec"></label></div><div class="mv"><button data-x="stup" data-i="${i}" aria-label="Monter">↑</button><button data-x="stdn" data-i="${i}" aria-label="Descendre">↓</button><button data-x="stdel" data-i="${i}" aria-label="Retirer">✕</button></div></div>`}).join("")||`<p class="mu">Aucune étape pour l'instant.</p>`}
  <div class="gxbtn"><button class="b p" data-x="stadd">+ Étape</button>${others.length?`<select id="gxcopy"><option value="">Copier le schéma de…</option>${others.map(o=>`<option value="${o.ref}">${e2(o.name)}</option>`).join("")}</select>`:""}</div>
  <label>Notes<textarea rows="3" data-f="note" placeholder="couleurs du chapitre, idées, matériel…">${e2(wk.note||"")}</textarea></label>
  <label>Photo de la figurine peinte<input type="file" accept="image/*" id="gxschimg"></label>${wk.img?`<div class="gxbtn"><button class="b x" data-x="schimgdel">Retirer la photo</button></div>`:""}
  <div class="gxf"><button class="b" data-gx="close">Annuler</button><button class="b p" data-x="schsave">Enregistrer</button></div>`)}
+/* v93 : sélecteur de peinture (recherche par texte ou par marque) */
+let pp={i:0,q:"",b:"",ref:""};
+const ppTok=q=>nk(q).split(/\s+/).filter(Boolean);
+function ppItems(){const h=hob(),tk=ppTok(pp.q),q0=nk(pp.q);
+ const L=h.paints.filter(p=>(!pp.b||nk(p.b)===nk(pp.b))&&tk.every(t=>nk([p.n,p.b,p.t,p.rg,p.sku].join(" ")).includes(t))).sort((a,b)=>(nk(b.n).startsWith(q0)-nk(a.n).startsWith(q0))||a.n.localeCompare(b.n,"fr"));
+ if(!L.length)return`<p class="mu">${h.paints.length?"Aucune peinture ne correspond. Essaie un autre mot, ou utilise « Nom libre ».":"Ta collection est vide : ajoute des peintures dans « Mes peintures »."}</p>`;
+ const sel=((wk.steps||[])[pp.i]||{}).p;
+ return`<p class="mu pph">${L.length} peinture${L.length>1?"s":""}</p>`+L.slice(0,80).map(p=>`<button class="gpt${p.id===sel?" on":""}" style="--pc:${p.c}" data-x="pppick" data-id="${p.id}"><span class="gsw" style="background:${p.c}"></span><span class="tx"><b>${e2(p.n)}</b><small>${e2([p.b,p.rg||p.t].filter(Boolean).join(" · "))}</small></span></button>`).join("")+(L.length>80?`<p class="mu">${L.length-80} autres : précise ta recherche.</p>`:"")}
+function ppScreen(){const h=hob(),bs=brands().filter(b=>h.paints.some(p=>nk(p.b)===nk(b)));
+ GX.open(`<div class="gxh"><h2>Choisir une peinture</h2><button class="b" data-x="ppback">← Retour</button></div>
+ <div class="gxtop"><input type="search" id="ppq" placeholder="Nom, marque, gamme, référence…" value="${e2(pp.q)}" autocomplete="off"></div>
+ <div class="gchips"><button class="${pp.b?"":"on"}" data-x="ppbr" data-k="">Toutes marques</button>${bs.map(b=>`<button class="${nk(pp.b)===nk(b)?"on":""}" data-x="ppbr" data-k="${e2(b)}">${e2(b)}</button>`).join("")}</div>
+ <div id="pplist">${ppItems()}</div>
+ <div class="gxbtn"><button class="b" data-x="ppnone">Aucune peinture</button><button class="b" data-x="ppfree">Nom libre</button></div>`)}
+function ppOpen(i){readSteps();pp={i,q:"",b:"",ref:cur&&cur.id};ppScreen();setTimeout(()=>{const e=document.getElementById("ppq");if(e)e.focus()},60)}
+function ppBack(){cur={k:"sch",id:pp.ref};schEdit(pp.ref,true)}
+function ppSet(v){const s=(wk.steps||[])[pp.i];if(s){s.p=v;if(v)s.px=""}ppBack()}
+document.addEventListener("input",e=>{if(e.target&&e.target.id==="ppq"){pp.q=e.target.value;const z=document.getElementById("pplist");if(z)z.innerHTML=ppItems()}});
+
 function luma(h){const m=/^#?([0-9a-f]{6})$/i.exec(h||"");if(!m)return 0;const n=parseInt(m[1],16);return .299*(n>>16)+.587*(n>>8&255)+.114*(n&255)}
 function brandMgr(msg){const h=hob(),L=brands();
  GX.open(`<div class="gxh"><h2>Marques de peinture</h2><button class="b" data-gx="close">✕</button></div><p class="mu">${msg?e2(msg):"Ajoute tes marques, renomme-les ou retire celles que tu n'utilises pas."}</p>
@@ -3973,7 +4013,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="lysave"){const i=cur.id,cu=m.cly.find(x=>x.id===i);if(cu){cu.nm=fv("nm")||cu.nm;cu.note=fv("note")||""}else{const v=Object.assign({},m.ly[i]||{});v.nm=fv("nm")||undefined;v.note=fv("note")||undefined;Object.keys(v).forEach(k=>v[k]===undefined&&delete v[k]);if(Object.keys(v).length)m.ly[i]=v;else delete m.ly[i]}done("Layout enregistré");return}
  if(a==="lydel"){const i=cur.id;conf("Supprimer ce layout ?","Tu pourras le restaurer depuis le dossier.","Supprimer",()=>{const cu=m.cly.find(x=>x.id===i);if(cu)cu.off=1;else(m.ly[i]=m.ly[i]||{}).off=1;done("Layout supprimé")});return}
  if(a==="pdfimp"){pdfPick();return}
- if(a==="pdfshow"){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<p class="mu">Préparation du layout…</p>`;try{const d=await renderPage(+b.dataset.p);if(!d){if(z)z.innerHTML=`<p class="mu">Pour afficher les layouts dans l'appli, importe une fois le PDF officiel « Compagnon de Rencontre Warhammer » (téléchargé depuis Warhammer Community). Il reste dans ton téléphone.</p><div class="gxbtn"><a class="b" href="${PDFU}" target="_blank" rel="noopener">⬇ Télécharger le PDF</a><button class="b p" data-x="pdfimp">📄 Importer le PDF</button></div>`;return}if(z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}catch(er){if(z)z.innerHTML=`<p class="mu">Affichage impossible : ${e2(er&&er.message||er)}</p>`}return}
+ if(a==="pdfshow"){const z=document.getElementById("gxpdf");if(z)z.innerHTML=`<p class="mu">Préparation du layout…</p>`;try{const d="lay/p"+(+b.dataset.p)+".webp";if(!d){if(z)z.innerHTML=`<p class="mu">Pour afficher les layouts dans l'appli, importe une fois le PDF officiel « Compagnon de Rencontre Warhammer » (téléchargé depuis Warhammer Community). Il reste dans ton téléphone.</p><div class="gxbtn"><a class="b" href="${PDFU}" target="_blank" rel="noopener">⬇ Télécharger le PDF</a><button class="b p" data-x="pdfimp">📄 Importer le PDF</button></div>`;return}if(z)z.innerHTML=`<img class="gimg" src="${d}" alt="Layout officiel">`}catch(er){if(z)z.innerHTML=`<p class="mu">Affichage impossible : ${e2(er&&er.message||er)}</p>`}return}
  if(a==="pdfall"){try{if(!await pdfDoc()){say("Importe d'abord le PDF officiel");pdfPick();return}let n=0;for(const l of LAY){await renderPage(l.p);n++;if(n%5===0)say(`Images des layouts : ${n} / ${LAY.length}`)}say("Les 45 layouts sont prêts, même hors connexion")}catch(er){say("Erreur : "+(er&&er.message||er))}return}
  /* éléments libres */
  if(a==="nted"){ntEdit(b.dataset.f,id);return}
@@ -3995,6 +4035,13 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="ptsave"){const n=(fv("n")||"").trim();if(!n){say("Donne un nom à la peinture");return}const h=hob();let p=h.paints.find(x=>x.id===cur.id);if(!p){p={id:cur.id};h.paints.push(p)}{const nb=(fv("b")||"").trim();if(nb&&!brands().some(x=>nk(x)===nk(nb))){const h2=hob();h2.brands=h2.brands||[];h2.brands.push(nb)}}Object.assign(p,{n,rg:(fv("rg")||"").trim(),sku:(fv("sku")||"").trim(),b:(fv("b")||"").trim(),t:fv("t"),c:fv("c"),s:fv("s"),note:fv("note")||""});done("Peinture enregistrée");return}
  if(a==="ptdel"){conf("Supprimer cette peinture ?","Elle sera retirée des schémas qui l'utilisent.","Supprimer",()=>{const h=hob();h.paints=h.paints.filter(x=>x.id!==cur.id);Object.values(h.sch).forEach(s=>(s.steps||[]).forEach(x=>{if(x.p===cur.id)x.p=""}));done("Peinture supprimée")});return}
  if(a==="sched"){schEdit(id);return}
+ if(a==="ppopen"){ppOpen(+b.dataset.i);return}
+ if(a==="pppick"){ppSet(b.dataset.id);return}
+ if(a==="ppback"){ppBack();return}
+ if(a==="ppnone"){ppSet("");return}
+ if(a==="ppbr"){pp.b=b.dataset.k||"";ppScreen();return}
+ if(a==="ppfree"){const q=(pp.q||"").trim();if(!q){say("Écris d'abord le nom dans la recherche");return}const st=(wk.steps||[])[pp.i];if(st){st.p="";st.px=q}ppBack();return}
+ if(a==="mtab"){mTab=b.dataset.k;mq="";GX.commit();return}
  if(a==="stadd"){readSteps();wk.steps=wk.steps||[];wk.steps.push({z:"",p:"",px:"",t:wk.steps.length?"Aplat":"Sous-couche",n:""});schEdit(cur.id,true);return}
  if(a==="stdel"||a==="stup"||a==="stdn"){readSteps();const i=+b.dataset.i,s=wk.steps;if(a==="stdel")s.splice(i,1);else{const j=a==="stup"?i-1:i+1;if(j>=0&&j<s.length)[s[i],s[j]]=[s[j],s[i]]}schEdit(cur.id,true);return}
  if(a==="schimgdel"){readSteps();delete wk.img;schEdit(cur.id,true);return}
@@ -4271,4 +4318,70 @@ window.PAINTOCR={pick,readFiles,entries,splitBrand};
 })();
 </script>
 
+</body></html>
+<script>
+/* ===== v94 : layouts de terrain (Compagnon de Rencontre) tirés au sort au lancement + mini-onglet en partie ===== */
+(function(){
+const LP={"take-and-hold__take-and-hold": {"A": 9, "B": 10, "C": 11}, "purge-the-foe__take-and-hold": {"A": 12, "B": 13, "C": 14}, "disruption__take-and-hold": {"A": 15, "B": 16, "C": 17}, "reconnaissance__take-and-hold": {"A": 18, "B": 19, "C": 20}, "priority-assets__take-and-hold": {"A": 21, "B": 22, "C": 23}, "purge-the-foe__purge-the-foe": {"A": 24, "B": 25, "C": 26}, "disruption__purge-the-foe": {"A": 27, "B": 28, "C": 29}, "purge-the-foe__reconnaissance": {"A": 30, "B": 31, "C": 32}, "priority-assets__purge-the-foe": {"A": 33, "B": 34, "C": 35}, "disruption__disruption": {"A": 36, "B": 37, "C": 38}, "disruption__reconnaissance": {"A": 39, "B": 40, "C": 41}, "disruption__priority-assets": {"A": 42, "B": 43, "C": 44}, "reconnaissance__reconnaissance": {"A": 45, "B": 46, "C": 47}, "priority-assets__reconnaissance": {"A": 48, "B": 49, "C": 50}, "priority-assets__priority-assets": {"A": 51, "B": 52, "C": 53}},KEYS=new Set(Object.keys(LP));
+const LET=["A","B","C"];
+const key=(a,b)=>[a,b].sort().join("__");
+const lid=p=>"lay-"+p;
+const REV={};Object.keys(LP).forEach(k=>LET.forEach(l=>{if(LP[k][l])REV[lid(LP[k][l])]={k,l,p:LP[k][l],id:lid(LP[k][l])}}));
+const mxo=()=>S.mx&&typeof S.mx==="object"?S.mx:{};
+const itemOf=id=>{const m=mxo();if(REV[id])return(m.ly&&m.ly[id]&&m.ly[id].off)?null:Object.assign({},REV[id]);const c=(m.cly||[]).find(x=>x.id===id&&!x.off);return c?{k:"custom",l:"★",p:0,id}:null};
+const nm=L=>{const m=mxo(),id=L.id||lid(L.p);if(L.k==="custom"){const c=(m.cly||[]).find(x=>x.id===id);return(c&&c.nm)||"Mon layout"}return((m.ly&&m.ly[id]||{}).nm)||"Agencement "+L.l};
+const img=L=>(S.mimg&&S.mimg[L.id||lid(L.p)])||(L.p?"lay/p"+L.p+".webp":"");
+const poolFor=(cs,sel)=>{let it;const k=cs?key(cs[0],cs[1]):null;
+ if(sel&&sel.length)it=sel.map(itemOf).filter(Boolean);else it=k&&LP[k]?LET.filter(l=>LP[k][l]).map(l=>itemOf(lid(LP[k][l]))).filter(Boolean):[];
+ return it};
+let open=false,leg=false,zoom=false,fresh=false;
+const cat=id=>{try{return __ms.catG(id)}catch(e){return null}};
+const cur=()=>{const r=S.games&&S.bat&&S.games.find(g=>g.id===S.bat.gid);return r&&!r.fin?r:null};
+const catsOf=r=>r&&r.p&&r.p[0]&&r.p[1]&&r.p[0].mission&&r.p[1].mission?[r.p[0].mission.id,r.p[1].mission.id]:null;
+const mk=(it)=>({k:it.k,l:it.l,p:it.p,id:it.id,t:Date.now()});
+
+/* tirage : au lancement (les 2 catégories sont connues), parmi les layouts choisis pour la partie s'il y en a */
+window.layDraw=function(c1,c2,sel){const cs=c1&&c2?[c1,c2]:null,pool=poolFor(cs,sel);if(!pool.length)return null;
+ const k=cs?key(c1,c2):null,m=pool.filter(x=>x.k===k),src=m.length?m:pool,it=src[Math.floor(Math.random()*src.length)];
+ open=false;leg=false;zoom=false;fresh=true;
+ setTimeout(()=>{try{toast("Layout tiré au sort : "+nm(it)+" · onglet 🗺 à droite")}catch(e){}},1100);return mk(it)};
+
+function html(r){const L=r.lay,cs=catsOf(r),a=cs&&cat(cs[0]),b=cs&&cat(cs[1]),pool=poolFor(cs,r.sel&&r.sel.lay);
+ const ms=[0,1].map(i=>r.p[i]&&r.p[i].mission&&r.p[i].mission.mn?`<span>${esc(r.n[i]||"J"+(i+1))} : <b>${esc(r.p[i].mission.mn)}</b></span>`:"").filter(Boolean).join("");
+ if(!L||!(L.p||L.id))return`<div class="lyh"><b>Layout de terrain</b><button class="lyx" data-ly="close" aria-label="Fermer">✕</button></div><p class="lyn">Aucun layout tiré pour cette partie.</p>${pool.length?`<button class="b p" data-ly="draw">🎲 Tirer un layout au sort</button>`:`<p class="lyn">Choisis la catégorie de mission des deux joueurs, ou des layouts dans la préparation de partie.</p>`}`;
+ const chips=pool.filter(x=>x.k===L.k);
+ return`<div class="lyh"><b>Layout — ${esc(nm(L))}</b><button class="lyx" data-ly="close" aria-label="Fermer">✕</button></div>
+ <p class="lyn">${a&&b?esc(a.ic+" "+a.fr)+" <span class=mu>contre</span> "+esc(b.ic+" "+b.fr):""}</p>${ms?`<p class="lyn lym">${ms}</p>`:""}
+ <div class="lyc">${chips.length>1?chips.map(x=>`<button class="${(x.id||"")===(L.id||lid(L.p))?"on":""}" data-ly="pick" data-id="${esc(x.id)}">${esc(x.l)}</button>`).join(""):""}<button data-ly="draw" title="Tirer un autre layout au sort">🎲 Retirer</button></div>
+ <div class="lyi${zoom?" z":""}"><img src="${esc(img(L))}" alt="Layout ${esc(nm(L))}" data-ly="zoom" decoding="async"></div>
+ <p class="lyn">Haut = bord de l'Attaquant (rouge) · bas = bord du Défenseur (bleu). Un dé décide qui est l'Attaquant. Touche l'image pour ${zoom?"réduire":"agrandir"}.</p>
+ <button class="b" data-ly="leg">${leg?"Masquer la légende":"Légende des symboles"}</button>${leg?`<div class="lyi"><img src="lay/legende.webp" alt="Légende" decoding="async"></div>`:""}
+ <p class="lyn mu">Source : Compagnon de Rencontre Warhammer, version 1.3.</p>`}
+
+let tab_,pan;
+function ensure(){if(tab_)return;tab_=document.createElement("button");tab_.id="layt";tab_.type="button";tab_.setAttribute("data-ly","toggle");tab_.setAttribute("aria-label","Layout de terrain");
+ pan=document.createElement("div");pan.id="layp";document.body.appendChild(tab_);document.body.appendChild(pan)}
+function upd(){ensure();const r=S.pm?cur():null;
+ if(!r){tab_.hidden=true;pan.hidden=true;return}
+ const ok=(r.lay&&(r.lay.p||r.lay.id))||poolFor(catsOf(r),r.sel&&r.sel.lay).length;
+ tab_.hidden=!ok;if(!ok){pan.hidden=true;return}
+ tab_.innerHTML=`<span>🗺</span><b>${r.lay?esc(r.lay.l||"?"):"?"}</b>`;tab_.classList.toggle("on",open);tab_.classList.toggle("new",fresh&&!open);
+ pan.hidden=!open;if(open)pan.innerHTML=html(r)}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ly]");if(!b)return;e.stopPropagation();e.preventDefault();
+ const a=b.dataset.ly,r=cur();
+ if(a==="toggle"){open=!open;fresh=false;upd();return}
+ if(a==="close"){open=false;upd();return}
+ if(a==="zoom"){zoom=!zoom;upd();return}
+ if(a==="leg"){leg=!leg;upd();return}
+ if(!r)return;
+ if(a==="pick"){const it=itemOf(b.dataset.id);if(it){r.lay=mk(it);r.lay.m=1;save();upd()}return}
+ if(a==="draw"){const cs=catsOf(r),n=window.layDraw(cs&&cs[0],cs&&cs[1],r.sel&&r.sel.lay);if(n){r.lay=n;open=true;save();upd();toast("Layout tiré : "+nm(n))}}},true);
+
+const _d=window.draw;window.draw=function(){const x=_d.apply(this,arguments);try{upd()}catch(e){}return x};
+try{draw=window.draw}catch(e){}
+window.__lay={LP,KEYS,key,cur,upd,isOpen:()=>open,poolFor,itemOf};
+try{upd()}catch(e){}
+})();
+
+</script>
 </body></html>
