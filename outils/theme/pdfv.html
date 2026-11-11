@@ -1,0 +1,116 @@
+<!-- ===== v99 : lecteur de PDF intégré ===== -->
+<style id="pdfv">
+.gpv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;background:#0b0c0d;color:var(--tx)}
+.gpvt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:linear-gradient(180deg,#1b1d21,#111214);border-bottom:1px solid rgba(216,180,94,.45)}
+.gpvt button,.gpva button{min-width:40px;min-height:40px;border-radius:10px;border:1px solid rgba(216,180,94,.35);background:#1b1d21;color:#ece4d2;font:inherit;font-size:15px;cursor:pointer;padding:0 10px}
+.gpvt button:active,.gpva button:active{background:var(--gold);color:#1a1307}
+.gpvn{flex:1;min-width:90px;font-family:var(--fs);font-size:16px;color:#f1e3bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gpvg{display:inline-flex;align-items:center;gap:4px}.gpvg input{width:52px;min-height:38px;text-align:center}.gpvg span{color:var(--mu);font-size:13px;min-width:44px;text-align:center}
+.gpvs{padding:8px 10px;border-bottom:1px solid rgba(216,180,94,.25);background:#111214;max-height:38vh;overflow:auto}.gpvs input{width:100%;min-height:42px}
+.gpvr button{display:block;width:100%;text-align:left;margin:6px 0 0;padding:8px 10px;border-radius:10px;border:1px solid rgba(216,180,94,.2);background:#15171a;color:#e6dcc4;font:inherit;font-size:13px;cursor:pointer}.gpvr b{color:var(--gold)}.gpvr mark{background:#e8a43c;color:#111;border-radius:3px;padding:0 2px}
+.gpvb{position:relative;flex:1;overflow:auto;padding:10px 8px 200px;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+.gpvw{transform-origin:0 0}
+.gpvpg{position:relative;margin:0 auto 12px;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.6);border-radius:2px}
+.gpvpg canvas{position:absolute;inset:0;width:100%;height:100%}
+.gpvpg .no{position:absolute;left:-2px;top:-2px;z-index:3;background:rgba(10,11,12,.75);color:#fff;font-size:11px;padding:2px 7px;border-radius:0 0 8px 0}
+.gpvpg.flash{outline:4px solid #e8a43c;outline-offset:2px}
+.gpva{position:fixed;left:0;right:0;bottom:0;z-index:81;display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#16181b,#0e0f11);border-top:1px solid rgba(216,180,94,.45)}
+.gpva button{flex:1 1 140px;font-size:13.5px;font-weight:700}.gpva button.p{background:linear-gradient(180deg,#e2c27a,#a77c2f);color:#1a1307;border-color:#f0d58f}
+.gpva .gpvh{flex:1 1 100%;font-size:12px;color:var(--mu);margin:0}
+.gpvrng{display:flex;gap:6px;align-items:center;flex:1 1 100%;font-size:13px;color:var(--mu)}.gpvrng input{width:64px;min-height:36px;text-align:center}
+.gpdfbar{display:flex;gap:8px;justify-content:flex-end;margin:0 0 8px}.gpdfbar button{min-height:38px;border-radius:10px;border:1px solid rgba(216,180,94,.45);background:#1b1d21;color:#f1e3bd;font:inherit;font-size:13.5px;cursor:pointer;padding:0 12px}
+/* couche de texte pdf.js (sélection) */
+.textLayer{position:absolute;text-align:initial;inset:0;overflow:hidden;opacity:1;line-height:1;-webkit-text-size-adjust:none;text-size-adjust:none;forced-color-adjust:none;transform-origin:0 0;z-index:2}
+.textLayer span,.textLayer br{color:transparent;position:absolute;white-space:pre;cursor:text;transform-origin:0% 0%}
+.textLayer span.markedContent{top:0;height:0}.textLayer ::selection{background:rgba(0,100,255,.35)}
+</style>
+<script>
+(()=>{
+const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const say=m=>{try{toast(m)}catch(_){}};
+const IDB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open("a40k-fichiers",1);r.onupgradeneeded=()=>r.result.createObjectStore("f");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+ async get(k){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f").objectStore("f").get(k);t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error)})},
+ async set(k,v){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f","readwrite");t.objectStore("f").put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}};
+let doc=null,buf=null,name="",zoom=1,base=1,N=0,obs=null,TC={},lastField=null,el=null,cur=1;
+/* dernier champ de saisie utilisé (pour y insérer le texte choisi dans le PDF) */
+document.addEventListener("focusin",e=>{const t=e.target;if(!t||!t.closest||t.closest("#gpdf")||t.closest("#gxo"))return;if((t.tagName==="TEXTAREA"&&!t.readOnly)||(t.tagName==="INPUT"&&["text",""].includes(t.type)&&!t.readOnly))lastField=t});
+const fieldOk=()=>lastField&&document.contains(lastField);
+function fieldName(){if(!fieldOk())return"";const l=lastField.closest("label");let s=l?[...l.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(" ").trim():"";if(!s)s=lastField.placeholder||(lastField.id==="raw"?"Texte de l'armée":"champ");return s.replace(/\s+/g," ").slice(0,36)}
+function sel(){const s=window.getSelection&&window.getSelection();if(!s||!s.rangeCount)return"";const n=s.anchorNode;if(!n||!el||!el.contains(n.nodeType===3?n.parentNode:n))return"";return s.toString().replace(/[ \t]+\n/g,"\n").trim()}
+function ui(){if(!el){el=document.createElement("div");el.id="gpdf";document.body.appendChild(el)}document.body.classList.add("jclk");
+ el.innerHTML=`<div class="gpv" role="dialog" aria-label="Lecteur de PDF"><div class="gpvt"><button data-pv="close" aria-label="Fermer">✕</button><b class="gpvn">${e2(name||"PDF")}</b>
+ <span class="gpvg"><button data-pv="prev" aria-label="Page précédente">‹</button><input id="gpvpg" type="number" min="1" value="${cur}" aria-label="Page"><span>/ ${N}</span><button data-pv="next" aria-label="Page suivante">›</button></span>
+ <span class="gpvg"><button data-pv="zo" aria-label="Dézoomer">－</button><span id="gpvz">${Math.round(zoom*100)}%</span><button data-pv="zi" aria-label="Zoomer">＋</button><button data-pv="fit">Largeur</button></span>
+ <button data-pv="find" aria-label="Chercher">🔍</button><button data-pv="open" aria-label="Ouvrir un autre PDF">📂</button></div>
+ <div class="gpvs" id="gpvs" hidden><input id="gpvq" type="search" placeholder="Chercher dans le PDF (nom d'unité, aptitude…)" autocomplete="off"><div class="gpvr" id="gpvr"></div></div>
+ <div class="gpvb" id="gpvb"><div class="gpvw" id="gpvw"></div></div>
+ <div class="gpva"><p class="gpvh">Appui long sur le texte pour le sélectionner · pince à deux doigts pour zoomer</p>
+ <button data-pv="copy">📋 Copier la sélection</button>${fieldOk()?`<button data-pv="ins">✎ Insérer dans « ${e2(fieldName())} »</button>`:""}<button data-pv="toraw">➕ Ajouter à l'import</button>
+ <span class="gpvrng">Pages <input id="gpva" type="number" min="1" max="${N}" value="1"> à <input id="gpvz2" type="number" min="1" max="${N}" value="${N}"><button class="p" data-pv="imp">⬇ Importer ces pages</button></span></div></div>`;
+ layout()}
+async function pageSize(n){const p=await doc.getPage(n);return p.getViewport({scale:1})}
+let P1=null;
+async function layout(keep){const w=document.getElementById("gpvw"),box=document.getElementById("gpvb");if(!w)return;P1=P1||await pageSize(1);base=Math.max(.3,(box.clientWidth-16)/P1.width);const sc=base*zoom,top=keep?cur:null;
+ w.innerHTML="";if(obs)obs.disconnect();obs=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)render(+x.target.dataset.n)}),{root:box,rootMargin:"600px 0px"});
+ for(let n=1;n<=N;n++){const d=document.createElement("div");d.className="gpvpg";d.dataset.n=n;d.style.width=Math.floor(P1.width*sc)+"px";d.style.height=Math.floor(P1.height*sc)+"px";d.innerHTML=`<span class="no">${n}</span>`;w.appendChild(d);obs.observe(d)}
+ const z=document.getElementById("gpvz");if(z)z.textContent=Math.round(zoom*100)+"%";if(top)go(top,true)}
+const RD=new Set();
+async function render(n){const w=document.getElementById("gpvw"),d=w&&w.querySelector(`.gpvpg[data-n="${n}"]`);if(!d||d.dataset.r===String(zoom))return;d.dataset.r=String(zoom);
+ try{const pg=await doc.getPage(n),vp=pg.getViewport({scale:base*zoom}),dpr=Math.min(2,window.devicePixelRatio||1),cv=document.createElement("canvas");d.style.width=Math.floor(vp.width)+"px";d.style.height=Math.floor(vp.height)+"px";cv.width=Math.floor(vp.width*dpr);cv.height=Math.floor(vp.height*dpr);
+  const ctx=cv.getContext("2d");ctx.scale(dpr,dpr);await pg.render({canvasContext:ctx,viewport:vp}).promise;if(d.dataset.r!==String(zoom))return;
+  d.querySelectorAll("canvas,.textLayer").forEach(x=>x.remove());d.appendChild(cv);
+  const tl=document.createElement("div");tl.className="textLayer";tl.style.setProperty("--scale-factor",vp.scale);d.appendChild(tl);
+  const tc=TC[n]||(TC[n]=await pg.getTextContent());const lib=window.pdfjsLib;
+  if(lib&&lib.renderTextLayer){const t=lib.renderTextLayer({textContentSource:tc,container:tl,viewport:vp,textDivs:[]});if(t&&t.promise)await t.promise}}catch(e){d.dataset.r=""}}
+function go(n,instant){n=Math.max(1,Math.min(N,n|0));cur=n;const box=document.getElementById("gpvb"),d=box&&box.querySelector(`.gpvpg[data-n="${n}"]`);if(d)box.scrollTo({top:d.offsetTop*getScale()-8,behavior:instant?"auto":"smooth"});const i=document.getElementById("gpvpg");if(i)i.value=n}
+const getScale=()=>1;
+function trackPage(){const box=document.getElementById("gpvb");if(!box)return;const y=box.scrollTop+box.clientHeight/3;let n=1;box.querySelectorAll(".gpvpg").forEach(d=>{if(d.offsetTop<=y)n=+d.dataset.n});if(n!==cur){cur=n;const i=document.getElementById("gpvpg");if(i&&document.activeElement!==i)i.value=n}}
+async function load(ab,nm){const lib=await pdfLib();buf=ab;name=nm||"PDF";doc=await lib.getDocument({data:new Uint8Array(ab.slice(0))}).promise;N=doc.numPages;TC={};P1=null;zoom=1;cur=1;try{await IDB.set("lastpdf",{buf:ab,name})}catch(_){}ui()}
+async function openFile(f){if(!f)return;say("Ouverture du PDF…");try{await load(await f.arrayBuffer(),f.name)}catch(e){say(e&&e.message==="lib"?"Lecteur de PDF indisponible (connexion ?)":"Ce PDF n'a pas pu être ouvert")}}
+function pick(){let i=document.getElementById("gpvfile");if(!i){i=document.createElement("input");i.type="file";i.accept="application/pdf,.pdf";i.id="gpvfile";i.hidden=true;document.body.appendChild(i)}i.value="";i.click()}
+function close(){if(el)el.innerHTML="";if(obs)obs.disconnect();document.body.classList.remove("jclk")}
+async function pagesText(a,b){const out=[];for(let n=a;n<=b;n++){const pg=await doc.getPage(n),tc=TC[n]||(TC[n]=await pg.getTextContent());out.push(...pdfLines(tc.items))}return out.join("\n")}
+function toImportTab(cb){if(typeof tab!=="undefined"&&tab!=="imp"){tab="imp";try{draw()}catch(_){}}setTimeout(cb,60)}
+function insert(t,txt){const s=t.selectionStart!=null?t.selectionStart:t.value.length,e=t.selectionEnd!=null?t.selectionEnd:t.value.length;const pre=t.value.slice(0,s),sep=pre&&!/\s$/.test(pre)?"\n":"";t.value=pre+sep+txt+t.value.slice(e);t.dispatchEvent(new Event("input",{bubbles:true}));t.dispatchEvent(new Event("change",{bubbles:true}))}
+window.PDFV={open:openFile,async openLast(){try{const l=await IDB.get("lastpdf");if(l&&l.buf){say("Ouverture du dernier PDF…");await load(l.buf,l.name);return}}catch(_){}pick()},pick};
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="gpvfile"){openFile(t.files&&t.files[0]);return}
+ if(t.id==="pdf"){e.stopImmediatePropagation();const f=t.files&&t.files[0];t.value="";openFile(f)}},true);
+document.addEventListener("input",e=>{if(e.target.id!=="gpvq"||!doc)return;const q=e.target.value.trim().toLowerCase(),r=document.getElementById("gpvr");if(q.length<2){r.innerHTML="";return}
+ clearTimeout(window.__gpvq);window.__gpvq=setTimeout(async()=>{const res=[];for(let n=1;n<=N&&res.length<40;n++){if(!TC[n]){const pg=await doc.getPage(n);TC[n]=await pg.getTextContent()}const txt=TC[n].items.map(i=>i.str).join(" ");const lo=txt.toLowerCase();let i=lo.indexOf(q);while(i>=0&&res.length<40){res.push([n,txt.slice(Math.max(0,i-40),i),txt.substr(i,q.length),txt.slice(i+q.length,i+q.length+60)]);i=lo.indexOf(q,i+q.length)}}
+  r.innerHTML=res.length?res.map(([n,a,m,b])=>`<button data-pv="res" data-n="${n}"><b>p. ${n}</b> … ${e2(a)}<mark>${e2(m)}</mark>${e2(b)} …</button>`).join(""):`<p class="mu">Aucun résultat.</p>`},250)});
+document.addEventListener("keydown",e=>{if(e.target.id==="gpvpg"&&e.key==="Enter")go(+e.target.value)});
+document.addEventListener("change",e=>{if(e.target.id==="gpvpg")go(+e.target.value)});
+document.addEventListener("scroll",e=>{if(e.target&&e.target.id==="gpvb")trackPage()},true);
+/* pincement à deux doigts */
+const PT=new Map();let pin=null;
+document.addEventListener("pointerdown",e=>{if(!e.target.closest||!e.target.closest("#gpvb")||e.pointerType!=="touch")return;PT.set(e.pointerId,[e.clientX,e.clientY]);if(PT.size===2){const a=[...PT.values()];pin={d:Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,r:1}}},true);
+document.addEventListener("pointermove",e=>{if(!PT.has(e.pointerId))return;PT.set(e.pointerId,[e.clientX,e.clientY]);if(pin&&PT.size===2){const a=[...PT.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);pin.r=Math.max(.4,Math.min(4,d/pin.d));const w=document.getElementById("gpvw");if(w)w.style.transform=`scale(${pin.r})`;e.preventDefault()}},{capture:true,passive:false});
+const pend=e=>{if(!PT.has(e.pointerId))return;PT.delete(e.pointerId);if(pin&&PT.size<2){const r=pin.r;pin=null;const w=document.getElementById("gpvw");if(w)w.style.transform="";if(Math.abs(r-1)>.05){zoom=Math.max(.5,Math.min(4,zoom*r));layout(true)}}};
+document.addEventListener("pointerup",pend,true);document.addEventListener("pointercancel",pend,true);
+document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-pv]");if(!b)return;const a=b.dataset.pv;e.preventDefault();e.stopPropagation();
+ if(a==="openv"){window.PDFV.openLast();return}
+ if(!doc&&a!=="close")return;
+ if(a==="close"){close();return}
+ if(a==="prev"){go(cur-1);return}if(a==="next"){go(cur+1);return}
+ if(a==="zi"||a==="zo"){zoom=Math.max(.5,Math.min(4,+(zoom*(a==="zi"?1.25:.8)).toFixed(2)));layout(true);return}
+ if(a==="fit"){zoom=1;layout(true);return}
+ if(a==="find"){const s=document.getElementById("gpvs");s.hidden=!s.hidden;if(!s.hidden)document.getElementById("gpvq").focus();return}
+ if(a==="open"){pick();return}
+ if(a==="res"){go(+b.dataset.n);const d=document.querySelector(`#gpvw .gpvpg[data-n="${b.dataset.n}"]`);if(d){d.classList.add("flash");setTimeout(()=>d.classList.remove("flash"),1500)}return}
+ if(a==="copy"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}try{await navigator.clipboard.writeText(t);say("Texte copié")}catch(_){say("Copie impossible ici : utilise « Insérer » ou « Ajouter à l'import »")}return}
+ if(a==="ins"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}if(!fieldOk()){say("Touche d'abord le champ à remplir dans la fiche");return}insert(lastField,t);say("Texte inséré dans « "+fieldName()+" »");return}
+ if(a==="toraw"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}close();toImportTab(()=>{const r=document.getElementById("raw");if(r){insert(r,t);say("Ajouté à la zone d'import")}});return}
+ if(a==="imp"){let x=+document.getElementById("gpva").value||1,y=+document.getElementById("gpvz2").value||N;x=Math.max(1,Math.min(N,x));y=Math.max(x,Math.min(N,y));say("Lecture des pages "+x+" à "+y+"…");const txt=await pagesText(x,y),nm=name.replace(/\.pdf$/i,"");close();
+  toImportTab(()=>{const r=document.getElementById("raw");if(!r)return;r.value=txt;const n=document.getElementById("nm");if(n&&!n.value.trim())n.value=nm;
+   if(txt.trim().length<30){try{info("Aucun texte lisible sur ces pages (image scannée ?).")}catch(_){}return}
+   let ok=true;try{ok=parse(txt).units.length>0}catch(_){}if(!ok){try{info("Les pages ont été lues, mais aucune unité n'a été reconnue. Le texte est dans la zone de texte : vérifie-le, puis appuie sur Importer.")}catch(_){}return}
+   const ib=document.querySelector('[data-act="imp"]');if(ib)ib.click()});return}
+},true);
+/* bouton « Ouvrir un PDF » dans les fenêtres de fiche (unité, détachement, stratagèmes…) et dans l'import */
+function addBars(){document.querySelectorAll("#md .pn").forEach(pn=>{if(pn.querySelector(":scope>.gpdfbar"))return;if(!pn.querySelector("textarea,input[type=text],input:not([type])"))return;const bar=document.createElement("div");bar.className="gpdfbar";bar.innerHTML=`<button data-pv="openv">📄 Remplir depuis un PDF</button>`;const mb=pn.querySelector(":scope>.mb");if(mb)mb.after(bar);else pn.prepend(bar)});
+ const pf=document.getElementById("pdf");if(pf&&!document.getElementById("gpdfimp")){const l=pf.closest("label");if(l)l.insertAdjacentHTML("afterend",`<p id="gpdfimp" class="mu" style="margin:4px 0 10px">Le PDF s'ouvre dans le lecteur : tu le consultes, puis tu importes tout ou seulement certaines pages. <button class="b" data-pv="openv" style="margin-left:6px">📄 Rouvrir le dernier PDF</button></p>`)}}
+const mo=new MutationObserver(()=>{try{addBars()}catch(_){}});
+["md","m"].forEach(i=>{const n=document.getElementById(i);if(n)mo.observe(n,{childList:true,subtree:true})});
+try{addBars()}catch(_){}
+})();
+</script>

@@ -3387,6 +3387,8 @@ html.gsd header>h1,html.gsd header>nav{position:relative;z-index:1}html.gsd head
  width:calc(max(100cqw,100cqh*var(--ar,1.5))*var(--k,1))!important;height:calc(max(100cqw/var(--ar,1.5),100cqh)*var(--k,1))!important;
  left:calc((100cqw - max(100cqw,100cqh*var(--ar,1.5))*var(--k,1))*var(--px,.5))!important;top:calc((100cqh - max(100cqw/var(--ar,1.5),100cqh)*var(--k,1))*var(--py,.5))!important}
 .gauto>.gfr{mix-blend-mode:multiply}
+#fsb{display:none!important}@media(max-width:899px){html.goth header h1{padding-right:92px}}
+.gsbbtn{position:absolute;right:10px;bottom:10px;z-index:2;min-width:42px;min-height:42px;border-radius:50%;border:1px solid rgba(216,180,94,.5);background:rgba(10,11,12,.7);color:#fff;font-size:18px;cursor:pointer}
 .gcrop.wide{aspect-ratio:3/1}.gcrop.tall{aspect-ratio:9/16;max-height:52vh;margin-left:auto;margin-right:auto}
 .ga .gth{position:relative;overflow:hidden}.ga .gth img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.ga .gcam{min-width:36px;font-size:16px}
 .glimg{position:relative;height:130px;margin:-12px -12px 10px;overflow:hidden;border-bottom:1px solid rgba(216,180,94,.35);background:radial-gradient(circle at 50% 40%,rgba(85,196,110,.25),transparent 70%),#121316}.glimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.glimg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,9,10,.6),transparent 60%);pointer-events:none}
@@ -3460,7 +3462,7 @@ const ic=n=>`<i class="gi"><svg viewBox="0 0 24 24">${P[n]||""}</svg></i>`;
 const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* rubriques : icône par défaut et couleur (comme l'exemple : chaque rubrique a sa teinte) */
 const SEC={home:["home","Accueil","#d8b45e"],lists:["shield","Mes armées","#55c46e"],coll:["layers","Collection","#3fc1b5"],paint:["brush","Peinture & Hobby","#c46be0"],mis:["map","Missions & Layout","#4aa3ff"],gm:["trophy","Parties","#e0563f"],enc:["book","Règles V11","#e8a43c"],imp:["download","Importer","#7f9cff"],play:["dice","Mode jeu","#a77bff"],
- q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["gear","Personnaliser","#ffd166"],
+ q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_pdf:["scroll","Lecteur PDF","#e8a43c"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["gear","Personnaliser","#ffd166"],
  units:["shield","Unités","#55c46e"],dets:["flag","Détachements","#e0563f"],strats:["bolt","Stratagèmes","#ffd166"],opti:["star","Optimisations","#4aa3ff"]};
 const icons=()=>{try{if(!S.icons||typeof S.icons!=="object")S.icons={};return S.icons}catch(_){return{}}};
 function icFor(key){const c=icons()[key],d=SEC[key];if(c&&c.t==="svg"&&P[c.v])return ic(c.v);if(c&&c.t==="emo"&&c.v)return`<i class="gi gemo">${e2(c.v)}</i>`;if(c&&c.t==="img"&&c.v)return`<i class="gi"><img src="${c.v}" alt=""></i>`;return ic(d?d[0]:"star")}
@@ -3475,7 +3477,7 @@ const XV=window.XV=window.XV||{};
 XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
  const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
  const tile=([k,v,key,t,s,p])=>{const mi=menuImg(key,p);return`<button class="gt${mi?(mi.cust?"":" gauto"):" gnp"}" data-${k}="${v}" style="--tc:${col(key)}">${mi?imgTag(mi,"gtimg"):`<span class="gdeco">${icFor(key).replace('class="gi','class="gi gbig')}</span>`}<span>${icFor(key)}<span><b>${t}</b><small>${s}</small></span></span></button>`};
- const quick=[["q_dice","data-g","gdice"],["q_play","data-act",run?"gresume":"gpick"],["q_enc","data-tab","enc"],["q_new","data-act","nlist"],["q_paint","data-tab","paint"],["q_ico","data-g","gico"]];
+ const quick=[["q_dice","data-g","gdice"],["q_play","data-act",run?"gresume":"gpick"],["q_pdf","data-g","gpdf"],["q_new","data-act","nlist"],["q_paint","data-tab","paint"],["q_ico","data-g","gico"]];
  const qb=([key,a,v])=>`<button ${a}="${v}" style="--tc:${col(key)}">${icFor(key)}<span>${key==="q_play"&&run?"Reprendre":SEC[key][1]}</span></button>`;
  const armies=L.length?L.map(l=>{let n=0,pts=0;try{n=typeof lcount==="function"?lcount(l):(l.units||[]).length;pts=typeof lpts==="function"?lpts(l):0}catch(_){}return`<div class="ga"><span class="gth">${lthumb(l)}</span><span class="gn"><b>${e2(l.name)}</b><small>${n} unité${n>1?"s":""}${pts?" · "+pts+" pts":""}</small></span><button data-act="gstart" data-id="${l.id}" title="Jouer" aria-label="Jouer avec ${e2(l.name)}">▶</button><button data-act="open" data-id="${l.id}" title="Gérer" aria-label="Gérer ${e2(l.name)}">✎</button><button class="gcam" data-g="gimg" data-k="L:${l.id}" title="Photo de la liste" aria-label="Photo de ${e2(l.name)}">📷</button></div>`}).join(""):`<p class="mu">Aucune liste pour l'instant.</p>`;
  let hb="";try{const h=S.hobby||{},us=Object.values(S.coll||{}),done=us.filter(u=>((h.sch||{})[u.ref]||{}).st==="fini").length;hb=`<section class="gp" style="--tc:${col("paint")}"><h3>${icFor("paint")}Peinture &amp; Hobby</h3><button class="gu" data-tab="paint"><span class="gbadge" style="color:${col("paint")}">${us.length?Math.round(done*100/us.length):0}%</span><span><b>${done} / ${us.length} figurines terminées</b><small>${(h.paints||[]).length} peinture${(h.paints||[]).length>1?"s":""} dans ta collection</small></span><i>›</i></button></section>`}catch(_){}
@@ -3497,17 +3499,19 @@ const arFix=()=>document.querySelectorAll(".gfr>img").forEach(t=>{if(t.complete&
 const LI=()=>{try{if(!S.limgs||typeof S.limgs!=="object")S.limgs={};return S.limgs}catch(_){return{}}};
 const isL=k=>String(k).startsWith("L:"),lName=k=>{try{const l=(S.lists||[]).find(x=>x.id===k.slice(2));return l?l.name:"Liste"}catch(_){return"Liste"}};
 const store=k=>isL(k)?LI():MI(),skey=k=>isL(k)?k.slice(2):k;
+const sbc=()=>{const p=(S.bpos&&S.bpos.s)||{};const c=S.sbc&&typeof S.sbc==="object"?S.sbc:{};return{x:c.x!=null?+c.x:(p.x!=null?+p.x:50),y:c.y!=null?+c.y:(p.y!=null?+p.y:50),z:+c.z||100,h:+c.h||170}};
+let SBH=170;
 const IMKEYS=["home","lists","coll","paint","mis","gm","enc","imp","play"];
 let W=null,imKey=null;
-function imgEdit(k){imKey=k;const m=store(k)[skey(k)];W=m&&m.src?{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100}:{src:"",x:50,y:50,z:100};imgDraw()}
-function imgDraw(){const k=imKey;GX.open(`<div class="gxh"><h2>${isL(k)?"Photo — "+e2(lName(k)):"Image — "+SEC[k][1]}</h2><button class="b" data-gx="${isL(k)?"close":"iclist"}">${isL(k)?"✕":"← Retour"}</button></div>
+function imgEdit(k){imKey=k;if(k==="sb"){const c=sbc();SBH=c.h;W={src:S.sban||"",x:c.x,y:c.y,z:c.z};imgDraw();return}const m=store(k)[skey(k)];W=m&&m.src?{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100}:{src:"",x:50,y:50,z:100};imgDraw()}
+function imgDraw(){const k=imKey;GX.open(`<div class="gxh"><h2>${k==="sb"?"Grande bannière":isL(k)?"Photo — "+e2(lName(k)):"Image — "+SEC[k][1]}</h2><button class="b" data-gx="${isL(k)?"close":"iclist"}">${isL(k)?"✕":"← Retour"}</button></div>
  <p class="mu">${W.src?"Fais glisser l'image pour la cadrer, ou utilise les curseurs.":"Choisis une photo de ton téléphone."}</p>
- <div class="gcrop${isL(k)?" wide":""}" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>
+ <div class="gcrop${isL(k)?" wide":""}" id="gcrop"${k==="sb"?` style="aspect-ratio:${Math.max(1.2,Math.min(6,(document.getElementById("sb")||{}).clientWidth/SBH||3)).toFixed(2)}"`:""}>${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>${k==="sb"&&W.src?`<label>Hauteur de la bannière<input type="range" id="gsbh" min="90" max="360" value="${SBH}"></label>`:""}
  ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="30" max="300" value="${W.z}"></label><div class="gopt"><button data-gx="zm" data-v="-10">－ Dézoomer</button><button data-gx="zm" data-v="10">＋ Zoomer</button><button data-gx="zfit">Image entière</button><button data-gx="zcov">Remplir</button></div><p class="mu">Astuce : pince l'aperçu à deux doigts pour zoomer ou dézoomer.</p>`:""}
  <label>📷 Choisir une photo<input type="file" id="gximf" accept="image/*"></label>
  <div class="gxf"><button class="b x" data-gx="imdel">Supprimer ${isL(k)?"la photo":"l'image"}</button>${isL(k)?"":`<button class="b" data-gx="imnone">Aucune image</button>`}<button class="b p" data-gx="imsave">Enregistrer</button></div>`)}
 function imgLive(){const f=document.querySelector("#gcrop .gfr");if(f){f.style.setProperty("--k",W.z/100);f.style.setProperty("--px",W.x/100);f.style.setProperty("--py",W.y/100)}const sx=document.getElementById("gcx"),sy=document.getElementById("gcy"),sz=document.getElementById("gcz");if(sx)sx.value=W.x;if(sy)sy.value=W.y;if(sz)sz.value=W.z}
-document.addEventListener("input",e=>{const id=e.target.id;if(id==="gsdo"&&SW){SW.op=+e.target.value;return}if(id==="gwd"){WD=+e.target.value;const k=document.getElementById("gwdk");if(k)k.style.opacity=WD/100;return}if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
+document.addEventListener("input",e=>{const id=e.target.id;if(id==="gsbh"){SBH=+e.target.value;const sb=document.getElementById("sb");if(sb)sb.style.height=SBH+"px";const c=document.getElementById("gcrop");if(c&&sb)c.style.aspectRatio=String(Math.max(1.2,Math.min(6,sb.clientWidth/SBH)));return}if(id==="gsdo"&&SW){SW.op=+e.target.value;return}if(id==="gwd"){WD=+e.target.value;const k=document.getElementById("gwdk");if(k)k.style.opacity=WD/100;return}if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
 let cdrag=null;const PT=new Map();let pinch=null;
 const pd=()=>{const a=[...PT.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1};
 document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#gcrop");if(!c||!W||!W.src)return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});try{c.setPointerCapture(e.pointerId)}catch(_){}
@@ -3604,7 +3608,8 @@ function icPick(k){icKey=k;const c=icons()[k]||{};
  <label>Ou un emoji<input id="gxemo" maxlength="4" placeholder="ex. 🐉" value="${c.t==="emo"?e2(c.v):""}"></label><div class="gxf"><button class="b" data-gx="icemo">Utiliser cet emoji</button></div>
  <label>Ou une image de ton téléphone<input type="file" id="gxicf" accept="image/*"></label>
  <div class="gxf"><button class="b" data-gx="icdef">Icône par défaut</button><button class="b p" data-gx="iclist">Terminé</button></div>`)}
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;const g=b.dataset.g;if(g==="gdice"){if(typeof window.dzToggle==="function")window.dzToggle(true);else{const f=document.getElementById("dzf");if(f)f.click()}}else if(g==="gico")icList();else if(g==="gimg")imgEdit(b.dataset.k)});
+document.addEventListener("click",e=>{const f=e.target.closest&&e.target.closest('[data-act="frm"][data-k="s"]');if(f){e.preventDefault();e.stopImmediatePropagation();imgEdit("sb")}},true);
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;const g=b.dataset.g;if(g==="gdice"){if(typeof window.dzToggle==="function")window.dzToggle(true);else{const f=document.getElementById("dzf");if(f)f.click()}}else if(g==="gico")icList();else if(g==="gimg")imgEdit(b.dataset.k);else if(g==="gpdf"&&window.PDFV)PDFV.openLast()});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-gx]");if(!b)return;const a=b.dataset.gx;
  if(a==="bg"){if(e.target===b)GX.close();return}
  if(a==="close"){GX.close();return}
@@ -3629,6 +3634,8 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="wdel"){delete S.wall;W={src:"",x:50,y:50,z:100};try{save()}catch(_){}applyWall();wallEdit(true);return}
  if(a==="frs"){frameSet("st",b.dataset.v);return}if(a==="frc"){frameSet("c",b.dataset.v);return}if(a==="frw"){frameSet("w",b.dataset.v);return}if(a==="frco"){frameSet("co",b.dataset.v);return}
  if(a==="frdef"){S.frame={};try{save()}catch(_){}applyFrame();frameEdit();return}
+ if(a==="imsave"&&imKey==="sb"){if(W.src){S.sban=W.src;S.sbc={x:W.x,y:W.y,z:W.z,h:SBH}}GX.commit();GX.close();return}
+ if(a==="imdel"&&imKey==="sb"){S.sban="";delete S.sbc;W=null;GX.commit();GX.close();return}
  if(a==="imsave"){const L=isL(imKey);if(W.src)store(imKey)[skey(imKey)]={src:W.src,x:W.x,y:W.y,z:W.z};GX.commit();if(L)GX.close();else icList();return}
  if(a==="imdel"){const L=isL(imKey);delete store(imKey)[skey(imKey)];W=null;GX.commit();if(L)GX.close();else icList();return}
  if(a==="imnone"){MI()[imKey]={none:1};W=null;GX.commit();icList();return}});
@@ -3639,6 +3646,7 @@ function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySel
  document.querySelectorAll("#nav>button[data-tab]").forEach(b=>{if(b.dataset.gd===JSON.stringify(icons()[b.dataset.tab]||0))return;const k=b.dataset.tab,old=b.querySelector(".gi");if(old)old.remove();const back=/^←/.test(b.textContent);b.textContent=b.textContent.replace(/^[^\wÀ-ÿ]+/,"");b.style.setProperty("--tc",col(k));b.insertAdjacentHTML("afterbegin",back?ic("back"):icFor(k));b.dataset.gd=JSON.stringify(icons()[k]||0)});
  try{const t=typeof tab!=="undefined"?tab:"",m=document.getElementById("m"),mi=IMKEYS.includes(t)&&t!=="home"?menuImg(t):null;if(m){const old=m.querySelector(":scope>.gban");if(mi&&mi.cust){if(!old||old.dataset.k!==t||old.dataset.s!==String(mi.src.length+mi.x+"-"+mi.y+"-"+mi.z)){if(old)old.remove();m.insertAdjacentHTML("afterbegin",`<div class="gban" data-k="${t}" data-s="${mi.src.length+mi.x+"-"+mi.y+"-"+mi.z}" style="--tc:${col(t)}">${imgTag(mi,"gtimg")}<b>${SEC[t][1]}</b><button data-g="gimg" data-k="${t}" aria-label="Changer l'image">📷</button></div>`)}}else if(old)old.remove()}}catch(_){}
  try{applyWall()}catch(_){}
+ try{const sb=document.getElementById("sb");if(sb){if(S.sban){const c=sbc(),k=[S.sban.length,S.sban.slice(-30),c.x,c.y,c.z,c.h].join("|");sb.style.background="#0d0e10";sb.style.height=c.h+"px";sb.style.position="relative";sb.style.overflow="hidden";if(sb.dataset.k!==k){sb.dataset.k=k;sb.innerHTML=imgTag({src:S.sban,x:c.x,y:c.y,z:c.z},"")+`<button class="gsbbtn" data-g="gimg" data-k="sb" aria-label="Cadrer la bannière">✥</button>`}}else{sb.dataset.k="";sb.innerHTML=""}}}catch(_){}
  try{arFix()}catch(_){}
  try{if(typeof tab!=="undefined"&&tab==="lists")document.querySelectorAll('#m [data-act="gstart"][data-id]').forEach(btn=>{const c=btn.closest(".card"),id=btn.dataset.id;if(!c)return;const m=LI()[id],k=m&&m.src?m.src.length+"|"+m.x+"|"+m.y+"|"+m.z:"0";let g=c.querySelector(":scope>.glimg");if(g&&g.dataset.k===k)return;if(g)g.remove();c.insertAdjacentHTML("afterbegin",`<div class="glimg" data-k="${k}">${m&&m.src?imgTag({src:m.src,x:+m.x,y:+m.y,z:+m.z||100},""):`<span class="gph">Ajoute une photo de ton armée</span>`}<button data-g="gimg" data-k="L:${id}" aria-label="Photo de la liste">📷</button></div>`)})}catch(_){}
  const hd=document.querySelector("header"),hp=hd&&hd.classList.contains("hpl");document.body.classList.toggle("gside",innerWidth>=900&&!hp)}
@@ -3923,6 +3931,122 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
 function msRead(cu){cu.nm=fv("nm")||cu.nm;cu.cat=fv("cat")||cu.cat;cu.d=fv("d")||"";cu.lines=fvs("[data-l]").map(t=>{const j=t.dataset.l,g=s=>document.querySelector(`#gxo [${s}="${j}"]`);return{tx:t.value,pts:+(g("data-lp")||{}).value||0,k:(g("data-lk")||{}).value||"chk",mo:(g("data-lm")||{}).value||"tour"}})}
 G40.SEC.x_f=["folder","Dossier","#d8b45e"];
 try{applyMx()}catch(_){}
+})();
+</script>
+<!-- ===== v99 : lecteur de PDF intégré ===== -->
+<style id="pdfv">
+.gpv{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;background:#0b0c0d;color:var(--tx)}
+.gpvt{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:linear-gradient(180deg,#1b1d21,#111214);border-bottom:1px solid rgba(216,180,94,.45)}
+.gpvt button,.gpva button{min-width:40px;min-height:40px;border-radius:10px;border:1px solid rgba(216,180,94,.35);background:#1b1d21;color:#ece4d2;font:inherit;font-size:15px;cursor:pointer;padding:0 10px}
+.gpvt button:active,.gpva button:active{background:var(--gold);color:#1a1307}
+.gpvn{flex:1;min-width:90px;font-family:var(--fs);font-size:16px;color:#f1e3bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gpvg{display:inline-flex;align-items:center;gap:4px}.gpvg input{width:52px;min-height:38px;text-align:center}.gpvg span{color:var(--mu);font-size:13px;min-width:44px;text-align:center}
+.gpvs{padding:8px 10px;border-bottom:1px solid rgba(216,180,94,.25);background:#111214;max-height:38vh;overflow:auto}.gpvs input{width:100%;min-height:42px}
+.gpvr button{display:block;width:100%;text-align:left;margin:6px 0 0;padding:8px 10px;border-radius:10px;border:1px solid rgba(216,180,94,.2);background:#15171a;color:#e6dcc4;font:inherit;font-size:13px;cursor:pointer}.gpvr b{color:var(--gold)}.gpvr mark{background:#e8a43c;color:#111;border-radius:3px;padding:0 2px}
+.gpvb{position:relative;flex:1;overflow:auto;padding:10px 8px 200px;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+.gpvw{transform-origin:0 0}
+.gpvpg{position:relative;margin:0 auto 12px;background:#fff;box-shadow:0 6px 20px rgba(0,0,0,.6);border-radius:2px}
+.gpvpg canvas{position:absolute;inset:0;width:100%;height:100%}
+.gpvpg .no{position:absolute;left:-2px;top:-2px;z-index:3;background:rgba(10,11,12,.75);color:#fff;font-size:11px;padding:2px 7px;border-radius:0 0 8px 0}
+.gpvpg.flash{outline:4px solid #e8a43c;outline-offset:2px}
+.gpva{position:fixed;left:0;right:0;bottom:0;z-index:81;display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#16181b,#0e0f11);border-top:1px solid rgba(216,180,94,.45)}
+.gpva button{flex:1 1 140px;font-size:13.5px;font-weight:700}.gpva button.p{background:linear-gradient(180deg,#e2c27a,#a77c2f);color:#1a1307;border-color:#f0d58f}
+.gpva .gpvh{flex:1 1 100%;font-size:12px;color:var(--mu);margin:0}
+.gpvrng{display:flex;gap:6px;align-items:center;flex:1 1 100%;font-size:13px;color:var(--mu)}.gpvrng input{width:64px;min-height:36px;text-align:center}
+.gpdfbar{display:flex;gap:8px;justify-content:flex-end;margin:0 0 8px}.gpdfbar button{min-height:38px;border-radius:10px;border:1px solid rgba(216,180,94,.45);background:#1b1d21;color:#f1e3bd;font:inherit;font-size:13.5px;cursor:pointer;padding:0 12px}
+/* couche de texte pdf.js (sélection) */
+.textLayer{position:absolute;text-align:initial;inset:0;overflow:hidden;opacity:1;line-height:1;-webkit-text-size-adjust:none;text-size-adjust:none;forced-color-adjust:none;transform-origin:0 0;z-index:2}
+.textLayer span,.textLayer br{color:transparent;position:absolute;white-space:pre;cursor:text;transform-origin:0% 0%}
+.textLayer span.markedContent{top:0;height:0}.textLayer ::selection{background:rgba(0,100,255,.35)}
+</style>
+<script>
+(()=>{
+const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const say=m=>{try{toast(m)}catch(_){}};
+const IDB={db:null,open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open("a40k-fichiers",1);r.onupgradeneeded=()=>r.result.createObjectStore("f");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+ async get(k){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f").objectStore("f").get(k);t.onsuccess=()=>res(t.result);t.onerror=()=>rej(t.error)})},
+ async set(k,v){const d=await this.open();return new Promise((res,rej)=>{const t=d.transaction("f","readwrite");t.objectStore("f").put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}};
+let doc=null,buf=null,name="",zoom=1,base=1,N=0,obs=null,TC={},lastField=null,el=null,cur=1;
+/* dernier champ de saisie utilisé (pour y insérer le texte choisi dans le PDF) */
+document.addEventListener("focusin",e=>{const t=e.target;if(!t||!t.closest||t.closest("#gpdf")||t.closest("#gxo"))return;if((t.tagName==="TEXTAREA"&&!t.readOnly)||(t.tagName==="INPUT"&&["text",""].includes(t.type)&&!t.readOnly))lastField=t});
+const fieldOk=()=>lastField&&document.contains(lastField);
+function fieldName(){if(!fieldOk())return"";const l=lastField.closest("label");let s=l?[...l.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(" ").trim():"";if(!s)s=lastField.placeholder||(lastField.id==="raw"?"Texte de l'armée":"champ");return s.replace(/\s+/g," ").slice(0,36)}
+function sel(){const s=window.getSelection&&window.getSelection();if(!s||!s.rangeCount)return"";const n=s.anchorNode;if(!n||!el||!el.contains(n.nodeType===3?n.parentNode:n))return"";return s.toString().replace(/[ \t]+\n/g,"\n").trim()}
+function ui(){if(!el){el=document.createElement("div");el.id="gpdf";document.body.appendChild(el)}document.body.classList.add("jclk");
+ el.innerHTML=`<div class="gpv" role="dialog" aria-label="Lecteur de PDF"><div class="gpvt"><button data-pv="close" aria-label="Fermer">✕</button><b class="gpvn">${e2(name||"PDF")}</b>
+ <span class="gpvg"><button data-pv="prev" aria-label="Page précédente">‹</button><input id="gpvpg" type="number" min="1" value="${cur}" aria-label="Page"><span>/ ${N}</span><button data-pv="next" aria-label="Page suivante">›</button></span>
+ <span class="gpvg"><button data-pv="zo" aria-label="Dézoomer">－</button><span id="gpvz">${Math.round(zoom*100)}%</span><button data-pv="zi" aria-label="Zoomer">＋</button><button data-pv="fit">Largeur</button></span>
+ <button data-pv="find" aria-label="Chercher">🔍</button><button data-pv="open" aria-label="Ouvrir un autre PDF">📂</button></div>
+ <div class="gpvs" id="gpvs" hidden><input id="gpvq" type="search" placeholder="Chercher dans le PDF (nom d'unité, aptitude…)" autocomplete="off"><div class="gpvr" id="gpvr"></div></div>
+ <div class="gpvb" id="gpvb"><div class="gpvw" id="gpvw"></div></div>
+ <div class="gpva"><p class="gpvh">Appui long sur le texte pour le sélectionner · pince à deux doigts pour zoomer</p>
+ <button data-pv="copy">📋 Copier la sélection</button>${fieldOk()?`<button data-pv="ins">✎ Insérer dans « ${e2(fieldName())} »</button>`:""}<button data-pv="toraw">➕ Ajouter à l'import</button>
+ <span class="gpvrng">Pages <input id="gpva" type="number" min="1" max="${N}" value="1"> à <input id="gpvz2" type="number" min="1" max="${N}" value="${N}"><button class="p" data-pv="imp">⬇ Importer ces pages</button></span></div></div>`;
+ layout()}
+async function pageSize(n){const p=await doc.getPage(n);return p.getViewport({scale:1})}
+let P1=null;
+async function layout(keep){const w=document.getElementById("gpvw"),box=document.getElementById("gpvb");if(!w)return;P1=P1||await pageSize(1);base=Math.max(.3,(box.clientWidth-16)/P1.width);const sc=base*zoom,top=keep?cur:null;
+ w.innerHTML="";if(obs)obs.disconnect();obs=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting)render(+x.target.dataset.n)}),{root:box,rootMargin:"600px 0px"});
+ for(let n=1;n<=N;n++){const d=document.createElement("div");d.className="gpvpg";d.dataset.n=n;d.style.width=Math.floor(P1.width*sc)+"px";d.style.height=Math.floor(P1.height*sc)+"px";d.innerHTML=`<span class="no">${n}</span>`;w.appendChild(d);obs.observe(d)}
+ const z=document.getElementById("gpvz");if(z)z.textContent=Math.round(zoom*100)+"%";if(top)go(top,true)}
+const RD=new Set();
+async function render(n){const w=document.getElementById("gpvw"),d=w&&w.querySelector(`.gpvpg[data-n="${n}"]`);if(!d||d.dataset.r===String(zoom))return;d.dataset.r=String(zoom);
+ try{const pg=await doc.getPage(n),vp=pg.getViewport({scale:base*zoom}),dpr=Math.min(2,window.devicePixelRatio||1),cv=document.createElement("canvas");d.style.width=Math.floor(vp.width)+"px";d.style.height=Math.floor(vp.height)+"px";cv.width=Math.floor(vp.width*dpr);cv.height=Math.floor(vp.height*dpr);
+  const ctx=cv.getContext("2d");ctx.scale(dpr,dpr);await pg.render({canvasContext:ctx,viewport:vp}).promise;if(d.dataset.r!==String(zoom))return;
+  d.querySelectorAll("canvas,.textLayer").forEach(x=>x.remove());d.appendChild(cv);
+  const tl=document.createElement("div");tl.className="textLayer";tl.style.setProperty("--scale-factor",vp.scale);d.appendChild(tl);
+  const tc=TC[n]||(TC[n]=await pg.getTextContent());const lib=window.pdfjsLib;
+  if(lib&&lib.renderTextLayer){const t=lib.renderTextLayer({textContentSource:tc,container:tl,viewport:vp,textDivs:[]});if(t&&t.promise)await t.promise}}catch(e){d.dataset.r=""}}
+function go(n,instant){n=Math.max(1,Math.min(N,n|0));cur=n;const box=document.getElementById("gpvb"),d=box&&box.querySelector(`.gpvpg[data-n="${n}"]`);if(d)box.scrollTo({top:d.offsetTop*getScale()-8,behavior:instant?"auto":"smooth"});const i=document.getElementById("gpvpg");if(i)i.value=n}
+const getScale=()=>1;
+function trackPage(){const box=document.getElementById("gpvb");if(!box)return;const y=box.scrollTop+box.clientHeight/3;let n=1;box.querySelectorAll(".gpvpg").forEach(d=>{if(d.offsetTop<=y)n=+d.dataset.n});if(n!==cur){cur=n;const i=document.getElementById("gpvpg");if(i&&document.activeElement!==i)i.value=n}}
+async function load(ab,nm){const lib=await pdfLib();buf=ab;name=nm||"PDF";doc=await lib.getDocument({data:new Uint8Array(ab.slice(0))}).promise;N=doc.numPages;TC={};P1=null;zoom=1;cur=1;try{await IDB.set("lastpdf",{buf:ab,name})}catch(_){}ui()}
+async function openFile(f){if(!f)return;say("Ouverture du PDF…");try{await load(await f.arrayBuffer(),f.name)}catch(e){say(e&&e.message==="lib"?"Lecteur de PDF indisponible (connexion ?)":"Ce PDF n'a pas pu être ouvert")}}
+function pick(){let i=document.getElementById("gpvfile");if(!i){i=document.createElement("input");i.type="file";i.accept="application/pdf,.pdf";i.id="gpvfile";i.hidden=true;document.body.appendChild(i)}i.value="";i.click()}
+function close(){if(el)el.innerHTML="";if(obs)obs.disconnect();document.body.classList.remove("jclk")}
+async function pagesText(a,b){const out=[];for(let n=a;n<=b;n++){const pg=await doc.getPage(n),tc=TC[n]||(TC[n]=await pg.getTextContent());out.push(...pdfLines(tc.items))}return out.join("\n")}
+function toImportTab(cb){if(typeof tab!=="undefined"&&tab!=="imp"){tab="imp";try{draw()}catch(_){}}setTimeout(cb,60)}
+function insert(t,txt){const s=t.selectionStart!=null?t.selectionStart:t.value.length,e=t.selectionEnd!=null?t.selectionEnd:t.value.length;const pre=t.value.slice(0,s),sep=pre&&!/\s$/.test(pre)?"\n":"";t.value=pre+sep+txt+t.value.slice(e);t.dispatchEvent(new Event("input",{bubbles:true}));t.dispatchEvent(new Event("change",{bubbles:true}))}
+window.PDFV={open:openFile,async openLast(){try{const l=await IDB.get("lastpdf");if(l&&l.buf){say("Ouverture du dernier PDF…");await load(l.buf,l.name);return}}catch(_){}pick()},pick};
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="gpvfile"){openFile(t.files&&t.files[0]);return}
+ if(t.id==="pdf"){e.stopImmediatePropagation();const f=t.files&&t.files[0];t.value="";openFile(f)}},true);
+document.addEventListener("input",e=>{if(e.target.id!=="gpvq"||!doc)return;const q=e.target.value.trim().toLowerCase(),r=document.getElementById("gpvr");if(q.length<2){r.innerHTML="";return}
+ clearTimeout(window.__gpvq);window.__gpvq=setTimeout(async()=>{const res=[];for(let n=1;n<=N&&res.length<40;n++){if(!TC[n]){const pg=await doc.getPage(n);TC[n]=await pg.getTextContent()}const txt=TC[n].items.map(i=>i.str).join(" ");const lo=txt.toLowerCase();let i=lo.indexOf(q);while(i>=0&&res.length<40){res.push([n,txt.slice(Math.max(0,i-40),i),txt.substr(i,q.length),txt.slice(i+q.length,i+q.length+60)]);i=lo.indexOf(q,i+q.length)}}
+  r.innerHTML=res.length?res.map(([n,a,m,b])=>`<button data-pv="res" data-n="${n}"><b>p. ${n}</b> … ${e2(a)}<mark>${e2(m)}</mark>${e2(b)} …</button>`).join(""):`<p class="mu">Aucun résultat.</p>`},250)});
+document.addEventListener("keydown",e=>{if(e.target.id==="gpvpg"&&e.key==="Enter")go(+e.target.value)});
+document.addEventListener("change",e=>{if(e.target.id==="gpvpg")go(+e.target.value)});
+document.addEventListener("scroll",e=>{if(e.target&&e.target.id==="gpvb")trackPage()},true);
+/* pincement à deux doigts */
+const PT=new Map();let pin=null;
+document.addEventListener("pointerdown",e=>{if(!e.target.closest||!e.target.closest("#gpvb")||e.pointerType!=="touch")return;PT.set(e.pointerId,[e.clientX,e.clientY]);if(PT.size===2){const a=[...PT.values()];pin={d:Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1,r:1}}},true);
+document.addEventListener("pointermove",e=>{if(!PT.has(e.pointerId))return;PT.set(e.pointerId,[e.clientX,e.clientY]);if(pin&&PT.size===2){const a=[...PT.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);pin.r=Math.max(.4,Math.min(4,d/pin.d));const w=document.getElementById("gpvw");if(w)w.style.transform=`scale(${pin.r})`;e.preventDefault()}},{capture:true,passive:false});
+const pend=e=>{if(!PT.has(e.pointerId))return;PT.delete(e.pointerId);if(pin&&PT.size<2){const r=pin.r;pin=null;const w=document.getElementById("gpvw");if(w)w.style.transform="";if(Math.abs(r-1)>.05){zoom=Math.max(.5,Math.min(4,zoom*r));layout(true)}}};
+document.addEventListener("pointerup",pend,true);document.addEventListener("pointercancel",pend,true);
+document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-pv]");if(!b)return;const a=b.dataset.pv;e.preventDefault();e.stopPropagation();
+ if(a==="openv"){window.PDFV.openLast();return}
+ if(!doc&&a!=="close")return;
+ if(a==="close"){close();return}
+ if(a==="prev"){go(cur-1);return}if(a==="next"){go(cur+1);return}
+ if(a==="zi"||a==="zo"){zoom=Math.max(.5,Math.min(4,+(zoom*(a==="zi"?1.25:.8)).toFixed(2)));layout(true);return}
+ if(a==="fit"){zoom=1;layout(true);return}
+ if(a==="find"){const s=document.getElementById("gpvs");s.hidden=!s.hidden;if(!s.hidden)document.getElementById("gpvq").focus();return}
+ if(a==="open"){pick();return}
+ if(a==="res"){go(+b.dataset.n);const d=document.querySelector(`#gpvw .gpvpg[data-n="${b.dataset.n}"]`);if(d){d.classList.add("flash");setTimeout(()=>d.classList.remove("flash"),1500)}return}
+ if(a==="copy"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}try{await navigator.clipboard.writeText(t);say("Texte copié")}catch(_){say("Copie impossible ici : utilise « Insérer » ou « Ajouter à l'import »")}return}
+ if(a==="ins"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}if(!fieldOk()){say("Touche d'abord le champ à remplir dans la fiche");return}insert(lastField,t);say("Texte inséré dans « "+fieldName()+" »");return}
+ if(a==="toraw"){const t=sel();if(!t){say("Sélectionne d'abord du texte (appui long sur le texte)");return}close();toImportTab(()=>{const r=document.getElementById("raw");if(r){insert(r,t);say("Ajouté à la zone d'import")}});return}
+ if(a==="imp"){let x=+document.getElementById("gpva").value||1,y=+document.getElementById("gpvz2").value||N;x=Math.max(1,Math.min(N,x));y=Math.max(x,Math.min(N,y));say("Lecture des pages "+x+" à "+y+"…");const txt=await pagesText(x,y),nm=name.replace(/\.pdf$/i,"");close();
+  toImportTab(()=>{const r=document.getElementById("raw");if(!r)return;r.value=txt;const n=document.getElementById("nm");if(n&&!n.value.trim())n.value=nm;
+   if(txt.trim().length<30){try{info("Aucun texte lisible sur ces pages (image scannée ?).")}catch(_){}return}
+   let ok=true;try{ok=parse(txt).units.length>0}catch(_){}if(!ok){try{info("Les pages ont été lues, mais aucune unité n'a été reconnue. Le texte est dans la zone de texte : vérifie-le, puis appuie sur Importer.")}catch(_){}return}
+   const ib=document.querySelector('[data-act="imp"]');if(ib)ib.click()});return}
+},true);
+/* bouton « Ouvrir un PDF » dans les fenêtres de fiche (unité, détachement, stratagèmes…) et dans l'import */
+function addBars(){document.querySelectorAll("#md .pn").forEach(pn=>{if(pn.querySelector(":scope>.gpdfbar"))return;if(!pn.querySelector("textarea,input[type=text],input:not([type])"))return;const bar=document.createElement("div");bar.className="gpdfbar";bar.innerHTML=`<button data-pv="openv">📄 Remplir depuis un PDF</button>`;const mb=pn.querySelector(":scope>.mb");if(mb)mb.after(bar);else pn.prepend(bar)});
+ const pf=document.getElementById("pdf");if(pf&&!document.getElementById("gpdfimp")){const l=pf.closest("label");if(l)l.insertAdjacentHTML("afterend",`<p id="gpdfimp" class="mu" style="margin:4px 0 10px">Le PDF s'ouvre dans le lecteur : tu le consultes, puis tu importes tout ou seulement certaines pages. <button class="b" data-pv="openv" style="margin-left:6px">📄 Rouvrir le dernier PDF</button></p>`)}}
+const mo=new MutationObserver(()=>{try{addBars()}catch(_){}});
+["md","m"].forEach(i=>{const n=document.getElementById(i);if(n)mo.observe(n,{childList:true,subtree:true})});
+try{addBars()}catch(_){}
 })();
 </script>
 

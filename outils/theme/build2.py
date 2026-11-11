@@ -3,7 +3,7 @@ src,out=sys.argv[1],sys.argv[2]
 logo=open('../logo.b64').read().strip()
 g=open('goth.html',encoding='utf8').read()
 g=g[:g.index('<script>')]  # CSS du thème uniquement
-mod=g+open('goth-js.html',encoding='utf8').read()+open('x40k.html',encoding='utf8').read()
+mod=g+open('goth-js.html',encoding='utf8').read()+open('x40k.html',encoding='utf8').read()+open('pdfv.html',encoding='utf8').read()
 mod=mod.replace('__LOGO__',logo).replace('__LAYOUTS__',json.dumps(json.load(open('layouts.json')),ensure_ascii=False))
 s=open(src,encoding='utf8').read()
 def r(a,b):
