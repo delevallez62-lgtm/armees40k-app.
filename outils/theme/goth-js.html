@@ -23,6 +23,21 @@ html.goth main,html.goth header{padding-left:calc(var(--pw) + 12px)!important;pa
 html.goth header{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='90' viewBox='0 0 420 90'%3E%3Cpath d='M0 90V70h20V50l8-22 8 22v20h18V40l10-30 10 30v30h16V55l6-15 6 15v15h22V30l12-28 12 28v40h16V48l7-18 7 18v22h20V58l5-10 5 10v12h24V36l11-26 11 26v34h18V52l7-16 7 16v18h20V44l9-24 9 24v26h22V60l5-9 5 9v10h20V90z' fill='%23d8b45e' opacity='.07'/%3E%3C/svg%3E") right bottom/auto 100% no-repeat,linear-gradient(180deg,#17191c,#0e0f11)!important}
 @media(min-width:900px){html.goth body{--pw:24px}body.gside header{left:var(--pw)!important;padding-left:14px!important;padding-right:14px!important}body.gside main,body.gside #sb{margin-left:calc(var(--side) + var(--pw))!important}body.gside #bar{left:calc(var(--side) + var(--pw))}}
 #dzf{display:none!important}
+.gtimg,.ghimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none}.gt.gauto,.ghero.gauto{background-color:#8a7656!important}.gauto>.gtimg,.gauto>.ghimg{mix-blend-mode:multiply}
+.gt::before,.ghero::before,.ghero::after{z-index:1}.gt>span,.gt .gdeco,.ghero>div{z-index:2}
+.gban{position:relative;height:120px;border-radius:14px;overflow:hidden;margin:0 0 12px;border:1px solid color-mix(in srgb,var(--tc,#d8b45e) 60%,transparent);box-shadow:0 8px 22px rgba(0,0,0,.5),0 0 18px color-mix(in srgb,var(--tc,#d8b45e) 25%,transparent)}
+.gban::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(8,9,10,.92),rgba(8,9,10,.2) 70%)}
+.gban b{position:absolute;left:14px;bottom:10px;z-index:2;font-family:var(--fc);font-size:22px;color:#f3ead4;text-shadow:0 2px 8px #000}
+.gban button{position:absolute;right:10px;top:10px;z-index:2;min-width:40px;min-height:40px;border-radius:50%;border:1px solid rgba(216,180,94,.5);background:rgba(10,11,12,.7);color:#fff;cursor:pointer;font-size:18px}
+.gcrop{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;border:1px solid rgba(216,180,94,.45);background:#0d0e10;touch-action:none;cursor:grab;margin:8px 0}.gcrop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}.gcrop p{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:var(--mu)}
+.gcrop::after{content:"";position:absolute;inset:0;pointer-events:none;border:2px dashed rgba(240,213,143,.5);border-radius:12px}
+.gxl .gthb{width:58px;height:34px;border-radius:6px;flex:none;position:relative;overflow:hidden;border:1px solid rgba(216,180,94,.3);background:#0d0e10}.gxl .gthb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gxl .bt{display:flex;gap:6px}.gxl .bt .b{min-height:38px;padding:4px 10px}
+.gopt{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}.gopt button{border-radius:10px;border:1px solid rgba(216,180,94,.3);background:#15171a;color:#e6dcc4;font:inherit;font-size:14px;padding:8px 12px;cursor:pointer;min-height:40px}.gopt button.on{background:linear-gradient(180deg,#e2c27a,#a77c2f);color:#1a1307;border-color:#f0d58f}
+.gopt .sw{width:40px;height:40px;padding:0;border-radius:50%}.gopt .sw.on{outline:3px solid #fff;outline-offset:2px}
+.gcorner{position:fixed;z-index:5;width:var(--cw,34px);height:var(--cw,34px);pointer-events:none;display:grid;place-items:center}.gcorner img,.gcorner svg{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px #000)}.gcorner svg{stroke:var(--fcol);fill:rgba(10,11,12,.85);stroke-width:1.4}
+@media(max-width:899px){html.gco header h1{margin-left:calc(var(--cw) - var(--pw) - 4px)}html.gco header .hbn{right:calc(var(--cw) - var(--pw) + 6px)}}
+.gcorner.tl{left:0;top:0}.gcorner.tr{right:0;top:0;transform:scaleX(-1)}.gcorner.bl{left:0;bottom:0}.gcorner.br{right:0;bottom:0;transform:scaleX(-1)}
 .gfoot{position:relative;height:46px;margin:6px 0 0;display:flex;justify-content:center;align-items:center}
 .gfoot::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:linear-gradient(90deg,transparent,#a07a30 20%,#f0d58f 50%,#a07a30 80%,transparent)}
 .gfoot img{position:relative;width:54px;height:54px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(216,180,94,.4))}
@@ -91,7 +106,7 @@ const ic=n=>`<i class="gi"><svg viewBox="0 0 24 24">${P[n]||""}</svg></i>`;
 const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* rubriques : icône par défaut et couleur (comme l'exemple : chaque rubrique a sa teinte) */
 const SEC={home:["home","Accueil","#d8b45e"],lists:["shield","Mes armées","#55c46e"],coll:["layers","Collection","#3fc1b5"],paint:["brush","Peinture & Hobby","#c46be0"],mis:["map","Missions & Layout","#4aa3ff"],gm:["trophy","Parties","#e0563f"],enc:["book","Règles V11","#e8a43c"],imp:["download","Importer","#7f9cff"],play:["dice","Mode jeu","#a77bff"],
- q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["star","Icônes","#ffd166"],
+ q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["gear","Personnaliser","#ffd166"],
  units:["shield","Unités","#55c46e"],dets:["flag","Détachements","#e0563f"],strats:["bolt","Stratagèmes","#ffd166"],opti:["star","Optimisations","#4aa3ff"]};
 const icons=()=>{try{if(!S.icons||typeof S.icons!=="object")S.icons={};return S.icons}catch(_){return{}}};
 function icFor(key){const c=icons()[key],d=SEC[key];if(c&&c.t==="svg"&&P[c.v])return ic(c.v);if(c&&c.t==="emo"&&c.v)return`<i class="gi gemo">${e2(c.v)}</i>`;if(c&&c.t==="img"&&c.v)return`<i class="gi"><img src="${c.v}" alt=""></i>`;return ic(d?d[0]:"star")}
@@ -104,13 +119,13 @@ const lpic=l=>{try{for(const u of l.units||[]){const v=S.imgs&&S.imgs[u.ref];if(
 const XV=window.XV=window.XV||{};
 XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
  const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
- const tile=([k,v,key,t,s,p])=>`<button class="gt${p?"":" gnp"}" data-${k}="${v}" style="--tc:${col(key)};${bg(p)}">${p?"":`<span class="gdeco">${icFor(key).replace('class="gi','class="gi gbig')}</span>`}<span>${icFor(key)}<span><b>${t}</b><small>${s}</small></span></span></button>`;
+ const tile=([k,v,key,t,s,p])=>{const mi=menuImg(key,p);return`<button class="gt${mi?(mi.cust?"":" gauto"):" gnp"}" data-${k}="${v}" style="--tc:${col(key)}">${mi?imgTag(mi,"gtimg"):`<span class="gdeco">${icFor(key).replace('class="gi','class="gi gbig')}</span>`}<span>${icFor(key)}<span><b>${t}</b><small>${s}</small></span></span></button>`};
  const quick=[["q_dice","data-g","gdice"],["q_play","data-act",run?"gresume":"gpick"],["q_enc","data-tab","enc"],["q_new","data-act","nlist"],["q_paint","data-tab","paint"],["q_ico","data-g","gico"]];
  const qb=([key,a,v])=>`<button ${a}="${v}" style="--tc:${col(key)}">${icFor(key)}<span>${key==="q_play"&&run?"Reprendre":SEC[key][1]}</span></button>`;
  const armies=L.length?L.map(l=>{let n=0,pts=0;try{n=typeof lcount==="function"?lcount(l):(l.units||[]).length;pts=typeof lpts==="function"?lpts(l):0}catch(_){}return`<div class="ga"><span class="gth" style="${bg(lpic(l))}"></span><span class="gn"><b>${e2(l.name)}</b><small>${n} unité${n>1?"s":""}${pts?" · "+pts+" pts":""}</small></span><button data-act="gstart" data-id="${l.id}" title="Jouer" aria-label="Jouer avec ${e2(l.name)}">▶</button><button data-act="open" data-id="${l.id}" title="Gérer" aria-label="Gérer ${e2(l.name)}">✎</button></div>`}).join(""):`<p class="mu">Aucune liste pour l'instant.</p>`;
  let hb="";try{const h=S.hobby||{},us=Object.values(S.coll||{}),done=us.filter(u=>((h.sch||{})[u.ref]||{}).st==="fini").length;hb=`<section class="gp" style="--tc:${col("paint")}"><h3>${icFor("paint")}Peinture &amp; Hobby</h3><button class="gu" data-tab="paint"><span class="gbadge" style="color:${col("paint")}">${us.length?Math.round(done*100/us.length):0}%</span><span><b>${done} / ${us.length} figurines terminées</b><small>${(h.paints||[]).length} peinture${(h.paints||[]).length>1?"s":""} dans ta collection</small></span><i>›</i></button></section>`}catch(_){}
  return `<div class="gh"><div class="ghl">
- <section class="ghero" style="${bg(S.sban||pk(4)||pk(0))}"><div><img src="${LOGO}" alt=""><h2>Bienvenue,<b>${e2(nm)}</b></h2><p>Ton assistant Warhammer 40,000 – V11</p></div></section>
+ ${(()=>{const hm=menuImg("home",S.sban||pk(4)||pk(0));return`<section class="ghero${hm&&!hm.cust?" gauto":""}">${hm?imgTag(hm,"ghimg"):""}<div>`})()}<img src="${LOGO}" alt=""><h2>Bienvenue,<b>${e2(nm)}</b></h2><p>Ton assistant Warhammer 40,000 – V11</p></div></section>
  <div class="gtiles">${tiles.map(tile).join("")}</div></div>
  <div class="ghr">
  <section class="gp" style="--tc:#ff7a45"><h3>${ic("tools")}Outils rapides</h3><div class="gq">${quick.map(qb).join("")}</div></section>
@@ -118,6 +133,57 @@ XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],ru
  ${hb}
  <section class="gp" style="--tc:${col("enc")}"><h3>${ic("news")}Actus &amp; mises à jour</h3><button class="gu" data-tab="enc"><span class="gbadge">V11</span><span><b>${nv?nv+" nouvelle"+(nv>1?"s":"")+" règle"+(nv>1?"s":"")+" à valider":"Règles à jour"}</b><small>Vérifiées sur Warhammer Community · chaque jeudi</small></span><i>›</i></button></section>
  </div></div><div class="gfoot"><img src="${LOGO}" alt=""></div>`};
+/* ----- images des menus : choisir, recadrer, supprimer ----- */
+const MI=()=>{try{if(!S.mimgs||typeof S.mimgs!=="object")S.mimgs={};return S.mimgs}catch(_){return{}}};
+function menuImg(key,auto){const m=MI()[key];if(m&&m.none)return null;if(m&&m.src)return{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100,cust:1};return auto?{src:auto,x:50,y:50,z:100}:null}
+const imgTag=(m,cls)=>`<img class="${cls}" src="${m.src}" alt="" style="object-position:${m.x}% ${m.y}%;transform:scale(${m.z/100});transform-origin:${m.x}% ${m.y}%">`;
+const IMKEYS=["home","lists","coll","paint","mis","gm","enc","imp","play"];
+let W=null,imKey=null;
+function imgEdit(k){imKey=k;const m=MI()[k];W=m&&m.src?{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100}:{src:"",x:50,y:50,z:100};imgDraw()}
+function imgDraw(){const k=imKey;GX.open(`<div class="gxh"><h2>Image — ${SEC[k][1]}</h2><button class="b" data-gx="iclist">← Retour</button></div>
+ <p class="mu">${W.src?"Fais glisser l'image pour la cadrer, ou utilise les curseurs.":"Choisis une photo de ton téléphone."}</p>
+ <div class="gcrop" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>
+ ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="100" max="300" value="${W.z}"></label>`:""}
+ <label>📷 Choisir une photo<input type="file" id="gximf" accept="image/*"></label>
+ <div class="gxf"><button class="b x" data-gx="imdel">Supprimer l'image</button>${k==="home"||IMKEYS.includes(k)?`<button class="b" data-gx="imnone">Aucune image</button>`:""}<button class="b p" data-gx="imsave">Enregistrer</button></div>`)}
+function imgLive(){const i=document.querySelector("#gcrop img");if(i){i.style.objectPosition=W.x+"% "+W.y+"%";i.style.transform="scale("+W.z/100+")";i.style.transformOrigin=W.x+"% "+W.y+"%"}const sx=document.getElementById("gcx"),sy=document.getElementById("gcy");if(sx)sx.value=W.x;if(sy)sy.value=W.y}
+document.addEventListener("input",e=>{const id=e.target.id;if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
+let cdrag=null;
+document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#gcrop");if(!c||!W||!W.src)return;cdrag={x:e.clientX,y:e.clientY,ox:W.x,oy:W.y,w:c.clientWidth,h:c.clientHeight};try{c.setPointerCapture(e.pointerId)}catch(_){}});
+document.addEventListener("pointermove",e=>{if(!cdrag)return;const k=W.z/100;W.x=Math.max(0,Math.min(100,Math.round(cdrag.ox-(e.clientX-cdrag.x)*100/(cdrag.w*k))));W.y=Math.max(0,Math.min(100,Math.round(cdrag.oy-(e.clientY-cdrag.y)*100/(cdrag.h*k))));imgLive()});
+document.addEventListener("pointerup",()=>{cdrag=null});
+/* ----- contour de l'application ----- */
+const FCOL={or:["Or","#d8b45e"],argent:["Argent","#c9ced6"],bronze:["Bronze","#c07a3e"],rouge:["Rouge sang","#c0262e"],vert:["Vert nécron","#3fd17a"],bleu:["Bleu","#4aa3ff"],violet:["Violet warp","#b06be0"]};
+const FST=[["goth","Piliers gothiques"],["gold","Cadre simple"],["chain","Chaînes"],["rust","Métal rouillé"],["img","Mon image"],["none","Aucun"]];
+const FW={fin:["Fin",6,12],moyen:["Moyen",10,24],large:["Large",18,36]};
+const FCO=[["logo","Mon logo"],["skull","Crânes"],["none","Aucun"]];
+const frame=()=>{try{const f=S.frame&&typeof S.frame==="object"?S.frame:(S.frame={});return Object.assign({st:"goth",c:"or",w:"moyen",co:"none",img:""},f)}catch(_){return{st:"goth",c:"or",w:"moyen",co:"none"}}};
+const u8=s=>"url(\"data:image/svg+xml,"+encodeURIComponent(s)+"\")";
+function sideBg(F,C){if(F.st==="img"&&F.img)return`url('${F.img}') repeat-y center/100% auto`;
+ if(F.st==="gold")return u8(`<svg xmlns="http://www.w3.org/2000/svg" width="26" height="40"><rect width="26" height="40" fill="#0c0d0f"/><rect x="3" width="2" height="40" fill="${C}"/><rect x="21" width="2" height="40" fill="${C}"/><rect x="11" width="4" height="40" fill="${C}" opacity=".3"/></svg>`)+" repeat-y center/100% auto";
+ if(F.st==="chain")return u8(`<svg xmlns="http://www.w3.org/2000/svg" width="26" height="44"><rect width="26" height="44" fill="#0a0b0c"/><rect x="7" y="3" width="12" height="20" rx="6" fill="none" stroke="${C}" stroke-width="3"/><rect x="11.5" y="20" width="3" height="21" rx="1.5" fill="${C}" opacity=".85"/><rect x="2" width="1" height="44" fill="${C}" opacity=".35"/><rect x="23" width="1" height="44" fill="${C}" opacity=".35"/></svg>`)+" repeat-y center/100% auto";
+ if(F.st==="rust")return u8(`<svg xmlns="http://www.w3.org/2000/svg" width="26" height="70"><defs><linearGradient id="r" x1="0" x2="1"><stop offset="0" stop-color="#2a170c"/><stop offset=".5" stop-color="#6b3a1c"/><stop offset="1" stop-color="#2a170c"/></linearGradient></defs><rect width="26" height="70" fill="url(#r)"/><circle cx="7" cy="12" r="3" fill="#a0522d"/><circle cx="18" cy="40" r="5" fill="#8b4513" opacity=".7"/><circle cx="9" cy="58" r="2" fill="#c0703a" opacity=".8"/><circle cx="13" cy="6" r="2.2" fill="${C}"/><circle cx="13" cy="64" r="2.2" fill="${C}"/><rect x="0" y="34" width="26" height="2" fill="#120a05"/><rect x="0" width="1.5" height="70" fill="${C}" opacity=".5"/><rect x="24.5" width="1.5" height="70" fill="${C}" opacity=".5"/></svg>`)+" repeat-y center/100% auto";
+ return u8(`<svg xmlns="http://www.w3.org/2000/svg" width="26" height="140"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#090a0b"/><stop offset=".5" stop-color="#302d29"/><stop offset="1" stop-color="#090a0b"/></linearGradient></defs><rect width="26" height="140" fill="url(#g)"/><rect x="3" width="1.2" height="140" fill="${C}" opacity=".75"/><rect x="21.8" width="1.2" height="140" fill="${C}" opacity=".75"/><path d="M7 12h12l-6 13z" fill="none" stroke="${C}" stroke-width="1.2"/><circle cx="13" cy="62" r="4" fill="${C}" opacity=".9"/><circle cx="13" cy="62" r="1.6" fill="#140f06"/><rect x="7" y="88" width="12" height="30" rx="6" fill="none" stroke="${C}" opacity=".7"/><path d="M13 92v22" stroke="${C}" opacity=".5"/></svg>`)+" repeat-y center/100% auto"}
+function applyFrame(){const F=frame(),C=(FCOL[F.c]||FCOL.or)[1],w=FW[F.w]||FW.moyen,none=F.st==="none";
+ let st=document.getElementById("gframe");if(!st){st=document.createElement("style");st.id="gframe";document.body.appendChild(st)}
+ const sky=u8(`<svg xmlns="http://www.w3.org/2000/svg" width="420" height="90" viewBox="0 0 420 90"><path d="M0 90V70h20V50l8-22 8 22v20h18V40l10-30 10 30v30h16V55l6-15 6 15v15h22V30l12-28 12 28v40h16V48l7-18 7 18v22h20V58l5-10 5 10v12h24V36l11-26 11 26v34h18V52l7-16 7 16v18h20V44l9-24 9 24v26h22V60l5-9 5 9v10h20V90z" fill="${C}" opacity=".09"/></svg>`);
+ st.textContent=`html.goth{--fcol:${C}}html.goth body{--pw:${none?0:w[1]}px}@media(min-width:900px){html.goth body{--pw:${none?0:w[2]}px}}
+ html.goth body::before,html.goth body::after{display:${none?"none":"block"};background:${sideBg(F,C)};border-color:${C}66}
+ html.goth header{background:${sky} right bottom/auto 100% no-repeat,linear-gradient(180deg,#17191c,#0e0f11)!important;border-bottom-color:${C}88}
+ .gfoot::before{background:linear-gradient(90deg,transparent,${C}99 20%,${C} 50%,${C}99 80%,transparent)}
+ html.goth body{--cw:${Math.max(26,w[1]*3)}px}@media(min-width:900px){html.goth body{--cw:${Math.max(34,w[2]*2)}px}}`;
+ document.documentElement.classList.toggle("gco",F.co!=="none");const sk=`<svg viewBox="0 0 24 24">${P.skull}</svg>`;["tl","tr","bl","br"].forEach(p=>{let d=document.querySelector(".gcorner."+p);if(!d){d=document.createElement("div");d.className="gcorner "+p;document.body.appendChild(d)}d.style.display=F.co==="none"?"none":"grid";d.innerHTML=F.co==="logo"?`<img src="${LOGO}" alt="">`:F.co==="skull"?sk:""});
+ document.querySelectorAll(".gfoot img").forEach(i=>{i.style.display=F.co==="none"?"":""})}
+window.applyFrame=applyFrame;
+function frameEdit(){const F=frame();
+ GX.open(`<div class="gxh"><h2>Contour de l'appli</h2><button class="b" data-gx="iclist">← Retour</button></div><p class="mu">Chaque choix s'applique tout de suite.</p>
+ <h4>Style</h4><div class="gopt">${FST.map(([k,n])=>`<button class="${F.st===k?"on":""}" data-gx="frs" data-v="${k}">${n}</button>`).join("")}</div>
+ ${F.st==="img"?`<label>📷 Image du contour (elle se répète sur les côtés)<input type="file" id="gxfrf" accept="image/*"></label>${F.img?"":`<p class="mu">Choisis une image pour ce style.</p>`}`:""}
+ <h4>Couleur</h4><div class="gopt">${Object.entries(FCOL).map(([k,[n,c]])=>`<button class="sw${F.c===k?" on":""}" style="background:${c}" title="${n}" aria-label="${n}" data-gx="frc" data-v="${k}"></button>`).join("")}</div>
+ <h4>Épaisseur</h4><div class="gopt">${Object.entries(FW).map(([k,[n]])=>`<button class="${F.w===k?"on":""}" data-gx="frw" data-v="${k}">${n}</button>`).join("")}</div>
+ <h4>Coins de l'écran</h4><div class="gopt">${FCO.map(([k,n])=>`<button class="${F.co===k?"on":""}" data-gx="frco" data-v="${k}">${n}</button>`).join("")}</div>
+ <div class="gxf"><button class="b" data-gx="frdef">Contour par défaut</button><button class="b p" data-gx="iclist">Terminé</button></div>`)}
+function frameSet(k,v){if(!S.frame||typeof S.frame!=="object")S.frame={};S.frame[k]=v;try{save()}catch(_){}applyFrame();frameEdit()}
 /* ----- personnalisation des icônes ----- */
 const GX=window.GX={open(html){let o=document.getElementById("gxo");if(!o){o=document.createElement("div");o.id="gxo";document.body.appendChild(o)}o.innerHTML=`<div class="gxo" data-gx="bg"><div class="gxp" role="dialog" aria-modal="true">${html}</div></div>`;document.body.classList.add("jclk");const f=o.querySelector("[autofocus]");if(f)try{f.focus()}catch(_){}},
  close(){const o=document.getElementById("gxo");if(o)o.innerHTML="";document.body.classList.remove("jclk")},
@@ -125,13 +191,17 @@ const GX=window.GX={open(html){let o=document.getElementById("gxo");if(!o){o=doc
  commit(){try{save()}catch(_){}try{draw()}catch(_){}}};
 let icKey=null;
 function icList(){const keys=["home","lists","coll","paint","mis","gm","enc","imp","play","q_dice","q_enc","q_new","q_paint","q_ico"];
- GX.open(`<div class="gxh"><h2>Icônes</h2><button class="b" data-gx="close" aria-label="Fermer">✕</button></div><p class="mu">Touche une rubrique pour changer son icône : symbole, emoji ou image de ton téléphone.</p>${keys.map(k=>`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b><button class="b" data-gx="icpick" data-k="${k}">Changer</button></div>`).join("")}<div class="gxf"><button class="b" data-gx="icreset">Tout remettre par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
+ const F=frame();GX.open(`<div class="gxh"><h2>Personnaliser</h2><button class="b" data-gx="close" aria-label="Fermer">✕</button></div>
+ <div class="gxl" style="--tc:${(FCOL[F.c]||FCOL.or)[1]}">${ic("castle")}<b>Contour de l'appli<br><small class="mu">${(FST.find(x=>x[0]===F.st)||FST[0])[1]} · ${(FCOL[F.c]||FCOL.or)[0]} · ${(FW[F.w]||FW.moyen)[0]}</small></b><span class="bt"><button class="b p" data-gx="frame">Modifier</button></span></div>
+ <h4>Icônes et images des menus</h4><p class="mu">« Icône » change le symbole ; « Image » change, recadre ou supprime la photo du menu (tuile de l'accueil et bandeau en haut du menu).</p>
+ ${keys.map(k=>{const mi=IMKEYS.includes(k)?menuImg(k):null;return`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b>${IMKEYS.includes(k)?`<span class="gthb">${mi?imgTag(mi,""):""}</span>`:""}<span class="bt"><button class="b" data-gx="icpick" data-k="${k}">Icône</button>${IMKEYS.includes(k)?`<button class="b" data-g="gimg" data-k="${k}">Image</button>`:""}</span></div>`}).join("")}
+ <div class="gxf"><button class="b" data-gx="icreset">Icônes par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
 function icPick(k){icKey=k;const c=icons()[k]||{};
  GX.open(`<div class="gxh"><h2>${SEC[k][1]}</h2><button class="b" data-gx="iclist">← Retour</button></div><p class="mu">Symboles</p><div class="gxg">${ICON_NAMES.map(n=>`<button class="${c.t==="svg"&&c.v===n?"on":""}" data-gx="icset" data-v="${n}" aria-label="${n}" style="color:${col(k)}">${ic(n)}</button>`).join("")}</div>
  <label>Ou un emoji<input id="gxemo" maxlength="4" placeholder="ex. 🐉" value="${c.t==="emo"?e2(c.v):""}"></label><div class="gxf"><button class="b" data-gx="icemo">Utiliser cet emoji</button></div>
  <label>Ou une image de ton téléphone<input type="file" id="gxicf" accept="image/*"></label>
  <div class="gxf"><button class="b" data-gx="icdef">Icône par défaut</button><button class="b p" data-gx="iclist">Terminé</button></div>`)}
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;const g=b.dataset.g;if(g==="gdice"){const f=document.getElementById("dzf");if(f)f.click()}else if(g==="gico")icList()});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-g]");if(!b)return;const g=b.dataset.g;if(g==="gdice"){if(typeof window.dzToggle==="function")window.dzToggle(true);else{const f=document.getElementById("dzf");if(f)f.click()}}else if(g==="gico")icList();else if(g==="gimg")imgEdit(b.dataset.k)});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-gx]");if(!b)return;const a=b.dataset.gx;
  if(a==="bg"){if(e.target===b)GX.close();return}
  if(a==="close"){GX.close();return}
@@ -140,16 +210,24 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="icset"){icons()[icKey]={t:"svg",v:b.dataset.v};GX.commit();icPick(icKey);return}
  if(a==="icemo"){const v=(document.getElementById("gxemo").value||"").trim();if(v){icons()[icKey]={t:"emo",v};GX.commit();icPick(icKey)}return}
  if(a==="icdef"){delete icons()[icKey];GX.commit();icPick(icKey);return}
- if(a==="icreset"){S.icons={};GX.commit();icList();return}});
-document.addEventListener("change",e=>{if(e.target.id==="gxicf"){GX.img(e.target.files[0],96,d=>{icons()[icKey]={t:"img",v:d};GX.commit();icPick(icKey)})}});
+ if(a==="icreset"){S.icons={};GX.commit();icList();return}
+ if(a==="frame"){frameEdit();return}
+ if(a==="frs"){frameSet("st",b.dataset.v);return}if(a==="frc"){frameSet("c",b.dataset.v);return}if(a==="frw"){frameSet("w",b.dataset.v);return}if(a==="frco"){frameSet("co",b.dataset.v);return}
+ if(a==="frdef"){S.frame={};try{save()}catch(_){}applyFrame();frameEdit();return}
+ if(a==="imsave"){if(!W.src){GX.commit();icList();return}MI()[imKey]={src:W.src,x:W.x,y:W.y,z:W.z};GX.commit();icList();return}
+ if(a==="imdel"){delete MI()[imKey];W=null;GX.commit();icList();return}
+ if(a==="imnone"){MI()[imKey]={none:1};W=null;GX.commit();icList();return}});
+document.addEventListener("change",e=>{if(e.target.id==="gximf"){GX.img(e.target.files[0],1600,d=>{W={src:d,x:50,y:50,z:100};imgDraw()});return}if(e.target.id==="gxfrf"){GX.img(e.target.files[0],300,d=>{if(!S.frame||typeof S.frame!=="object")S.frame={};S.frame.img=d;try{save()}catch(_){}applyFrame();frameEdit()});return}if(e.target.id==="gxicf"){GX.img(e.target.files[0],96,d=>{icons()[icKey]={t:"img",v:d};GX.commit();icPick(icKey)})}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.querySelector("#gxo .gxo"))GX.close()});
 /* ----- en-tête, menu, menu latéral ----- */
 function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySelector(".glogo"))h1.insertAdjacentHTML("afterbegin",`<img class="glogo" src="${LOGO}" alt="">`);
  document.querySelectorAll("#nav>button[data-tab]").forEach(b=>{if(b.dataset.gd===JSON.stringify(icons()[b.dataset.tab]||0))return;const k=b.dataset.tab,old=b.querySelector(".gi");if(old)old.remove();const back=/^←/.test(b.textContent);b.textContent=b.textContent.replace(/^[^\wÀ-ÿ]+/,"");b.style.setProperty("--tc",col(k));b.insertAdjacentHTML("afterbegin",back?ic("back"):icFor(k));b.dataset.gd=JSON.stringify(icons()[k]||0)});
+ try{const t=typeof tab!=="undefined"?tab:"",m=document.getElementById("m"),mi=IMKEYS.includes(t)&&t!=="home"?menuImg(t):null;if(m){const old=m.querySelector(":scope>.gban");if(mi&&mi.cust){if(!old||old.dataset.k!==t||old.dataset.s!==String(mi.src.length+mi.x+"-"+mi.y+"-"+mi.z)){if(old)old.remove();m.insertAdjacentHTML("afterbegin",`<div class="gban" data-k="${t}" data-s="${mi.src.length+mi.x+"-"+mi.y+"-"+mi.z}" style="--tc:${col(t)}">${imgTag(mi,"gtimg")}<b>${SEC[t][1]}</b><button data-g="gimg" data-k="${t}" aria-label="Changer l'image">📷</button></div>`)}}else if(old)old.remove()}}catch(_){}
  const hd=document.querySelector("header"),hp=hd&&hd.classList.contains("hpl");document.body.classList.toggle("gside",innerWidth>=900&&!hp)}
 const old=window.tbPost;window.tbPost=()=>{try{deco()}catch(_){}if(old)old()};
 addEventListener("resize",()=>{try{deco()}catch(_){}});
 try{deco()}catch(_){}
+try{applyFrame()}catch(_){}
 setTimeout(()=>{try{if(typeof tab!=="undefined"&&XV[tab]&&typeof draw==="function")draw()}catch(_){}},0);
 })();
 </script>
