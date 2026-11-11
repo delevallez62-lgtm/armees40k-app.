@@ -2142,7 +2142,7 @@ function wzData(k){try{window.applyMx&&window.applyMx()}catch(e){}
 const WZF={pri:["🎯","Missions primaires","#e0563f","mission"],sec:["⚡","Cartes secondaires","#ff7a45","carte"],lay:["🗺","Layouts de terrain","#4aa3ff","layout"]};
 function wzFolds(k){try{return(window.__mxFolders?window.__mxFolders():[]).filter(f=>f.k===k)}catch(e){return[]}}
 function wzIds(k){return wzData(k).flatMap(g=>g.it.map(x=>x.id))}
-function wzFSel(){const p=P();p.sel=p.sel||{pri:[],sec:[],lay:[]};p.fsel=p.fsel||{};WZK.forEach(k=>{p.sel[k]=p.fsel[k]?(window.__mxFolderIds?window.__mxFolderIds(p.fsel[k]):wzIds(k)):[]})}
+function wzFSel(){const p=P();p.sel=p.sel||{pri:[],sec:[],lay:[]};p.fsel=p.fsel||{};WZK.forEach(k=>{p.sel[k]=p.fsel[k]?(window.__mxFolderIds?(window.__mxFolderIds(p.fsel[k]).length?window.__mxFolderIds(p.fsel[k]):["-"]):wzIds(k)):[]})}
 function wzEnter(){const p=P();if((p.wz||1)<3)return;if(!p.fsel){p.fsel={};WZK.forEach(k=>{const f=wzFolds(k).find(x=>x.n>0)||wzFolds(k)[0];if(f)p.fsel[k]=f.id})}wzFSel()}
 function wzFolders(){const p=P();wzEnter();const f=p.fsel||{},lp=window.__lay&&window.__lay.LP[window.__lay.key(eff1(),p.m2)]||null;
  const card=(k,fo)=>{const m=WZF[k],on=f[k]===fo.id;return`<button type="button" class="wzf2${on?" on":""}" style="--c:${esc(fo.c||m[2])}" data-gp="wfold" data-k="${k}" data-id="${esc(fo.id)}" aria-pressed="${on}"><span class="ic">${m[0]}</span><span class="tx"><b>${esc(fo.nm)}</b><small>${fo.n?fo.n+" "+m[3]+(fo.n>1?"s":""):"vide"}</small></span><span class="rd"></span></button>`};
@@ -2157,7 +2157,7 @@ function wzBody(n){const k=WZK[n-1],p=P(),c=((p.sel||{})[k]||[]).length;wzEnter(
 function wzApply(){const p=P();if(!p.sel||!p.sel.pri||!p.sel.pri.length)return;
  [1,2].forEach(n=>{const cat=n===1?eff1():p.m2;if(!cat)return;const sl=p.sel.pri.filter(id=>{const m=mOf(id);return m&&m.cat===cat});if(sl.length&&!sl.includes(n===1?ind1():ind2()))p["i"+n]=sl[0]})}
 window.gSel=k=>{const r=S.games&&S.bat&&S.bat.gid&&S.games.find(g=>g.id===S.bat.gid&&!g.fin);const s=r?r.sel:(open?P().sel:null);return s&&s[k]&&s[k].length?s[k]:null};
-window.gSelF=(k,l,f)=>{const s=window.gSel(k);if(!s)return l;const o=l.filter(x=>s.includes(f(x)));return o.length?o:l};
+window.gSelF=(k,l,f)=>{const s=window.gSel(k);if(!s)return l;return l.filter(x=>s.includes(f(x)))};
 window.okSx=id=>{const s=window.gSel("sec");return!s||s.includes(id)};
 function gpDraw(){if(!open||!el)return;const p=P(),L=mine(),O=opp(),g=p.g,e1=eff1(),tmp=p.m1&&p.m1!==(L.mission||""),old=el.querySelector(".pn"),sc=old?old.scrollTop:0,lm=L.mission?misTag(L.mission,g):"aucune mission enregistrée",mi=miss(),need=k=>mi.some(x=>x[0]===k)?" need":"";
  const opts=(sel,none)=>(none?`<option value="">${none}</option>`:"")+S.lists.map(l=>`<option value="${l.id}"${l.id===sel?" selected":""}>${esc(l.name)}</option>`).join("");
@@ -4454,10 +4454,10 @@ html{-webkit-tap-highlight-color:transparent}
  #gbn button.on{color:var(--tc,var(--gold))}
  #gbn button.on::before{content:"";position:absolute;top:0;left:24%;right:24%;height:3px;border-radius:0 0 4px 4px;background:var(--tc,var(--gold));box-shadow:0 0 10px var(--tc,var(--gold))}
  #gbn button.on .gi{color:var(--tc,var(--gold))}
- #gbn .gjeu{flex:1.2}
- #gbn .gjeu .gcirc{width:58px;height:58px;margin-top:-28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f0d58f,#a77c2f);color:#1a1307;border:3px solid #0d0e10;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 18px rgba(216,180,94,.45)}
+ #gbn button{flex:1 1 0!important}#gbn .gjeu{flex:1 1 0!important;justify-content:flex-start;padding-top:0;gap:0}
+ #gbn .gjeu .gcirc{width:56px;height:56px;margin-top:-24px;margin-bottom:3px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f0d58f,#a77c2f);color:#1a1307;border:3px solid #0d0e10;box-shadow:0 6px 18px rgba(0,0,0,.6),0 0 18px rgba(216,180,94,.45)}
  #gbn .gjeu .gcirc .gi{color:#1a1307;width:30px;height:30px}#gbn .gjeu .gcirc .gi svg{width:30px;height:30px}
- #gbn .gjeu .l{color:var(--gold);margin-top:-2px}
+ #gbn .gjeu .l{color:var(--gold);margin:0}
  body:not(.gingame) main{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
  body:not(.gingame) #ts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
  /* feuille « Plus » */
