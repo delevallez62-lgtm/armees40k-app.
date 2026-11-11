@@ -42,7 +42,13 @@ html.gwl #gwall{display:block}html.gwl main,html.gwl #sb,html.gwl #nav{position:
 html.gfull main{max-width:none!important}
 .gsideimg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.gsideimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gsideimg i{position:absolute;inset:0;background:#000}
 html.gsd header>h1,html.gsd header>nav{position:relative;z-index:1}html.gsd header>.hbn{z-index:2}
-.gcrop.tall{aspect-ratio:9/16;max-height:52vh;margin-left:auto;margin-right:auto}
+.ghero:not(.gauto),.gt:not(.gauto):not(.gnp),.ga .gth{background-color:#0d0e10!important}.gban{background:#0d0e10}
+.gfr{position:absolute!important;inset:0!important;overflow:hidden;container-type:size;pointer-events:none;display:block!important;padding:0!important;margin:0!important;z-index:0!important}
+.gfr>img{position:absolute!important;inset:auto!important;max-width:none!important;max-height:none!important;object-fit:fill!important;transform:none!important;mix-blend-mode:inherit;
+ width:calc(max(100cqw,100cqh*var(--ar,1.5))*var(--k,1))!important;height:calc(max(100cqw/var(--ar,1.5),100cqh)*var(--k,1))!important;
+ left:calc((100cqw - max(100cqw,100cqh*var(--ar,1.5))*var(--k,1))*var(--px,.5))!important;top:calc((100cqh - max(100cqw/var(--ar,1.5),100cqh)*var(--k,1))*var(--py,.5))!important}
+.gauto>.gfr{mix-blend-mode:multiply}
+.gcrop.wide{aspect-ratio:3/1}.gcrop.tall{aspect-ratio:9/16;max-height:52vh;margin-left:auto;margin-right:auto}
 .ga .gth{position:relative;overflow:hidden}.ga .gth img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.ga .gcam{min-width:36px;font-size:16px}
 .glimg{position:relative;height:130px;margin:-12px -12px 10px;overflow:hidden;border-bottom:1px solid rgba(216,180,94,.35);background:radial-gradient(circle at 50% 40%,rgba(85,196,110,.25),transparent 70%),#121316}.glimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.glimg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,9,10,.6),transparent 60%);pointer-events:none}
 .glimg .gph{position:absolute;inset:0;display:grid;place-items:center;color:var(--mu);font-size:13px}.glimg button{position:absolute;right:8px;top:8px;z-index:2;min-width:42px;min-height:42px;border-radius:50%;border:1px solid rgba(216,180,94,.5);background:rgba(10,11,12,.75);color:#fff;font-size:18px;cursor:pointer}
@@ -125,7 +131,7 @@ function pics(){const out=[],seen=new Set(),add=v=>{if(v&&!seen.has(v)){seen.add
  try{(S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>add(S.imgs&&S.imgs[u.ref])));Object.values(S.imgs||{}).forEach(add)}catch(_){}return out}
 const bg=u=>u?`background-image:url('${u}');`:"";
 const lpic=l=>{try{for(const u of l.units||[]){const v=S.imgs&&S.imgs[u.ref];if(v)return v}}catch(_){}return""};
-const lthumb=l=>{const m=LI()[l.id];if(m&&m.src)return imgTag({src:m.src,x:+m.x,y:+m.y,z:+m.z||100},"");const a=lpic(l);return a?`<img src="${a}" alt="" style="mix-blend-mode:multiply">`:""};
+const lthumb=l=>{const m=LI()[l.id];if(m&&m.src)return imgTag({src:m.src,x:+m.x,y:+m.y,z:+m.z||100},"");const a=lpic(l);return a?`<img src="${a}" alt="">`:""};
 const XV=window.XV=window.XV||{};
 XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
  const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
@@ -146,7 +152,9 @@ XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],ru
 /* ----- images des menus : choisir, recadrer, supprimer ----- */
 const MI=()=>{try{if(!S.mimgs||typeof S.mimgs!=="object")S.mimgs={};return S.mimgs}catch(_){return{}}};
 function menuImg(key,auto){const m=MI()[key];if(m&&m.none)return null;if(m&&m.src)return{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100,cust:1};return auto?{src:auto,x:50,y:50,z:100}:null}
-const imgTag=(m,cls)=>`<img class="${cls}" src="${m.src}" alt="" style="object-position:${m.x}% ${m.y}%;transform:scale(${m.z/100});transform-origin:${m.x}% ${m.y}%">`;
+const imgTag=(m,cls)=>`<span class="gfr ${cls||""}" style="--k:${(+m.z||100)/100};--px:${(m.x==null?50:+m.x)/100};--py:${(m.y==null?50:+m.y)/100}"><img src="${m.src}" alt=""></span>`;
+document.addEventListener("load",e=>{const t=e.target;if(t&&t.tagName==="IMG"&&t.parentNode&&t.parentNode.classList&&t.parentNode.classList.contains("gfr")&&t.naturalHeight)t.parentNode.style.setProperty("--ar",t.naturalWidth/t.naturalHeight)},true);
+const arFix=()=>document.querySelectorAll(".gfr>img").forEach(t=>{if(t.complete&&t.naturalHeight)t.parentNode.style.setProperty("--ar",t.naturalWidth/t.naturalHeight)});
 const LI=()=>{try{if(!S.limgs||typeof S.limgs!=="object")S.limgs={};return S.limgs}catch(_){return{}}};
 const isL=k=>String(k).startsWith("L:"),lName=k=>{try{const l=(S.lists||[]).find(x=>x.id===k.slice(2));return l?l.name:"Liste"}catch(_){return"Liste"}};
 const store=k=>isL(k)?LI():MI(),skey=k=>isL(k)?k.slice(2):k;
@@ -155,16 +163,18 @@ let W=null,imKey=null;
 function imgEdit(k){imKey=k;const m=store(k)[skey(k)];W=m&&m.src?{src:m.src,x:+m.x||50,y:m.y==null?50:+m.y,z:+m.z||100}:{src:"",x:50,y:50,z:100};imgDraw()}
 function imgDraw(){const k=imKey;GX.open(`<div class="gxh"><h2>${isL(k)?"Photo — "+e2(lName(k)):"Image — "+SEC[k][1]}</h2><button class="b" data-gx="${isL(k)?"close":"iclist"}">${isL(k)?"✕":"← Retour"}</button></div>
  <p class="mu">${W.src?"Fais glisser l'image pour la cadrer, ou utilise les curseurs.":"Choisis une photo de ton téléphone."}</p>
- <div class="gcrop" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>
- ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="100" max="300" value="${W.z}"></label>`:""}
+ <div class="gcrop${isL(k)?" wide":""}" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>
+ ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="30" max="300" value="${W.z}"></label><div class="gopt"><button data-gx="zm" data-v="-10">－ Dézoomer</button><button data-gx="zm" data-v="10">＋ Zoomer</button><button data-gx="zfit">Image entière</button><button data-gx="zcov">Remplir</button></div><p class="mu">Astuce : pince l'aperçu à deux doigts pour zoomer ou dézoomer.</p>`:""}
  <label>📷 Choisir une photo<input type="file" id="gximf" accept="image/*"></label>
  <div class="gxf"><button class="b x" data-gx="imdel">Supprimer ${isL(k)?"la photo":"l'image"}</button>${isL(k)?"":`<button class="b" data-gx="imnone">Aucune image</button>`}<button class="b p" data-gx="imsave">Enregistrer</button></div>`)}
-function imgLive(){const i=document.querySelector("#gcrop img");if(i){i.style.objectPosition=W.x+"% "+W.y+"%";i.style.transform="scale("+W.z/100+")";i.style.transformOrigin=W.x+"% "+W.y+"%"}const sx=document.getElementById("gcx"),sy=document.getElementById("gcy");if(sx)sx.value=W.x;if(sy)sy.value=W.y}
+function imgLive(){const f=document.querySelector("#gcrop .gfr");if(f){f.style.setProperty("--k",W.z/100);f.style.setProperty("--px",W.x/100);f.style.setProperty("--py",W.y/100)}const sx=document.getElementById("gcx"),sy=document.getElementById("gcy"),sz=document.getElementById("gcz");if(sx)sx.value=W.x;if(sy)sy.value=W.y;if(sz)sz.value=W.z}
 document.addEventListener("input",e=>{const id=e.target.id;if(id==="gsdo"&&SW){SW.op=+e.target.value;return}if(id==="gwd"){WD=+e.target.value;const k=document.getElementById("gwdk");if(k)k.style.opacity=WD/100;return}if(!W||!["gcx","gcy","gcz"].includes(id))return;W[id==="gcx"?"x":id==="gcy"?"y":"z"]=+e.target.value;imgLive()});
-let cdrag=null;
-document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#gcrop");if(!c||!W||!W.src)return;cdrag={x:e.clientX,y:e.clientY,ox:W.x,oy:W.y,w:c.clientWidth,h:c.clientHeight};try{c.setPointerCapture(e.pointerId)}catch(_){}});
-document.addEventListener("pointermove",e=>{if(!cdrag)return;const k=W.z/100;W.x=Math.max(0,Math.min(100,Math.round(cdrag.ox-(e.clientX-cdrag.x)*100/(cdrag.w*k))));W.y=Math.max(0,Math.min(100,Math.round(cdrag.oy-(e.clientY-cdrag.y)*100/(cdrag.h*k))));imgLive()});
-document.addEventListener("pointerup",()=>{cdrag=null});
+let cdrag=null;const PT=new Map();let pinch=null;
+const pd=()=>{const a=[...PT.values()];return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1};
+document.addEventListener("pointerdown",e=>{const c=e.target.closest&&e.target.closest("#gcrop");if(!c||!W||!W.src)return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});try{c.setPointerCapture(e.pointerId)}catch(_){}
+ if(PT.size===2){cdrag=null;pinch={d:pd(),z:W.z};return}{const ir=(c.querySelector(".gfr>img")||c).getBoundingClientRect();cdrag={x:e.clientX,y:e.clientY,ox:W.x,oy:W.y,fw:c.clientWidth-ir.width,fh:c.clientHeight-ir.height}}});
+document.addEventListener("pointermove",e=>{if(PT.has(e.pointerId))PT.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch&&PT.size===2){W.z=Math.max(30,Math.min(300,Math.round(pinch.z*pd()/pinch.d)));imgLive();return}if(!cdrag)return;const k=W.z/100;if(Math.abs(cdrag.fw)>1)W.x=Math.max(0,Math.min(100,Math.round(cdrag.ox+(e.clientX-cdrag.x)*100/cdrag.fw)));if(Math.abs(cdrag.fh)>1)W.y=Math.max(0,Math.min(100,Math.round(cdrag.oy+(e.clientY-cdrag.y)*100/cdrag.fh)));imgLive()});
+const pu=e=>{PT.delete(e.pointerId);if(PT.size<2)pinch=null;cdrag=null};document.addEventListener("pointerup",pu);document.addEventListener("pointercancel",pu);
 /* ----- contour de l'application ----- */
 const FCOL={or:["Or","#d8b45e"],argent:["Argent","#c9ced6"],bronze:["Bronze","#c07a3e"],rouge:["Rouge sang","#c0262e"],vert:["Vert nécron","#3fd17a"],bleu:["Bleu","#4aa3ff"],violet:["Violet warp","#b06be0"]};
 const FST=[["goth","Piliers gothiques"],["gold","Cadre simple"],["chain","Chaînes"],["rust","Métal rouillé"],["img","Mon image"],["none","Aucun"]];
@@ -204,7 +214,7 @@ function wallEdit(keep){const w=wall()||{};if(!keep){W=w.src?{src:w.src,x:w.x==n
  GX.open(`<div class="gxh"><h2>Fond d'écran</h2><button class="b" data-gx="iclist">← Retour</button></div>
  <p class="mu">L'image remplit tout l'arrière-plan de l'appli, derrière les menus et les cadres.${W.src?" Fais-la glisser pour la cadrer.":""}</p>
  <div class="gcrop tall" id="gcrop">${W.src?imgTag(W,"gcimg")+`<i id="gwdk" style="position:absolute;inset:0;background:#000;opacity:${WD/100};pointer-events:none"></i>`:"<p>Aucune image</p>"}</div>
- ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="100" max="300" value="${W.z}"></label><label>Assombrir (lisibilité)<input type="range" id="gwd" min="0" max="85" value="${WD}"></label>`:""}
+ ${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="30" max="300" value="${W.z}"></label><div class="gopt"><button data-gx="zm" data-v="-10">－ Dézoomer</button><button data-gx="zm" data-v="10">＋ Zoomer</button><button data-gx="zfit">Image entière</button><button data-gx="zcov">Remplir</button></div><p class="mu">Astuce : pince l'aperçu à deux doigts pour zoomer ou dézoomer.</p><label>Assombrir (lisibilité)<input type="range" id="gwd" min="0" max="85" value="${WD}"></label>`:""}
  <label>📷 Choisir une photo<input type="file" id="gxwf" accept="image/*"></label>
  <h4>Où afficher le fond</h4><div class="gopt">${[["all","Toute l'appli"],["home","Accueil seulement"],["menu","L'image de chaque menu"]].map(([k,n])=>`<button class="${((wall()||{}).sc||"all")===k?"on":""}" data-gx="wsc" data-v="${k}">${n}</button>`).join("")}</div>
  <p class="mu">« L'image de chaque menu » utilise l'image choisie pour chaque menu (bouton Image) ; à défaut, ce fond.</p>
@@ -232,7 +242,7 @@ function sideEdit(keep){const F=side();if(!keep)SW=Object.assign({},F,{x:F.x==nu
  <h4>Fond du menu</h4><div class="gopt">${[["noir","Noir (défaut)"],["transp","Transparent"],["img","Ma photo"],["col","Couleur"]].map(([k,n])=>`<button class="${SW.mode===k?"on":""}" data-gx="sdm" data-v="${k}">${n}</button>`).join("")}</div>
  ${SW.mode==="transp"?`<p class="mu">Laisse voir le fond d'écran derrière le menu.</p>`:""}
  ${SW.mode==="col"?`<label>Couleur<input type="color" id="gsdc" value="${SW.col}"></label>`:""}
- ${SW.mode==="img"?`<div class="gcrop tall" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="100" max="300" value="${W.z}"></label>`:""}<label>📷 Choisir une photo<input type="file" id="gxsdf" accept="image/*"></label>`:""}
+ ${SW.mode==="img"?`<div class="gcrop tall" id="gcrop">${W.src?imgTag(W,"gcimg"):"<p>Aucune image</p>"}</div>${W.src?`<label>Horizontal<input type="range" id="gcx" min="0" max="100" value="${W.x}"></label><label>Vertical<input type="range" id="gcy" min="0" max="100" value="${W.y}"></label><label>Zoom<input type="range" id="gcz" min="30" max="300" value="${W.z}"></label><div class="gopt"><button data-gx="zm" data-v="-10">－ Dézoomer</button><button data-gx="zm" data-v="10">＋ Zoomer</button><button data-gx="zfit">Image entière</button><button data-gx="zcov">Remplir</button></div><p class="mu">Astuce : pince l'aperçu à deux doigts pour zoomer ou dézoomer.</p>`:""}<label>📷 Choisir une photo<input type="file" id="gxsdf" accept="image/*"></label>`:""}
  ${SW.mode==="transp"||SW.mode==="img"?`<label>Assombrir (lisibilité)<input type="range" id="gsdo" min="0" max="90" value="${SW.op}"></label>`:""}
  <div class="gxf"><button class="b" data-gx="sddef">Par défaut</button><button class="b p" data-gx="sdsave">Enregistrer</button></div>`)}
 function frameSet(k,v){if(!S.frame||typeof S.frame!=="object")S.frame={};S.frame[k]=v;try{save()}catch(_){}applyFrame();frameEdit()}
@@ -265,6 +275,9 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="icemo"){const v=(document.getElementById("gxemo").value||"").trim();if(v){icons()[icKey]={t:"emo",v};GX.commit();icPick(icKey)}return}
  if(a==="icdef"){delete icons()[icKey];GX.commit();icPick(icKey);return}
  if(a==="icreset"){S.icons={};GX.commit();icList();return}
+ if(a==="zm"&&W){W.z=Math.max(30,Math.min(300,W.z+ +b.dataset.v));imgLive();return}
+ if(a==="zcov"&&W){W.z=100;W.x=50;W.y=50;imgLive();return}
+ if(a==="zfit"&&W){const c=document.getElementById("gcrop"),i=c&&c.querySelector(".gfr>img");if(i&&i.naturalWidth){const cw=c.clientWidth,ch=c.clientHeight,iw=i.naturalWidth,ih=i.naturalHeight,sc=Math.max(cw/iw,ch/ih),sf=Math.min(cw/iw,ch/ih);W.z=Math.max(30,Math.round(100*sf/sc));W.x=50;W.y=50;imgLive()}return}
  if(a==="frame"){frameEdit();return}
  if(a==="wall"){wallEdit();return}
  if(a==="wsc"){if(!S.wall||typeof S.wall!=="object")S.wall={};if(W&&W.src&&!S.wall.src)Object.assign(S.wall,{src:W.src,x:W.x,y:W.y,z:W.z,dk:WD});S.wall.sc=b.dataset.v;try{save()}catch(_){}applyWall();wallEdit(true);return}
@@ -287,6 +300,7 @@ function deco(){const h1=document.querySelector("header h1");if(h1&&!h1.querySel
  document.querySelectorAll("#nav>button[data-tab]").forEach(b=>{if(b.dataset.gd===JSON.stringify(icons()[b.dataset.tab]||0))return;const k=b.dataset.tab,old=b.querySelector(".gi");if(old)old.remove();const back=/^←/.test(b.textContent);b.textContent=b.textContent.replace(/^[^\wÀ-ÿ]+/,"");b.style.setProperty("--tc",col(k));b.insertAdjacentHTML("afterbegin",back?ic("back"):icFor(k));b.dataset.gd=JSON.stringify(icons()[k]||0)});
  try{const t=typeof tab!=="undefined"?tab:"",m=document.getElementById("m"),mi=IMKEYS.includes(t)&&t!=="home"?menuImg(t):null;if(m){const old=m.querySelector(":scope>.gban");if(mi&&mi.cust){if(!old||old.dataset.k!==t||old.dataset.s!==String(mi.src.length+mi.x+"-"+mi.y+"-"+mi.z)){if(old)old.remove();m.insertAdjacentHTML("afterbegin",`<div class="gban" data-k="${t}" data-s="${mi.src.length+mi.x+"-"+mi.y+"-"+mi.z}" style="--tc:${col(t)}">${imgTag(mi,"gtimg")}<b>${SEC[t][1]}</b><button data-g="gimg" data-k="${t}" aria-label="Changer l'image">📷</button></div>`)}}else if(old)old.remove()}}catch(_){}
  try{applyWall()}catch(_){}
+ try{arFix()}catch(_){}
  try{if(typeof tab!=="undefined"&&tab==="lists")document.querySelectorAll('#m [data-act="gstart"][data-id]').forEach(btn=>{const c=btn.closest(".card"),id=btn.dataset.id;if(!c)return;const m=LI()[id],k=m&&m.src?m.src.length+"|"+m.x+"|"+m.y+"|"+m.z:"0";let g=c.querySelector(":scope>.glimg");if(g&&g.dataset.k===k)return;if(g)g.remove();c.insertAdjacentHTML("afterbegin",`<div class="glimg" data-k="${k}">${m&&m.src?imgTag({src:m.src,x:+m.x,y:+m.y,z:+m.z||100},""):`<span class="gph">Ajoute une photo de ton armée</span>`}<button data-g="gimg" data-k="L:${id}" aria-label="Photo de la liste">📷</button></div>`)})}catch(_){}
  const hd=document.querySelector("header"),hp=hd&&hd.classList.contains("hpl");document.body.classList.toggle("gside",innerWidth>=900&&!hp)}
 const old=window.tbPost;window.tbPost=()=>{try{deco()}catch(_){}if(old)old()};
