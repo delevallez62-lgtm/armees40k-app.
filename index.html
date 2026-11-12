@@ -1117,7 +1117,7 @@ main>.card:has(>[data-act=gdel])>details[open]{padding-bottom:12px}
 .hcp{font:600 11px system-ui;color:#d8c9a2}.hcp b{font:800 15px Georgia,serif;color:#fff}.hcp i{font-style:normal;color:#ffb36a}
 .hhelp{margin:0 0 8px}
 /* face en grand en partie */
-#sxhf{position:relative;z-index:38}.hfo{position:fixed;inset:0;z-index:38;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(4,5,6,.82);backdrop-filter:blur(4px);padding:12px 10px 40px}.hfo.in{animation:f .2s}
+#sxhf{position:relative;z-index:38}.hfo{position:fixed;inset:0;z-index:38;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:rgba(4,5,6,.96);padding:12px 10px 40px}.hfo.in{animation:f .2s}
 .hfw{max-width:440px;margin:0 auto;position:relative}.hfx{position:sticky;top:0;float:right;z-index:5;width:44px;height:44px;border-radius:50%;border:2px solid #d8b45e;background:#14100a;color:#f6dc8a;font-size:18px;margin:0 0 -44px;cursor:pointer}
 .hfpl{margin:0 0 8px;padding:6px 52px 6px 12px;border-left:5px solid var(--c);background:rgba(20,16,10,.85);color:#f3e6c4;border-radius:8px;font:700 13px system-ui}
 .hfa2{margin:12px 4px 0;padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--card)}.hfed{margin-top:10px;width:100%}
@@ -2662,12 +2662,13 @@ function pLine(o,os,i,mk){if(o.x)return"";const prev=os.slice(0,i).filter(p=>!p.
 function roLine(o){const lv=o.k==="lv"?`<ul>${o.lv.map(l=>`<li>${esc(l[0])} : <b>${l[1]} PdV</b></li>`).join("")}</ul>`:"";
  return`<li><span class="hfk" aria-hidden="true">☠</span><span>${o.sup?"<b>En plus</b> : ":""}${esc(String(o.tx).replace(/[.\s]+$/,""))}${o.k==="lv"?"":" : <b>"+esc(ptsTx(o))+"</b>"}${o.w?`<em class="hfw2">⏱ ${esc(o.w.replace(/\.$/,""))}</em>`:""}${o.r0?`<em class="hfw2">🔒 dès le round ${o.r0}</em>`:""}${lv}</span></li>`}
 const PIC={fx:'<svg viewBox="-24 -24 48 48" aria-hidden="true"><g fill="none" stroke="#ff6a52" stroke-width="2.6"><circle r="14"/><circle r="6"/><path d="M0-21V-10M0 10V21M-21 0H-10M10 0H21"/></g></svg>',tc:'<svg viewBox="-24 -24 48 48" aria-hidden="true"><g fill="none" stroke="#7fb2ff" stroke-width="3" stroke-linecap="round"><path d="M-14-14L12 12M14-14L-12 12"/><path d="M-17-10L-10-17M17-10L10-17M-12 17L-17 12M12 17L17 12" stroke-width="3.5"/></g></svg>'};
-function panelHtml(title,icon,tone,body,act,note){return`<section class="hfp ${tone}${act===false?" off":""}"><div class="hfh"><i aria-hidden="true">${PIC[tone]}</i><b>${title}</b>${note?`<small>${note}</small>`:""}</div><div class="hfb">${body}</div></section>`}
+function panelHtml(title,icon,tone,body,act,note){return`<section class="hfp ${tone}"><div class="hfh"><i aria-hidden="true">${PIC[tone]}</i><b>${title}</b>${note?`<small>${note}</small>`:""}</div><div class="hfb">${body}</div></section>`}
 const FULL={assassinat:{img:"art/assassinat-card.webp",z:{f:[[44.6,49.8],[50.6,55.8]],t:[[68.8,74.4],[78.8,84.4]]},p:{f:[35.4,58.2],t:[59.2,87.6]}}};
 const AR={};
 function arOf(k,u){if(AR[k]!==undefined)return AR[k];AR[k]=0;const i=new Image();i.onload=()=>{AR[k]=i.naturalHeight/i.naturalWidth;try{draw()}catch(e){}};i.src=u;return 0}
 /* image ajoutée à la main : si elle est en portrait (une carte entière), elle devient la carte jouable */
-function fullOf(d){if(FULL[d.id])return FULL[d.id];const u=S.mimg&&S.mimg[d.id];if(!u)return null;return{img:u,auto:1}}
+const IMGBAD=new Set();window.__imgBad=id=>{if(IMGBAD.has(id))return;IMGBAD.add(id);try{draw()}catch(e){}try{hfDraw()}catch(e){}};
+function fullOf(d){const u=S.mimg&&S.mimg[d.id];if(u&&!IMGBAD.has(d.id))return{img:u,auto:1};if(FULL[d.id]&&!IMGBAD.has("F:"+d.id))return FULL[d.id];return null}
 function zonesOf(d,F){if(F.z)return{z:F.z,p:F.p};
  const seg=(os,a,b)=>{const L=os.filter(x=>!x.x),W=L.map((x,i)=>Math.ceil(String(x.tx).length/34)+(i&&x.g&&L[i-1].g===x.g?.7:0)),T=W.reduce((p,q)=>p+q,0)||1;let y=a;const out=[];os.forEach(x=>{if(x.x){out.push(null);return}const h=(b-a)*W[out.filter(Boolean).length]/T;out.push([+y.toFixed(1),+(y+h).toFixed(1)]);y+=h});return out};
  if(d.o)return{z:{t:seg(optsOf(d,"t"),44,86),f:[]}};
@@ -2680,10 +2681,10 @@ function ovLines(d,m,os,o,act){let h="",prev=null;
   const body=`<span class="hfk" aria-hidden="true">☠</span><span class="hfov-t">${op.sup?"<b>En plus</b> : ":""}${esc(tx)}${op.k==="lv"?`<span class="hfov-lv">${(op.lv||[]).map(l=>esc(l[0])+" : <b>"+l[1]+" PdV</b>").join(" · ")}</span>`:" : <b>"+esc(op.k==="cnt"?op.pts+" PdV"+(op.cap?" (max. "+op.cap+")":""):ptsTx(op))+"</b>"}</span>${q?`<i class="hfov-q">${op.k==="chk"?"✓":"×"+q}</i>`:""}`;
   h+=or+(act?`<button type="button" class="hfov-l${q?" on":""}" data-dk="set" data-pl="${o.pl}" data-id="${d.id}" data-oi="${oi}" data-q="${nq}" aria-label="${esc(tx)}${op.k==="chk"?"":" : ajouter 1"}">${body}</button>`:`<div class="hfov-l">${body}</div>`)});
  return h}
-function fullFace(d,o,F0){const F=F0||fullOf(d),img=`<img class="hf2i" src="${esc(F.img)}" alt="Carte ${esc(d.nm)}" decoding="async">`,T=txOv(d,F,o.nov);
+function fullFace(d,o,F0){const F=F0||fullOf(d),img=`<img class="hf2i" src="${esc(F.img)}" alt="Carte ${esc(d.nm)}" decoding="async" onerror="__imgBad('${F.auto?"":"F:"}${d.id}')">`,T=txOv(d,F,o.nov);
  const mode=o.mode||"t",R=o.R,live=!!o.live,getOs=m=>o.os&&m===(o.omode||mode)?o.os:optsOf(d,m);
  const pan=(m,y)=>`<div class="hfov" style="top:${y[0]}%;height:${(y[1]-y[0]).toFixed(1)}%"><div class="hfov-i">${ovLines(d,m,getOs(m),o,live&&m===mode)}</div></div>`;
- if(T&&!d.o){const ot=mode==="f"?"t":"f",P=F.p||{f:[35.4,58.2],t:[59.2,87.6]},dim=live&&P[ot]?`<div class="hfdim" style="top:${P[ot][0]}%;height:${P[ot][1]-P[ot][0]}%"><span>mode inactif</span></div>`:"";
+ if(T&&!d.o){const ot=mode==="f"?"t":"f",P=F.p||{f:[35.4,58.2],t:[59.2,87.6]},dim=live&&P[ot]?``:"";
   const face=`<article class="hf2">${img}${pan("f",T.f)}${pan("t",T.t)}${dim}</article>`;
   if(!live)return face;const os=optsOf(d,mode);
   return face+`<div class="hfcnt"><div class="dkh2">Comptage · mode ${mode==="f"?"Fixe":"Tactique"} · round ${R}</div><p class="dkhelp">Touche une ligne de la carte pour la valider (ou ajouter 1), ou utilise les boutons ci-dessous.</p>${os.map((op,oi)=>op.x?"":optHtml(o.pl,d,o.c,oi,op,R,o.gone,os)).join("")}</div>`}
@@ -2692,7 +2693,7 @@ function fullFace(d,o,F0){const F=F0||fullOf(d),img=`<img class="hf2i" src="${es
  zs.forEach((y,oi)=>{const op=os[oi];if(!op||op.x)return;const q=c.v[oi+"|"+R]||0,nq=op.k==="chk"?(q?0:1):Math.min(maxQ(op),q+1);
   zones+=`<button type="button" class="hfz${q?" on":""}" style="top:${y[0]}%;height:${y[1]-y[0]}%" data-dk="set" data-pl="${o.pl}" data-id="${d.id}" data-oi="${oi}" data-q="${nq}" aria-label="${esc(op.tx)}${op.k==="chk"?"":" : ajouter 1"}"></button>`+(q?`<i class="hfq" style="top:${(y[0]+y[1])/2}%">${op.k==="chk"?"✓":"×"+q}</i>`:"")});
  const ot=mode==="f"?"t":"f",p=Z.p&&!d.o?Z.p[ot]:null;
- return`<article class="hf2">${img}${zones}${p?`<div class="hfdim" style="top:${p[0]}%;height:${p[1]-p[0]}%"><span>mode inactif</span></div>`:""}</article>
+ return`<article class="hf2">${img}${zones}${p?``:""}</article>
  <div class="hfcnt"><div class="dkh2">Comptage · mode ${mode==="f"?"Fixe":"Tactique"} · round ${R}</div><p class="dkhelp">Touche une ligne de la carte pour la valider (ou ajouter 1), ou utilise les boutons ci-dessous.</p>${os.map((op,oi)=>op.x?"":optHtml(o.pl,d,c,oi,op,R,o.gone,os)).join("")}</div>`}
 function faceHtml(d,o){o=o||{};{const F=fullOf(d);if(F)return fullFace(d,o,F)}const G=GR[d.g]||{c:"#888",ic:"•",nm:""},live=!!o.live,mode=o.mode||"t";
  const ro=os=>`<ul class="hfl">${os.map((x,i)=>pLine(x,os,i,roLine)).join("")}</ul>`;
@@ -2700,15 +2701,15 @@ function faceHtml(d,o){o=o||{};{const F=fullOf(d);if(F)return fullFace(d,o,F)}co
  let panels="";
  if(d.o){const os=optsOf(d,"t");panels=panelHtml("Objectif","🎯","fx",live?inter(os):ro(os))}
  else{const mf=optsOf(d,"f"),mt=optsOf(d,"t");
-  panels=panelHtml("Missions fixes","◎","fx",live&&mode==="f"?inter(mf):ro(mf),!live||mode==="f",live&&mode!=="f"?"mode inactif":"")+
-         panelHtml("Missions tactiques","⚔","tc",live&&mode==="t"?inter(mt):ro(mt),!live||mode==="t",live&&mode!=="t"?"mode inactif":"")}
+  panels=panelHtml("Missions fixes","◎","fx",live&&mode==="f"?inter(mf):ro(mf),!live||mode==="f","")+
+         panelHtml("Missions tactiques","⚔","tc",live&&mode==="t"?inter(mt):ro(mt),!live||mode==="t","")}
  const L=d.nm.length,fs=L<=11?31:L<=16?26:L<=22?22:19;
  return`<article class="hf" style="--g:${G.c}"><div class="hfart">${artHtml(d)}${wings}</div><div class="hft">${skullBadge}<h3 style="font-size:${fs}px">${esc(d.nm)}</h3>${skullBadge}</div>${d.d?`<p class="hfd">${esc(d.d)}</p>`:""}${panels}<div class="hff">${lauFoot}<span>Mission secondaire · V11</span><span class="hfm">${lauFoot}</span></div><span class="hfc l">${skullBadge}</span><span class="hfc r">${skullBadge}</span></article>`}
 {const fit=()=>{document.querySelectorAll(".hfov-i:not([data-fit])").forEach(n=>{const b=n.parentNode;if(!b.clientHeight)return;n.dataset.fit=1;let f=3.15;n.style.setProperty("--fs",f);let g=40;while(n.scrollHeight>b.clientHeight+1&&f>1.4&&g--){f-=.1;n.style.setProperty("--fs",f.toFixed(2))}})};let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{fit()}catch(e){}})}).observe(document.body,{childList:true,subtree:true});window.addEventListener("resize",()=>{document.querySelectorAll(".hfov-i[data-fit]").forEach(n=>n.removeAttribute("data-fit"));fit()})}
 window.sxFace=(id)=>{const d=BY[id];return d?faceHtml(d,{}):""};
 /* main du joueur : petites cartes */
 function miniHtml(pl,d,c,sx){const G=GR[d.g],pts=dead(c)?0:cardPts(c,d,sx.mode).tot,miss=(d.des||[]).some(f=>!String((c.d||{})[f.f]||"").trim());
- const FF=fullOf(d);if(FF)return`<button type="button" class="hc fc${recent.has(pl+"|"+d.id)?" new":""}" role="listitem" data-dk="hopen" data-pl="${pl}" data-id="${d.id}" aria-label="${esc(d.nm)} : ouvrir la carte"><img src="${esc(FF.img)}" alt="" decoding="async"><span class="hcp2"><b>${pts}</b> PdV</span></button>`;
+ const FF=fullOf(d);if(FF)return`<button type="button" class="hc fc${recent.has(pl+"|"+d.id)?" new":""}" role="listitem" data-dk="hopen" data-pl="${pl}" data-id="${d.id}" aria-label="${esc(d.nm)} : ouvrir la carte"><img src="${esc(FF.img)}" alt="" decoding="async" onerror="__imgBad('${FF.auto?"":"F:"}${d.id}')"><span class="hcp2"><b>${pts}</b> PdV</span></button>`;
  return`<button type="button" class="hc${recent.has(pl+"|"+d.id)?" new":""}" role="listitem" data-dk="hopen" data-pl="${pl}" data-id="${d.id}" style="--g:${G.c}" aria-label="${esc(d.nm)} : ouvrir la carte"><span class="hca">${artHtml(d)}</span><span class="hcn">${esc(d.nm)}</span><span class="hcp"><b>${pts}</b> PdV${miss?` <i title="À désigner">✎</i>`:""}</span></button>`}
 function handHtml(pl,list,cs,sx){return`<div class="hand" role="list" aria-label="Main de ${esc(S.bat.n[pl])}">${list.map(d=>miniHtml(pl,d,cs[d.id],sx)).join("")}</div><p class="dkhelp hhelp">Touche une carte pour la voir en grand et valider ses conditions.</p>`}
 let hfPl=-1,hfId=null;const hfEl=document.createElement("div");hfEl.id="sxhf";document.body.appendChild(hfEl);
@@ -2716,10 +2717,16 @@ function hfHtml(){const sx=view(),c=sx.pl[hfPl]&&sx.pl[hfPl].cards[hfId],d=BY[hf
  return`<div class="hfo" data-dk="hbg"><div class="hfw" role="dialog" aria-modal="true" aria-label="${esc(d.nm)}"><button type="button" class="hfx" data-dk="hclose" aria-label="Fermer">✕</button><div class="hfpl" style="--c:${CL[hfPl]}">${esc(S.bat.n[hfPl])} · round ${R}${d.o?"":" · mode "+(mode==="f"?"Fixe":"Tactique")}</div>${faceHtml(d,{live:1,pl:hfPl,c,R,mode,gone})}
  <div class="hfa2"><div class="dktt"><span>Total de la carte</span><span><b>${gone?0:cp.tot}</b> PdV</span></div>${desHtml(hfPl,d,c)}${d.pc?pcHtml(hfPl,d):""}<div class="dkact"><button type="button" class="fin" data-dk="done" data-pl="${hfPl}" data-id="${d.id}">✔ Valider la secondaire</button><button type="button" class="del" data-dk="del" data-pl="${hfPl}" data-id="${d.id}">🗑 Supprimer</button><button type="button" class="ret" data-dk="ret" data-pl="${hfPl}" data-id="${d.id}">🔄 Renvoyer dans la pioche et repiocher 1</button></div><button type="button" class="dked hfed" data-dk="sxe" data-id="${d.id}">✎ Modifier les conditions</button></div></div></div>`}
 function hfOpen(pl,id){if(!S.bat)return;hfPl=pl;hfId=id;document.body.classList.add("jclk");hfDraw(true)}
-function hfClose(){hfPl=-1;hfId=null;hfEl.innerHTML="";if(catPl<0&&jcPl<0&&exId===null&&!document.querySelector("#md .ov"))document.body.classList.remove("jclk")}
-function hfDraw(first){if(hfPl<0)return;const h=hfHtml();if(!h){hfClose();return}const o=hfEl.querySelector(".hfo"),top=o?o.scrollTop:0;hfEl.innerHTML=h;const n=hfEl.querySelector(".hfo");if(n){if(first)n.classList.add("in");else n.scrollTop=top}}
+let hfPend=false;
+function hfClose(){hfPl=-1;hfId=null;hfEl.innerHTML="";if(hfPend){hfPend=false;try{draw()}catch(e){}}if(catPl<0&&jcPl<0&&exId===null&&!document.querySelector("#md .ov"))document.body.classList.remove("jclk")}
+function hfDraw(first){if(hfPl<0)return;const h=hfHtml();if(!h){hfClose();return}const o=hfEl.querySelector(".hfo"),top=o?o.scrollTop:0;
+ if(o&&!first){const old=[...hfEl.querySelectorAll("img")],t=document.createElement("div");t.innerHTML=h;
+  t.querySelectorAll("img").forEach(ni=>{const k=old.findIndex(oi=>oi.getAttribute("src")===ni.getAttribute("src"));if(k>=0){ni.replaceWith(old[k]);old.splice(k,1)}});
+  const nw=t.querySelector(".hfo .hfw"),ow=o.querySelector(".hfw");if(nw&&ow){ow.replaceWith(nw);o.scrollTop=top;return}
+  hfEl.replaceChildren(...t.childNodes);const n=hfEl.querySelector(".hfo");if(n)n.scrollTop=top;return}
+ hfEl.innerHTML=h;const n=hfEl.querySelector(".hfo");if(n){if(first)n.classList.add("in");else n.scrollTop=top}}
 window.sxHfRefresh=()=>{if(hfPl>=0)hfDraw()};
-{const _d=window.draw;if(typeof _d==="function"){window.draw=function(){const r=_d.apply(this,arguments);try{hfDraw()}catch(e){}return r};try{draw=window.draw}catch(e){}}}
+{const _d=window.draw;if(typeof _d==="function"){window.draw=function(){if(hfPl>=0&&!window.__hfFull){hfPend=true;try{hfDraw()}catch(e){}return}const r=_d.apply(this,arguments);try{hfDraw()}catch(e){}return r};try{draw=window.draw}catch(e){}}}
 
 window.sxView=(pl,R)=>{
  const sx=view(),B=S.bat,nm=B.n[pl],st=stat(pl),cs=sx.pl[pl].cards,locked=hasPts(sx),exh=!st.av.length,cu=B.cur||0;
