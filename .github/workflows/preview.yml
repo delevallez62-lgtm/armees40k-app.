@@ -26,10 +26,8 @@ jobs:
           mkdir -p _site
           cp -a index.html android outils README.md _site/
           if [ -f favicon.ico ]; then cp favicon.ico _site/; fi
-      - name: Activer et préparer GitHub Pages
+      - name: Préparer GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Publier les fichiers inchangés
         uses: actions/upload-pages-artifact@v3
         with:
