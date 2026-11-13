@@ -130,7 +130,7 @@ function secDuel(r){const a=st(),FA=A.figures(r.PA),FB=A.figures(r.PB),nm=r.name
  const tone=(o,b)=>o>b*1.5?"#2e9d6b":o*1.5<b?"#d1503b":"inherit";
  return`<div class="an-c"><h3>Duel de figurines</h3><p class="mu" style="margin:0 0 8px">Choisis une figurine de chaque armée : tu vois sa chance de toucher et les dégâts qu'<b>une seule figurine</b> inflige à l'autre.</p>
  <div class="an-sel"><label>${E(nm[0])}${sel(FA,"fa",a.fa)}</label>${stepper("na",a.na,"Nombre de figurines attaquantes")}<label>${E(nm[1])}${sel(FB,"fb",a.fb)}</label>${stepper("nb",a.nb,"Nombre de figurines cibles")}</div></div>
- ${grpCard(a.na+" × "+E(fa.name)+" → "+a.nb+" × "+E(fb.name),g1,fb)}${grpCard("Riposte : "+a.nb+" × "+E(fb.name)+" → "+a.na+" × "+E(fa.name),g2,fa)}
+ ${grpCard(a.na+" × "+E(fa.name)+" → "+a.nb+" × "+E(fb.name),g1,fb)}${grpCard("Riposte : "+a.nb+" × "+E(fb.name)+" → "+a.na+" × "+E(fa.name),g2,fa)}${(()=>{try{const LA=listOf(a.a),LB=listOf(a.b),uA=LA.units[fa.ui],uB=LB.units[fb.ui],T=window.TRKUI;return T&&T.realBlock&&uA&&uB?T.realBlock(uA,facOf(LA),uB,facOf(LB))+T.realBlock(uB,facOf(LB),uA,facOf(LA)):""}catch(e){return""}})()}
  ${duelCard(E(fa.name)+" → "+E(fb.name),d1,fb)}${duelCard("Riposte : "+E(fb.name)+" → "+E(fa.name),d2,fa)}
  <div class="an-c"><h3>${E(fa.name)} contre toutes les cibles</h3><div class="an-th"><span>Cible</span><span>Touche</span><span>Inflige</span><span>Reçoit</span></div>
  ${rows.map(x=>`<button class="an-tr${x.j===a.fb?" on":""}" data-an="pickb" data-v="${x.j}"><span class="nm">${figLabel(x.f)}<small>${x.mode} · riposte ${x.bmode}</small></span><span>${Math.round(x.hit*100)} %</span><b style="color:${tone(x.out,x.back)}">${n1(x.out)} PV</b><span>${n1(x.back)} PV</span></button>`).join("")}

@@ -5542,7 +5542,7 @@ function secDuel(r){const a=st(),FA=A.figures(r.PA),FB=A.figures(r.PB),nm=r.name
  const tone=(o,b)=>o>b*1.5?"#2e9d6b":o*1.5<b?"#d1503b":"inherit";
  return`<div class="an-c"><h3>Duel de figurines</h3><p class="mu" style="margin:0 0 8px">Choisis une figurine de chaque armée : tu vois sa chance de toucher et les dégâts qu'<b>une seule figurine</b> inflige à l'autre.</p>
  <div class="an-sel"><label>${E(nm[0])}${sel(FA,"fa",a.fa)}</label>${stepper("na",a.na,"Nombre de figurines attaquantes")}<label>${E(nm[1])}${sel(FB,"fb",a.fb)}</label>${stepper("nb",a.nb,"Nombre de figurines cibles")}</div></div>
- ${grpCard(a.na+" × "+E(fa.name)+" → "+a.nb+" × "+E(fb.name),g1,fb)}${grpCard("Riposte : "+a.nb+" × "+E(fb.name)+" → "+a.na+" × "+E(fa.name),g2,fa)}
+ ${grpCard(a.na+" × "+E(fa.name)+" → "+a.nb+" × "+E(fb.name),g1,fb)}${grpCard("Riposte : "+a.nb+" × "+E(fb.name)+" → "+a.na+" × "+E(fa.name),g2,fa)}${(()=>{try{const LA=listOf(a.a),LB=listOf(a.b),uA=LA.units[fa.ui],uB=LB.units[fb.ui],T=window.TRKUI;return T&&T.realBlock&&uA&&uB?T.realBlock(uA,facOf(LA),uB,facOf(LB))+T.realBlock(uB,facOf(LB),uA,facOf(LA)):""}catch(e){return""}})()}
  ${duelCard(E(fa.name)+" → "+E(fb.name),d1,fb)}${duelCard("Riposte : "+E(fb.name)+" → "+E(fa.name),d2,fa)}
  <div class="an-c"><h3>${E(fa.name)} contre toutes les cibles</h3><div class="an-th"><span>Cible</span><span>Touche</span><span>Inflige</span><span>Reçoit</span></div>
  ${rows.map(x=>`<button class="an-tr${x.j===a.fb?" on":""}" data-an="pickb" data-v="${x.j}"><span class="nm">${figLabel(x.f)}<small>${x.mode} · riposte ${x.bmode}</small></span><span>${Math.round(x.hit*100)} %</span><b style="color:${tone(x.out,x.back)}">${n1(x.out)} PV</b><span>${n1(x.back)} PV</span></button>`).join("")}
@@ -5631,6 +5631,266 @@ document.addEventListener("change",e=>{const t=e.target;if(!t.closest||!t.closes
  if(t.dataset.anf){HFORM[t.dataset.anf]=t.value}});
 document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.anf&&t.closest&&t.closest(".an"))HFORM[t.dataset.anf]=t.value});
 window.ANAUI={battle:battleData,data,runSim,addGame,importGames,state:st,_res:()=>RES};
+})();
+
+</script>
+<!-- ===== Suivi des dégâts + statistiques de parties (100 % local) ===== -->
+<style id="trkcss">
+#tks{position:fixed;inset:0;z-index:120;background:rgba(4,5,6,.72);display:flex;align-items:flex-end;justify-content:center}
+.tk-sh{width:min(560px,100%);max-height:94vh;overflow:auto;background:var(--card);color:var(--tx);border-radius:20px 20px 0 0;border-top:1px solid var(--bd);padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px))}
+@media(min-width:900px){#tks{align-items:center}.tk-sh{border-radius:18px}}
+.tk h4,.tk-sh h3{margin:14px 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.tk-sh h2{margin:0;font-size:20px}.tk-top{display:flex;gap:8px;align-items:flex-start}.tk-top>div{flex:1;min-width:0}
+.tk-x{flex:none;min-width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:20px;cursor:pointer}
+.tk label{display:block;font-size:12px;color:var(--mu);margin-top:8px}.tk-sh label{display:block;font-size:12px;color:var(--mu);margin-top:8px}
+.tk-sh select,.tk-sh input,.tk select{width:100%;min-height:46px;margin-top:3px;font-size:16px}
+.tk-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tk-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:10px 0 0;padding:4px;background:var(--bg);border:1px solid var(--bd);border-radius:12px}.tk-seg button{border:0;background:transparent;color:var(--tx);font:inherit;font-weight:700;min-height:44px;border-radius:9px;cursor:pointer}.tk-seg button.on{background:var(--ac);color:#fff}
+.tk-c{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:10px 0;background:var(--bg)}.tk-c b{font-size:14px}
+.tk-kv{display:grid;grid-template-columns:1fr auto;gap:3px 10px;font-size:14px;margin-top:6px}.tk-kv b{text-align:right}
+.tk-step{display:flex;gap:6px;align-items:center;margin-top:3px}.tk-step button{flex:none;width:44px;height:46px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:20px;font-weight:700;cursor:pointer}.tk-step button.s{width:auto;padding:0 10px;font-size:14px}.tk-step input{margin-top:0;text-align:center;font-size:20px;font-weight:800;min-width:0}
+.tk-save{display:block;width:100%;min-height:52px;margin:12px 0 6px;border:0;border-radius:12px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:16px;cursor:pointer}
+.tk-b{min-height:44px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer;padding:0 14px}.tk-b.p{background:var(--ac);color:#fff;border-color:var(--ac)}.tk-row{display:flex;gap:8px;margin-top:8px}.tk-row .tk-b{flex:1}
+.tk-rr{display:grid;grid-template-columns:1fr auto 40px 40px;gap:6px;align-items:center;padding:7px 0;border-top:1px solid var(--bd);font-size:13px}.tk-rr .nm small{display:block;color:var(--mu);font-size:11px}.tk-rr button{min-height:40px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;cursor:pointer}
+.tk-g{color:#2e9d6b;font-weight:700}.tk-r{color:#d1503b;font-weight:700}
+.tk-dh{display:flex;align-items:center;gap:14px}.tk-dnw{flex:none;width:92px}.tk-dn{width:92px;height:92px;display:block}.tk-dk{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}.tk-pc span{display:block;font-size:24px;font-weight:800;line-height:1.1}.tk-pc small{font-size:11px;color:var(--mu)}
+.tk-cnt{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin-top:8px;color:var(--mu)}.tk-cnt b{font-size:16px;color:inherit}
+.tk-flt{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}.tk-flt select{font-size:13px;min-height:42px;padding:2px 4px}
+.tk-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0 2px;padding-bottom:4px}.tk-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 13px;font:inherit;font-weight:700;min-height:40px;cursor:pointer}.tk-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}.tk-pills.sm button{min-height:34px;padding:4px 11px;font-size:13px}
+.tk-body{margin-top:6px}.tk-t{width:100%;border-collapse:collapse;font-size:13px}.tk-t td,.tk-t th{padding:6px 3px;border-bottom:1px solid var(--bd);text-align:center}.tk-t td:first-child,.tk-t th:first-child{text-align:left}
+.tk-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:1px 9px;background:color-mix(in srgb,#e08a2c 28%,var(--card));margin:4px 0}
+.tk-fs{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap}.tk-fs button,.tk-f button{min-height:36px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:0 12px;font:inherit;font-size:13px;cursor:pointer}.tk-fs button.on,.tk-f button.on{background:var(--ac);color:#fff;border-color:var(--ac)}.tk-f{display:flex;gap:4px;grid-column:2/5}
+#tkdash details{border:1px solid var(--bd);border-radius:10px;padding:4px 10px;margin:6px 0;background:var(--bg)}#tkdash summary{cursor:pointer;padding:6px 0}
+.tk-rr button.cf{background:#d1503b;color:#fff;border-color:#d1503b;font-size:11px;font-weight:700}
+</style>
+<script>
+/* ===== HAMMER · Suivi des dégâts et statistiques de parties — moteur (sans interface, hors ligne) =====
+   Les dégâts enregistrés sont des RÉSULTATS RÉELS saisis par le joueur ; ils ne sont jamais mélangés
+   aux estimations du simulateur (ANA). */
+(function(root){
+"use strict";
+const nk=s=>String(s==null?"":s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g," ").replace(/\s+/g," ").trim();
+const hsh=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36)};
+const VER="V11";
+
+/* ---------- identifiants stables d'unités ---------- */
+function equipSig(u){return String(u.equip||"").split(",").map(x=>nk(x.replace(/\(\d+\)/g,""))).filter(Boolean).sort().join("+")}
+function weaponsSig(u){return(u.weapons||[]).map(w=>[nk(w.name),w.range,w.a,w.hit,w.f,w.pa,w.d,nk(w.caps)].join(":")).sort().join(";")}
+function statsSig(u){const s=u.stats||{};return[s.E,s.SV,s.PV].map(x=>String(x==null?"":x)).join("/")}
+/* faction : première faction déclarée (mot-clé de faction) */
+function facOfUnit(u){return String(u.fkw||u.fac||"").split(",")[0].trim()}
+/* unit : fiche importée ; renvoie {uid, name, fac, label, parts}. Pour une unité saisie à la main : {man:true,n,f} */
+function uidOf(unit,opts){opts=opts||{};
+ if(unit&&unit.man){const fac=nk(unit.f||""),name=nk(unit.n||"");return{uid:"m_"+hsh(fac+"|"+name),name:String(unit.n||"?"),fac:String(unit.f||""),man:true,parts:{fac,name}}}
+ const fac=nk(opts.fac||facOfUnit(unit)),name=nk(unit.name),eq=equipSig(unit),st=statsSig(unit),wp=hsh(weaponsSig(unit)),ver=opts.ver||VER;
+ const key=[fac,name,eq,st,wp,ver].join("|");
+ return{uid:"u_"+hsh(key),name:String(unit.name||"?"),fac:String(opts.fac||facOfUnit(unit)),man:false,parts:{fac,name,eq,st,wp,ver}}}
+
+/* ---------- statistiques de dégâts réels ---------- */
+/* rec : [{id,gid,d,rd,ty,a:{uid,n,f,pts},b:{uid,n,f},v,k}] ; v = dégâts (PV), k = figurines éliminées (facultatif) */
+const num=x=>{const v=parseFloat(x);return Number.isFinite(v)?v:null};
+function aggregate(list){const n=list.length,tot=list.reduce((a,r)=>a+(num(r.v)||0),0),ks=list.filter(r=>num(r.k)!=null),kt=ks.reduce((a,r)=>a+num(r.k),0),games=new Set(list.map(r=>r.gid||"-")).size;
+ const vs=list.map(r=>num(r.v)||0);return{n,games,total:tot,mean:n?tot/n:null,min:n?Math.min(...vs):null,max:n?Math.max(...vs):null,killsTracked:ks.length,killsTotal:kt,killsMean:ks.length?kt/ks.length:null}}
+function byGame(list){const m={};list.forEach(r=>{const k=r.gid||("d"+r.d);const o=m[k]||(m[k]={gid:r.gid||"",d:r.d,sum:0,n:0,kills:0,kn:0});o.sum+=num(r.v)||0;o.n++;if(num(r.k)!=null){o.kills+=num(r.k);o.kn++}if(r.d<o.d)o.d=r.d});
+ return Object.values(m).sort((a,b)=>a.d-b.d)}
+/* tendance : moyenne par partie, 2e moitié contre 1re moitié */
+function trendOf(series){if(series.length<2)return{delta:null,first:null,last:null,dir:0};const h=Math.floor(series.length/2),a=series.slice(0,h||1),b=series.slice(h||1),ma=a.reduce((x,y)=>x+y,0)/a.length,mb=b.reduce((x,y)=>x+y,0)/b.length;
+ return{first:ma,last:mb,delta:mb-ma,dir:Math.abs(mb-ma)<1e-9?0:(mb>ma?1:-1)}}
+function matchup(rec,aUid,bUid){const list=rec.filter(r=>r.a&&r.b&&r.a.uid===aUid&&r.b.uid===bUid),ag=aggregate(list),bg=byGame(list);
+ return{...ag,byGame:bg,trend:trendOf(bg.map(g=>g.sum)),last:list.slice().sort((x,y)=>y.d-x.d).slice(0,5),byType:byType(list)}}
+function byType(list){const o={};list.forEach(r=>{const k=r.ty||"autre";const x=o[k]||(o[k]={n:0,total:0});x.n++;x.total+=num(r.v)||0});Object.values(o).forEach(x=>x.mean=x.n?x.total/x.n:null);return o}
+const keyFac=r=>nk(r.b&&r.b.f)||"?";
+function unitProfile(rec,uid){const list=rec.filter(r=>r.a&&r.a.uid===uid),ag=aggregate(list);
+ const grp=(f)=>{const m={};list.forEach(r=>{const k=f(r);(m[k.k]||(m[k.k]={k:k.k,name:k.name,fac:k.fac,list:[]})).list.push(r)});return Object.values(m).map(g=>({k:g.k,name:g.name,fac:g.fac,...aggregate(g.list)})).sort((a,b)=>b.mean-a.mean)};
+ const pts=list.length?num(list[list.length-1].a.pts):null,perGame=byGame(list);
+ return{...ag,pts,perPoint:pts&&ag.games?ag.total/ag.games/pts:null,perGame,trend:trendOf(perGame.map(g=>g.sum)),byTarget:grp(r=>({k:r.b.uid,name:r.b.n,fac:r.b.f})),byFaction:grp(r=>({k:keyFac(r),name:r.b.f||"Non renseignée",fac:r.b.f})),byType:byType(list)}}
+/* classement de toutes les unités ayant des données */
+function ranking(rec,filter){filter=filter||{};let list=rec.filter(r=>r.a&&r.a.uid);if(filter.fac)list=list.filter(r=>keyFac(r)===nk(filter.fac));if(filter.from)list=list.filter(r=>r.d>=filter.from);
+ const m={};list.forEach(r=>{(m[r.a.uid]||(m[r.a.uid]={uid:r.a.uid,name:r.a.n,fac:r.a.f,pts:null,list:[]})).list.push(r);if(num(r.a.pts))m[r.a.uid].pts=num(r.a.pts)});
+ return Object.values(m).map(x=>{const g=aggregate(x.list),pg=byGame(x.list);return{uid:x.uid,name:x.name,fac:x.fac,pts:x.pts,...g,perGame:g.games?g.total/g.games:null,perPoint:x.pts&&g.games?g.total/g.games/x.pts:null}}).sort((a,b)=>b.mean-a.mean)}
+/* comparaison de plusieurs unités (mêmes filtres) : une ligne par unité */
+function compare(rec,uids,filter){const r=ranking(rec,filter);return uids.map(u=>r.find(x=>x.uid===u)).filter(Boolean)}
+/* efficacité contre une faction : classement des unités selon la faction cible */
+function bestAgainst(rec,fac){return ranking(rec,{fac}).filter(x=>x.n>0)}
+/* matchups : meilleurs et moins bons */
+function matchupsTable(rec){const m={};rec.forEach(r=>{if(!(r.a&&r.b))return;const k=r.a.uid+">"+r.b.uid;(m[k]||(m[k]={a:r.a,b:r.b,list:[]})).list.push(r)});
+ return Object.values(m).map(x=>({a:x.a.n,af:x.a.f,b:x.b.n,bf:x.b.f,auid:x.a.uid,buid:x.b.uid,...aggregate(x.list)})).sort((x,y)=>y.mean-x.mean)}
+
+/* ---------- résultats de parties ---------- */
+const resOf=(s1,s2)=>s1>s2?"V":s1<s2?"D":"E";
+/* normalise : parties terminées de l'appli + saisies manuelles (sans doublon) ; J1 = moi */
+function results(games,ash,meta){meta=meta||{};const out=[],have=new Set();
+ (games||[]).forEach(g=>{if(!g||g.fin===false||!g.tot)return;const s1=num(g.tot[0]),s2=num(g.tot[1]);if(s1==null||s2==null)return;
+  const m=meta[g.id]||{},manual=(ash||[]).find(x=>x.src===g.id);have.add(g.id);
+  out.push({id:g.id,d:g.d,f1:(g.f&&g.f[0])||(manual&&manual.f1)||"",f2:(g.f&&g.f[1])||(manual&&manual.f2)||"",d1:(g.p&&g.p[0]&&g.p[0].det)||(manual&&manual.d1)||"",d2:(g.p&&g.p[1]&&g.p[1].det)||(manual&&manual.d2)||"",
+   s1,s2,res:resOf(s1,s2),first:m.first||(manual&&manual.first)||0,src:"app"})});
+ (ash||[]).forEach(x=>{if(x.src&&have.has(x.src))return;const s1=num(x.s1),s2=num(x.s2);if(s1==null||s2==null)return;out.push({id:x.id,d:typeof x.d==="string"?Date.parse(x.d):x.d,f1:x.f1||"",f2:x.f2||"",d1:x.d1||"",d2:x.d2||"",s1,s2,res:resOf(s1,s2),first:+x.first||0,src:"manuel"})});
+ return out.sort((a,b)=>a.d-b.d)}
+function filterResults(rs,f){f=f||{};return rs.filter(r=>(!f.fac||nk(r.f2)===nk(f.fac))&&(!f.det||nk(r.d1)===nk(f.det))&&(!f.from||r.d>=f.from)&&(!f.to||r.d<=f.to))}
+/* pourcentages entiers dont la somme vaut exactement 100 (méthode du plus fort reste) */
+function pct3(V,D,E){const n=V+D+E;if(!n)return{V:0,D:0,E:0,n:0};const raw=[V,D,E].map(x=>x/n*100),fl=raw.map(Math.floor);let rest=100-fl.reduce((a,b)=>a+b,0);
+ raw.map((x,i)=>({i,r:x-fl[i]})).sort((a,b)=>b.r-a.r).forEach(o=>{if(rest>0){fl[o.i]++;rest--}});return{V:fl[0],D:fl[1],E:fl[2],n}}
+function tally(rs){const c={V:0,D:0,E:0};rs.forEach(r=>c[r.res]++);const n=rs.length;return{n,V:c.V,D:c.D,E:c.E,win:n?c.V/n*100:null,loss:n?c.D/n*100:null,draw:n?c.E/n*100:null,round:pct3(c.V,c.D,c.E),avg1:n?rs.reduce((a,r)=>a+r.s1,0)/n:null,avg2:n?rs.reduce((a,r)=>a+r.s2,0)/n:null}}
+function groupBy(rs,key){const m={};rs.forEach(r=>{const k=key(r)||"Non renseigné";(m[k]||(m[k]=[])).push(r)});return Object.entries(m).map(([k,l])=>({k,...tally(l)})).sort((a,b)=>b.n-a.n)}
+/* évolution : taux de victoire cumulé après chaque partie, et mois par mois */
+function evolution(rs){let v=0;const cum=rs.map((r,i)=>{if(r.res==="V")v++;return{i:i+1,d:r.d,win:v/(i+1)*100,res:r.res}});
+ const mo={};rs.forEach(r=>{const dt=new Date(r.d),k=dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0");(mo[k]||(mo[k]=[])).push(r)});
+ const months=Object.keys(mo).sort().map(k=>({k,...tally(mo[k])}));
+ const h=Math.floor(rs.length/2),a=tally(rs.slice(0,h||1)),b=tally(rs.slice(h||1));
+ return{cum,months,trend:rs.length>=4?{first:a.win,last:b.win,delta:b.win-a.win}:null}}
+function resultStats(games,ash,meta,filter){const all=results(games,ash,meta),rs=filterResults(all,filter);const t=tally(rs);
+ return{...t,all:all.length,results:rs,byFaction:groupBy(rs,r=>r.f1),byOpponent:groupBy(rs,r=>r.f2),byDetachment:groupBy(rs,r=>r.d1),byFirst:groupBy(rs,r=>r.first===1?"Je commence":r.first===2?"L'adversaire commence":"Non renseigné"),evolution:evolution(rs)}}
+/* dégâts moyens infligés par partie (par moi, J1) sur les parties filtrées */
+function damagePerGame(rec,rs,mine){const ids=new Set(rs.map(r=>r.id));const per={};rec.forEach(r=>{if(!r.gid||!ids.has(r.gid))return;if(mine&&!mine(r))return;per[r.gid]=(per[r.gid]||0)+(num(r.v)||0)});
+ const v=Object.values(per);return{games:v.length,total:v.reduce((a,b)=>a+b,0),mean:v.length?v.reduce((a,b)=>a+b,0)/v.length:null,perGame:per}}
+function periodFrom(code,now){now=now||Date.now();const d=86400000;return code==="30"?now-30*d:code==="90"?now-90*d:code==="365"?now-365*d:0}
+
+root.TRK={VER,nk,hsh,uidOf,facOfUnit,aggregate,byGame,trendOf,matchup,unitProfile,ranking,compare,bestAgainst,matchupsTable,results,filterResults,pct3,tally,groupBy,evolution,resultStats,damagePerGame,periodFrom,resOf};
+if(typeof module!=="undefined")module.exports=root.TRK;
+})(typeof window!=="undefined"?window:globalThis);
+
+</script>
+<script>
+/* ===== HAMMER · Suivi des dégâts (lanceur de dés) + tableau de bord de l'onglet Parties — interface ===== */
+(()=>{
+const T=window.TRK;if(!T)return;
+const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pl=(n,a,b)=>n+" "+(n>1?b:a);
+const n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
+const capn=s=>String(s||"").replace(/(^|\s)(\S)/g,(m,a,b)=>a+b.toUpperCase());
+const trk=()=>{const t=S.trk=S.trk&&typeof S.trk==="object"?S.trk:{};if(!Array.isArray(t.rec))t.rec=[];if(!Array.isArray(t.man))t.man=[];if(!t.meta||typeof t.meta!=="object")t.meta={};if(!t.ui||typeof t.ui!=="object")t.ui={};t.v=1;return t};
+const sv=()=>{try{save()}catch(_){}};
+const TYPES=[["tir","Tir"],["combat","Combat"],["autre","Autre"]];
+/* ---------- contexte : partie en cours, listes disponibles ---------- */
+function gameCtx(){const B=S.bat,gid=S.pm&&B&&B.gid,g=gid&&(S.games||[]).find(x=>x.id===gid&&x.fin===false);
+ return g?{gid:g.id,g,title:g.title||"Partie en cours",rd:Math.max(1,Math.min(5,(B.cur||0)+1)),me:B.l&&B.l[0],opp:B.l&&B.l[1],fo:(g.f&&g.f[1])||"",fm:(g.f&&g.f[0])||""}:{gid:"",g:null,title:"",rd:1,me:"",opp:"",fo:"",fm:""}}
+function unitsOf(listId,fallbackFac){const L=(S.lists||[]).find(l=>l.id===listId);if(!L)return[];
+ return(L.units||[]).map((u,i)=>{const fac=T.facOfUnit(u)||fallbackFac||"",id=T.uidOf(u,{fac}),pts=typeof upts==="function"?upts(u):(+u.pts||0);return{k:"l"+i,uid:id.uid,name:capn(u.name),fac,pts:pts||null,man:false}})}
+function manUnits(side){return trk().man.filter(m=>!m.s||m.s===side).map(m=>{const id=T.uidOf({man:true,n:m.n,f:m.f});return{k:"m"+m.id,uid:id.uid,name:capn(m.n),fac:m.f||"",pts:null,man:true,mid:m.id}})}
+function allUnits(side,c){const sel=SH;let lid=side==="me"?(c.gid?c.me:sel.meList):(c.gid?c.opp:sel.oppList);
+ const base=unitsOf(lid,side==="me"?c.fm:c.fo);return{list:base,man:manUnits(side)}}
+/* ---------- feuille de saisie ---------- */
+let SH={side:"me",a:"",b:"",ty:"tir",rd:0,v:"",k:"",edit:null,meList:"",oppList:"",add:null,gid:null};
+const root=()=>{let o=document.getElementById("tks");if(!o){o=document.createElement("div");o.id="tks";o.setAttribute("role","dialog");o.setAttribute("aria-label","Suivi des dégâts");document.body.appendChild(o);o.addEventListener("click",onClick);o.addEventListener("change",onChange);o.addEventListener("input",onInput)}return o};
+function closeSheet(){const o=document.getElementById("tks");if(o)o.remove()}
+function openSheet(editId){const c=gameCtx(),t=trk();SH.add=null;SH.edit=null;SH.v="";SH.k="";SH.gid=null;
+ if(!SH.meList||!(S.lists||[]).some(l=>l.id===SH.meList))SH.meList=((S.lists||[]).find(l=>l.id===S.cur)||(S.lists||[])[0]||{}).id||"";
+ if(!SH.oppList||!(S.lists||[]).some(l=>l.id===SH.oppList))SH.oppList="";
+ SH.rd=c.rd;if(editId){const r=t.rec.find(x=>x.id===editId);if(r){SH.edit=r.id;SH.gid=r.gid||"";SH.side=r.me===false?"opp":"me";SH.ty=r.ty||"tir";SH.rd=r.rd||1;SH.v=String(r.v);SH.k=r.k==null?"":String(r.k);SH._a=r.a;SH._b=r.b;SH.a="@a";SH.b="@b"}}
+ else{SH.a="";SH.b="";SH._a=SH._b=null}
+ draw2()}
+function findUnit(side,key,c){if(key==="@a")return SH._a?{uid:SH._a.uid,name:SH._a.n,fac:SH._a.f,pts:SH._a.pts}:null;if(key==="@b")return SH._b?{uid:SH._b.uid,name:SH._b.n,fac:SH._b.f,pts:null}:null;
+ const u=allUnits(side,c);return u.list.concat(u.man).find(x=>x.k===key)||null}
+function opts(arr,sel,ph){return`<option value=""${sel?"":" selected"}>${ph}</option>`+arr.map(u=>`<option value="${E(u.k)}"${u.k===sel?" selected":""}>${E(u.name)}${u.fac?" — "+E(u.fac):""}</option>`).join("")}
+function unitSelect(side,sel,c,which){const u=allUnits(side,c);const lab=side==="me"?"Ma liste":"Liste adverse";
+ const edit=SH.edit&&(sel==="@a"||sel==="@b");
+ return`<select data-tk="${which}">${edit?`<option value="${sel}" selected>${E((which==="a"?SH._a:SH._b).n)} — ${E((which==="a"?SH._a:SH._b).f||"")}</option>`:`<option value=""${sel?"":" selected"}>Choisir une unité…</option>`}
+ ${u.list.length?`<optgroup label="${lab}">${u.list.map(x=>`<option value="${E(x.k)}"${x.k===sel?" selected":""}>${E(x.name)}</option>`).join("")}</optgroup>`:""}
+ ${u.man.length?`<optgroup label="Saisies à la main">${u.man.map(x=>`<option value="${E(x.k)}"${x.k===sel?" selected":""}>${E(x.name)}${x.fac?" — "+E(x.fac):""}</option>`).join("")}</optgroup>`:""}
+ <option value="__new">➕ Nouvelle unité (nom + faction)…</option></select>`}
+function matchBlock(a,b){if(!a||!b)return"";const rec=trk().rec.filter(r=>r.a&&r.b&&r.a.uid===a.uid&&r.b.uid===b.uid),m=T.matchup(trk().rec,a.uid,b.uid);
+ if(!m.n)return`<div class="tk-c"><b>Première rencontre enregistrée</b><p class="mu" style="margin:4px 0 0">Aucune donnée pour ${E(a.name)} contre ${E(b.name)}.</p></div>`;
+ return`<div class="tk-c"><b>Déjà rencontré : ${m.n} fois (${m.games} partie${m.games>1?"s":""})</b><div class="tk-kv"><span>Dégâts moyens</span><b>${n1(m.mean)}</b><span>Total enregistré</span><b>${n1(m.total)}</b><span>Min · max</span><b>${n1(m.min)} · ${n1(m.max)}</b>${m.killsTracked?`<span>Figurines éliminées (moy.)</span><b>${n1(m.killsMean)}</b>`:""}${m.trend.delta!=null?`<span>Évolution</span><b class="${m.trend.dir>0?"tk-g":m.trend.dir<0?"tk-r":""}">${m.trend.dir>0?"▲":m.trend.dir<0?"▼":"="} ${n1(m.trend.first)} → ${n1(m.trend.last)}</b>`:""}</div><p class="mu" style="margin:6px 0 0">Données réelles de tes parties, sans lien avec le simulateur.</p></div>`}
+function draw2(){const c=gameCtx(),t=trk(),gid=SH.edit?(SH.gid||""):c.gid;const side=SH.side,other=side==="me"?"opp":"me";
+ const A=SH.a?findUnit(side,SH.a,c):null,B=SH.b?findUnit(other,SH.b,c):null;
+ const lists=S.lists||[],listSel=(key,val)=>`<select data-tk="${key}"><option value="">${key==="oppList"?"Aucune (saisie à la main)":"—"}</option>${lists.map(l=>`<option value="${E(l.id)}"${l.id===val?" selected":""}>${E(l.name||"Liste")}</option>`).join("")}</select>`;
+ const cur=t.rec.filter(r=>(r.gid||"")===(gid||"")).sort((x,y)=>y.d-x.d);
+ const form=SH.add?`<div class="tk-c"><b>Nouvelle unité ${SH.add.side==="me"?"(ma liste)":"adverse"}</b><label>Nom<input data-tk="nn" value="${E(SH.add.n||"")}" placeholder="ex. Intercessors"></label><label>Faction<input data-tk="nf" value="${E(SH.add.f==null?(SH.add.side==="opp"?c.fo:c.fm):SH.add.f)}" placeholder="ex. Space Marines"></label><div class="tk-row"><button class="tk-b" data-tk="addcancel">Annuler</button><button class="tk-b p" data-tk="addsave">Ajouter</button></div></div>`:"";
+ root().innerHTML=`<div class="tk-sh"><div class="tk-top"><div><h2>Suivi des dégâts</h2><p class="mu" style="margin:0">${gid?"Partie : "+E(c.gid===gid?c.title:((S.games||[]).find(g=>g.id===gid)||{}).title||"")+" · tour "+SH.rd:"Hors partie en cours"}</p></div><button class="tk-x" data-tk="close" aria-label="Fermer">✕</button></div>
+ ${!c.gid&&!SH.edit?`<div class="tk-c"><div class="tk-two"><label>Ma liste${listSel("meList",SH.meList)}</label><label>Liste adverse (facultative)${listSel("oppList",SH.oppList)}</label></div></div>`:""}
+ <div class="tk-seg"><button data-tk="side" data-v="me" class="${side==="me"?"on":""}">J'attaque</button><button data-tk="side" data-v="opp" class="${side==="opp"?"on":""}">L'adversaire attaque</button></div>
+ <label>Unité attaquante${unitSelect(side,SH.a,c,"a")}</label><label>Unité ciblée${unitSelect(other,SH.b,c,"b")}</label>${form}
+ ${matchBlock(A,B)}
+ <div class="tk-two"><label>Dégâts infligés<div class="tk-step"><button data-tk="dv" data-v="-1">−</button><input data-tk="v" type="number" inputmode="decimal" min="0" value="${E(SH.v)}" placeholder="0"><button data-tk="dv" data-v="1">+</button><button data-tk="dv" data-v="5" class="s">+5</button></div></label>
+ <label>Figurines éliminées <span class="mu">(facultatif)</span><div class="tk-step"><button data-tk="dk" data-v="-1">−</button><input data-tk="k" type="number" inputmode="numeric" min="0" value="${E(SH.k)}" placeholder="—"><button data-tk="dk" data-v="1">+</button></div></label></div>
+ <div class="tk-two"><label>Type d'attaque<select data-tk="ty">${TYPES.map(([k,n])=>`<option value="${k}"${SH.ty===k?" selected":""}>${n}</option>`).join("")}</select></label><label>Tour de bataille<select data-tk="rd">${[1,2,3,4,5].map(n=>`<option${SH.rd===n?" selected":""}>${n}</option>`).join("")}</select></label></div>
+ <button class="tk-save" data-tk="save">${SH.edit?"Enregistrer les modifications":"Enregistrer"}</button>${SH.edit?`<button class="tk-b" style="width:100%" data-tk="editcancel">Annuler la modification</button>`:""}
+ <h3>Enregistrements ${gid?"de cette partie":"hors partie"} (${cur.length})</h3>${cur.length?cur.slice(0,40).map(r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}</small></span><b>${n1(+r.v)} PV</b><button data-tk="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tk="del" data-id="${E(r.id)}" aria-label="Supprimer" class="${SH.cd===r.id?"cf":""}">${SH.cd===r.id?"Sûr ?":"🗑"}</button></div>`).join(""):'<p class="mu">Aucun enregistrement.</p>'}
+ </div>`}
+function save1(){const c=gameCtx(),t=trk(),side=SH.side,other=side==="me"?"opp":"me",A=findUnit(side,SH.a,c),B=findUnit(other,SH.b,c),v=parseFloat(SH.v);
+ if(!A||!B){toast("Choisis l'unité attaquante et l'unité ciblée");return}if(!Number.isFinite(v)||v<0){toast("Saisis les dégâts infligés");return}
+ const kv=SH.k===""||SH.k==null?null:Math.max(0,parseInt(SH.k,10)||0),gid=SH.edit?(SH.gid||""):c.gid;
+ const mkA={uid:A.uid,n:A.name,f:A.fac||"",pts:A.pts||null},mkB={uid:B.uid,n:B.name,f:B.fac||""};
+ if(SH.edit){const r=t.rec.find(x=>x.id===SH.edit);if(r){r.a=mkA;r.b=mkB;r.v=v;r.k=kv;r.ty=SH.ty;r.rd=SH.rd;r.me=side==="me";r.t2=Date.now()}toast("Enregistrement modifié")}
+ else{t.rec.push({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),gid,gt:gid?c.title:"",d:Date.now(),rd:SH.rd,ty:SH.ty,me:side==="me",a:mkA,b:mkB,v,k:kv});toast("Dégâts enregistrés")}
+ SH.v="";SH.k="";SH.edit=null;SH.a=SH.a==="@a"?"":SH.a;SH.b=SH.b==="@b"?"":SH.b;SH._a=SH._b=null;sv();draw2();if(tab==="gm")try{draw()}catch(_){}}
+function onChange(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;const c=gameCtx();
+ if(k==="a"||k==="b"){if(t.value==="__new"){SH.add={side:k==="a"?SH.side:(SH.side==="me"?"opp":"me"),which:k,n:"",f:null};draw2();return}SH[k]=t.value;if(SH.edit&&(t.value!=="@a"&&t.value!=="@b")){}draw2();return}
+ if(k==="ty"){SH.ty=t.value;return}if(k==="rd"){SH.rd=+t.value;return}if(k==="meList"||k==="oppList"){SH[k]=t.value;SH.a=SH.b="";draw2()}}
+function onInput(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;if(k==="v")SH.v=t.value;else if(k==="k")SH.k=t.value;else if(k==="nn"&&SH.add)SH.add.n=t.value;else if(k==="nf"&&SH.add)SH.add.f=t.value}
+function onClick(e){const b=e.target.closest&&e.target.closest("[data-tk]");if(!b||b.matches("select,input"))return;const k=b.dataset.tk,t=trk();
+ if(k==="close"){closeSheet();return}if(k==="side"){SH.side=b.dataset.v;SH.a=SH.b="";if(SH.edit){SH.edit=null}draw2();return}
+ if(k==="dv"){SH.v=String(Math.max(0,(parseFloat(SH.v)||0)+ +b.dataset.v));draw2();return}if(k==="dk"){SH.k=String(Math.max(0,(parseInt(SH.k,10)||0)+ +b.dataset.v));draw2();return}
+ if(k==="save"){save1();return}if(k==="editcancel"){SH.edit=null;SH.a=SH.b="";SH.v=SH.k="";draw2();return}
+ if(k==="addcancel"){SH.add=null;draw2();return}
+ if(k==="addsave"){const a=SH.add,n=(a.n||"").trim(),f=(a.f==null?"":a.f).trim();if(!n){toast("Indique le nom de l'unité");return}const id=T.uidOf({man:true,n,f});
+  if(!t.man.some(m=>T.uidOf({man:true,n:m.n,f:m.f}).uid===id.uid))t.man.push({id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,4),n,f,s:a.side});
+  const mk=t.man.find(m=>T.uidOf({man:true,n:m.n,f:m.f}).uid===id.uid);SH[a.which]="m"+mk.id;SH.add=null;sv();draw2();return}
+ if(k==="edit"){openSheet(b.dataset.id);return}
+ if(k==="del"){const id=b.dataset.id;if(SH.cd!==id){SH.cd=id;draw2();setTimeout(()=>{if(SH.cd===id){SH.cd=null;if(document.getElementById("tks"))draw2()}},3500);return}
+  SH.cd=null;t.rec=t.rec.filter(r=>r.id!==id);if(SH.edit===id)SH.edit=null;sv();draw2();toast("Enregistrement supprimé");if(tab==="gm")try{draw()}catch(_){}return}}
+/* ---------- icône discrète dans le lanceur de dés ---------- */
+function mountIcon(){const h=document.querySelector("#dzp .dzh");if(!h||document.getElementById("dztrk"))return!!document.getElementById("dztrk");
+ const b=document.createElement("button");b.type="button";b.id="dztrk";b.className="dzx";b.title="Suivi des dégâts";b.setAttribute("aria-label","Suivi des dégâts");b.textContent="📊";b.style.cssText="opacity:.55;font-size:15px";h.insertBefore(b,document.getElementById("dzsn")||h.lastChild);return true}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#dztrk");if(!b)return;e.preventDefault();e.stopPropagation();openSheet()},true);
+let tries=0;const mt=setInterval(()=>{if(mountIcon()||++tries>40)clearInterval(mt)},250);
+/* ---------- tableau de bord de l'onglet Parties ---------- */
+const FILT=()=>{const u=trk().ui;return{fac:u.fac||"",det:u.det||"",per:u.per||""}};
+const SECS=[["fac","Factions"],["det","Détachements"],["evo","Évolution"],["first","Je commence ?"],["dmg","Dégâts"],["uni","Unités"],["mu","Match-ups"]];
+function resultsAll(){return T.results(S.games,S.ash,trk().meta)}
+function dashData(){const f=FILT(),from=T.periodFrom(f.per),all=resultsAll(),rs=T.resultStats(S.games,S.ash,trk().meta,{fac:f.fac,det:f.det,from});return{f,from,all,rs}}
+function donut(p,n){if(!n)return`<svg viewBox="0 0 100 100" class="tk-dn"><circle r="38" cx="50" cy="50" fill="none" stroke="var(--bd)" stroke-width="14"/><text x="50" y="55" text-anchor="middle" font-size="14" fill="var(--mu)">0</text></svg>`;
+ const R=38,C=2*Math.PI*R;let off=0;const seg=(v,c)=>{const l=v/100*C,s=`<circle r="${R}" cx="50" cy="50" fill="none" stroke="${c}" stroke-width="14" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 50 50)"/>`;off+=l;return s};
+ return`<svg viewBox="0 0 100 100" class="tk-dn" role="img" aria-label="Répartition des résultats">${seg(p.V,"#2e9d6b")}${seg(p.D,"#d1503b")}${seg(p.E,"#9aa5a0")}<text x="50" y="54" text-anchor="middle" font-size="20" font-weight="800" fill="var(--tx)">${n}</text><text x="50" y="66" text-anchor="middle" font-size="8" fill="var(--mu)">parties</text></svg>`}
+function tbl(rows,first){return rows.length?`<table class="tk-t"><tr><th>${first}</th><th>N</th><th>V</th><th>D</th><th>É</th><th>% V</th></tr>${rows.map(x=>`<tr><td>${E(x.k)}</td><td>${x.n}</td><td>${x.V}</td><td>${x.D}</td><td>${x.E}</td><td><b>${n1(x.win)}</b></td></tr>`).join("")}</table>`:'<p class="mu">Aucune donnée.</p>'}
+function lineChart(cum){if(cum.length<2)return'<p class="mu">Il faut au moins deux parties pour tracer l\'évolution.</p>';const W=300,H=90,x=i=>8+i*(W-16)/(cum.length-1),y=v=>H-6-v/100*(H-12);
+ return`<svg viewBox="0 0 ${W} ${H+14}" style="width:100%;max-width:360px"><line x1="8" y1="${y(50)}" x2="${W-8}" y2="${y(50)}" stroke="var(--bd)" stroke-dasharray="3 3"/><polyline fill="none" stroke="var(--ac)" stroke-width="2.4" points="${cum.map((c,i)=>x(i)+","+y(c.win)).join(" ")}"/>${cum.map((c,i)=>`<circle cx="${x(i)}" cy="${y(c.win)}" r="3" fill="${c.res==="V"?"#2e9d6b":c.res==="D"?"#d1503b":"#9aa5a0"}"/>`).join("")}<text x="8" y="${H+11}" font-size="9" fill="var(--mu)">Partie 1</text><text x="${W-8}" y="${H+11}" font-size="9" text-anchor="end" fill="var(--mu)">Partie ${cum.length}</text></svg>`}
+function filteredRec(d){const f=d.f,ids=f.det||f.fac?new Set(d.rs.results.map(r=>r.id)):null;return trk().rec.filter(r=>{if(d.from&&r.d<d.from)return false;if(f.fac&&T.nk(r.b&&r.b.f)!==T.nk(f.fac)&&!(r.gid&&ids&&ids.has(r.gid)&&false))return false;if(f.det&&!(r.gid&&ids&&ids.has(r.gid)))return false;return true})}
+const dmgLine=r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}</small></span><b>${n1(+r.v)} PV</b><button data-tkp="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tkp="del" data-id="${E(r.id)}" aria-label="Supprimer">🗑</button></div>`;
+function secBody(sec,d){const rs=d.rs,u=trk().ui,mine=filteredRec(d).filter(r=>r.me!==false);
+ if(sec==="fac")return`<h4>Contre chaque faction</h4>${tbl(rs.byOpponent,"Adversaire")}<h4>Par faction jouée</h4>${tbl(rs.byFaction,"Ma faction")}`;
+ if(sec==="det")return`<h4>Par détachement</h4>${tbl(rs.byDetachment,"Détachement")}`;
+ if(sec==="evo"){const ev=rs.evolution;return`<h4>Taux de victoire cumulé</h4>${lineChart(ev.cum)}${ev.trend?`<p>${ev.trend.delta>0?'<b class="tk-g">▲ Ça progresse</b>':ev.trend.delta<0?'<b class="tk-r">▼ Ça baisse</b>':"= Stable"} : ${n1(ev.trend.first)} % sur la 1ʳᵉ moitié des parties, ${n1(ev.trend.last)} % sur la 2ᵉ.</p>`:'<p class="mu">Évolution chiffrée à partir de 4 parties.</p>'}<h4>Mois par mois</h4>${tbl(ev.months.map(m=>({...m,k:m.k})),"Mois")}`}
+ if(sec==="first"){const L=rs.results.slice().sort((a,b)=>b.d-a.d);return`<h4>Selon qui commence</h4>${tbl(rs.byFirst,"Premier joueur")}<h4>Indiquer qui a commencé</h4>${L.length?L.slice(0,30).map(r=>`<div class="tk-rr"><span class="nm"><b>${new Date(r.d).toLocaleDateString("fr-FR")}</b> contre ${E(r.f2||"?")}<small>${r.s1} – ${r.s2}</small></span><span class="tk-f" data-g="${E(r.id)}"><button data-tkp="first" data-id="${E(r.id)}" data-v="1" class="${r.first===1?"on":""}">Moi</button><button data-tkp="first" data-id="${E(r.id)}" data-v="2" class="${r.first===2?"on":""}">Adv.</button><button data-tkp="first" data-id="${E(r.id)}" data-v="0" class="${!r.first?"on":""}">—</button></span></div>`).join(""):'<p class="mu">Aucune partie.</p>'}`}
+ if(sec==="dmg"){const dg=T.damagePerGame(mine,rs.results);const games=T.byGame(mine);
+  return`<p class="tk-tag">Données réelles saisies dans le lanceur de dés</p><div class="tk-kv"><span>Dégâts moyens infligés par partie</span><b>${dg.mean==null?"—":n1(dg.mean)}</b><span>Parties avec dégâts enregistrés</span><b>${dg.games}</b><span>Total enregistré</span><b>${n1(mine.reduce((a,r)=>a+(+r.v||0),0))}</b></div>
+  <h4>Par partie</h4>${games.length?games.slice().reverse().map(g=>{const gr=trk().rec.filter(r=>(r.gid||"")===g.gid&&(g.gid||r.d===g.d||true)).sort((a,b)=>a.d-b.d);return`<details><summary>${new Date(g.d).toLocaleDateString("fr-FR")} — <b>${n1(g.sum)} PV</b> <span class="mu">(${g.n} enreg.)</span></summary>${gr.map(dmgLine).join("")}</details>`}).join(""):'<p class="mu">Aucun dégât enregistré. Utilise l\'icône 📊 du lanceur de dés.</p>'}`}
+ if(sec==="uni"){const sort=u.sort||"mean",rk=T.ranking(mine).sort((a,b)=>sort==="total"?b.total-a.total:sort==="pp"?(b.perPoint||-1)-(a.perPoint||-1):b.mean-a.mean);
+  return`<p class="tk-tag">Données réelles</p><div class="tk-pills sm">${[["mean","Moyenne"],["total","Total"],["pp","Par point"]].map(([k,n])=>`<button data-tkp="sort" data-v="${k}" class="${sort===k?"on":""}">${n}</button>`).join("")}</div>
+  ${rk.length?`<table class="tk-t"><tr><th>Unité</th><th>Actions</th><th>Moy.</th><th>Total</th><th>PV/pt</th></tr>${rk.map(x=>`<tr data-tkp="unit" data-id="${E(x.uid)}" style="cursor:pointer"><td>${E(x.name)}<div class="mu" style="font-size:10px">${E(x.fac||"")}${x.pts?" · "+x.pts+" pts":""}</div></td><td>${x.n}</td><td><b>${n1(x.mean)}</b></td><td>${n1(x.total)}</td><td>${x.perPoint!=null?n2(x.perPoint):"—"}</td></tr>`).join("")}</table><p class="mu">PV/pt : dégâts moyens par partie rapportés aux points de l'unité. Touche une unité pour voir ses cibles.</p>${u.unit?unitDetail(u.unit,mine):""}`:'<p class="mu">Aucune donnée.</p>'}`}
+ if(sec==="mu"){const rec=mine,units=T.ranking(rec),tg=[];rec.forEach(r=>{if(!tg.some(x=>x.uid===r.b.uid))tg.push({uid:r.b.uid,name:r.b.n,fac:r.b.f})});
+  const A=u.mA&&units.some(x=>x.uid===u.mA)?u.mA:"",B=u.mB&&tg.some(x=>x.uid===u.mB)?u.mB:"",m=A&&B?T.matchup(rec,A,B):null;
+  return`<p class="tk-tag">Données réelles</p><div class="tk-two"><label>Mon unité<select data-tkp="mA"><option value="">Choisir…</option>${units.map(x=>`<option value="${E(x.uid)}"${x.uid===A?" selected":""}>${E(x.name)}</option>`).join("")}</select></label><label>Cible<select data-tkp="mB"><option value="">Choisir…</option>${tg.map(x=>`<option value="${E(x.uid)}"${x.uid===B?" selected":""}>${E(x.name)}${x.fac?" — "+E(x.fac):""}</option>`).join("")}</select></label></div>
+  ${m?`<div class="tk-c"><b>${m.n} rencontre(s), ${m.games} partie(s)</b><div class="tk-kv"><span>Dégâts moyens</span><b>${n1(m.mean)}</b><span>Total</span><b>${n1(m.total)}</b><span>Min · max</span><b>${n1(m.min)} · ${n1(m.max)}</b>${m.killsTracked?`<span>Figurines éliminées (moy.)</span><b>${n1(m.killsMean)}</b>`:""}${m.trend.delta!=null?`<span>Évolution</span><b>${n1(m.trend.first)} → ${n1(m.trend.last)}</b>`:""}</div>${m.byGame.length>1?lineSpark(m.byGame.map(g=>g.sum)):""}${Object.entries(m.byType).map(([k,x])=>`<p class="mu" style="margin:4px 0 0">${E((TYPES.find(t=>t[0]===k)||["","Autre"])[1])} : ${x.n} fois, moyenne ${n1(x.mean)}</p>`).join("")}</div>`:'<p class="mu">Choisis une unité et une cible pour retrouver tes anciennes données.</p>'}
+  <h4>Meilleurs match-ups</h4>${T.matchupsTable(rec).slice(0,8).map(x=>`<div class="tk-rr"><span class="nm">${E(x.a)} → ${E(x.b)}<small>${x.n} fois · total ${n1(x.total)}</small></span><b>${n1(x.mean)}</b></div>`).join("")||'<p class="mu">Aucune donnée.</p>'}`}
+ return""}
+function lineSpark(v){const W=240,H=44,mx=Math.max(...v,1),x=i=>6+i*(W-12)/(v.length-1),y=a=>H-4-a/mx*(H-10);return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:280px;margin-top:6px"><polyline fill="none" stroke="var(--ac)" stroke-width="2" points="${v.map((a,i)=>x(i)+","+y(a)).join(" ")}"/>${v.map((a,i)=>`<circle cx="${x(i)}" cy="${y(a)}" r="2.6" fill="var(--ac)"/>`).join("")}</svg><div class="mu" style="font-size:10px">Dégâts par partie, de la plus ancienne à la plus récente</div>`}
+function unitDetail(uid,rec){const p=T.unitProfile(rec,uid);if(!p.n)return"";return`<div class="tk-c"><b>${E((rec.find(r=>r.a.uid===uid)||{a:{n:""}}).a.n)}</b><div class="tk-kv"><span>Actions enregistrées</span><b>${p.n}</b><span>Dégâts moyens</span><b>${n1(p.mean)}</b><span>Total</span><b>${n1(p.total)}</b>${p.perPoint!=null?`<span>Dégâts par partie et par point</span><b>${n2(p.perPoint)}</b>`:""}</div>${p.perGame.length>1?lineSpark(p.perGame.map(g=>g.sum)):""}<h4>Contre chaque faction</h4>${p.byFaction.map(x=>`<div class="tk-rr"><span class="nm">${E(x.name)}<small>${x.n} fois</small></span><b>${n1(x.mean)}</b></div>`).join("")}<h4>Contre chaque unité</h4>${p.byTarget.map(x=>`<div class="tk-rr"><span class="nm">${E(x.name)}<small>${E(x.fac||"")} · ${x.n} fois</small></span><b>${n1(x.mean)}</b></div>`).join("")}</div>`}
+function dashboard(){const d=dashData(),t=trk(),u=t.ui,rs=d.rs,p=rs.round,facs=[...new Set(d.all.map(r=>r.f2).filter(Boolean))].sort(),dets=[...new Set(d.all.map(r=>r.d1).filter(Boolean))].sort();
+ const sel=(k,list,cur,all)=>`<select data-tkp="f_${k}"><option value="">${all}</option>${list.map(x=>`<option value="${E(x)}"${x===cur?" selected":""}>${E(x)}</option>`).join("")}</select>`;
+ return`<div class="tk" id="tkdash"><div class="tk-c" style="margin-top:0"><div class="tk-dh"><div class="tk-dnw">${donut(p,rs.n)}</div><div class="tk-dk"><div class="tk-pc"><span class="tk-g">${rs.n?p.V:0} %</span><small>victoires</small></div><div class="tk-pc"><span class="tk-r">${rs.n?p.D:0} %</span><small>défaites</small></div><div class="tk-pc"><span>${rs.n?p.E:0} %</span><small>égalités</small></div></div></div>
+ <div class="tk-cnt"><span><b>${rs.n}</b> ${rs.n>1?"parties":"partie"}</span><span class="tk-g"><b>${rs.V}</b> ${rs.V>1?"victoires":"victoire"}</span><span class="tk-r"><b>${rs.D}</b> ${rs.D>1?"défaites":"défaite"}</span><span><b>${rs.E}</b> ${rs.E>1?"égalités":"égalité"}</span></div>
+ ${rs.n?`<p class="mu" style="margin:6px 0 0">Taux de victoire = victoires ÷ parties × 100. Parties abandonnées non comptées. Je suis le Joueur 1.</p>`:`<p class="mu" style="margin:6px 0 0">Aucune partie terminée${d.all.length?" avec ces filtres":""}. Les parties terminées s'ajoutent automatiquement.</p>`}
+ <div class="tk-flt"><label>Faction adverse${sel("fac",facs,u.fac,"Toutes")}</label><label>Mon détachement${sel("det",dets,u.det,"Tous")}</label><label>Période<select data-tkp="f_per">${[["","Tout"],["30","30 jours"],["90","90 jours"],["365","1 an"]].map(([k,n])=>`<option value="${k}"${(u.per||"")===k?" selected":""}>${n}</option>`).join("")}</select></label></div>
+ <div class="tk-pills">${SECS.map(([k,n])=>`<button data-tkp="sec" data-v="${k}" class="${u.sec===k?"on":""}">${n}</button>`).join("")}</div>${u.sec?`<div class="tk-body">${secBody(u.sec,d)}</div>`:""}</div></div>`}
+function damageReport(g){const rs=trk().rec.filter(r=>r.gid===g.id);if(!rs.length)return"";const mine=rs.filter(r=>r.me!==false),tot=mine.reduce((a,r)=>a+(+r.v||0),0),best=T.ranking(mine)[0];
+ return`<details style="margin-top:6px"><summary class="mu">Dégâts enregistrés : ${n1(tot)} PV infligés${best?" · meilleure unité : "+E(best.name):""}</summary>${rs.sort((a,b)=>a.d-b.d).map(dmgLine).join("")}</details>`}
+function firstSel(g){const m=trk().meta[g.id]||{},v=m.first||0;return`<div class="tk-fs" data-tkpf="${E(g.id)}"><span class="mu">Qui a commencé :</span><button data-tkp="first" data-id="${E(g.id)}" data-v="1" class="${v===1?"on":""}">Moi</button><button data-tkp="first" data-id="${E(g.id)}" data-v="2" class="${v===2?"on":""}">Adversaire</button><button data-tkp="first" data-id="${E(g.id)}" data-v="0" class="${!v?"on":""}">—</button></div>`}
+const g0=window.gmView;
+if(typeof g0==="function"){window.gmView=function(){let h="";try{h=g0.apply(this,arguments)}catch(e){h='<p class="mu">Parties indisponibles</p>'}
+ let out=h;try{const parts=String(h).split('<div class="card" style="position:relative">');if(parts.length>1){out=parts[0]+parts.slice(1).map(c=>{const m=/data-g="([^"]+)"/.exec(c),g=m&&(S.games||[]).find(x=>x.id===m[1]);if(!g||g.fin===false)return'<div class="card" style="position:relative">'+c;const i=c.lastIndexOf("</div>");return'<div class="card" style="position:relative">'+c.slice(0,i)+damageReport(g)+firstSel(g)+c.slice(i)}).join("")}}catch(e){}
+ let dash="";try{dash=dashboard()}catch(e){dash=""}return dash+out};try{gmView=window.gmView}catch(_){}}
+document.addEventListener("change",e=>{const t=e.target,k=t.dataset&&t.dataset.tkp;if(!k||t.closest("#tks"))return;const u=trk().ui;
+ if(k==="f_fac"){u.fac=t.value}else if(k==="f_det"){u.det=t.value}else if(k==="f_per"){u.per=t.value}else if(k==="mA"){u.mA=t.value}else if(k==="mB"){u.mB=t.value}else return;sv();draw()});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tkp]");if(!b||b.matches("select,option")||b.closest("#tks"))return;const k=b.dataset.tkp,t=trk(),u=t.ui;
+ if(k==="sec"){u.sec=u.sec===b.dataset.v?"":b.dataset.v;sv();draw();return}if(k==="sort"){u.sort=b.dataset.v;sv();draw();return}if(k==="unit"){u.unit=u.unit===b.dataset.id?"":b.dataset.id;sv();draw();return}
+ if(k==="first"){const id=b.dataset.id,v=+b.dataset.v;t.meta[id]=t.meta[id]||{};t.meta[id].first=v;const a=(S.ash||[]).find(x=>x.id===id||x.src===id);if(a)a.first=v;sv();draw();return}
+ if(k==="edit"){openSheet(b.dataset.id);return}
+ if(k==="del"){const id=b.dataset.id,go=()=>{t.rec=t.rec.filter(r=>r.id!==id);sv();draw()};if(typeof ask==="function")ask({t:"Supprimer cet enregistrement ?",p:"Les statistiques seront recalculées sans lui.",ok:"Supprimer",dg:1},go);else if(confirm("Supprimer cet enregistrement ?"))go()}},true);
+window.TRKUI={open:openSheet,trk,dashboard,gameCtx,unitsOf,realBlock:null};
+/* ---------- bloc « données réelles » pour le simulateur (séparé des estimations) ---------- */
+window.TRKUI.realBlock=(uA,facA,uB,facB)=>{try{const a=T.uidOf(uA,{fac:T.facOfUnit(uA)||facA}).uid,b=T.uidOf(uB,{fac:T.facOfUnit(uB)||facB}).uid,m=T.matchup(trk().rec,a,b);if(!m.n)return"";
+ return`<div class="an-c" style="border-color:#e08a2c"><h3>Tes résultats réels (données enregistrées)</h3><p class="mu" style="margin:0 0 4px">Ces chiffres viennent de tes parties, pas du simulateur.</p><div class="an-kv"><span>Rencontres</span><b>${m.n} (${m.games} partie${m.games>1?"s":""})</b><span>Dégâts moyens réels</span><b>${n1(m.mean)}</b><span>Total enregistré</span><b>${n1(m.total)}</b>${m.killsTracked?`<span>Figurines éliminées (moy.)</span><b>${n1(m.killsMean)}</b>`:""}</div></div>`}catch(e){return""}};
 })();
 
 </script>
