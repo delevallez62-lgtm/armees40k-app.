@@ -4065,7 +4065,7 @@ window.__mxLay=()=>{const g={},ks=[];layAll().filter(l=>!l.off).forEach(l=>{cons
 const smTxt=s=>s==null?"":typeof s==="string"?s:[s.f?"Fixe : "+s.f:"",s.t?"Tactique : "+s.t:""].filter(Boolean).join(" · ");
 const lineSum=c=>(c.cond||[]).map(l=>`${l.pts} PdV${l.k==="cnt"?" par objectif/élément":""}`).join(" · ");
 let mOpen={},mq="",mShowOff={},mTab="pri";
-const thumb=id=>{const u=(S.mimg&&S.mimg[id])||(/^lay-\d+$/.test(id)?"lay/p"+id.slice(4)+".webp":"");return u?`<span class="th" style="background-image:url('${u}')"></span>`:""};
+const thumb=id=>{const u=(S.mimg&&S.mimg[id])||(/^lay-\d+$/.test(id)?"lay/p"+id.slice(4)+".jpg":"");return u?`<span class="th" style="background-image:url('${u}')"></span>`:""};
 function secItems(f,q){const m=mx(),B=by(),GR=gr(),out=[],mem=memberIds(f),refs=(S.mfm&&S.mfm[f.id])||[];
  const offs=[...OR.sx.map(o=>o.id).filter(id=>m.sx[id]&&m.sx[id].off),...m.csx.filter(c=>c.off).map(c=>c.id)].filter(id=>homeOf("sec",id)===f.id);
  ["e","c","a"].forEach(g=>{const ids=mem.filter(id=>B[id]&&B[id].g===g&&(!q||nk(B[id].nm+" "+B[id].d).includes(q)));if(!ids.length)return;const G=GR[g]||{nm:g,ic:"",c:"#d8b45e"};
