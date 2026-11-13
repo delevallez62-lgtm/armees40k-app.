@@ -327,6 +327,15 @@ function duelFig(unitA,gi,unitB,gj,ctx,withSim){ctx=ctx||DEFCTX;const ga=unitA.g
   if(withSim&&eff>0){const sm=simulate(att,tgt,mode,ctx,1500,31);m.kill=sm.wipeProb;m.mean=sm.mean}
   out.modes[mode]=m});
  out.best=["shoot","melee"].map(k=>({k,m:out.modes[k]})).filter(x=>x.m).sort((x,y)=>y.m.eff-x.m.eff)[0]||null;return out}
+/* n figurines attaquantes contre n figurines cibles (types de figurines choisis) */
+function duelGroup(unitA,gi,nA,unitB,gj,nB,ctx,runs){ctx=ctx||DEFCTX;const ga=unitA.groups[gi],gb=unitB.groups[gj];nA=Math.max(1,Math.min(200,nA|0||1));nB=Math.max(1,Math.min(200,nB|0||1));
+ const att={...unitA,models:nA,groups:[{...ga,n:nA,weapons:ga.weapons.filter(w=>w.count>0).map(w=>({...w,count:nA}))}]},tgt={...unitB,models:nB,groups:[{...gb,n:nB}]};
+ const out={nA,nB,pv:gb.stats.PV,totalWounds:totalWounds(tgt),modes:{}};
+ ["shoot","melee"].forEach(mode=>{const sel=chooseWeapons(att,mode,tgt,ctx,{});if(!sel.length){out.modes[mode]=null;return}
+  const th=theory(att,tgt,mode,ctx,{}),sm=simulate(att,tgt,mode,ctx,runs||1500,57);
+  out.modes[mode]={attacks:th.attacks,eff:th.eff,effCap:Math.min(th.eff,out.totalWounds),mean:sm.mean,kills:sm.killsMean,wipe:sm.wipeProb,p10:sm.p10,p90:sm.p90,hist:sm.hist,hit:th.attacks>0?th.hits/th.attacks:0}});
+ return out}
+
 /* liste des types de figurines d'une armée */
 function figures(P){const o=[];P.forEach((p,ui)=>p.groups.forEach((g,gi)=>o.push({ui,gi,unit:p,g,name:(g.isLeader?(g.label||p.name)+" ("+p.name+")":p.name),n:g.n,pv:g.stats.PV})));return o}
 
@@ -338,7 +347,7 @@ const HYPOTHESES=[
  "Distances, déplacements, ligne de vue et terrain ne sont pas simulés : tu choisis le scénario (mi-portée, couvert, charge, immobile).",
  "Nombre d'armes absent de la liste : 1 retenu, et signalé.",
  "Bataille : chaque unité tire puis charge la meilleure cible restante à chaque round (affectation automatique) ; les dégâts sont des espérances, la mêlée est un échange, les objectifs ne sont pas joués."];
-root.ANA={duelFig,figures,battle,HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
+root.ANA={duelGroup,duelFig,figures,battle,HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
  expectedWeapon,simulate,simulateOnce,theory,chooseWeapons,pairMatrix,armyStats,unitRanking,winEstimate,histStats,resultOf,fracKilled,DEFCTX,WEIGHTS,SUPPORTED,INFO_ONLY};
 if(typeof module!=="undefined")module.exports=root.ANA;
 })(typeof window!=="undefined"?window:globalThis);

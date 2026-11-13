@@ -107,6 +107,11 @@ const rk=A.unitRanking(Q,Rr,m1,m2);ok(rk.danger.length===4&&rk.vuln.length===4,'
  near(m.eff,4*(4/6)*(3/6)*(2/6),1e-9,'duel : dégâts moyens par figurine');ok(m.kill>=0&&m.kill<=1&&d.modes.melee===null,'duel : chance de tuer, pas de mêlée sans arme');
  const big=tg({size:1,stats:{PV:'1'}});near(A.duelFig(att(W('20','2+','8','-3','6')),0,big,0,ctx,false).modes.shoot.eff,20*(5/6)*(5/6)*(5/6),1e-6,'duel : dégâts plafonnés aux PV de la figurine cible (D6 contre 1 PV)');}
 
+// --- plusieurs figurines : 10 attaquantes contre 10 cibles
+{const a=att(W('2','3+','4','0','1'),10),t2=tg({size:10,stats:{PV:'1',SV:'4+'}});const one=A.duelFig(a,0,t2,0,ctx,false).modes.shoot.eff,gp=A.duelGroup(a,0,10,t2,0,10,ctx,3000).modes.shoot;
+ near(gp.eff,one*10,1e-9,'groupe : 10 figurines = 10 × une figurine (théorie)');near(gp.mean/gp.eff,1,.06,'groupe : simulation ≈ théorie');ok(gp.kills<=10&&gp.wipe>=0&&gp.wipe<=1,'groupe : figurines tuées et probabilité d\'anéantir');
+ const g1=A.duelGroup(a,0,1,t2,0,1,ctx,500).modes.shoot;near(g1.eff,one,1e-9,'groupe de 1 = duel simple');}
+
 // --- historique
 const games=[{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:80,s2:60,first:1},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:50,s2:50,first:2},{f1:'Nécrons',f2:'T\'au',d1:'Légion',s1:30,s2:70,first:2},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:90,s2:10,first:1}];
 const hs=A.histStats(games);ok(hs.n===4&&hs.V===2&&hs.D===1&&hs.E===1,'historique : V/D/E');near(hs.win,50,1e-9,'taux de victoire = V/N×100');near(hs.draw,25,1e-9,'égalités séparées');near(hs.avg1,62.5,1e-9,'moyenne J1');
