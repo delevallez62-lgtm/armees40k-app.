@@ -35,7 +35,7 @@ jobs:
           for page_no in range(9, 54):
               page = doc[page_no - 1]
               pix = page.get_pixmap(matrix=fitz.Matrix(1.65, 1.65), alpha=False)
-              pix.save(f"lay/p{page_no}.webp", output="webp", jpg_quality=86)
+              pix.save(f"lay/p{page_no}.jpg", output="jpg", jpg_quality=88)
           print("45 layouts officiels générés")
           PY
       - name: Préparer le site sans modifier l'application
