@@ -1,14 +1,14 @@
 /* ===== HAMMER · Analyse & Simulation — interface (le moteur est ANA, voir ana-engine) ===== */
 (()=>{
 const A=window.ANA,E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const SECS=[["cmp","Comparer"],["bat","Bataille"],["sim","Affrontement"],["mat","Match-ups"],["rec","Conseils"],["win","Victoire"],["his","Historique"]];
+const SECS=[["duel","Duels"],["cmp","Comparer"],["bat","Bataille"],["sim","Simulation"],["rec","Conseils"],["win","Victoire"],["his","Historique"]];
 const pct=x=>x==null?"—":Math.round(x*100)+" %",n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
 let CACHE={key:"",res:null},RES=null,BUSY=false,HFORM={};
 const lists=()=>(typeof S!=="undefined"&&S.lists)||[];
 const facOf=l=>{const c={};(l.units||[]).forEach(u=>{const f=String(u.fkw||"").split(",")[0].trim();if(f)c[f]=(c[f]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
 const detOf=l=>((l&&l.dets||[])[0]||{}).name||"";
 const st=()=>{const a=S.ana=S.ana&&typeof S.ana==="object"?S.ana:{};const L=lists();
- if(!a.sec)a.sec="cmp";if(!a.ctx)a.ctx={half:false,cover:false,charged:false,still:false};if(!a.n)a.n=3000;if(!a.mode)a.mode="shoot";
+ if(!a.sec||a.sec==="mat")a.sec="duel";if(!a.ctx)a.ctx={half:false,cover:false,charged:false,still:false};if(!a.n)a.n=3000;if(!a.mode)a.mode="shoot";
  if(!L.some(l=>l.id===a.a))a.a=(L.find(l=>l.id===S.cur)||L[0]||{}).id||"";
  if(!L.some(l=>l.id===a.b))a.b=(L.find(l=>l.id!==a.a)||L.find(l=>l.id===a.a)||{}).id||"";
  return a};
@@ -36,6 +36,8 @@ const css=`<style id="anacss">
 .an-t{width:100%;border-collapse:collapse;font-size:13px}.an-t td,.an-t th{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:center}.an-t td:first-child,.an-t th:first-child{text-align:left}
 .an-f{display:grid;gap:8px}.an-f label{display:block;font-size:12px;color:var(--mu)}.an-f input,.an-f select{width:100%;min-height:44px;margin-top:3px}.an-f .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .an-ck{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}.an-ck input{width:22px;height:22px}
+.an-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.an-tile{border:1px solid var(--bd);border-radius:12px;padding:10px;background:var(--bg);text-align:center}.an-tile.off{opacity:.5}.an-tile .k{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}.an-tile .big{font-size:30px;font-weight:800;line-height:1.1}.an-tile .s{font-size:12px;color:var(--mu)}.an-tile .big2{font-size:22px;font-weight:800;color:var(--ac);margin-top:6px}.an-tile .kill{margin-top:6px;font-size:13px;font-weight:700}
+.an-tr{display:grid;grid-template-columns:1fr 54px 64px 64px;gap:6px;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid var(--bd);background:none;color:var(--tx);font:inherit;padding:9px 2px;min-height:48px;cursor:pointer}.an-tr:first-of-type{border-top:0}.an-tr.on{background:color-mix(in srgb,var(--ac) 14%,transparent);border-radius:8px}.an-tr b{font-size:15px}.an-tr .nm{font-size:13.5px;line-height:1.2}.an-tr .nm small{display:block;color:var(--mu);font-size:11px}.an-th{display:grid;grid-template-columns:1fr 54px 64px 64px;gap:6px;font-size:11px;color:var(--mu);font-weight:700;text-transform:uppercase;padding:0 2px 4px}
 </style>`;
 const hdr=a=>{const L=lists();const opt=(id)=>L.map(l=>`<option value="${E(l.id)}"${l.id===id?" selected":""}>${E(l.name||"Liste")} (${(l.units||[]).length})</option>`).join("");
  return`<div class="an"><h2>Analyse &amp; Simulation</h2><p class="mu" style="margin:0">Tout est calculé sur cet appareil, sans connexion, à partir des listes importées. Règles V11.</p>
@@ -102,6 +104,29 @@ function secMat(r){const a=st(),dir=a.dir==="ba"?"ba":"ab",grid=a.grid===1;
   return head+`<div class="an-c" style="padding:6px;overflow-x:auto"><table class="an-t" style="min-width:${80+Q.length*64}px"><tr><th style="position:sticky;left:0;background:var(--card)">↓ attaque / cible →</th>${Q.map(q=>`<th style="font-size:10px">${E(q.name.slice(0,14))}</th>`).join("")}</tr>${P.map((p,i)=>`<tr><td style="position:sticky;left:0;background:var(--card);font-size:12px">${E(p.name.slice(0,18))}</td>${Q.map((q,j)=>{const c=cell(i,j);return`<td style="color:${tone(c.ratio)};font-weight:700" title="${E(p.name)} → ${E(q.name)} : ${pct(c.o)} détruit / ${pct(c.b)} reçu">${rcol(c.ratio)}<div class="mu" style="font-size:10px;font-weight:400">${pct(c.o)}</div></td>`}).join("")}</tr>`).join("")}</table><p class="mu" style="margin:6px 4px 0">Chaque case : ratio en gras, part de la cible détruite dessous. Vert ≥ 1,5 · rouge ≤ 0,67.</p></div>`}
  return head+P.map((p,i)=>{const row=Q.map((q,j)=>({j,q,c:cell(i,j)})).sort((x,y)=>y.c.o-x.c.o);const b=row[0];
   return`<details><summary>${E(p.name)}${p.models>1?" ×"+p.models:""} <span class="mu">— meilleure cible : ${b?E(b.q.name)+" ("+pct(b.c.o)+")":"—"}</span></summary><table class="an-t"><tr><th>Cible</th><th>Dégâts</th><th>Retour</th><th>Ratio</th><th>Par fig.</th></tr>${row.map(x=>`<tr><td>${E(x.q.name)}${x.q.models>1?" ×"+x.q.models:""}<div class="mu" style="font-size:10px">${x.c.type} / ${x.c.btype}</div></td><td>${pct(x.c.o)}</td><td>${pct(x.c.b)}</td><td style="font-weight:700;color:${x.c.ratio>=1.5?"#2e9d6b":x.c.ratio<=0.67?"#d1503b":"inherit"}">${rcol(x.c.ratio)}</td><td style="font-size:11px">${n2(x.c.dmg/Math.max(1,p.models))} PV infligés / fig. attaquante ; ${n2(x.c.back/Math.max(1,x.q.models))} reçus / fig. cible</td></tr>`).join("")}</table></details>`}).join("")}
+/* ---- duels : une figurine contre une figurine ---- */
+function figLabel(f){return E(f.name)+(f.n>1?" ×"+f.n:"")}
+function modeTile(label,m,pv){if(!m)return`<div class="an-tile off"><div class="k">${label}</div><div class="s" style="margin-top:14px">aucune arme</div></div>`;
+ return`<div class="an-tile"><div class="k">${label}</div><div class="big">${Math.round(m.hit*100)} %</div><div class="s">de touche</div><div class="big2">${n1(m.mean!=null?m.mean:m.effCap)} PV</div><div class="s">retirés à la cible, par tour</div>${m.kill!=null?`<div class="kill">${m.kill>=0.995?"≈ 100":Math.round(m.kill*100)} % de la tuer (${pv} PV)</div>`:""}</div>`}
+function duelCard(title,d,tgtF){const pv=d.pv;const wtab=(lab,m)=>m?`<details><summary>${lab} : détail par arme</summary><table class="an-t"><tr><th>Arme</th><th>Att.</th><th>Touche</th><th>Blesse</th><th>Passe</th><th>PV</th></tr>${m.rows.map(r=>`<tr><td>${E(r.name)}</td><td>${n1(r.attacks)}</td><td>${Math.round(r.hit*100)} %</td><td>${Math.round(r.wound*100)} %</td><td>${Math.round(r.fail*100)} %</td><td><b>${r.ok?n1(r.eff):"—"}</b></td></tr>`).join("")}</table><p class="mu" style="margin:4px 0 0">Touche : jet de touche réussi. Blesse : blessure réussie après une touche. Passe : la sauvegarde de la cible échoue. PV : dégâts moyens avant plafonnement aux PV de la cible.</p></details>`:"";
+ return`<div class="an-c"><h3>${title}</h3><p class="mu" style="margin:0">Cible : ${E(tgtF.name)} — Endurance ${d.E==null?'<span class="an-tag">manquante</span>':d.E}, sauvegarde ${d.sv?d.sv+"+":"—"}${d.inv?" / "+d.inv+"++":""}, ${pv} PV</p>
+ <div class="an-tiles">${modeTile("Tir",d.modes.shoot,pv)}${modeTile("Mêlée",d.modes.melee,pv)}</div>${wtab("Tir",d.modes.shoot)}${wtab("Mêlée",d.modes.melee)}</div>`}
+function secDuel(r){const a=st(),FA=A.figures(r.PA),FB=A.figures(r.PB),nm=r.names;
+ if(a.fa==null||a.fa>=FA.length)a.fa=0;if(a.fb==null||a.fb>=FB.length)a.fb=0;const fa=FA[a.fa],fb=FB[a.fb];
+ const sel=(F,key,val)=>`<select data-ans="${key}">${F.map((f,i)=>`<option value="${i}"${i===val?" selected":""}>${E(f.name)}${f.n>1?" ×"+f.n:""}</option>`).join("")}</select>`;
+ const ctx=a.ctx,d1=A.duelFig(r.PA[fa.ui],fa.gi,r.PB[fb.ui],fb.gi,ctx,true),d2=A.duelFig(r.PB[fb.ui],fb.gi,r.PA[fa.ui],fa.gi,ctx,true);
+ /* toutes les cibles de la figurine choisie (calcul sans dés) */
+ const rows=FB.map((f,j)=>{const x=A.duelFig(r.PA[fa.ui],fa.gi,r.PB[f.ui],f.gi,ctx,false),y=A.duelFig(r.PB[f.ui],f.gi,r.PA[fa.ui],fa.gi,ctx,false);
+  return{j,f,out:x.best?x.best.m.effCap:0,hit:x.best?x.best.m.hit:0,mode:x.best?(x.best.k==="shoot"?"tir":"mêlée"):"—",back:y.best?y.best.m.effCap:0,bmode:y.best?(y.best.k==="shoot"?"tir":"mêlée"):"—"}}).sort((p,q)=>q.out-p.out);
+ const tone=(o,b)=>o>b*1.5?"#2e9d6b":o*1.5<b?"#d1503b":"inherit";
+ return`<div class="an-c"><h3>Duel de figurines</h3><p class="mu" style="margin:0 0 8px">Choisis une figurine de chaque armée : tu vois sa chance de toucher et les dégâts qu'<b>une seule figurine</b> inflige à l'autre.</p>
+ <div class="an-sel"><label>${E(nm[0])}${sel(FA,"fa",a.fa)}</label><label>${E(nm[1])}${sel(FB,"fb",a.fb)}</label></div></div>
+ ${duelCard(E(fa.name)+" → "+E(fb.name),d1,fb)}${duelCard("Riposte : "+E(fb.name)+" → "+E(fa.name),d2,fa)}
+ <div class="an-c"><h3>${E(fa.name)} contre toutes les cibles</h3><div class="an-th"><span>Cible</span><span>Touche</span><span>Inflige</span><span>Reçoit</span></div>
+ ${rows.map(x=>`<button class="an-tr${x.j===a.fb?" on":""}" data-an="pickb" data-v="${x.j}"><span class="nm">${figLabel(x.f)}<small>${x.mode} · riposte ${x.bmode}</small></span><span>${Math.round(x.hit*100)} %</span><b style="color:${tone(x.out,x.back)}">${n1(x.out)} PV</b><span>${n1(x.back)} PV</span></button>`).join("")}
+ <p class="mu" style="margin:6px 0 0">PV moyens retirés à une figurine cible par une figurine attaquante en un tour (meilleur mode). Vert : tu infliges nettement plus que tu ne reçois.</p></div>
+ <details><summary>Tableau complet : chaque figurine contre chaque figurine</summary><div style="overflow-x:auto"><table class="an-t" style="min-width:${90+FB.length*58}px"><tr><th style="position:sticky;left:0;background:var(--bg)">Inflige (PV) ↓ / cible →</th>${FB.map(f=>`<th style="font-size:10px">${E(f.name.slice(0,12))}</th>`).join("")}</tr>
+ ${FA.map(f=>`<tr><td style="position:sticky;left:0;background:var(--bg);font-size:12px">${E(f.name.slice(0,16))}</td>${FB.map(g=>{const x=A.duelFig(r.PA[f.ui],f.gi,r.PB[g.ui],g.gi,ctx,false),y=A.duelFig(r.PB[g.ui],g.gi,r.PA[f.ui],f.gi,ctx,false),o=x.best?x.best.m.effCap:0,b=y.best?y.best.m.effCap:0;return`<td style="color:${tone(o,b)};font-weight:700">${n1(o)}<div class="mu" style="font-size:10px;font-weight:400">${x.best?Math.round(x.best.m.hit*100)+" %":"—"}</div></td>`}).join("")}</tr>`).join("")}</table></div><p class="mu">Chaque case : PV infligés par une figurine (gras) et son % de touche.</p></details>${missingBlock(r)}`}
 /* ---- bataille ---- */
 let BCACHE={key:"",res:null};
 function battleData(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);const key=[sig(LA),sig(LB),JSON.stringify(a.ctx),a.rounds||5].join("##");if(BCACHE.key===key)return BCACHE.res;
@@ -171,15 +196,15 @@ function body(){const a=st();let h=css+hdr(a);const L=lists();
  if(a.sec==="his")return h+secHis()+"</div>";
  const r=data();
  if(!r)return h+`<div class="an-warn">Choisis deux listes contenant des unités pour lancer l'analyse.${L.length<2?"":""}</div></div>`;
- const f={cmp:secCmp,bat:secBat,sim:secSim,mat:secMat,rec:secRec,win:secWin}[a.sec]||secCmp;
+ const f={duel:secDuel,cmp:secCmp,bat:secBat,sim:secSim,rec:secRec,win:secWin}[a.sec]||secDuel;
  return h+f(r)+"</div>"}
 window.XV=window.XV||{};window.XV.ana=()=>{try{return body()}catch(e){return`<div class="card"><b>Erreur dans Analyse &amp; Simulation</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-an]");if(!b||!document.querySelector(".an"))return;const k=b.dataset.an,a=st();
- if(k==="sec"){a.sec=b.dataset.v;RES=RES;save();draw();window.scrollTo(0,0);return}
- if(k==="dir"){a.dir=b.dataset.v;draw();return}if(k==="grid"){a.grid=+b.dataset.v;draw();return}if(k==="run"){runSim();return}if(k==="addg"){addGame();return}if(k==="impg"){importGames();return}
+ if(k==="sec"){a.sec=b.dataset.v;save();draw();window.scrollTo(0,0);setTimeout(()=>{const x=document.querySelector(".an-pills button.on");if(x&&x.scrollIntoView)x.scrollIntoView({inline:"center",block:"nearest"})},50);return}
+ if(k==="pickb"){a.fb=+b.dataset.v;draw();return}if(k==="dir"){a.dir=b.dataset.v;draw();return}if(k==="grid"){a.grid=+b.dataset.v;draw();return}if(k==="run"){runSim();return}if(k==="addg"){addGame();return}if(k==="impg"){importGames();return}
  if(k==="delg"){S.ash=games().filter(x=>x.id!==b.dataset.v);save();draw();return}});
 document.addEventListener("change",e=>{const t=e.target;if(!t.closest||!t.closest(".an"))return;const a=st();
- if(t.dataset.ans){const k=t.dataset.ans;a[k]=["u1","u2","n","first","rounds"].includes(k)?+t.value:t.value;if(k==="a"||k==="b"){a.u1=a.u2=0}save();draw();return}
+ if(t.dataset.ans){const k=t.dataset.ans;a[k]=["u1","u2","n","first","rounds","fa","fb"].includes(k)?+t.value:t.value;if(k==="a"||k==="b"){a.u1=a.u2=0;a.fa=a.fb=0}save();draw();return}
  if(t.dataset.anac){a.ctx[t.dataset.anac]=t.checked;save();draw();return}
  if(t.dataset.anf){HFORM[t.dataset.anf]=t.value}});
 document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.anf&&t.closest&&t.closest(".an"))HFORM[t.dataset.anf]=t.value});

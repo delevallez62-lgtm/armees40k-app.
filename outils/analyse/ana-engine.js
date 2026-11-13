@@ -316,6 +316,20 @@ function battle(unitsA,unitsB,ctx,opts){opts=opts||{};ctx=ctx||DEFCTX;const R=Ma
  return{PA,PB,fa,fb,log,pairs:pl,rounds:R,first,weighting:{A:useA?"points":"égale",B:useB?"points":"égale"},
   remA,remB,lostA:lA,lostB:lB,totA:tA,totB:tB,winner:Math.abs(remA-remB)<0.02?0:(remA>remB?1:2)}}
 
+/* ---------- 11. duel de figurines : une figurine contre une figurine ---------- */
+function singleAtt(unit,g){return{...unit,models:1,groups:[{...g,n:1,weapons:g.weapons.filter(w=>w.count>0).map(w=>({...w,count:1}))}]}}
+function singleTgt(unit,g){return{...unit,models:1,groups:[{...g,n:1}]}}
+function duelFig(unitA,gi,unitB,gj,ctx,withSim){ctx=ctx||DEFCTX;const ga=unitA.groups[gi],gb=unitB.groups[gj],att=singleAtt(unitA,ga),tgt=singleTgt(unitB,gb),out={pv:gb.stats.PV,E:gb.stats.E,sv:gb.stats.sv,inv:gb.stats.inv,modes:{}};
+ ["shoot","melee"].forEach(mode=>{const sel=chooseWeapons(att,mode,tgt,ctx,{});if(!sel.length){out.modes[mode]=null;return}
+  const rows=sel.map(({w})=>{const P=weaponParams(w,null,tgt.kw,ctx),hp=hitProbs(P),wp=woundProbs(P,w.f,gb.stats.E==null?4:gb.stats.E),pf=saveFailProb(gb.stats.sv,gb.stats.inv,w.pa),e=expectedWeapon(w,tgt.groups[0],tgt,ctx);
+   return{name:w.name,attacks:e.attacks,hit:hp.pc+hp.pn,wound:wp.pc+wp.pn,fail:pf,eff:e.eff,dmg:e.damage,ok:e.ok}});
+  const eff=rows.reduce((a,r)=>a+(r.ok?r.eff:0),0),m={rows,eff,hit:rows.length?(rows.reduce((a,r)=>a+r.hit*r.attacks,0)/Math.max(1e-9,rows.reduce((a,r)=>a+r.attacks,0))):0,attacks:rows.reduce((a,r)=>a+r.attacks,0),main:rows.slice().sort((x,y)=>y.eff-x.eff)[0]};m.effCap=Math.min(eff,gb.stats.PV||eff);
+  if(withSim&&eff>0){const sm=simulate(att,tgt,mode,ctx,1500,31);m.kill=sm.wipeProb;m.mean=sm.mean}
+  out.modes[mode]=m});
+ out.best=["shoot","melee"].map(k=>({k,m:out.modes[k]})).filter(x=>x.m).sort((x,y)=>y.m.eff-x.m.eff)[0]||null;return out}
+/* liste des types de figurines d'une armée */
+function figures(P){const o=[];P.forEach((p,ui)=>p.groups.forEach((g,gi)=>o.push({ui,gi,unit:p,g,name:(g.isLeader?(g.label||p.name)+" ("+p.name+")":p.name),n:g.n,pv:g.stats.PV})));return o}
+
 const HYPOTHESES=[
  "Règles V11 appliquées : séquence d'attaque (05), aptitudes d'arme [TOUCHES FATALES/SOUTENUES], [BLESSURES DÉVASTATRICES], [ANTI], [DÉFLAGRATION], [ABATTAGE], [TIR RAPIDE], [LOURD], [LANCE], [JUMELÉ], [TORRENT], [FUSION], [IGNORE LE COUVERT] ; couvert (CT −1) ; Insensible à la Douleur.",
  "Les autres aptitudes d'unité, auras, stratagèmes, points de commandement, optimisations et unités attachées ne modifient pas les calculs.",
@@ -324,7 +338,7 @@ const HYPOTHESES=[
  "Distances, déplacements, ligne de vue et terrain ne sont pas simulés : tu choisis le scénario (mi-portée, couvert, charge, immobile).",
  "Nombre d'armes absent de la liste : 1 retenu, et signalé.",
  "Bataille : chaque unité tire puis charge la meilleure cible restante à chaque round (affectation automatique) ; les dégâts sont des espérances, la mêlée est un échange, les objectifs ne sont pas joués."];
-root.ANA={battle,HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
+root.ANA={duelFig,figures,battle,HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
  expectedWeapon,simulate,simulateOnce,theory,chooseWeapons,pairMatrix,armyStats,unitRanking,winEstimate,histStats,resultOf,fracKilled,DEFCTX,WEIGHTS,SUPPORTED,INFO_ONLY};
 if(typeof module!=="undefined")module.exports=root.ANA;
 })(typeof window!=="undefined"?window:globalThis);

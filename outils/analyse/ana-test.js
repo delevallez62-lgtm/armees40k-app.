@@ -100,6 +100,13 @@ const we=A.winEstimate(s1,s2);near(we.pA+we.pB,1,1e-9,'probabilités complément
 const self=A.winEstimate(s1,s1);near(self.pA,.5,1e-9,'armée identique ⇒ 50 %');
 const rk=A.unitRanking(Q,Rr,m1,m2);ok(rk.danger.length===4&&rk.vuln.length===4,'classements');
 }
+// --- duel de figurines (une figurine contre une figurine)
+{const a=att(W('4','3+','4','0','1'),5),t2=tg({size:3,stats:{PV:'2',SV:'3+',E:'4'}});
+ const d=A.duelFig(a,0,t2,0,ctx,true);const m=d.modes.shoot;
+ near(m.rows[0].hit,4/6,1e-9,'duel : % de touche');near(m.rows[0].wound,3/6,1e-9,'duel : % de blessure');near(m.rows[0].fail,2/6,1e-9,'duel : % de sauvegarde ratée');
+ near(m.eff,4*(4/6)*(3/6)*(2/6),1e-9,'duel : dégâts moyens par figurine');ok(m.kill>=0&&m.kill<=1&&d.modes.melee===null,'duel : chance de tuer, pas de mêlée sans arme');
+ const big=tg({size:1,stats:{PV:'1'}});near(A.duelFig(att(W('20','2+','8','-3','6')),0,big,0,ctx,false).modes.shoot.eff,20*(5/6)*(5/6)*(5/6),1e-6,'duel : dégâts plafonnés aux PV de la figurine cible (D6 contre 1 PV)');}
+
 // --- historique
 const games=[{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:80,s2:60,first:1},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:50,s2:50,first:2},{f1:'Nécrons',f2:'T\'au',d1:'Légion',s1:30,s2:70,first:2},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:90,s2:10,first:1}];
 const hs=A.histStats(games);ok(hs.n===4&&hs.V===2&&hs.D===1&&hs.E===1,'historique : V/D/E');near(hs.win,50,1e-9,'taux de victoire = V/N×100');near(hs.draw,25,1e-9,'égalités séparées');near(hs.avg1,62.5,1e-9,'moyenne J1');
