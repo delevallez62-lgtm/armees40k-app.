@@ -112,6 +112,10 @@ const rk=A.unitRanking(Q,Rr,m1,m2);ok(rk.danger.length===4&&rk.vuln.length===4,'
  near(gp.eff,one*10,1e-9,'groupe : 10 figurines = 10 × une figurine (théorie)');near(gp.mean/gp.eff,1,.06,'groupe : simulation ≈ théorie');ok(gp.kills<=10&&gp.wipe>=0&&gp.wipe<=1,'groupe : figurines tuées et probabilité d\'anéantir');
  const g1=A.duelGroup(a,0,1,t2,0,1,ctx,500).modes.shoot;near(g1.eff,one,1e-9,'groupe de 1 = duel simple');}
 
+// --- dégâts par arme (simulation) : la somme retrouve le total
+{const a=A.toProfile({name:'T',qty:1,size:1,pts:1,stats:{M:'6',E:'4',SV:'3+',PV:'3',CD:'7+',CO:'1'},weapons:[{name:'Canon',range:'24',a:'4',hit:'3+',f:'6',pa:'-1',d:'2',caps:''},{name:'Epée',range:'24',a:'2',hit:'3+',f:'4',pa:'0',d:'1',caps:'Blessures Dévastatrices'}],equip:'Canon, Epée',apt:'',kw:'Infanterie',fkw:'X',subs:[]});
+ const tt=tg({size:100,stats:{PV:'3'}});const sm=A.simulate(a,tt,'shoot',ctx,3000,4),sum=Object.values(sm.byWeapon).reduce((x,y)=>x+y,0);near(sum/sm.mean,1,1e-9,'dégâts par arme : somme = total simulé');ok(sm.byWeapon.Canon>0&&sm.byWeapon.Epée>=0,'dégâts par arme : noms des armes');}
+
 // --- historique
 const games=[{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:80,s2:60,first:1},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:50,s2:50,first:2},{f1:'Nécrons',f2:'T\'au',d1:'Légion',s1:30,s2:70,first:2},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:90,s2:10,first:1}];
 const hs=A.histStats(games);ok(hs.n===4&&hs.V===2&&hs.D===1&&hs.E===1,'historique : V/D/E');near(hs.win,50,1e-9,'taux de victoire = V/N×100');near(hs.draw,25,1e-9,'égalités séparées');near(hs.avg1,62.5,1e-9,'moyenne J1');

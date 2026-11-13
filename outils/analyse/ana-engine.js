@@ -137,7 +137,7 @@ function pickModel(gs){/* groupe courant : un groupe contenant une figurine bles
  return null}
 function loseWounds(m,n,fnp,rng){let lost=0;for(let i=0;i<n&&m.pv>0;i++){if(fnp&&Math.floor(rng()*6)+1>=fnp)continue;m.pv--;lost++}return lost}
 function simulateOnce(att,tgt,sel,ctx,rng){
- const kwT=tgt.kw,gs=makeTarget(tgt),startM=tgt.models;let dmg=0;const mortalQueue=[],saves=[];
+ const kwT=tgt.kw,gs=makeTarget(tgt),startM=tgt.models;let dmg=0;const mortalQueue=[],saves=[],by={};
  const aliveCount=()=>gs.reduce((a,g)=>a+g.models.filter(m=>m.pv>0).length,0);
  sel.forEach(({w})=>{const P0=weaponParams(w,null,kwT,ctx),add=weaponDice(w,startM,ctx,kwT);
   let diceN=0;for(let k=0;k<w.count;k++)diceN+=rollDice(w.a,rng)+add;
@@ -152,14 +152,14 @@ function simulateOnce(att,tgt,sel,ctx,rng){
   pend.forEach(h=>{let wd,c=false;
    if(h.crit&&auto){wd=true}else{let x=roll();if(!x.wd&&P0.reroll)x=roll();wd=x.wd;c=x.c}
    if(!wd)return;
-   if(c&&P0.deva)mortalQueue.push({d:Math.max(0,rollDice(w.d,rng)+P0.dAdd)});
+   if(c&&P0.deva)mortalQueue.push({d:Math.max(0,rollDice(w.d,rng)+P0.dAdd),n:w.name});
    else saves.push({roll:Math.floor(rng()*6)+1,w,P0})})});
  saves.sort((a,b)=>a.roll-b.roll);
  for(const s of saves){const pm=pickModel(gs);if(!pm)break;const st=pm.grp.g.stats;
   let ok=false;if(s.roll!==1){if(st.inv!=null&&s.roll>=st.inv)ok=true;else if(st.sv!=null&&s.roll+s.w.pa>=st.sv)ok=true}
-  if(ok)continue;const D=Math.max(0,rollDice(s.w.d,rng)+s.P0.dAdd);dmg+=loseWounds(pm.m,D,tgt.fnp,rng)}
- for(const mq of mortalQueue){const pm=pickModel(gs);if(!pm)break;dmg+=loseWounds(pm.m,mq.d,tgt.fnp,rng)}
- const alive=aliveCount();return{dmg,killed:startM-alive,wiped:alive===0}}
+  if(ok)continue;const D=Math.max(0,rollDice(s.w.d,rng)+s.P0.dAdd);const l=loseWounds(pm.m,D,tgt.fnp,rng);dmg+=l;by[s.w.name]=(by[s.w.name]||0)+l}
+ for(const mq of mortalQueue){const pm=pickModel(gs);if(!pm)break;const l=loseWounds(pm.m,mq.d,tgt.fnp,rng);dmg+=l;by[mq.n]=(by[mq.n]||0)+l}
+ const alive=aliveCount();return{dmg,killed:startM-alive,wiped:alive===0,by}}
 function chooseWeapons(att,mode,tgt,ctx,opt){/* sélection des armes utilisées (règles : Attaques Bonus + une arme de mêlée ; profils alternatifs exclusifs) */
  const sel=[];const kwT=tgt.kw;
  att.groups.forEach(g=>{let ws=g.weapons.filter(w=>(mode==="melee")===w.melee&&w.count>0&&!w.missing.length);
@@ -175,10 +175,10 @@ function chooseWeapons(att,mode,tgt,ctx,opt){/* sélection des armes utilisées 
  return sel}
 /* simulation de n tirages */
 function simulate(att,tgt,mode,ctx,n,seed,opt){const rng=mulberry32(seed==null?12345:seed),sel=chooseWeapons(att,mode,tgt,ctx,opt);
- const dm=[],kills=[];let wiped=0,sumD=0,sumK=0;const hist={};
- for(let i=0;i<n;i++){const r=simulateOnce(att,tgt,sel,ctx,rng);dm.push(r.dmg);kills.push(r.killed);sumD+=r.dmg;sumK+=r.killed;if(r.wiped)wiped++;hist[r.killed]=(hist[r.killed]||0)+1}
+ const dm=[],kills=[];let wiped=0,sumD=0,sumK=0;const hist={},sumBy={};
+ for(let i=0;i<n;i++){const r=simulateOnce(att,tgt,sel,ctx,rng);dm.push(r.dmg);kills.push(r.killed);sumD+=r.dmg;for(const k in r.by)sumBy[k]=(sumBy[k]||0)+r.by[k];sumK+=r.killed;if(r.wiped)wiped++;hist[r.killed]=(hist[r.killed]||0)+1}
  dm.sort((a,b)=>a-b);const q=p=>dm[Math.min(dm.length-1,Math.floor(p*dm.length))];
- return{n,mean:sumD/n,median:q(.5),p10:q(.1),p90:q(.9),min:dm[0],max:dm[dm.length-1],killsMean:sumK/n,wipeProb:wiped/n,hist,weapons:sel.map(s=>s.w.name)}}
+ return{n,mean:sumD/n,median:q(.5),p10:q(.1),p90:q(.9),min:dm[0],max:dm[dm.length-1],killsMean:sumK/n,wipeProb:wiped/n,hist,weapons:sel.map(s=>s.w.name),byWeapon:Object.fromEntries(Object.entries(sumBy).map(([k,v])=>[k,v/n]))}}
 /* moyenne théorique + maximum théorique pour le même scénario */
 function theory(att,tgt,mode,ctx,opt){const sel=chooseWeapons(att,mode,tgt,ctx,opt);let avg=0,eff=0,max=0,att_=0,hits=0,wounds=0,mortal=0;const per=[];
  sel.forEach(({w})=>{const mainG=tgt.groups.reduce((b,g)=>g.n>b.n?g:b,tgt.groups[0]);const e=expectedWeapon(w,mainG,tgt,ctx);avg+=e.damage;eff+=e.eff;att_+=e.attacks;hits+=e.hits;wounds+=e.wounds;mortal+=e.mortal;
@@ -324,7 +324,7 @@ function duelFig(unitA,gi,unitB,gj,ctx,withSim){ctx=ctx||DEFCTX;const ga=unitA.g
   const rows=sel.map(({w})=>{const P=weaponParams(w,null,tgt.kw,ctx),hp=hitProbs(P),wp=woundProbs(P,w.f,gb.stats.E==null?4:gb.stats.E),pf=saveFailProb(gb.stats.sv,gb.stats.inv,w.pa),e=expectedWeapon(w,tgt.groups[0],tgt,ctx);
    return{name:w.name,attacks:e.attacks,hit:hp.pc+hp.pn,wound:wp.pc+wp.pn,fail:pf,eff:e.eff,dmg:e.damage,ok:e.ok}});
   const eff=rows.reduce((a,r)=>a+(r.ok?r.eff:0),0),m={rows,eff,hit:rows.length?(rows.reduce((a,r)=>a+r.hit*r.attacks,0)/Math.max(1e-9,rows.reduce((a,r)=>a+r.attacks,0))):0,attacks:rows.reduce((a,r)=>a+r.attacks,0),main:rows.slice().sort((x,y)=>y.eff-x.eff)[0]};m.effCap=Math.min(eff,gb.stats.PV||eff);
-  if(withSim&&eff>0){const sm=simulate(att,tgt,mode,ctx,1500,31);m.kill=sm.wipeProb;m.mean=sm.mean}
+  if(withSim&&eff>0){const sm=simulate(att,tgt,mode,ctx,1500,31);m.kill=sm.wipeProb;m.mean=sm.mean;m.byWeapon=sm.byWeapon}
   out.modes[mode]=m});
  out.best=["shoot","melee"].map(k=>({k,m:out.modes[k]})).filter(x=>x.m).sort((x,y)=>y.m.eff-x.m.eff)[0]||null;return out}
 /* n figurines attaquantes contre n figurines cibles (types de figurines choisis) */
@@ -333,7 +333,7 @@ function duelGroup(unitA,gi,nA,unitB,gj,nB,ctx,runs){ctx=ctx||DEFCTX;const ga=un
  const out={nA,nB,pv:gb.stats.PV,totalWounds:totalWounds(tgt),modes:{}};
  ["shoot","melee"].forEach(mode=>{const sel=chooseWeapons(att,mode,tgt,ctx,{});if(!sel.length){out.modes[mode]=null;return}
   const th=theory(att,tgt,mode,ctx,{}),sm=simulate(att,tgt,mode,ctx,runs||1500,57);
-  out.modes[mode]={attacks:th.attacks,eff:th.eff,effCap:Math.min(th.eff,out.totalWounds),mean:sm.mean,kills:sm.killsMean,wipe:sm.wipeProb,p10:sm.p10,p90:sm.p90,hist:sm.hist,hit:th.attacks>0?th.hits/th.attacks:0}});
+  out.modes[mode]={attacks:th.attacks,eff:th.eff,effCap:Math.min(th.eff,out.totalWounds),mean:sm.mean,byWeapon:sm.byWeapon,kills:sm.killsMean,wipe:sm.wipeProb,p10:sm.p10,p90:sm.p90,hist:sm.hist,hit:th.attacks>0?th.hits/th.attacks:0}});
  return out}
 
 /* liste des types de figurines d'une armée */
