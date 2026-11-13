@@ -116,6 +116,18 @@ const rk=A.unitRanking(Q,Rr,m1,m2);ok(rk.danger.length===4&&rk.vuln.length===4,'
 {const a=A.toProfile({name:'T',qty:1,size:1,pts:1,stats:{M:'6',E:'4',SV:'3+',PV:'3',CD:'7+',CO:'1'},weapons:[{name:'Canon',range:'24',a:'4',hit:'3+',f:'6',pa:'-1',d:'2',caps:''},{name:'Epée',range:'24',a:'2',hit:'3+',f:'4',pa:'0',d:'1',caps:'Blessures Dévastatrices'}],equip:'Canon, Epée',apt:'',kw:'Infanterie',fkw:'X',subs:[]});
  const tt=tg({size:100,stats:{PV:'3'}});const sm=A.simulate(a,tt,'shoot',ctx,3000,4),sum=Object.values(sm.byWeapon).reduce((x,y)=>x+y,0);near(sum/sm.mean,1,1e-9,'dégâts par arme : somme = total simulé');ok(sm.byWeapon.Canon>0&&sm.byWeapon.Epée>=0,'dégâts par arme : noms des armes');}
 
+// --- effets des aptitudes affichés
+{const mkw=(caps)=>att(W('3','3+','4','0','1',caps),1),t0=tg({size:12,stats:{PV:'1'},kw:'Infanterie'});
+ const g=(caps,c)=>A.duelGroup(mkw(caps),0,1,t0,0,12,c||ctx,200).modes.shoot.rows[0].fx;
+ const f1=g('Déflagration, Tir Rapide 2, Lourd, Touches Soutenues 1: Véhicule');
+ ok(f1.find(x=>x.id==='DEFLAGRATION').s==='on'&&/\+2 dé/.test(f1.find(x=>x.id==='DEFLAGRATION').t),'effet : déflagration +2 dés');
+ ok(f1.find(x=>x.id==='TIR_RAPIDE').s==='off'&&f1.find(x=>x.id==='LOURD').s==='off','effet : options inactives par défaut');
+ ok(f1.find(x=>x.id==='TOUCHES_SOUTENUES').s==='off','effet : restriction par mot-clé (cible infanterie) ⇒ inactive');
+ const f2=g('Tir Rapide 2, Lourd, Fusion 2',{...ctx,half:true,still:true});ok(f2.every(x=>x.s==='on'),'effet : options activées ⇒ appliquées');
+ const f3=g('Anti-Infanterie 4+, Précision, Machin');ok(f3[0].s==='on'&&f3[1].s==='info'&&f3[2].s==='unk','effet : anti actif, précision sans effet, inconnue signalée');
+ const r=A.duelGroup(mkw(''),0,1,t0,0,12,ctx,200).modes.shoot.rows[0];ok(r.need===5||r.need===4,'fiche d\'arme : seuil de blessure');near(r.hit,4/6,1e-9,'fiche d\'arme : touche');
+ const d=A.duelGroup(mkw(''),0,1,t0,0,12,ctx,200);ok(d.def.PV===1&&d.def.E===4,'fiche du défenseur');}
+
 // --- historique
 const games=[{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:80,s2:60,first:1},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:50,s2:50,first:2},{f1:'Nécrons',f2:'T\'au',d1:'Légion',s1:30,s2:70,first:2},{f1:'Nécrons',f2:'Orks',d1:'Hôte',s1:90,s2:10,first:1}];
 const hs=A.histStats(games);ok(hs.n===4&&hs.V===2&&hs.D===1&&hs.E===1,'historique : V/D/E');near(hs.win,50,1e-9,'taux de victoire = V/N×100');near(hs.draw,25,1e-9,'égalités séparées');near(hs.avg1,62.5,1e-9,'moyenne J1');

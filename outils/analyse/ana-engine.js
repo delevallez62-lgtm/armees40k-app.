@@ -327,13 +327,38 @@ function duelFig(unitA,gi,unitB,gj,ctx,withSim){ctx=ctx||DEFCTX;const ga=unitA.g
   if(withSim&&eff>0){const sm=simulate(att,tgt,mode,ctx,1500,31);m.kill=sm.wipeProb;m.mean=sm.mean;m.byWeapon=sm.byWeapon}
   out.modes[mode]=m});
  out.best=["shoot","melee"].map(k=>({k,m:out.modes[k]})).filter(x=>x.m).sort((x,y)=>y.m.eff-x.m.eff)[0]||null;return out}
+/* effets des aptitudes d'arme (affichage) : état on = appliquée ici, off = inactive dans ce scénario, info = sans effet sur les dégâts, unk = non modélisée */
+function fxOf(w,tgt,ctx){const kwT=tgt.kw,out=[],M=w.melee;
+ w.caps.forEach(c=>{const act=capActive(c,kwT);let st="info",t="";
+  switch(c.id){
+   case"TOUCHES_SOUTENUES":st=act?"on":"off";t=act?"touche critique : +"+(c.x||1)+" touche(s)":"inactive contre cette cible";break;
+   case"TOUCHES_FATALES":st=act?"on":"off";t=act?"touche critique : blesse automatiquement":"inactive contre cette cible";break;
+   case"BLESSURES_DEVASTATRICES":st=act?"on":"off";t=act?"blessure critique : blessures mortelles = D, sans sauvegarde":"inactive contre cette cible";break;
+   case"ANTI":{const a=hasKw(kwT,c.kwTarget);st=a?"on":"off";t=a?"blessure critique dès "+c.y+"+ (cible "+c.kwTarget+")":"inactive : la cible n'est pas "+c.kwTarget;break}
+   case"DEFLAGRATION":case"ABATTAGE":{const n=(c.x||1)*Math.floor(tgt.models/5);st=n>0&&act?"on":"off";t=n>0&&act?"+"+n+" dé(s) d'attaque ("+tgt.models+" figurines ciblées)":"sans effet : moins de 5 figurines ciblées";break}
+   case"TIR_RAPIDE":st=ctx.half?"on":"off";t=ctx.half?"+"+(c.x||0)+" attaque(s) à mi-portée":"inactive : active l'option « mi-portée »";break;
+   case"LOURD":st=!M&&ctx.still?"on":"off";t=M?"tir seulement":ctx.still?"+1 au jet de touche (unité immobile)":"inactive : active l'option « immobile »";break;
+   case"LANCE":st=M&&ctx.charged?"on":"off";t=!M?"mêlée seulement":ctx.charged?"+1 au jet de blessure (a chargé)":"inactive : active l'option « a chargé »";break;
+   case"JUMELE":st="on";t="relance des jets de blessure ratés";break;
+   case"TORRENT":st="on";t="touche automatique";break;
+   case"FUSION":st=ctx.half?"on":"off";t=ctx.half?"+"+(c.x||0)+" aux dégâts (mi-portée)":"inactive : active l'option « mi-portée »";break;
+   case"IGNORE_COUVERT":st=ctx.cover?"on":"info";t=ctx.cover?"ignore le couvert de la cible":"utile si la cible est à couvert";break;
+   case"ATTAQUES_BONUS":st="on";t="s'ajoute à une autre arme de mêlée";break;
+   case"PISTOLET":case"COMBAT_RAPPROCHE":case"ASSAUT":case"TIR_INDIRECT":st="info";t="règle de tir / mouvement : sans effet sur les dégâts moyens";break;
+   default:st="info";t="sans effet pris en compte dans le calcul"}
+  out.push({raw:c.raw,id:c.id,s:st,t})});
+ (w.unknownCaps||[]).forEach(r=>out.push({raw:r,id:"?",s:"unk",t:"aptitude non modélisée : effet ignoré"}));return out}
+/* fiche d'une arme contre une cible : probabilités à chaque étape + effets */
+function weaponCard(w,tgt,gb,ctx){const P=weaponParams(w,null,tgt.kw,ctx),hp=hitProbs(P),E=gb.stats.E==null?4:gb.stats.E,wp=woundProbs(P,w.f,E),pf=saveFailProb(gb.stats.sv,gb.stats.inv,w.pa),e=expectedWeapon(w,tgt.groups[0],tgt,ctx);
+ return{name:w.name,count:w.count,melee:w.melee,a:w.a?w.a.raw:"?",ct:w.hit,ctEff:P.ct,f:w.f,pa:w.pa,d:w.d?w.d.raw:"?",hit:hp.pc+hp.pn,wound:wp.pc+wp.pn,fail:pf,need:woundNeeded(w.f,E),attacks:e.attacks,eff:e.eff,fx:fxOf(w,tgt,ctx),ok:e.ok,missing:w.missing}}
+
 /* n figurines attaquantes contre n figurines cibles (types de figurines choisis) */
 function duelGroup(unitA,gi,nA,unitB,gj,nB,ctx,runs){ctx=ctx||DEFCTX;const ga=unitA.groups[gi],gb=unitB.groups[gj];nA=Math.max(1,Math.min(200,nA|0||1));nB=Math.max(1,Math.min(200,nB|0||1));
  const att={...unitA,models:nA,groups:[{...ga,n:nA,weapons:ga.weapons.filter(w=>w.count>0).map(w=>({...w,count:nA}))}]},tgt={...unitB,models:nB,groups:[{...gb,n:nB}]};
- const out={nA,nB,pv:gb.stats.PV,totalWounds:totalWounds(tgt),modes:{}};
+ const out={nA,nB,pv:gb.stats.PV,totalWounds:totalWounds(tgt),modes:{},def:{E:gb.stats.E,sv:gb.stats.sv,inv:gb.stats.inv,PV:gb.stats.PV,fnp:unitB.fnp||null,name:gb.label||unitB.name},att:{name:ga.label||unitA.name}};
  ["shoot","melee"].forEach(mode=>{const sel=chooseWeapons(att,mode,tgt,ctx,{});if(!sel.length){out.modes[mode]=null;return}
   const th=theory(att,tgt,mode,ctx,{}),sm=simulate(att,tgt,mode,ctx,runs||1500,57);
-  out.modes[mode]={attacks:th.attacks,eff:th.eff,effCap:Math.min(th.eff,out.totalWounds),mean:sm.mean,byWeapon:sm.byWeapon,kills:sm.killsMean,wipe:sm.wipeProb,p10:sm.p10,p90:sm.p90,hist:sm.hist,hit:th.attacks>0?th.hits/th.attacks:0}});
+  out.modes[mode]={rows:sel.map(({w})=>weaponCard(w,tgt,gb,ctx)),attacks:th.attacks,eff:th.eff,effCap:Math.min(th.eff,out.totalWounds),mean:sm.mean,byWeapon:sm.byWeapon,kills:sm.killsMean,wipe:sm.wipeProb,p10:sm.p10,p90:sm.p90,hist:sm.hist,hit:th.attacks>0?th.hits/th.attacks:0}});
  return out}
 
 /* liste des types de figurines d'une armée */
