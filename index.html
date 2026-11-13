@@ -5836,6 +5836,9 @@ window.ANAUI={battle:battleData,data,runSim,addGame,importGames,state:st,_res:()
 .tk-prog{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin:4px 0}.tk-prog i{display:block;height:100%;background:#d1503b}
 .tk-sz{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;padding:6px 10px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);font-weight:700;font-size:13px}.tk-sz .tk-step{flex:0 0 150px}.tk-sz .tk-step button,.tk-sz .tk-step input{min-height:40px}
 .tk-km{margin:8px 0;padding:8px 10px;border-radius:12px}.tk-kmr{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700;font-size:13px}.tk-kmr .tk-step{flex:0 0 150px}.tk-kmr .tk-step button,.tk-kmr .tk-step input{min-height:40px}
+.tk-flow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px;margin:10px 0}.tk-st{min-width:0;border:1px solid var(--bd);border-radius:12px;background:var(--bg);padding:8px 4px;text-align:center}.tk-st span{display:block;font-size:12px;font-weight:800;color:var(--mu)}.tk-st b{display:block;font-size:28px;line-height:1.1}.tk-st small{display:block;font-size:11px;color:var(--mu);line-height:1.2}.tk-st.tkssv{border-color:#d1503b}
+.tk-step1{display:flex;gap:10px;margin:12px 0;align-items:flex-start}.tk-num{flex:0 0 30px;height:30px;border-radius:50%;background:var(--ac);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}.tk-sb{flex:1;min-width:0}.tk-sb>b{display:block;font-size:16px;margin-bottom:4px}.tk-sb select{width:100%;min-height:50px;font-size:16px}
+.tk-res{margin:10px 0;padding:12px;border-radius:14px;border:2px solid var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--card));text-align:center}
 </style>
 <script>
 /* ===== HAMMER · Suivi des dégâts et statistiques de parties — moteur (sans interface, hors ligne) =====
@@ -5960,7 +5963,7 @@ function pvOf(B){if(!B)return null;if(B.pv)return B.pv;const x=trk().pvo[B.uid];
 function phApply(){const p=SH.ph;if(!p)return;const n=parseInt(p.pass,10),dm=phDm();const c=gameCtx(),other=SH.side==="me"?"opp":"me",B=SH.b?findUnit(other,SH.b,c):null;
  if(Number.isFinite(n)&&dm!=null){const v=Math.max(0,n*dm+(p.mort||0));SH.v=String(v);const pv=pvOf(B);SH.k=pv?String(Math.floor(v/pv)):"";}
  const q=s=>document.querySelector("#tks "+s);const vi=q('[data-tk="v"]'),ki=q('[data-tk="k"]');if(vi)vi.value=SH.v;if(ki)ki.value=SH.k;
- const r=q("#tkres");if(r)r.innerHTML=phRes()}
+ const r=q("#tkres");if(r)r.innerHTML=phRes()||'<span class="mu">Le résultat s\'affiche ici dès que tu indiques les sauvegardes ratées.</span>';const sb=q(".tk-save");if(sb){const vv=parseFloat(SH.v);sb.textContent="✔ Enregistrer"+(Number.isFinite(vv)&&vv>0?" · "+n1(vv)+" PV":"")}}
 function phRes(){const p=SH.ph,n=parseInt(p.pass,10),dm=phDm();if(!Number.isFinite(n))return"";if(dm==null)return'<span class="mu">Indique les dégâts par dé pour calculer les PV perdus.</span>';
  const v=n*dm+(p.mort||0),c=gameCtx(),other=SH.side==="me"?"opp":"me",B=SH.b?findUnit(other,SH.b,c):null,pv=pvOf(B);
  return`<b style="font-size:20px">${n1(v)} PV perdus</b><div class="mu">${n} dé${n>1?"s":""} × ${n1(dm)} dégât${dm>1?"s":""}${p.mort?" + "+p.mort+" mortelle(s)":""}${pv?` · ≈ <b>${Math.floor(v/pv)}</b> figurine(s) tuée(s) (${pv} PV chacune)`:""}</div>`}
@@ -5984,7 +5987,27 @@ function savedSize(key){const t=tz(),c=gameCtx(),g=c.gid||"_";return(t.sz[g]||{}
 function baseOf(key,gid){const t=tz();return((t.base[gid||"_"]||{})[key])||0}
 function killedBefore(key,gid){return Math.max(0,trk().rec.filter(r=>r.mk===key&&(r.gid||"")===(gid||"")&&r.id!==SH.edit).reduce((s,r)=>s+(+r.km||0),0)-baseOf(key,gid))}
 function myKey(c){if(SH.edit)return SH.mkE||"";if(SH.pre&&SH.pre.key)return SH.pre.key;const side=SH.side,A=SH.a?findUnit("me",SH.a,c):null,B=SH.b?findUnit("me",SH.b,c):null;const m=side==="me"?SH.a:SH.b;if(m&&m[0]==="l"){const lid=c.gid?c.me:SH.meList;return lid?"u:"+lid+":"+m.slice(1):""}return""}
-function draw2(){const c=gameCtx(),t=trk(),gid=SH.edit?(SH.gid||""):c.gid;const side=SH.side,other=side==="me"?"opp":"me";
+function phDraw(){const c=gameCtx(),gid=c.gid,side=SH.side,other=side==="me"?"opp":"me",p=SH.ph;
+ const A=SH.a?findUnit(side,SH.a,c):null,B=SH.b?findUnit(other,SH.b,c):null;
+ const form=SH.add?`<div class="tk-c"><b>Nouvelle unité ${SH.add.side==="me"?"(ma liste)":"adverse"}</b><label>Nom<input data-tk="nn" value="${E(SH.add.n||"")}" placeholder="ex. Intercessors"></label><label>Faction<input data-tk="nf" value="${E(SH.add.f==null?(SH.add.side==="opp"?c.fo:c.fm):SH.add.f)}" placeholder="ex. Space Marines"></label><div class="tk-row"><button class="tk-b" data-tk="addcancel">Annuler</button><button class="tk-b p" data-tk="addsave">Ajouter</button></div></div>`:"";
+ const ic={Touches:"🎯",Blessures:"💥"};
+ const chain=p.hist.map(h=>`<div class="tk-st"><span>${ic[h.l]||"🎲"} ${E(h.l)}</span><b>${h.v}</b><small>réussis sur ${h.n}</small></div>`).join("")+`<div class="tk-st tkssv"><span>🛡 Sauvegardes</span><b>${p.saves}</b><small>dé${p.saves>1?"s":""} à lancer par lui</small></div>`;
+ const need=B&&!pvOf(B),pass=parseInt(p.pass,10),dm=phDm();
+ const tot=Number.isFinite(pass)&&dm!=null?Math.max(0,pass*dm+(p.mort||0)):null;
+ root().innerHTML=`<div class="tk-sh"><div class="tk-top"><div><h2>Enregistrer ce tir</h2><p class="mu" style="margin:0">${gid?E(c.title)+" · ":""}${A?E(A.name)+" · ":""}${E(p.w)}</p></div><button class="tk-x" data-tk="close" aria-label="Fermer">✕</button></div>
+ <div class="tk-flow">${chain}</div>
+ <div class="tk-step1"><div class="tk-num">1</div><div class="tk-sb"><b>Qui a été touché ?</b>${unitSelect(other,SH.b,c,"b")}${form}</div></div>
+ <div class="tk-step1"><div class="tk-num">2</div><div class="tk-sb"><b>Combien de sauvegardes ont échoué ?</b><div class="mu" style="font-size:12.5px;margin:2px 0 6px">Sur les ${p.saves} dé${p.saves>1?"s":""} de sauvegarde de l'adversaire, compte ceux qui ont raté : chacun fait ${dm!=null?n1(dm)+" dégât"+(dm>1?"s":""):"des dégâts"}.</div>
+  <div class="tk-big sm"><button data-tk="pdv" data-v="-1" aria-label="Moins">−</button><input data-tk="pass" type="number" inputmode="numeric" min="0" max="${p.saves}" value="${E(p.pass)}" placeholder="0"><button data-tk="pdv" data-v="1" aria-label="Plus">+</button></div>
+  <div class="tk-quick"><button data-tk="pset" data-v="0">Aucune</button><button data-tk="pset" data-v="${p.saves}">Toutes (${p.saves})</button></div>
+  ${p.dmg==null?`<label style="display:block;margin-top:8px">Dégâts par sauvegarde ratée <span class="mu">(arme « ${E(p.dtxt||"?")} »)</span><input data-tk="pdm" type="number" inputmode="decimal" min="0" value="${E(p.dm)}" placeholder="ex. 3"></label>`:""}
+  ${need?`<label style="display:block;margin-top:8px">PV d'une figurine de la cible <span class="mu">(inconnu — sert à compter les figurines tuées)</span><input data-tk="pvin" type="number" inputmode="numeric" min="1" value="${E(SH.pvIn)}" placeholder="ex. 2"></label>`:""}</div></div>
+ <div class="tk-res" id="tkres">${phRes()||'<span class="mu">Le résultat s\'affiche ici dès que tu indiques les sauvegardes ratées.</span>'}</div>
+ <div class="tk-when"><div class="tk-wl">Tour</div><div class="tk-chp">${[1,2,3,4,5].map(n=>`<button data-tk="rdc" data-v="${n}" class="${SH.rd===n?"on":""}">${n}</button>`).join("")}</div></div>
+ <details class="tk-more"><summary>Autres options</summary><label class="tk-chk ${SH.x?"on":""}"><input type="checkbox" data-tk="x"${SH.x?" checked":""}><span>☠ L'unité ciblée est détruite</span></label>
+  <label>Figurines qui ont tiré<div class="tk-step"><button data-tk="dnf" data-v="-1">−</button><input data-tk="nfg" type="number" inputmode="numeric" min="1" value="${E(SH.nf)}" placeholder="—"><button data-tk="dnf" data-v="1">+</button></div></label></details>
+ <div class="tk-sticky"><button class="tk-save" data-tk="save">✔ Enregistrer${tot!=null&&tot>0?" · "+n1(tot)+" PV":""}</button></div></div>`}
+function draw2(){if(SH.ph&&!SH.edit)return phDraw();const c=gameCtx(),t=trk(),gid=SH.edit?(SH.gid||""):c.gid;const side=SH.side,other=side==="me"?"opp":"me";
  const A=SH.a?findUnit(side,SH.a,c):null,B=SH.b?findUnit(other,SH.b,c):null;
  const lists=S.lists||[],listSel=(key,val)=>`<select data-tk="${key}"><option value="">${key==="oppList"?"Aucune (saisie à la main)":"—"}</option>${lists.map(l=>`<option value="${E(l.id)}"${l.id===val?" selected":""}>${E(l.name||"Liste")}</option>`).join("")}</select>`;
  const cur=t.rec.filter(r=>(r.gid||"")===(gid||"")).sort((x,y)=>y.d-x.d);
@@ -6046,6 +6069,7 @@ function onClick(e){const b=e.target.closest&&e.target.closest("[data-tk]");if(!
  if(k==="close"){closeSheet();return}if(k==="role"){SH.pre.role=b.dataset.v;SH.a=SH.b="";applyPre();draw2();return}if(k==="side"){SH.side=b.dataset.v;SH.a=SH.b="";if(SH.edit){SH.edit=null}draw2();return}
  if(k==="pdv"&&SH.ph){const n=Math.max(0,Math.min(SH.ph.saves,(parseInt(SH.ph.pass,10)||0)+ +b.dataset.v));SH.ph.pass=String(n);const i=document.querySelector('#tks [data-tk="pass"]');if(i)i.value=SH.ph.pass;phApply();return}
  if(k==="dkm"){SH.km=String(Math.max(0,(parseInt(SH.km,10)||0)+ +b.dataset.v));draw2();return}if(k==="dsz"){const c=gameCtx(),mk=myKey(c),cur=SH.sz!==""?+SH.sz:(savedSize(mk)||defSize(mk));SH.sz=String(Math.max(1,cur+ +b.dataset.v));draw2();return}
+ if(k==="pset"&&SH.ph){SH.ph.pass=b.dataset.v;const i=document.querySelector('#tks [data-tk="pass"]');if(i)i.value=SH.ph.pass;phApply();return}
  if(k==="rdc"){SH.rd=+b.dataset.v;draw2();return}if(k==="tyc"){SH.ty=b.dataset.v;draw2();return}
  if(k==="dd"){const w=b.dataset.w;SH[w]=String(Math.max(0,(parseInt(SH[w],10)||0)+ +b.dataset.v));if(w==="dl"&&SH.dt!==""&&+SH.dt>+SH.dl)SH.dt=SH.dl;if(w==="dt"&&+SH.dt>(+SH.dl||0)&&SH.dl!=="")SH.dl=SH.dt;draw2();return}
  if(k==="unfall"){markFall(SH.pre.key,false);closeSheet();toast("Unité remise en jeu");try{draw()}catch(_){}return}
