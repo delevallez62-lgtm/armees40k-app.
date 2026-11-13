@@ -1,0 +1,150 @@
+<!-- ===== v111 : import intelligent d'un PDF (règles, layouts, cartes de mission) — 100 % dans l'appli, sans Claude ===== -->
+<style id="spdfcss">
+#spd{position:fixed;inset:0;z-index:90;background:rgba(4,5,6,.72);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center}
+#spd .sh{width:min(680px,100%);max-height:94vh;overflow:auto;background:var(--card);color:var(--tx);border-radius:20px 20px 0 0;border-top:1px solid var(--bd);padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));animation:gup .22s ease-out}
+@media(min-width:900px){#spd{align-items:center}#spd .sh{border-radius:18px}}
+#spd h2{margin:0 0 4px;font-size:20px}#spd h3{margin:16px 0 6px;font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--mu)}
+#spd .top{display:flex;align-items:flex-start;gap:8px}#spd .top>div{flex:1;min-width:0}
+#spd .sx0{flex:none;min-width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:20px;cursor:pointer}
+#spd .it{display:flex;gap:10px;align-items:flex-start;padding:10px 8px;border:1px solid var(--bd);border-radius:12px;margin:6px 0;background:var(--bg)}
+#spd .it input[type=checkbox]{flex:none;width:24px;height:24px;margin-top:2px}
+#spd .it .tx{flex:1;min-width:0}#spd .it b{display:block;font-size:15px;line-height:1.25}#spd .it small{display:block;color:var(--mu);font-size:12px;margin-top:2px}
+#spd .it p{margin:4px 0 0;font-size:13px;line-height:1.35;overflow-wrap:anywhere}
+#spd .it details{margin-top:4px}#spd .it summary{cursor:pointer;color:var(--ac);font-size:12.5px}
+#spd .bd{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:1px;background:color-mix(in srgb,var(--ac) 22%,var(--card))}
+#spd .bd.m{background:color-mix(in srgb,#e08a2c 30%,var(--card))}
+#spd .ft{position:sticky;bottom:-14px;display:flex;gap:8px;padding:10px 0 2px;margin-top:10px;background:var(--card)}
+#spd .ft .b{flex:1;min-height:48px;font-weight:700}
+#spd .pr{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin:10px 0}#spd .pr i{display:block;height:100%;background:var(--ac);width:0;transition:width .2s}
+#spd .mu{color:var(--mu);font-size:13px}
+#spdcard{margin:12px 0}
+#spdcard .b{width:100%;min-height:52px;font-weight:700}
+</style>
+<script>
+(()=>{
+const nk=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9' ]+/g," ").replace(/\s+/g," ").trim();
+const nsp=s=>nk(s).replace(/ /g,"");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hsh=s=>{let h=5381;s=nk(s);for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return h.toString(36)};
+/* ---------- 1. lecture : colonnes -> lignes ---------- */
+function pageLines(pg){
+ const its=pg.items.filter(i=>i.s&&i.s.trim());if(!its.length)return[];
+ const xs={};its.forEach(i=>{const k=Math.round(i.x/3)*3;xs[k]=(xs[k]||0)+1});
+ const total=its.length,starts=Object.keys(xs).map(Number).filter(k=>xs[k]>=Math.max(6,total*.06)).sort((a,b)=>a-b),cols=[];
+ starts.forEach(s=>{if(!cols.length||s-cols[cols.length-1]>pg.w*.22)cols.push(s)});if(!cols.length)cols.push(0);
+ const colOf=x=>{let c=0;for(let k=0;k<cols.length;k++)if(x>=cols[k]-pg.w*.06)c=k;return c};
+ const lines=[];
+ cols.forEach((_,ci)=>{const a=its.filter(i=>colOf(i.x)===ci).sort((p,q)=>q.y-p.y||p.x-q.x),rows=[];
+  a.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=Math.max(1.5,.4*Math.min(r.h,i.h)))r.it.push(i);else rows.push({y:i.y,h:i.h,it:[i]})});
+  rows.forEach(r=>{r.it.sort((p,q)=>p.x-q.x);let o="",end=null;r.it.forEach(i=>{if(end!==null&&i.x-end>.12*r.h&&!/\s$/.test(o)&&!/^\s/.test(i.s))o+=" ";o+=i.s;end=i.x+(i.w||i.s.length*r.h*.5)});
+   const fo={};r.it.forEach(i=>fo[i.f]=(fo[i.f]||0)+i.s.length);const f=Object.keys(fo).sort((p,q)=>fo[q]-fo[p])[0];
+   lines.push({t:o.replace(/\s+/g," ").trim(),y:r.y,h:r.h,x:r.it[0].x,f,col:ci,pg:pg.n})})});
+ return lines.filter(l=>l.t)}
+const isCaps=t=>{const L=t.replace(/[^A-Za-zÀ-ÿ]/g,"");return L.length>=3&&L===L.toUpperCase()};
+function vocab(pages){const V=new Set();pages.forEach(p=>p.items.forEach(i=>{const t=i.s||"";if(/[a-zà-ÿ]/.test(t)&&t!==t.toUpperCase())t.toLowerCase().split(/[^a-zà-ÿ]+/).forEach(w=>{if(w.length>=2&&w.length<=24)V.add(w)})}));
+ "de du des la le les et un une en au aux a à sur par pour ou est qui que ne pas se sa son ses leur dans avec sans sous vs".split(" ").forEach(w=>V.add(w));return V}
+function segWord(str,V){const s=str.toLowerCase(),n=s.length,best=Array(n+1).fill(1e9),back=Array(n+1).fill(0);best[0]=0;
+ for(let i=1;i<=n;i++)for(let j=Math.max(0,i-24);j<i;j++){const w=s.slice(j,i),kn=V.has(w)||/^\d+$/.test(w),c=best[j]+(kn?(w.length<=2?2.2:1-Math.min(.5,w.length*.03)):3.5*w.length);if(c<best[i]){best[i]=c;back[i]=j}}
+ const o=[];let i=n;while(i>0){o.unshift(str.slice(back[i],i));i=back[i]}return o.join(" ")}
+function fixTitle(t,V){return t.split(/([’'])/).reduce((a,x)=>{if(x==="’"||x==="'")return a+x;const w=x.replace(/\s+/g," ").trim();if(!w)return a;const seg=/\s/.test(w)?w.split(" ").map(z=>z.length>14?segWord(z,V):z).join(" "):(w.length>9?segWord(w,V):w);return a+(a&&!/[’']$/.test(a)?" ":"")+seg},"").replace(/\s+/g," ").trim()}
+/* ---------- 2. sections (titre en capitales + texte) ---------- */
+function sections(pages,lines){const V=vocab(pages),all=lines;
+ const bf={};all.forEach(l=>{if(!isCaps(l.t))bf[l.f]=(bf[l.f]||0)+l.t.length});const body=Object.keys(bf).sort((a,b)=>bf[b]-bf[a])[0],out=[];let cur=null;
+ all.forEach(l=>{const head=isCaps(l.t)&&l.t.length<=60&&!/[.;,]$/.test(l.t)&&l.f!==body&&!/^\d+$/.test(l.t);
+  if(head){if(cur&&!cur.body.length&&l.pg===cur.pg&&l.col===cur.col&&Math.abs(cur.lastY-l.y)<l.h*2.2){cur.title+=" "+l.t;cur.lastY=l.y}else{cur={title:l.t,pg:l.pg,col:l.col,body:[],lastY:l.y};out.push(cur)}}
+  else if(cur)cur.body.push(l.t)});
+ return out.map(s=>{let t=s.title.replace(/\s+/g," ").trim(),ref="";const m=/(\d{2}\.\d{2})\s*$/.exec(t)||/^(\d{2}\.\d{2})\s/.exec(t);if(m){ref=m[1];t=t.replace(m[1],"").trim()}t=t.replace(/^[\d�]+\s*/,"");
+  return{title:fixTitle(t,V),ref,pg:s.pg,text:s.body.join(" ").replace(/\s+/g," ").trim()}}).filter(s=>s.text.length>25&&s.title.length>2&&s.title.length<=60&&!/[�▪►]/.test(s.title)&&!/^(MISES? À JOUR|ERRATA|FAQ|INTRODUCTION|SOMMAIRE|QUOI DE NEUF|NOTES? DE CONCEPTION)\b/i.test(s.title)&&!/^\d/.test(s.title))}
+const cap1=t=>t.charAt(0)+t.slice(1).toLowerCase();
+const sent=t=>t.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý“«(▪])/).filter(Boolean);
+function excerpt(text){const ss=sent(text);let d="",i=0;while(i<ss.length&&(d+ss[i]).length<=330){d+=(d?" ":"")+ss[i];i++}if(!d)d=text.slice(0,330);
+ let h="";while(i<ss.length&&(h+ss[i]).length<=650){h+=(h?" ":"")+ss[i];i++}return{def:d,how:h}}
+/* ---------- 3. layouts : « AGENCEMENT X » + catégories des deux joueurs ---------- */
+function layoutsOf(lines){const pgs={};lines.forEach(l=>(pgs[l.pg]=pgs[l.pg]||[]).push(l));const out=[];
+ const cats=(window.__ms&&window.__ms.cats?window.__ms.cats():[]).map(c=>({id:c.id,fr:c.fr,k:nsp(c.fr)})),find=t=>{const k=nsp(t);return cats.find(c=>c.k===k)||null};
+ Object.keys(pgs).forEach(p=>{const L=pgs[p],am=L.map(l=>/^AGENCEMENT\s+([A-C])\b/i.exec(l.t)).find(Boolean);if(!am)return;
+  let c1=null,c2=null;for(const l of L){const m=/^(.+?)\s+VS\s+(.+)$/i.exec(l.t);if(m){c1=find(m[1]);c2=find(m[2]);if(c1&&c2)break}}
+  if(c1&&c2)out.push({pg:+p,l:am[1].toUpperCase(),a:c1,b:c2})});return out}
+/* ---------- 4. cartes de mission (analyse prudente, à valider) ---------- */
+function cardsOf(secs){return secs.filter(s=>!s.ref&&!/^(MISSIONS?|PILE|RÈGLES?|NOTES?|CHOISIR|DÉTERMINER|GÉNÉRER|CLASSER)\b/i.test(s.title)&&/\d+\s*(PdV|VP)\b/i.test(s.text)&&!/^(ERRATA|FAQ|INTRODUCTION|SOMMAIRE)/i.test(s.title)).map(s=>{
+ const lines=sent(s.text).map(x=>{const m=/(\d+)\s*(?:PdV|VP)/i.exec(x);return m?{tx:x.replace(/\s+/g," ").trim(),pts:+m[1],k:/chacun|par |each/i.test(x)?"cnt":"chk"}:null}).filter(Boolean);
+ const kind=/secondaire/i.test(s.text)?"sec":/primaire|objectif/i.test(s.text)?"pri":"";
+ return kind&&lines.length?{title:cap1(s.title),pg:s.pg,kind,lines,d:sent(s.text)[0]||""}:null}).filter(Boolean)}
+/* ---------- 5. rapprochement avec ce que l'appli connaît ---------- */
+function analyse(file,pages){
+ const lines=[];pages.forEach(p=>pageLines(p).forEach(l=>lines.push(l)));
+ const secs=sections(pages,lines),full=secs.filter(s=>s.ref).length>=30,event=!full&&/compagnon|event_companion|agencement/i.test(file+" "+lines.slice(0,12).map(l=>l.t).join(" ")),upd=!full;
+ const api=window.encApi,H=(S.spdf&&S.spdf.h)||{},res={file,pages:pages.length,full,event,rules:{nv:[],md:[],same:0},lay:[],cards:[],sections:secs.length};
+ if(api&&!event){const seen=new Set();secs.forEach(s=>{const key=(s.ref?"r"+s.ref:"t"+nsp(s.title)),h=hsh(s.text);if(seen.has(key))return;seen.add(key);
+   if(!s.ref&&!upd)return; // texte courant d'un document complet sans numéro : ignoré
+   const ex=api.find(s.title),ob=H[key];
+   if(!ex){res.rules.nv.push({key,h,title:cap1(s.title),pg:s.pg,ref:s.ref,text:s.text,...excerpt(s.text)})}
+   else if(full){if(ob&&ob!==h)res.rules.md.push({key,h,id:ex.id,title:ex.n,pg:s.pg,ref:s.ref,text:s.text,old:ex.def,...excerpt(s.text)});else res.rules.same++}
+   else{res.rules.md.push({key,h,id:ex.id,title:ex.n,pg:s.pg,ref:s.ref,text:s.text,old:ex.def,...excerpt(s.text)})}})}
+ const LP=(window.__lay&&window.__lay.LP)||{},key=window.__lay&&window.__lay.key;
+ layoutsOf(lines).forEach(x=>{const k=key?key(x.a.id,x.b.id):"",have=LP[k]&&LP[k][x.l];res.lay.push({...x,have:!!have})});
+ res.cards=cardsOf(secs);return res}
+/* ---------- 6. lecture du PDF ---------- */
+async function readPages(f,prog){const lib=await pdfLib(),doc=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,pages=[];
+ for(let n=1;n<=doc.numPages;n++){const pg=await doc.getPage(n),vp=pg.getViewport({scale:1}),tc=await pg.getTextContent();
+  pages.push({n,w:vp.width,h:vp.height,items:tc.items.map(i=>({s:String(i.str||"").replace(/[\u0000-\u0008\u000b-\u001f\ufffd]/g," "),x:i.transform[4],y:i.transform[5],w:i.width,h:Math.abs(i.transform[3])||i.height,f:i.fontName}))});if(prog&&n%4===0)prog(n,doc.numPages)}
+ return{doc,pages}}
+async function pageImage(doc,n){const pg=await doc.getPage(n),vp=pg.getViewport({scale:1.7}),c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);
+ await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;return c.toDataURL("image/jpeg",.82)}
+/* ---------- 7. fenêtre ---------- */
+let ST=null;
+const root=()=>{let o=document.getElementById("spd");if(!o){o=document.createElement("div");o.id="spd";o.setAttribute("role","dialog");document.body.appendChild(o);o.addEventListener("click",onClick);o.addEventListener("change",e=>{if(e.target.matches&&e.target.matches("[data-s]"))count()})}return o};
+const close=()=>{const o=document.getElementById("spd");if(o)o.remove();ST=null};
+const shell=(h)=>{root().innerHTML=`<div class="sh">${h}</div>`};
+const TOP=(t,s)=>`<div class="top"><div><h2>${t}</h2>${s?`<p class="mu" style="margin:0">${s}</p>`:""}</div><button class="sx0" data-s="x" aria-label="Fermer">✕</button></div>`;
+function start(){shell(TOP("Importer un PDF","Choisis un PDF officiel (Règles de Base, mises à jour, Compagnon de Rencontre, pack de faction…). Je lis le texte moi-même, sur ce téléphone, et je te propose les ajouts à valider.")+`<p><input type="file" id="spdf" accept="application/pdf,.pdf" style="width:100%"></p><p class="mu">Rien n'est ajouté sans ton accord. Tout reste modifiable ensuite.</p>`);
+ document.getElementById("spdf").onchange=async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  shell(TOP("Lecture du PDF…",esc(f.name))+`<div class="pr"><i id="spdp"></i></div><p class="mu" id="spdt">Extraction du texte…</p>`);
+  try{const r=await readPages(f,(n,t)=>{const p=document.getElementById("spdp"),x=document.getElementById("spdt");if(p)p.style.width=Math.round(n/t*100)+"%";if(x)x.textContent="Page "+n+" / "+t})
+   ST={file:f.name,doc:r.doc,res:analyse(f.name,r.pages)};review()}
+  catch(er){shell(TOP("Lecture impossible","Le PDF n'a pas pu être lu ("+esc(er&&er.message==="lib"?"lecteur indisponible : connexion nécessaire la première fois":er&&er.message||er)+").")+`<div class="ft"><button class="b p" data-s="x">Fermer</button></div>`)}}}
+function review(){const R=ST.res,n0=R.rules.nv.length,m0=R.rules.md.length,L=R.lay.filter(x=>!x.have),C=R.cards;
+ const rule=(x,i,k)=>`<label class="it"><input type="checkbox" data-s="${k}" data-i="${i}" checked><span class="tx"><b>${esc(x.title)}${k==="md"?'<span class="bd m">modifiée</span>':'<span class="bd">nouvelle</span>'}</b><small>${x.ref?"§ "+esc(x.ref)+" · ":""}page ${x.pg}</small><p>${esc(x.def)}</p>${k==="md"&&x.old?`<details><summary>Voir l'ancienne version</summary><p>${esc(x.old)}</p></details>`:""}</span></label>`;
+ shell(TOP("Ce que j'ai trouvé",`${esc(ST.file)} · ${R.pages} page${R.pages>1?"s":""}`)
+  +(R.full&&!R.rules.nv.length&&!R.rules.md.length&&!R.lay.length&&!C.length?`<p class="mu">Rien de nouveau : ${R.rules.same} règle(s) déjà connue(s). Ce document est enregistré comme référence : la prochaine version sera comparée à celle-ci.</p>`:"")
+  +(n0?`<h3>Règles nouvelles (${n0}) <button class="b" style="min-height:30px;padding:2px 10px;font-size:12px;margin-left:6px;text-transform:none;letter-spacing:0" data-s="tg" data-k="nv">Tout cocher / décocher</button></h3>${R.rules.nv.map((x,i)=>rule(x,i,"nv")).join("")}`:"")
+  +(m0?`<h3>Règles modifiées (${m0}) <button class="b" style="min-height:30px;padding:2px 10px;font-size:12px;margin-left:6px;text-transform:none;letter-spacing:0" data-s="tg" data-k="md">Tout cocher / décocher</button></h3>${R.rules.md.map((x,i)=>rule(x,i,"md")).join("")}`:"")
+  +(L.length?`<h3>Layouts nouveaux (${L.length})</h3>${L.map((x,i)=>`<label class="it"><input type="checkbox" data-s="ly" data-i="${R.lay.indexOf(x)}" checked><span class="tx"><b>${esc(x.a.fr)} vs ${esc(x.b.fr)} — Agencement ${x.l}<span class="bd">nouveau</span></b><small>page ${x.pg} · l'image de la page sera enregistrée</small></span></label>`).join("")}`:"")
+  +(R.lay.length&&!L.length?`<p class="mu">${R.lay.length} layout(s) reconnu(s), tous déjà présents.</p>`:"")
+  +(C.length?`<h3>Cartes de mission à vérifier (${C.length})</h3>${C.map((x,i)=>`<label class="it"><input type="checkbox" data-s="cd" data-i="${i}"><span class="tx"><b>${esc(x.title)}<span class="bd m">${x.kind==="sec"?"secondaire":"primaire"}</span></b><small>page ${x.pg} · ${x.lines.map(l=>l.pts+" PdV").join(" · ")}</small><p>${esc(x.d)}</p></span></label>`).join("")}<p class="mu">Analyse automatique prudente : relis les points après l'ajout.</p>`:"")
+  +(R.event?`<p class="mu">Document de type « Compagnon de rencontre » : je cherche les layouts et les cartes de mission, pas les règles.</p>`:"")
+  +(!n0&&!m0&&!L.length&&!C.length&&!(R.full&&!R.rules.nv.length)?`<p class="mu">Je n'ai rien reconnu de nouveau dans ce document (${R.sections} section(s) lues).</p>`:"")
+  +`<div class="ft"><button class="b" data-s="x">Fermer</button><button class="b p" data-s="go" id="spdgo">Ajouter</button></div>`);count()}
+function count(){const o=document.getElementById("spd");if(!o)return;const n=o.querySelectorAll("input[data-s]:checked").length,b=document.getElementById("spdgo");if(b){b.textContent=n?`Ajouter (${n})`:"Terminer";}}
+async function apply(){const o=document.getElementById("spd"),R=ST.res,api=window.encApi,sel=k=>[...o.querySelectorAll(`input[data-s="${k}"]:checked`)].map(x=>+x.dataset.i);
+ const day=new Date().toISOString().slice(0,10),src=f=>"PDF importé : "+ST.file+" (p."+f.pg+")";let nr=0,nm=0,nl=0,nc=0;
+ S.spdf=S.spdf&&typeof S.spdf==="object"?S.spdf:{h:{},log:[]};S.spdf.h=S.spdf.h||{};
+ sel("nv").forEach(i=>{const x=R.rules.nv[i];api.addRule({n:x.title,al:[],cat:"gen",fac:"",def:x.def,how:x.how,cond:"",rest:"",src:src(x),url:"",v:"Import "+day,st:"new"});nr++});
+ sel("md").forEach(i=>{const x=R.rules.md[i];api.setRule(x.id,{def:x.def,how:x.how,src:src(x),st:"new",v:"Import "+day});nm++});
+ // mémoriser une référence pour toutes les sections lues (comparaison à la prochaine version)
+ R.rules.nv.concat(R.rules.md).forEach(x=>{S.spdf.h[x.key]=x.h});
+ if(sel("ly").length||sel("cd").length){const T=document.getElementById("spd").querySelector(".sh");
+  if(window.__mxAdd){
+   const fname="PDF "+day;
+   for(const i of sel("ly")){const x=R.lay[i];let img="";try{img=await pageImage(ST.doc,x.pg)}catch(e){}
+    window.__mxAdd("lay",{nm:x.a.fr+" vs "+x.b.fr+" — Agencement "+x.l,note:"Importé de "+ST.file+" (p."+x.pg+")",ck:[x.a.id,x.b.id].sort().join("__")},fname,img);nl++}
+   for(const i of sel("cd")){const x=R.cards[i];
+    if(x.kind==="sec")window.__mxAdd("sec",{nm:x.title,g:"c",d:x.d,tx:x.lines.map(l=>l.tx).join("\n"),k:"chk",pts:Math.max(...x.lines.map(l=>l.pts))},fname);
+    else window.__mxAdd("pri",{nm:x.title,cat:"",d:x.d,lines:x.lines.map(l=>({tx:l.tx,pts:l.pts,k:l.k,mo:"tour"}))},fname);nc++}}}
+ S.spdf.log=(S.spdf.log||[]).concat([{d:day,f:ST.file,r:nr,m:nm,l:nl,c:nc}]).slice(-20);
+ try{if(api&&api.commit)api.commit();else save()}catch(e){try{save()}catch(_){}}try{draw()}catch(e){}
+ const out=[nr?nr+" règle(s) ajoutée(s)":"",nm?nm+" règle(s) mise(s) à jour":"",nl?nl+" layout(s)":"",nc?nc+" carte(s)":""].filter(Boolean).join(" · ")||"Référence enregistrée";
+ close();try{toast(out)}catch(e){}}
+function onClick(e){const b=e.target.closest&&e.target.closest("[data-s]");if(!b)return;const k=b.dataset.s;if(k==="x"){close();return}if(k==="tg"){const a=[...document.querySelectorAll(`#spd input[data-s="${b.dataset.k}"]`)],on=a.some(x=>!x.checked);a.forEach(x=>x.checked=on);count();return}if(k==="go"){b.disabled=true;apply();return}}
+window.SPDF={open:start,analyse,sections,pageLines,layoutsOf,cardsOf,_t:{nk,hsh,segWord,fixTitle}};
+/* ---------- 8. boutons d'accès ---------- */
+const BTN=`<div id="spdcard"><button type="button" class="b p" data-spdf="1">📄 Importer un PDF : règles, missions, layouts</button><p class="mu" style="margin:6px 0 0">Fonctionne sans Claude : l'appli lit le PDF et te propose les ajouts à valider.</p></div>`;
+function inject(){try{const m=document.getElementById("m");if(!m||document.getElementById("spdcard"))return;
+ const t=typeof tab!=="undefined"?tab:"";
+ if(t==="imp"||t==="enc"){m.insertAdjacentHTML("afterbegin",BTN)}
+ else if(t==="mis"){const bar=m.querySelector(".mtabs");if(bar)bar.insertAdjacentHTML("afterend",BTN)}}catch(e){}}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-spdf]")){e.preventDefault();start()}},true);
+const _d=window.draw;window.draw=function(){const r=_d.apply(this,arguments);inject();return r};try{draw=window.draw}catch(e){}
+setTimeout(inject,50);
+})();
+</script>
