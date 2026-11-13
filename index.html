@@ -1331,7 +1331,7 @@ function modal(){const u=ed==null?null:cl().units[ed];if(!u){$("#md").innerHTML=
 
 const batTot=(i,u)=>S.bat.t.slice(0,u+1).reduce((a,r)=>a+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0);
 function miniBar(){const B=S.bat,c=B.cur||0,CL=["#3ddc97","#f0a54a"],cb=(i,v)=>`<button data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} un PC">${v>0?"+":"−"}</button>`;
- return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div></div>`}
+ return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div><button class="b" type="button" data-dz-open style="width:100%;margin-top:7px">🎲 Lanceur de dés</button></div>`}
 function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;B.sx=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
 function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat"||(tab==="enc"&&!!S.pm&&!S.mg),run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
  $("#bar").style.display=g?"flex":"none";$("#m").classList.toggle("gm",g);$("#fab").style.display=g?"none":"";$("#fab").textContent=run?"▶ Reprendre la partie":"🎲 Mode jeu";$("#fab").dataset.act=run?"gresume":"gpick";
@@ -2026,6 +2026,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&isOpen)toggle(false
 function clamp(){const W=innerWidth,H=innerHeight;P=P||{x:10,y:Math.max(60,H-200)};P.x=Math.min(W-52,Math.max(4,P.x));P.y=Math.min(H-52,Math.max(4,P.y))}
 function place(){clamp();f.style.left=P.x+"px";f.style.top=P.y+"px"}
 let drag=null;
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-dz-open]");if(!b)return;e.preventDefault();toggle(true)});
 f.addEventListener("pointerdown",e=>{drag={sx:e.clientX,sy:e.clientY,ox:P.x,oy:P.y,mv:false,id:e.pointerId};try{f.setPointerCapture(e.pointerId)}catch(x){}});
 f.addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(!drag.mv&&Math.hypot(dx,dy)>7){drag.mv=true;f.classList.add("drag")}
   if(drag.mv){P.x=drag.ox+dx;P.y=drag.oy+dy;place()}});
