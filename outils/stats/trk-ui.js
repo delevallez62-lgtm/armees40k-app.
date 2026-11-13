@@ -7,7 +7,7 @@ const n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x
 const capn=s=>String(s||"").replace(/(^|\s)(\S)/g,(m,a,b)=>a+b.toUpperCase());
 const trk=()=>{const t=S.trk=S.trk&&typeof S.trk==="object"?S.trk:{};if(!t.pvo||typeof t.pvo!=="object")t.pvo={};if(!Array.isArray(t.rec))t.rec=[];if(!Array.isArray(t.man))t.man=[];if(!t.meta||typeof t.meta!=="object")t.meta={};if(!t.ui||typeof t.ui!=="object")t.ui={};t.v=1;return t};
 const sv=()=>{try{save()}catch(_){}};
-const TYPES=[["tir","Tir"],["combat","Combat"],["autre","Autre"]];
+const TYPES=[["tir","Tir"],["combat","Mêlée"],["autre","Autre"]];
 /* ---------- contexte : partie en cours, listes disponibles ---------- */
 function gameCtx(){const B=S.bat,gid=S.pm&&B&&B.gid,g=gid&&(S.games||[]).find(x=>x.id===gid&&x.fin===false);
  return g?{gid:g.id,g,title:g.title||"Partie en cours",rd:Math.max(1,Math.min(5,(B.cur||0)+1)),me:B.l&&B.l[0],opp:B.l&&B.l[1],fo:(g.f&&g.f[1])||"",fm:(g.f&&g.f[0])||""}:{gid:"",g:null,title:"",rd:1,me:"",opp:"",fo:"",fm:""}}
@@ -20,10 +20,10 @@ function allUnits(side,c){const sel=SH;let lid=side==="me"?(c.gid?c.me:sel.meLis
 let SH={side:"me",a:"",b:"",ty:"tir",rd:0,v:"",k:"",edit:null,meList:"",oppList:"",add:null,gid:null};
 const root=()=>{let o=document.getElementById("tks");if(!o){o=document.createElement("div");o.id="tks";o.setAttribute("role","dialog");o.setAttribute("aria-label","Suivi des dégâts");document.body.appendChild(o);o.addEventListener("click",onClick);o.addEventListener("change",onChange);o.addEventListener("input",onInput)}return o};
 function closeSheet(){const o=document.getElementById("tks");if(o)o.remove()}
-function openSheet(editId,pre){const c=gameCtx(),t=trk();SH.pre=null;SH.ph=null;SH.pvIn="";SH.add=null;SH.edit=null;SH.v="";SH.k="";SH.gid=null;
+function openSheet(editId,pre){const c=gameCtx(),t=trk();SH.pre=null;SH.ph=null;SH.pvIn="";SH.x=false;SH.nf="";SH.add=null;SH.edit=null;SH.v="";SH.k="";SH.gid=null;
  if(!SH.meList||!(S.lists||[]).some(l=>l.id===SH.meList))SH.meList=((S.lists||[]).find(l=>l.id===S.cur)||(S.lists||[])[0]||{}).id||"";
  if(!SH.oppList||!(S.lists||[]).some(l=>l.id===SH.oppList))SH.oppList="";
- SH.rd=c.rd;if(editId){const r=t.rec.find(x=>x.id===editId);if(r){SH.edit=r.id;SH.gid=r.gid||"";SH.side=r.me===false?"opp":"me";SH.ty=r.ty||"tir";SH.rd=r.rd||1;SH.v=String(r.v);SH.k=r.k==null?"":String(r.k);SH._a=r.a;SH._b=r.b;SH.a="@a";SH.b="@b"}}
+ SH.rd=c.rd;if(editId){const r=t.rec.find(x=>x.id===editId);if(r){SH.edit=r.id;SH.gid=r.gid||"";SH.side=r.me===false?"opp":"me";SH.ty=r.ty||"tir";SH.rd=r.rd||1;SH.v=String(r.v);SH.k=r.k==null?"":String(r.k);SH.x=!!r.x;SH.nf=r.nf==null?"":String(r.nf);SH._a=r.a;SH._b=r.b;SH.a="@a";SH.b="@b"}}
  else{SH.a="";SH.b="";SH._a=SH._b=null;SH.w="";SH.from=false;if(pre&&pre.unit){const nm=T.nk(pre.unit),idx=unitsOf(c.gid?c.me:SH.meList).findIndex(x=>T.nk(x.name)===nm);if(idx>=0){SH.pre={unit:pre.unit,k:"l"+idx,role:pre.role||"dealt"};applyPre()}}else{SH.from=fromLauncher(c);if(pre&&pre.phase&&SH.from)SH.ph=readPhase()}}
  draw2()}
 function readPhase(){try{const j=JSON.parse(localStorage.getItem("dz40k")||"null"),D=j&&j.D;if(!D||D.st!==2||!D.rc||!D.w)return null;
@@ -65,9 +65,11 @@ function draw2(){const c=gameCtx(),t=trk(),gid=SH.edit?(SH.gid||""):c.gid;const 
  ${SH.ph?phBlock(B):""}
  <div class="tk-two"><label>Dégâts infligés<div class="tk-step"><button data-tk="dv" data-v="-1">−</button><input data-tk="v" type="number" inputmode="decimal" min="0" value="${E(SH.v)}" placeholder="0"><button data-tk="dv" data-v="1">+</button><button data-tk="dv" data-v="5" class="s">+5</button></div></label>
  <label>Figurines éliminées <span class="mu">(facultatif)</span><div class="tk-step"><button data-tk="dk" data-v="-1">−</button><input data-tk="k" type="number" inputmode="numeric" min="0" value="${E(SH.k)}" placeholder="—"><button data-tk="dk" data-v="1">+</button></div></label></div>
- <div class="tk-two"><label>Type d'attaque<select data-tk="ty">${TYPES.map(([k,n])=>`<option value="${k}"${SH.ty===k?" selected":""}>${n}</option>`).join("")}</select></label><label>Tour de bataille<select data-tk="rd">${[1,2,3,4,5].map(n=>`<option${SH.rd===n?" selected":""}>${n}</option>`).join("")}</select></label></div>
+ <label class="tk-chk"><input type="checkbox" data-tk="x"${SH.x?" checked":""}> <span>☠ ${(SH.pre?SH.pre.role==="taken":side==="opp")?"Mon unité est tombée au combat":"L'unité ciblée est détruite"}</span></label>
+ <label>Figurines qui ont ${side==="opp"?"attaqué":"frappé ou tiré"} <span class="mu">(facultatif — sert aux statistiques par figurine)</span><div class="tk-step"><button data-tk="dnf" data-v="-1">−</button><input data-tk="nf" type="number" inputmode="numeric" min="1" value="${E(SH.nf)}" placeholder="—"><button data-tk="dnf" data-v="1">+</button></div></label>
+ <div class="tk-two"><label>Phase<select data-tk="ty">${TYPES.map(([k,n])=>`<option value="${k}"${SH.ty===k?" selected":""}>${n}</option>`).join("")}</select></label><label>Quand : tour<select data-tk="rd">${[1,2,3,4,5].map(n=>`<option${SH.rd===n?" selected":""}>${n}</option>`).join("")}</select></label></div>
  <button class="tk-save" data-tk="save">${SH.edit?"Enregistrer les modifications":"Enregistrer"}</button>${SH.edit?`<button class="tk-b" style="width:100%" data-tk="editcancel">Annuler la modification</button>`:""}
- <h3>Enregistrements ${gid?"de cette partie":"hors partie"} (${cur.length})</h3>${cur.length?cur.slice(0,40).map(r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}</small></span><b>${n1(+r.v)} PV</b><button data-tk="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tk="del" data-id="${E(r.id)}" aria-label="Supprimer" class="${SH.cd===r.id?"cf":""}">${SH.cd===r.id?"Sûr ?":"🗑"}</button></div>`).join(""):'<p class="mu">Aucun enregistrement.</p>'}
+ <h3>Enregistrements ${gid?"de cette partie":"hors partie"} (${cur.length})</h3>${cur.length?cur.slice(0,40).map(r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}${r.x?" · ☠ détruite":""}${r.ph?" · 🎲":""}</small></span><b>${n1(+r.v)} PV</b><button data-tk="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tk="del" data-id="${E(r.id)}" aria-label="Supprimer" class="${SH.cd===r.id?"cf":""}">${SH.cd===r.id?"Sûr ?":"🗑"}</button></div>`).join(""):'<p class="mu">Aucun enregistrement.</p>'}
  </div>`}
 function phBlock(B){const p=SH.ph,need=B&&!pvOf(B);return`<div class="tk-c" style="border-color:var(--ac)"><b>🎲 Phase de lancers à enregistrer</b><div class="mu" style="margin:4px 0">${E(p.w)} · ${p.hist.map(h=>E(h.l)+" "+h.v+"/"+h.n).join(" → ")} · <b>${p.saves}</b> dé${p.saves>1?"s":""} de sauvegarde pour l'adversaire</div>
  <label>Combien de dés sont passés (sauvegardes ratées) ?<div class="tk-step"><button data-tk="pdv" data-v="-1">−</button><input data-tk="pass" type="number" inputmode="numeric" min="0" max="${p.saves}" value="${E(p.pass)}" placeholder="0"><button data-tk="pdv" data-v="1">+</button></div></label>
@@ -78,17 +80,19 @@ function save1(){const c=gameCtx(),t=trk(),side=SH.side,other=side==="me"?"opp":
  if(!A||!B){toast("Choisis l'unité attaquante et l'unité ciblée");return}if(!Number.isFinite(v)||v<0){toast("Saisis les dégâts infligés");return}
  if(B&&SH.pvIn){const pvn=parseInt(SH.pvIn,10);if(pvn>0){const m=B.man&&t.man.find(x=>x.id===B.mid);if(m){m.st=Object.assign({},m.st,{PV:pvn})}else t.pvo[B.uid]=pvn}}
  const kv=SH.k===""||SH.k==null?null:Math.max(0,parseInt(SH.k,10)||0),gid=SH.edit?(SH.gid||""):c.gid;
+ const nfv=SH.nf===""||SH.nf==null?null:Math.max(1,parseInt(SH.nf,10)||1);
  const mkA={uid:A.uid,n:A.name,f:A.fac||"",pts:A.pts||null},mkB={uid:B.uid,n:B.name,f:B.fac||""};
- if(SH.edit){const r=t.rec.find(x=>x.id===SH.edit);if(r){r.a=mkA;r.b=mkB;r.v=v;r.k=kv;r.ty=SH.ty;r.rd=SH.rd;r.me=side==="me";r.t2=Date.now()}toast("Enregistrement modifié")}
- else{t.rec.push({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),gid,gt:gid?c.title:"",d:Date.now(),rd:SH.rd,ty:SH.ty,me:side==="me",a:mkA,b:mkB,v,k:kv,w:SH.w||""});toast("Dégâts enregistrés")}
- SH.v="";SH.k="";SH.w="";SH.from=false;SH.ph=null;SH.pvIn="";SH.edit=null;SH.a=SH.a==="@a"?"":SH.a;SH.b=SH.b==="@b"?"":SH.b;SH._a=SH._b=null;sv();draw2();if(tab==="gm")try{draw()}catch(_){}}
+ if(SH.edit){const r=t.rec.find(x=>x.id===SH.edit);if(r){r.a=mkA;r.b=mkB;r.v=v;r.k=kv;r.x=SH.x?1:0;r.nf=nfv;r.ty=SH.ty;r.rd=SH.rd;r.me=side==="me";r.t2=Date.now()}toast("Enregistrement modifié")}
+ else{t.rec.push({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),gid,gt:gid?c.title:"",d:Date.now(),rd:SH.rd,ty:SH.ty,me:side==="me",a:mkA,b:mkB,v,k:kv,w:SH.w||"",x:SH.x?1:0,nf:nfv,ph:SH.ph?{h:SH.ph.hist,s:SH.ph.saves,p:parseInt(SH.ph.pass,10)||0,te:SH.ph.te,dm:phDm(),m:SH.ph.mort||0}:undefined});toast("Dégâts enregistrés")}
+ SH.v="";SH.k="";SH.w="";SH.from=false;SH.ph=null;SH.pvIn="";SH.x=false;SH.nf="";SH.edit=null;SH.a=SH.a==="@a"?"":SH.a;SH.b=SH.b==="@b"?"":SH.b;SH._a=SH._b=null;sv();draw2();if((tab==="gm"||tab==="ana"))try{draw()}catch(_){}}
 function onChange(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;const c=gameCtx();
  if(k==="a"||k==="b"){if(t.value==="__new"){SH.add={side:k==="a"?SH.side:(SH.side==="me"?"opp":"me"),which:k,n:"",f:null};draw2();return}SH[k]=t.value;if(k==="b"){SH.pvIn=""}draw2();if(SH.ph)phApply();return}
- if(k==="ty"){SH.ty=t.value;return}if(k==="rd"){SH.rd=+t.value;return}if(k==="meList"||k==="oppList"){SH[k]=t.value;SH.a=SH.b="";draw2()}}
-function onInput(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;if(k==="pass"&&SH.ph){SH.ph.pass=t.value;phApply();return}if(k==="pdm"&&SH.ph){SH.ph.dm=t.value;phApply();return}if(k==="pvin"){SH.pvIn=t.value;phApply();return}if(k==="v")SH.v=t.value;else if(k==="k")SH.k=t.value;else if(k==="nn"&&SH.add)SH.add.n=t.value;else if(k==="nf"&&SH.add)SH.add.f=t.value}
+ if(k==="x"){SH.x=t.checked;return}if(k==="ty"){SH.ty=t.value;return}if(k==="rd"){SH.rd=+t.value;return}if(k==="meList"||k==="oppList"){SH[k]=t.value;SH.a=SH.b="";draw2()}}
+function onInput(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;if(k==="pass"&&SH.ph){SH.ph.pass=t.value;phApply();return}if(k==="pdm"&&SH.ph){SH.ph.dm=t.value;phApply();return}if(k==="pvin"){SH.pvIn=t.value;phApply();return}if(k==="v")SH.v=t.value;else if(k==="k")SH.k=t.value;else if(k==="nf")SH.nf=t.value;else if(k==="nn"&&SH.add)SH.add.n=t.value;else if(k==="nf"&&SH.add)SH.add.f=t.value}
 function onClick(e){const b=e.target.closest&&e.target.closest("[data-tk]");if(!b||b.matches("select,input"))return;const k=b.dataset.tk,t=trk();
  if(k==="close"){closeSheet();return}if(k==="role"){SH.pre.role=b.dataset.v;SH.a=SH.b="";applyPre();draw2();return}if(k==="side"){SH.side=b.dataset.v;SH.a=SH.b="";if(SH.edit){SH.edit=null}draw2();return}
  if(k==="pdv"&&SH.ph){const n=Math.max(0,Math.min(SH.ph.saves,(parseInt(SH.ph.pass,10)||0)+ +b.dataset.v));SH.ph.pass=String(n);const i=document.querySelector('#tks [data-tk="pass"]');if(i)i.value=SH.ph.pass;phApply();return}
+ if(k==="dnf"){SH.nf=String(Math.max(1,(parseInt(SH.nf,10)||0)+ +b.dataset.v));draw2();if(SH.ph)phApply();return}
  if(k==="dv"){SH.v=String(Math.max(0,(parseFloat(SH.v)||0)+ +b.dataset.v));draw2();return}if(k==="dk"){SH.k=String(Math.max(0,(parseInt(SH.k,10)||0)+ +b.dataset.v));draw2();return}
  if(k==="save"){save1();return}if(k==="editcancel"){SH.edit=null;SH.a=SH.b="";SH.v=SH.k="";draw2();return}
  if(k==="addcancel"){SH.add=null;draw2();return}
@@ -97,7 +101,7 @@ function onClick(e){const b=e.target.closest&&e.target.closest("[data-tk]");if(!
   const mk=t.man.find(m=>T.uidOf({man:true,n:m.n,f:m.f}).uid===id.uid);SH[a.which]="m"+mk.id;SH.add=null;sv();draw2();return}
  if(k==="edit"){openSheet(b.dataset.id);return}
  if(k==="del"){const id=b.dataset.id;if(SH.cd!==id){SH.cd=id;draw2();setTimeout(()=>{if(SH.cd===id){SH.cd=null;if(document.getElementById("tks"))draw2()}},3500);return}
-  SH.cd=null;t.rec=t.rec.filter(r=>r.id!==id);if(SH.edit===id)SH.edit=null;sv();draw2();toast("Enregistrement supprimé");if(tab==="gm")try{draw()}catch(_){}return}}
+  SH.cd=null;t.rec=t.rec.filter(r=>r.id!==id);if(SH.edit===id)SH.edit=null;sv();draw2();toast("Enregistrement supprimé");if((tab==="gm"||tab==="ana"))try{draw()}catch(_){}return}}
 /* ---------- unité d'origine du lanceur (clic sur le nombre d'attaques d'une arme) ---------- */
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".wza");if(!b)return;try{const w=JSON.parse(b.dataset.dzw),box=b.closest(".encu");window.__trkSrc={n:w.u||(box&&box.dataset.encn)||"",ref:box&&box.dataset.encr||"",w:w.n||"",t:w.t||"r",at:Date.now()}}catch(_){}},true);
 function fromLauncher(c){const s=window.__trkSrc,wp=document.getElementById("dzwp");if(!s||!s.n||!wp||wp.hidden)return false;
@@ -132,7 +136,7 @@ function tbl(rows,first){return rows.length?`<table class="tk-t"><tr><th>${first
 function lineChart(cum){if(cum.length<2)return'<p class="mu">Il faut au moins deux parties pour tracer l\'évolution.</p>';const W=300,H=90,x=i=>8+i*(W-16)/(cum.length-1),y=v=>H-6-v/100*(H-12);
  return`<svg viewBox="0 0 ${W} ${H+14}" style="width:100%;max-width:360px"><line x1="8" y1="${y(50)}" x2="${W-8}" y2="${y(50)}" stroke="var(--bd)" stroke-dasharray="3 3"/><polyline fill="none" stroke="var(--ac)" stroke-width="2.4" points="${cum.map((c,i)=>x(i)+","+y(c.win)).join(" ")}"/>${cum.map((c,i)=>`<circle cx="${x(i)}" cy="${y(c.win)}" r="3" fill="${c.res==="V"?"#2e9d6b":c.res==="D"?"#d1503b":"#9aa5a0"}"/>`).join("")}<text x="8" y="${H+11}" font-size="9" fill="var(--mu)">Partie 1</text><text x="${W-8}" y="${H+11}" font-size="9" text-anchor="end" fill="var(--mu)">Partie ${cum.length}</text></svg>`}
 function filteredRec(d){const f=d.f,ids=f.det||f.fac?new Set(d.rs.results.map(r=>r.id)):null;return trk().rec.filter(r=>{if(d.from&&r.d<d.from)return false;if(f.fac&&T.nk(r.b&&r.b.f)!==T.nk(f.fac)&&!(r.gid&&ids&&ids.has(r.gid)&&false))return false;if(f.det&&!(r.gid&&ids&&ids.has(r.gid)))return false;return true})}
-const dmgLine=r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}</small></span><b>${n1(+r.v)} PV</b><button data-tkp="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tkp="del" data-id="${E(r.id)}" aria-label="Supprimer">🗑</button></div>`;
+const dmgLine=r=>`<div class="tk-rr"><span class="nm"><b>${r.me===false?"Adv.":"Moi"}</b> ${E(r.a.n)} → ${E(r.b.n)}<small>${E((TYPES.find(x=>x[0]===r.ty)||["","Autre"])[1])} · tour ${r.rd||"—"}${r.k!=null?" · "+r.k+" fig.":""}${r.x?" · ☠ détruite":""}${r.ph?" · 🎲":""}</small></span><b>${n1(+r.v)} PV</b><button data-tkp="edit" data-id="${E(r.id)}" aria-label="Modifier">✎</button><button data-tkp="del" data-id="${E(r.id)}" aria-label="Supprimer">🗑</button></div>`;
 function secBody(sec,d){const rs=d.rs,u=trk().ui,mine=filteredRec(d).filter(r=>r.me!==false);
  if(sec==="fac")return`<h4>Contre chaque faction</h4>${tbl(rs.byOpponent,"Adversaire")}<h4>Par faction jouée</h4>${tbl(rs.byFaction,"Ma faction")}`;
  if(sec==="det")return`<h4>Par détachement</h4>${tbl(rs.byDetachment,"Détachement")}`;
