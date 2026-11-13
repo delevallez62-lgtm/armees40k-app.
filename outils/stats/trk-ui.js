@@ -24,13 +24,13 @@ function openSheet(editId){const c=gameCtx(),t=trk();SH.add=null;SH.edit=null;SH
  if(!SH.meList||!(S.lists||[]).some(l=>l.id===SH.meList))SH.meList=((S.lists||[]).find(l=>l.id===S.cur)||(S.lists||[])[0]||{}).id||"";
  if(!SH.oppList||!(S.lists||[]).some(l=>l.id===SH.oppList))SH.oppList="";
  SH.rd=c.rd;if(editId){const r=t.rec.find(x=>x.id===editId);if(r){SH.edit=r.id;SH.gid=r.gid||"";SH.side=r.me===false?"opp":"me";SH.ty=r.ty||"tir";SH.rd=r.rd||1;SH.v=String(r.v);SH.k=r.k==null?"":String(r.k);SH._a=r.a;SH._b=r.b;SH.a="@a";SH.b="@b"}}
- else{SH.a="";SH.b="";SH._a=SH._b=null}
+ else{SH.a="";SH.b="";SH._a=SH._b=null;SH.w="";SH.from=false;SH.from=fromLauncher(c)}
  draw2()}
 function findUnit(side,key,c){if(key==="@a")return SH._a?{uid:SH._a.uid,name:SH._a.n,fac:SH._a.f,pts:SH._a.pts}:null;if(key==="@b")return SH._b?{uid:SH._b.uid,name:SH._b.n,fac:SH._b.f,pts:null}:null;
  const u=allUnits(side,c);return u.list.concat(u.man).find(x=>x.k===key)||null}
 function opts(arr,sel,ph){return`<option value=""${sel?"":" selected"}>${ph}</option>`+arr.map(u=>`<option value="${E(u.k)}"${u.k===sel?" selected":""}>${E(u.name)}${u.fac?" — "+E(u.fac):""}</option>`).join("")}
 function unitSelect(side,sel,c,which){const u=allUnits(side,c);const lab=side==="me"?"Ma liste":"Liste adverse";
- const edit=SH.edit&&(sel==="@a"||sel==="@b");
+ const edit=(sel==="@a"&&SH._a)||(sel==="@b"&&SH._b);
  return`<select data-tk="${which}">${edit?`<option value="${sel}" selected>${E((which==="a"?SH._a:SH._b).n)} — ${E((which==="a"?SH._a:SH._b).f||"")}</option>`:`<option value=""${sel?"":" selected"}>Choisir une unité…</option>`}
  ${u.list.length?`<optgroup label="${lab}">${u.list.map(x=>`<option value="${E(x.k)}"${x.k===sel?" selected":""}>${E(x.name)}</option>`).join("")}</optgroup>`:""}
  ${u.man.length?`<optgroup label="Saisies à la main">${u.man.map(x=>`<option value="${E(x.k)}"${x.k===sel?" selected":""}>${E(x.name)}${x.fac?" — "+E(x.fac):""}</option>`).join("")}</optgroup>`:""}
@@ -47,6 +47,7 @@ function draw2(){const c=gameCtx(),t=trk(),gid=SH.edit?(SH.gid||""):c.gid;const 
  ${!c.gid&&!SH.edit?`<div class="tk-c"><div class="tk-two"><label>Ma liste${listSel("meList",SH.meList)}</label><label>Liste adverse (facultative)${listSel("oppList",SH.oppList)}</label></div></div>`:""}
  <div class="tk-seg"><button data-tk="side" data-v="me" class="${side==="me"?"on":""}">J'attaque</button><button data-tk="side" data-v="opp" class="${side==="opp"?"on":""}">L'adversaire attaque</button></div>
  <label>Unité attaquante${unitSelect(side,SH.a,c,"a")}</label><label>Unité ciblée${unitSelect(other,SH.b,c,"b")}</label>${form}
+ ${SH.from&&SH.w?`<p class="mu" style="margin:6px 0 0">Depuis le lanceur : <b>${E(SH.w)}</b> — l'unité attaquante est déjà choisie.</p>`:""}
  ${matchBlock(A,B)}
  <div class="tk-two"><label>Dégâts infligés<div class="tk-step"><button data-tk="dv" data-v="-1">−</button><input data-tk="v" type="number" inputmode="decimal" min="0" value="${E(SH.v)}" placeholder="0"><button data-tk="dv" data-v="1">+</button><button data-tk="dv" data-v="5" class="s">+5</button></div></label>
  <label>Figurines éliminées <span class="mu">(facultatif)</span><div class="tk-step"><button data-tk="dk" data-v="-1">−</button><input data-tk="k" type="number" inputmode="numeric" min="0" value="${E(SH.k)}" placeholder="—"><button data-tk="dk" data-v="1">+</button></div></label></div>
@@ -59,8 +60,8 @@ function save1(){const c=gameCtx(),t=trk(),side=SH.side,other=side==="me"?"opp":
  const kv=SH.k===""||SH.k==null?null:Math.max(0,parseInt(SH.k,10)||0),gid=SH.edit?(SH.gid||""):c.gid;
  const mkA={uid:A.uid,n:A.name,f:A.fac||"",pts:A.pts||null},mkB={uid:B.uid,n:B.name,f:B.fac||""};
  if(SH.edit){const r=t.rec.find(x=>x.id===SH.edit);if(r){r.a=mkA;r.b=mkB;r.v=v;r.k=kv;r.ty=SH.ty;r.rd=SH.rd;r.me=side==="me";r.t2=Date.now()}toast("Enregistrement modifié")}
- else{t.rec.push({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),gid,gt:gid?c.title:"",d:Date.now(),rd:SH.rd,ty:SH.ty,me:side==="me",a:mkA,b:mkB,v,k:kv});toast("Dégâts enregistrés")}
- SH.v="";SH.k="";SH.edit=null;SH.a=SH.a==="@a"?"":SH.a;SH.b=SH.b==="@b"?"":SH.b;SH._a=SH._b=null;sv();draw2();if(tab==="gm")try{draw()}catch(_){}}
+ else{t.rec.push({id:"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),gid,gt:gid?c.title:"",d:Date.now(),rd:SH.rd,ty:SH.ty,me:side==="me",a:mkA,b:mkB,v,k:kv,w:SH.w||""});toast("Dégâts enregistrés")}
+ SH.v="";SH.k="";SH.w="";SH.from=false;SH.edit=null;SH.a=SH.a==="@a"?"":SH.a;SH.b=SH.b==="@b"?"":SH.b;SH._a=SH._b=null;sv();draw2();if(tab==="gm")try{draw()}catch(_){}}
 function onChange(e){const t=e.target,k=t.dataset&&t.dataset.tk;if(!k)return;const c=gameCtx();
  if(k==="a"||k==="b"){if(t.value==="__new"){SH.add={side:k==="a"?SH.side:(SH.side==="me"?"opp":"me"),which:k,n:"",f:null};draw2();return}SH[k]=t.value;if(SH.edit&&(t.value!=="@a"&&t.value!=="@b")){}draw2();return}
  if(k==="ty"){SH.ty=t.value;return}if(k==="rd"){SH.rd=+t.value;return}if(k==="meList"||k==="oppList"){SH[k]=t.value;SH.a=SH.b="";draw2()}}
@@ -76,6 +77,15 @@ function onClick(e){const b=e.target.closest&&e.target.closest("[data-tk]");if(!
  if(k==="edit"){openSheet(b.dataset.id);return}
  if(k==="del"){const id=b.dataset.id;if(SH.cd!==id){SH.cd=id;draw2();setTimeout(()=>{if(SH.cd===id){SH.cd=null;if(document.getElementById("tks"))draw2()}},3500);return}
   SH.cd=null;t.rec=t.rec.filter(r=>r.id!==id);if(SH.edit===id)SH.edit=null;sv();draw2();toast("Enregistrement supprimé");if(tab==="gm")try{draw()}catch(_){}return}}
+/* ---------- unité d'origine du lanceur (clic sur le nombre d'attaques d'une arme) ---------- */
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".wza");if(!b)return;try{const w=JSON.parse(b.dataset.dzw),box=b.closest(".encu");window.__trkSrc={n:w.u||(box&&box.dataset.encn)||"",ref:box&&box.dataset.encr||"",w:w.n||"",t:w.t||"r",at:Date.now()}}catch(_){}},true);
+function fromLauncher(c){const s=window.__trkSrc,wp=document.getElementById("dzwp");if(!s||!s.n||!wp||wp.hidden)return false;
+ const nm=T.nk(s.n),find=lid=>unitsOf(lid).findIndex(x=>T.nk(x.name)===nm);let side="me",idx=-1;
+ if(c.gid){idx=find(c.me);if(idx<0&&c.opp){idx=find(c.opp);if(idx>=0)side="opp"}}
+ else{idx=find(SH.meList);if(idx<0){const L=(S.lists||[]).find(l=>find(l.id)>=0);if(L){SH.meList=L.id;idx=find(L.id)}}}
+ if(idx>=0){SH.side=side;SH.a="l"+idx}
+ else{const cu=(S.coll||{})[s.ref]||Object.values(S.coll||{}).find(x=>T.nk(x.name)===nm);if(!cu)return false;const fac=T.facOfUnit(cu);SH._a={uid:T.uidOf(cu,{fac}).uid,n:capn(cu.name),f:fac,pts:+cu.pts||null};SH.a="@a";SH.side="me"}
+ SH.ty=s.t==="m"?"combat":"tir";SH.w=s.w||"";return true}
 /* ---------- icône discrète dans le lanceur de dés ---------- */
 function mountIcon(){const h=document.querySelector("#dzp .dzh");if(!h||document.getElementById("dztrk"))return!!document.getElementById("dztrk");
  const b=document.createElement("button");b.type="button";b.id="dztrk";b.className="dzx";b.title="Suivi des dégâts";b.setAttribute("aria-label","Suivi des dégâts");b.textContent="📊";b.style.cssText="opacity:.55;font-size:15px";h.insertBefore(b,document.getElementById("dzsn")||h.lastChild);return true}
