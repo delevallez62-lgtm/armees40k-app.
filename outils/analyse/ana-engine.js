@@ -292,7 +292,29 @@ function analyseArmies(unitsA,unitsB,ctx,names){ctx=ctx||DEFCTX;names=names||["A
  else if(rr(sA.oc,sB.oc)>=1.15)strat.push({t:"Marquer par les objectifs",why:`Contrôle d'objectifs supérieur : ${sA.oc} contre ${sB.oc} (${sA.ocUnits} unités capables de tenir un objectif).`});
  if(threats.length)strat.push({t:"Neutraliser en priorité "+threats.slice(0,2).map(x=>x.name).join(" puis "),why:threats.slice(0,2).map(x=>`${x.name} peut détruire ${pct(x.bestHit?x.bestHit.f:0)} de ${x.bestHit?PA[x.bestHit.i].name:"?"} (${x.bestHit?x.bestHit.type:""})`).join(" ; ")});
  if(sA.deep>0)strat.push({t:"Garder des unités en réserve",why:`${sA.deep} unité(s) peuvent arriver par frappe en profondeur / infiltration : elles permettent de contourner la puissance adverse et de menacer les objectifs.`});
- return{weighting:{A:useA?"points":"égale",B:useB?"points":"égale"},names,PA,PB,mAB,mBA,sA,sB,win,rankA:rA,rankB:rB,assign,threats,preserve,eff,favorable,unfavorable,avoid,adv,weak,strat,missing,ctx}}
+ return{pairs,weighting:{A:useA?"points":"égale",B:useB?"points":"égale"},names,PA,PB,mAB,mBA,sA,sB,win,rankA:rA,rankB:rB,assign,threats,preserve,eff,favorable,unfavorable,avoid,adv,weak,strat,missing,ctx}}
+
+/* ---------- 10. bataille entre deux armées : qui affronte qui, round par round (espérances) ---------- */
+function battle(unitsA,unitsB,ctx,opts){opts=opts||{};ctx=ctx||DEFCTX;const R=Math.max(1,Math.min(5,opts.rounds||5)),first=opts.first===2?2:1;
+ const PA=armyProfiles(unitsA),PB=armyProfiles(unitsB),mAB=pairMatrix(PA,PB,ctx),mBA=pairMatrix(PB,PA,ctx);
+ const useA=PA.every(p=>p.pts>0),useB=PB.every(p=>p.pts>0),V=(P,use,i)=>use?P[i].pts:1;
+ const fa=PA.map(()=>1),fb=PB.map(()=>1),log=[],pairs={};
+ const rec=(side,i,j,mode,dealt,got)=>{const k=side+":"+i+">"+j+":"+mode;const o=pairs[k]||(pairs[k]={side,i,j,mode,dealt:0,got:0,n:0});o.dealt+=dealt;o.got+=got;o.n++};
+ /* une unité agit : tir puis mêlée, chacune sur la meilleure cible restante ; la mêlée est un échange (riposte proportionnelle aux survivants) */
+ function act(side,r){const att=side===1?PA:PB,def=side===1?PB:PA,fo=side===1?fa:fb,fd=side===1?fb:fa,m=side===1?mAB:mBA,mb=side===1?mBA:mAB,Va=side===1?(i=>V(PA,useA,i)):(i=>V(PB,useB,i)),Vd=side===1?(j=>V(PB,useB,j)):(j=>V(PA,useA,j));
+  const order=att.map((_,i)=>i).filter(i=>fo[i]>0.001).sort((x,y)=>Va(y)-Va(x));
+  order.forEach(i=>{["shoot","melee"].forEach(mode=>{if(fo[i]<=0.001)return;const key=mode==="shoot"?"fs":"fm";let best=-1,bv=0;
+    def.forEach((q,j)=>{if(fd[j]<=0.001)return;const f=Math.min(fd[j],m[i][j][key]*fo[i]);const v=f*Vd(j);if(v>bv||best<0&&f>0){bv=v;best=j}});
+    if(best<0)return;const j=best,dealt=Math.min(fd[j],m[i][j][key]*fo[i]);if(dealt<=0.0005)return;fd[j]-=dealt;
+    let got=0;if(mode==="melee"&&fd[j]>0.001){got=Math.min(fo[i],mb[j][i].fm*fd[j]);fo[i]-=got}
+    log.push({r,side,i,j,mode,dealt,got,att:att[i].name,tgt:def[j].name,left:fd[j]});rec(side,i,j,mode,dealt,got)})})}
+ for(let r=1;r<=R;r++){const seq=first===1?[1,2]:[2,1];seq.forEach(sd=>act(sd,r))}
+ const lost=(P,use,f)=>P.reduce((a,p,i)=>a+(1-f[i])*(use?p.pts:1),0),tot=(P,use)=>P.reduce((a,p)=>a+(use?p.pts:1),0);
+ const lA=lost(PA,useA,fa),lB=lost(PB,useB,fb),tA=tot(PA,useA),tB=tot(PB,useB);
+ const remA=1-lA/tA,remB=1-lB/tB;
+ const pl=Object.values(pairs).map(o=>({...o,a:o.side===1?PA[o.i].name:PB[o.i].name,b:o.side===1?PB[o.j].name:PA[o.j].name,ratio:o.got>0?o.dealt/o.got:(o.dealt>0?99:1)})).sort((x,y)=>y.dealt-x.dealt);
+ return{PA,PB,fa,fb,log,pairs:pl,rounds:R,first,weighting:{A:useA?"points":"égale",B:useB?"points":"égale"},
+  remA,remB,lostA:lA,lostB:lB,totA:tA,totB:tB,winner:Math.abs(remA-remB)<0.02?0:(remA>remB?1:2)}}
 
 const HYPOTHESES=[
  "Règles V11 appliquées : séquence d'attaque (05), aptitudes d'arme [TOUCHES FATALES/SOUTENUES], [BLESSURES DÉVASTATRICES], [ANTI], [DÉFLAGRATION], [ABATTAGE], [TIR RAPIDE], [LOURD], [LANCE], [JUMELÉ], [TORRENT], [FUSION], [IGNORE LE COUVERT] ; couvert (CT −1) ; Insensible à la Douleur.",
@@ -300,8 +322,9 @@ const HYPOTHESES=[
  "Unité à endurance mixte : l'endurance du groupe le plus nombreux encore en vie est utilisée (règle V11 non vérifiée pour ce cas).",
  "Toutes les armes de tir (ou de mêlée) de l'unité sont utilisées ; pour les profils alternatifs (« Arme - profil »), le meilleur est retenu ; en mêlée, une figurine seule garde [ATTAQUES BONUS] + sa meilleure arme.",
  "Distances, déplacements, ligne de vue et terrain ne sont pas simulés : tu choisis le scénario (mi-portée, couvert, charge, immobile).",
- "Nombre d'armes absent de la liste : 1 retenu, et signalé."];
-root.ANA={HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
+ "Nombre d'armes absent de la liste : 1 retenu, et signalé.",
+ "Bataille : chaque unité tire puis charge la meilleure cible restante à chaque round (affectation automatique) ; les dégâts sont des espérances, la mêlée est un échange, les objectifs ne sont pas joués."];
+root.ANA={battle,HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
  expectedWeapon,simulate,simulateOnce,theory,chooseWeapons,pairMatrix,armyStats,unitRanking,winEstimate,histStats,resultOf,fracKilled,DEFCTX,WEIGHTS,SUPPORTED,INFO_ONLY};
 if(typeof module!=="undefined")module.exports=root.ANA;
 })(typeof window!=="undefined"?window:globalThis);
