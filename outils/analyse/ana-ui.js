@@ -1,7 +1,10 @@
 /* ===== HAMMER · Analyse & Simulation — interface (le moteur est ANA, voir ana-engine) ===== */
 (()=>{
 const A=window.ANA,E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const SECS=[["par","🏁 Parties"],["duel","⚔ Duels"],["sim","🎲 Simulation"],["rec","💡 Conseils"],["jou","📓 Journal"],["cmp","Comparer"],["bat","Bataille"],["win","Victoire"],["his","Historique"]];
+const GROUPS=[["par","🏁","Parties",["par","his"]],["aff","⚔","Affronter",["duel","sim"]],["rec","💡","Conseils",["rec"]],["jou","📓","Journal",["jou"]],["arm","🛡","Armées",["cmp","bat","win"]]];
+const LEAF={par:"Mes parties",his:"Historique manuel",duel:"Duel",sim:"Simulation",rec:"Conseils",jou:"Journal",cmp:"Comparer",bat:"Bataille",win:"Victoire"};
+const DESC={par:"Tes parties en cours et terminées, avec tes statistiques de victoires.",his:"Ajoute à la main une partie jouée ailleurs.",duel:"Une figurine contre une autre : combien de PV elle retire et combien de figurines elle tue.",sim:"Les dés lancés des milliers de fois pour voir ce qui est le plus probable.",rec:"Les meilleurs choix de ta liste contre celle de l'adversaire, en mots simples.",jou:"Tout ce que tu as noté en jouant : dégâts, unités tombées, jets de dés.",cmp:"Tes deux armées côte à côte : puissance, mobilité, objectifs.",bat:"Une bataille complète simulée, tour par tour.",win:"Une estimation théorique de tes chances de victoire."};
+const SECS=GROUPS.flatMap(g=>g[3].map(k=>[k,LEAF[k]]));
 const pct=x=>x==null?"—":Math.round(x*100)+" %",n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
 let CACHE={key:"",res:null},RES=null,BUSY=false,HFORM={};
 const lists=()=>(typeof S!=="undefined"&&S.lists)||[];
@@ -18,8 +21,8 @@ function data(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);if(!LA||!LB||!(LA.uni
  const key=sig(LA)+"##"+sig(LB)+"##"+JSON.stringify(a.ctx);if(CACHE.key===key)return CACHE.res;
  const r=A.analyseArmies(LA.units,LB.units,a.ctx,[(LA.name||"Armée 1")+" (J1)",(LB.name||"Armée 2")+" (J2)"]);CACHE={key,res:r};return r}
 const css=`<style id="anacss">
-.an h2{margin:0 0 6px;font-family:var(--fs,inherit)}.an .mu{color:var(--mu);font-size:13px}
-.an-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:4px}.an-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.an-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.an h2{margin:0 0 6px;font-size:22px;letter-spacing:.04em;font-family:var(--fs,inherit)}.an .mu{color:var(--mu);font-size:13px}
+.an-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0 6px}.an-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:62px;padding:6px 2px;border-radius:14px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:800;font-size:11.5px;cursor:pointer;touch-action:manipulation}.an-nav button i{font-style:normal;font-size:22px;line-height:1}.an-nav button.on{background:var(--ac);border-color:var(--ac);color:#fff}.an-sub{display:flex;gap:6px;margin:6px 0}.an-sub button{flex:1;min-height:42px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:700;font-size:14px;cursor:pointer}.an-sub button.on{background:color-mix(in srgb,var(--ac) 22%,var(--card));border-color:var(--ac);color:var(--ac)}.an-desc{margin:6px 2px 8px;font-size:13.5px;color:var(--mu);line-height:1.4}.an-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:4px}.an-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.an-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
 .an-c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}.an-c h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}.an-bil{border-width:2px;border-color:var(--ac)}.an-big{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}.an-big b{display:block;font-size:34px;line-height:1.1}.an-big small{font-size:16px;color:var(--mu)}.an-big span{font-size:12px;color:var(--mu)}
 .an-sel{display:grid;grid-template-columns:1fr;gap:8px}.an-sel.two{grid-template-columns:1fr 1fr}.an-sel label{display:block;font-size:12px;color:var(--mu)}.an-sel select{width:100%;min-height:44px;margin-top:3px}
 .an-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.an-row:first-of-type{border-top:0}.an-row b{font-size:15px}.an-row .l{text-align:right}.an-row .k{font-size:12px;color:var(--mu);text-align:center;max-width:110px}
@@ -53,8 +56,11 @@ const css=`<style id="anacss">
 </style>`;
 const hdr=a=>{const L=lists();const opt=(id)=>L.map(l=>`<option value="${E(l.id)}"${l.id===id?" selected":""}>${E(l.name||"Liste")} (${(l.units||[]).length})</option>`).join("");
  const need=!["par","jou","his"].includes(a.sec);
- return`<div class="an"><h2>CENTRE DE COMMANDEMENT</h2><p class="mu" style="margin:0">Tes parties, tes analyses et ton journal de bataille au même endroit. Tout est calculé sur ton téléphone, sans connexion. Règles V11.</p>
- <div class="an-pills">${SECS.map(([k,n])=>`<button data-an="sec" data-v="${k}" class="${a.sec===k?"on":""}">${n}</button>`).join("")}</div>
+ const grp=GROUPS.find(g=>g[3].includes(a.sec))||GROUPS[0];a.last=a.last||{};
+ return`<div class="an"><h2>CENTRE DE COMMANDEMENT</h2>
+ <div class="an-nav">${GROUPS.map(([id,ic,nm,lv])=>`<button data-an="sec" data-v="${lv.includes(a.last[id])?a.last[id]:lv[0]}" class="${grp[0]===id?"on":""}"><i>${ic}</i><span>${nm}</span></button>`).join("")}</div>
+ ${grp[3].length>1?`<div class="an-sub">${grp[3].map(k=>`<button data-an="sec" data-v="${k}" class="${a.sec===k?"on":""}">${LEAF[k]}</button>`).join("")}</div>`:""}
+ <p class="an-desc">${DESC[a.sec]||""}</p>
  ${need?`<div class="an-c"><div class="an-sel"><label>Armée 1 — moi (Joueur 1)<select data-ans="a">${opt(a.a)}</select></label><label>Armée 2 — adversaire (Joueur 2)<select data-ans="b">${opt(a.b)}</select></label></div>
  ${L.length<2?`<div class="an-warn">Une seule liste : tu peux l'affronter elle-même (choisis-la des deux côtés). Pour un vrai adversaire, importe sa liste dans <b>Importer</b>.</div>`:""}${a.a&&a.a===a.b?`<div class="an-warn">Même liste des deux côtés : combat miroir.</div>`:""}
  <details><summary>Scénario de tir et de mêlée</summary>${["half|La cible est à mi-portée (Tir Rapide, Fusion)","cover|La cible a le bénéfice du couvert (CT −1)","charged|L'attaquant a chargé (Lance)","still|L'attaquant n'a pas bougé (Lourd)"].map(x=>{const[k,t]=x.split("|");return`<label class="an-ck"><input type="checkbox" data-anac="${k}"${a.ctx[k]?" checked":""}>${t}</label>`}).join("")}</details></div>`:""}`};
@@ -329,7 +335,7 @@ function body(){const a=st();let h=css+hdr(a);const L=lists();
  return h+f(r)+"</div>"}
 window.XV=window.XV||{};window.XV.gm=()=>{try{st().sec="par"}catch(_){}return window.XV.ana()};window.XV.ana=()=>{try{return body()}catch(e){return`<div class="card"><b>Erreur dans Analyse &amp; Simulation</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-an]");if(!b||!document.querySelector(".an"))return;const k=b.dataset.an,a=st();
- if(k==="sec"){a.sec=b.dataset.v;save();draw();window.scrollTo(0,0);setTimeout(()=>{const x=document.querySelector(".an-pills button.on");if(x&&x.scrollIntoView)x.scrollIntoView({inline:"center",block:"nearest"})},50);return}
+ if(k==="sec"){a.sec=b.dataset.v;{const g=GROUPS.find(x=>x[3].includes(a.sec));if(g){a.last=a.last||{};a.last[g[0]]=a.sec}}save();draw();window.scrollTo(0,0);setTimeout(()=>{const x=document.querySelector(".an-pills button.on");if(x&&x.scrollIntoView)x.scrollIntoView({inline:"center",block:"nearest"})},50);return}
  if(k==="pickb"){a.fb=+b.dataset.v;a.nb=null;draw();return}if(k==="dt"){a.dt=b.dataset.v;save();draw();return}if(k==="ctxt"){a.ctx[b.dataset.v]=!a.ctx[b.dataset.v];save();draw();return}if(k==="nstep"){const key=b.dataset.k;a[key]=Math.max(1,Math.min(100,(a[key]||1)+ +b.dataset.v));save();draw();return}if(k==="dir"){a.dir=b.dataset.v;draw();return}if(k==="grid"){a.grid=+b.dataset.v;draw();return}if(k==="run"){runSim();return}if(k==="jexp"){exportJ();return}if(k==="addg"){addGame();return}if(k==="impg"){importGames();return}
  if(k==="delg"){S.ash=games().filter(x=>x.id!==b.dataset.v);save();draw();return}});
 document.addEventListener("change",e=>{const t=e.target;if(!t.closest||!t.closest(".an"))return;const a=st();

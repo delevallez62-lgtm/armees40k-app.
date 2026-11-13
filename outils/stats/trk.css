@@ -37,3 +37,7 @@
 .tk-kf{display:grid;gap:4px;font-weight:700}.tk-kf .tk-step{width:100%}
 .tk-more{border:1px solid var(--bd);border-radius:12px;padding:4px 12px;margin:8px 0;background:var(--bg)}.tk-more summary{min-height:44px;display:flex;align-items:center;font-weight:700;cursor:pointer}
 .tk-sticky{position:sticky;bottom:0;padding:8px 0 4px;background:linear-gradient(transparent,var(--card) 30%);z-index:2}.tk-sticky .tk-save{min-height:60px;font-size:18px}
+.tk-when{margin:8px 0 2px}.tk-wl{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:4px}
+.tk-chp{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.tk-chp.tk3{grid-template-columns:repeat(3,1fr);margin-top:6px}.tk-chp button{min-height:48px;border-radius:12px;border:2px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:800;font-size:17px;cursor:pointer}.tk-chp.tk3 button{font-size:14px;min-height:40px}.tk-chp button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.tk-dice{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}.tk-dice label{font-weight:700;font-size:13px}
+.tk-fell{opacity:.5;filter:grayscale(1)}.tk-rip{display:inline-block;margin-left:6px;font-size:11px;font-weight:800;padding:1px 8px;border-radius:99px;background:#6b6b6b;color:#fff;vertical-align:middle}
