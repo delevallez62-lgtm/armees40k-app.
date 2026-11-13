@@ -21,9 +21,27 @@ jobs:
     steps:
       - name: Récupérer exactement le dépôt
         uses: actions/checkout@v4
+      - name: Générer les 45 layouts officiels depuis le PDF français
+        run: |
+          python -m pip install --quiet pymupdf
+          mkdir -p lay
+          curl -L --fail --retry 3 "https://assets.warhammer-community.com/fre_12-06_warhammer40000_event_companion-tjltehrpk8-ue6jwa8reo.pdf" -o /tmp/event-companion.pdf
+          python - <<'PY'
+          import fitz, os
+          doc = fitz.open("/tmp/event-companion.pdf")
+          if len(doc) < 53:
+              raise SystemExit(f"PDF inattendu : {len(doc)} pages")
+          os.makedirs("lay", exist_ok=True)
+          for page_no in range(9, 54):
+              page = doc[page_no - 1]
+              pix = page.get_pixmap(matrix=fitz.Matrix(1.65, 1.65), alpha=False)
+              pix.save(f"lay/p{page_no}.webp", output="webp", jpg_quality=86)
+          print("45 layouts officiels générés")
+          PY
       - name: Préparer le site sans modifier l'application
         run: |
           mkdir -p _site
+          cp -a lay _site/
           cp -a index.html android outils README.md _site/
           if [ -f favicon.ico ]; then cp favicon.ico _site/; fi
       - name: Préparer GitHub Pages
