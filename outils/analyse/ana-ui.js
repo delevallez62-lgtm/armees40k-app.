@@ -1,0 +1,158 @@
+/* ===== HAMMER · Analyse & Simulation — interface (le moteur est ANA, voir ana-engine) ===== */
+(()=>{
+const A=window.ANA,E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const SECS=[["cmp","Comparer"],["sim","Affrontement"],["mat","Match-ups"],["rec","Conseils"],["win","Victoire"],["his","Historique"]];
+const pct=x=>x==null?"—":Math.round(x*100)+" %",n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
+let CACHE={key:"",res:null},RES=null,BUSY=false,HFORM={};
+const lists=()=>(typeof S!=="undefined"&&S.lists)||[];
+const facOf=l=>{const c={};(l.units||[]).forEach(u=>{const f=String(u.fkw||"").split(",")[0].trim();if(f)c[f]=(c[f]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
+const detOf=l=>((l&&l.dets||[])[0]||{}).name||"";
+const st=()=>{const a=S.ana=S.ana&&typeof S.ana==="object"?S.ana:{};const L=lists();
+ if(!a.sec)a.sec="cmp";if(!a.ctx)a.ctx={half:false,cover:false,charged:false,still:false};if(!a.n)a.n=3000;if(!a.mode)a.mode="shoot";
+ if(!L.some(l=>l.id===a.a))a.a=(L.find(l=>l.id===S.cur)||L[0]||{}).id||"";
+ if(!L.some(l=>l.id===a.b)||a.b===a.a)a.b=(L.find(l=>l.id!==a.a)||{}).id||"";
+ return a};
+const listOf=id=>lists().find(l=>l.id===id);
+const sig=l=>l?(l.id+"|"+(l.units||[]).map(u=>[u.name,u.qty,u.size,u.pts,(u.weapons||[]).length,(u.subs||[]).length,u.equip].join(",")).join(";")):"";
+function data(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);if(!LA||!LB||!(LA.units||[]).length||!(LB.units||[]).length)return null;
+ const key=sig(LA)+"##"+sig(LB)+"##"+JSON.stringify(a.ctx);if(CACHE.key===key)return CACHE.res;
+ const r=A.analyseArmies(LA.units,LB.units,a.ctx,[LA.name||"Armée 1",LB.name||"Armée 2"]);CACHE={key,res:r};return r}
+const css=`<style id="anacss">
+.an h2{margin:0 0 6px;font-family:var(--fs,inherit)}.an .mu{color:var(--mu);font-size:13px}
+.an-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:4px}.an-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.an-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.an-c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}.an-c h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.an-sel{display:grid;grid-template-columns:1fr;gap:8px}.an-sel.two{grid-template-columns:1fr 1fr}.an-sel label{display:block;font-size:12px;color:var(--mu)}.an-sel select{width:100%;min-height:44px;margin-top:3px}
+.an-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.an-row:first-of-type{border-top:0}.an-row b{font-size:15px}.an-row .l{text-align:right}.an-row .k{font-size:12px;color:var(--mu);text-align:center;max-width:110px}
+.an-bar{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin-top:3px}.an-bar i{display:block;height:100%;background:var(--ac)}.an-bar.rb i{background:#e0563f}
+.an ul{margin:4px 0 0;padding-left:18px}.an li{margin:4px 0;font-size:13.5px;line-height:1.35}
+.an .an-g{color:#2e9d6b;font-weight:700}.an .an-r{color:#d1503b;font-weight:700}
+.an-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px;margin-left:6px;background:color-mix(in srgb,#e08a2c 28%,var(--card))}
+.an-kv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:14px}.an-kv b{text-align:right}
+.an-big{font-size:34px;font-weight:800;line-height:1.1}
+.an-gauge{display:flex;height:26px;border-radius:13px;overflow:hidden;margin:10px 0}.an-gauge i{display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-weight:800;font-size:13px}
+.an-warn{border-left:4px solid #e08a2c;background:color-mix(in srgb,#e08a2c 10%,var(--card));padding:8px 10px;border-radius:8px;font-size:13px;margin:8px 0}
+.an-btn{display:block;width:100%;min-height:50px;border-radius:12px;border:0;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer;margin:8px 0}.an-btn.s{background:var(--card);color:var(--tx);border:1px solid var(--bd);font-weight:700;min-height:42px}
+.an details{border:1px solid var(--bd);border-radius:12px;padding:6px 10px;margin:6px 0;background:var(--bg)}.an summary{cursor:pointer;font-weight:700;padding:6px 0}
+.an-t{width:100%;border-collapse:collapse;font-size:13px}.an-t td,.an-t th{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:center}.an-t td:first-child,.an-t th:first-child{text-align:left}
+.an-f{display:grid;gap:8px}.an-f label{display:block;font-size:12px;color:var(--mu)}.an-f input,.an-f select{width:100%;min-height:44px;margin-top:3px}.an-f .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.an-ck{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}.an-ck input{width:22px;height:22px}
+</style>`;
+const hdr=a=>{const L=lists();const opt=(id)=>L.map(l=>`<option value="${E(l.id)}"${l.id===id?" selected":""}>${E(l.name||"Liste")} (${(l.units||[]).length})</option>`).join("");
+ return`<div class="an"><h2>Analyse &amp; Simulation</h2><p class="mu" style="margin:0">Tout est calculé sur cet appareil, sans connexion, à partir des listes importées. Règles V11.</p>
+ <div class="an-c"><div class="an-sel"><label>Armée 1 — moi (Joueur 1)<select data-ans="a">${opt(a.a)}</select></label><label>Armée 2 — adversaire (Joueur 2)<select data-ans="b">${opt(a.b)}</select></label></div>
+ ${L.length<2?`<div class="an-warn">Il faut deux listes. Importe la liste de l'adversaire dans <b>Importer</b>, puis reviens ici.</div>`:""}
+ <details><summary>Scénario de tir et de mêlée</summary>${["half|La cible est à mi-portée (Tir Rapide, Fusion)","cover|La cible a le bénéfice du couvert (CT −1)","charged|L'attaquant a chargé (Lance)","still|L'attaquant n'a pas bougé (Lourd)"].map(x=>{const[k,t]=x.split("|");return`<label class="an-ck"><input type="checkbox" data-anac="${k}"${a.ctx[k]?" checked":""}>${t}</label>`}).join("")}</details></div>
+ <div class="an-pills">${SECS.map(([k,n])=>`<button data-an="sec" data-v="${k}" class="${a.sec===k?"on":""}">${n}</button>`).join("")}</div>`};
+const missingBlock=(r)=>{return`<details><summary>Hypothèses du modèle et données manquantes (${r.missing.length})</summary><ul>${A.HYPOTHESES.map(h=>`<li>${E(h)}</li>`).join("")}</ul>${r.missing.length?"<ul>":""}${r.missing.slice(0,60).map(m=>`<li><b>${E(m.unit)}</b> (${E(m.army)}) — ${E(m.what)}</li>`).join("")}${r.missing.length?"</ul>":""}</details>`};
+function cmpRow(label,a,b,fa,hi){const x=a==null?0:a,y=b==null?0:b,mx=Math.max(x,y,1e-9);const f=fa||n1;
+ return`<div class="an-row"><div class="l"><b>${a==null?'<span class="an-tag">Donnée manquante</span>':f(a)}</b><div class="an-bar" style="direction:rtl"><i style="width:${x/mx*100}%"></i></div></div><div class="k">${label}</div><div><b>${b==null?'<span class="an-tag">Donnée manquante</span>':f(b)}</b><div class="an-bar rb"><i style="width:${y/mx*100}%"></i></div></div></div>`}
+function secCmp(r){const a=r.sA,b=r.sB,pc=x=>pct(x);
+ const wtxt=r.weighting.A==="égale"||r.weighting.B==="égale"?`<div class="an-warn">Points non renseignés pour certaines unités : pour ces calculs, toutes les unités comptent à égalité. Complète les points dans la liste pour des résultats pondérés.</div>`:"";
+ const li=a=>a.length?`<ul>${a.map(t=>`<li>${E(t)}</li>`).join("")}</ul>`:'<p class="mu">Aucun écart marqué sur les données importées.</p>';
+ const top=(rk,P,Q)=>rk.danger.slice(0,3).map(d=>`<li><b>${E(d.name)}</b> — peut détruire ${pct(d.best?d.best.f:0)} de <b>${E(d.best?Q[d.best.j].name:"?")}</b> (${d.best?d.best.type:""})</li>`).join("");
+ const vul=(rk)=>rk.vuln.slice(0,3).map(v=>`<li><b>${E(v.name)}</b> — ${pct(v.focus)} détruit si l'adversaire concentre ses tirs et ses charges</li>`).join("");
+ return`${wtxt}<div class="an-c"><h3>Chiffres clés</h3>
+ <div class="an-row" style="border:0;font-size:12px;color:var(--mu)"><b class="l">${E(r.names[0])}</b><span class="k"></span><b>${E(r.names[1])}</b></div>
+ ${cmpRow("Points",a.pts,b.pts,x=>String(x))}${cmpRow("Unités",a.units,b.units,x=>String(x))}${cmpRow("Figurines",a.models,b.models,x=>String(x))}${cmpRow("Points de vie",a.wounds,b.wounds,x=>String(Math.round(x)))}
+ ${cmpRow("Puissance de tir",a.shootPts,b.shootPts,pc)}${cmpRow("Puissance de mêlée",a.meleePts,b.meleePts,pc)}${cmpRow("Mouvement moyen",a.moveAvg,b.moveAvg,x=>n1(x)+'"')}${cmpRow("Portée max",a.maxRange,b.maxRange,x=>x+'"')}${cmpRow("Portée moyenne",a.avgRange,b.avgRange,x=>n1(x)+'"')}
+ ${cmpRow("Contrôle d'objectifs",a.oc,b.oc,x=>String(x))}${cmpRow("Unités qui tiennent un objectif",a.ocUnits,b.ocUnits,x=>String(x))}
+ ${cmpRow("Antichar (véhicules / monstres adverses)",a.vsHeavy?a.vsHeavy.shoot+a.vsHeavy.melee:null,b.vsHeavy?b.vsHeavy.shoot+b.vsHeavy.melee:null,pc)}${cmpRow("Antipersonnel (infanterie adverse)",a.vsInf?a.vsInf.shoot+a.vsInf.melee:null,b.vsInf?b.vsInf.shoot+b.vsInf.melee:null,pc)}
+ <p class="mu">Puissance : part des points adverses détruite en un tour si chaque unité tire ou charge une cible moyenne. Plusieurs unités peuvent viser la même cible : la valeur peut dépasser 100 %. Compare les deux armées entre elles plus que la valeur absolue.</p></div>
+ <div class="an-c"><h3>Avantages de ${E(r.names[0])}</h3>${li(r.adv.A)}<h3 style="margin-top:12px">Faiblesses de ${E(r.names[0])}</h3>${li(r.weak.A)}</div>
+ <div class="an-c"><h3>Avantages de ${E(r.names[1])}</h3>${li(r.adv.B)}<h3 style="margin-top:12px">Faiblesses de ${E(r.names[1])}</h3>${li(r.weak.B)}</div>
+ <div class="an-c"><h3>Unités les plus dangereuses</h3><p class="mu" style="margin:0">${E(r.names[0])}</p><ul>${top(r.rankA,r.PA,r.PB)}</ul><p class="mu" style="margin:8px 0 0">${E(r.names[1])}</p><ul>${top(r.rankB,r.PB,r.PA)}</ul></div>
+ <div class="an-c"><h3>Unités les plus vulnérables</h3><p class="mu" style="margin:0">${E(r.names[0])}</p><ul>${vul(r.rankA)}</ul><p class="mu" style="margin:8px 0 0">${E(r.names[1])}</p><ul>${vul(r.rankB)}</ul></div>
+ <div class="an-c"><h3>Synergies et règles spéciales</h3><p class="mu" style="margin:0 0 4px">Relevé des aptitudes d'aura et personnages de chaque liste importée (aucune synergie n'est supposée au-delà).</p>
+ <p style="margin:6px 0 2px"><b>${E(r.names[0])}</b> — ${a.leaders} personnage(s), ${a.auras.length} aptitude(s) d'aura</p>${a.auras.length?`<ul>${a.auras.slice(0,8).map(x=>`<li>${E(x.u)} : ${E(x.a)}</li>`).join("")}</ul>`:""}
+ <p style="margin:10px 0 2px"><b>${E(r.names[1])}</b> — ${b.leaders} personnage(s), ${b.auras.length} aptitude(s) d'aura</p>${b.auras.length?`<ul>${b.auras.slice(0,8).map(x=>`<li>${E(x.u)} : ${E(x.a)}</li>`).join("")}</ul>`:""}
+ <p class="mu" style="margin:10px 0 0">Mobilité : ${a.fly} unité(s) volantes et ${a.deep} arrivée(s) par frappe en profondeur / infiltration contre ${b.fly} et ${b.deep}.</p></div>
+ <div class="an-c"><h3>Stratégies recommandées</h3>${r.strat.length?`<ul>${r.strat.map(s=>`<li><b>${E(s.t)}</b><br><span class="mu">${E(s.why)}</span></li>`).join("")}</ul>`:'<p class="mu">Pas assez de données pour recommander une stratégie.</p>'}</div>${missingBlock(r)}`}
+/* ---- affrontement ---- */
+function unitSel(P,key,val){return`<select data-ans="${key}">${P.map((p,i)=>`<option value="${i}"${+val===i?" selected":""}>${E(p.name)}${p.models>1?" ×"+p.models:""}</option>`).join("")}</select>`}
+function hist(h,n){const ks=Object.keys(h).map(Number).sort((a,b)=>a-b),mx=Math.max(...ks.map(k=>h[k]),1),W=300,H=70,bw=Math.max(4,Math.min(26,Math.floor(W/Math.max(1,ks.length))-3));
+ return`<svg viewBox="0 0 ${W} ${H+16}" style="width:100%;max-width:340px">${ks.slice(0,40).map((k,i)=>{const hh=h[k]/mx*H;return`<rect x="${i*(bw+3)}" y="${H-hh}" width="${bw}" height="${hh}" fill="var(--ac)" rx="2"/><text x="${i*(bw+3)+bw/2}" y="${H+12}" font-size="9" text-anchor="middle" fill="var(--mu)">${k}</text>`}).join("")}</svg>`}
+function dirBlock(res,title,att,tgt){if(!res)return"";const t=res.th,s=res.si,pts=tgt.pts;
+ const lostPts=pts?Math.min(1,t.eff/Math.max(1,t.totalWounds))*pts:null,simLost=pts?s.mean/Math.max(1,t.totalWounds)*pts:null;
+ return`<div class="an-c"><h3>${E(title)}</h3>
+ <p class="mu" style="margin:0 0 6px">Armes utilisées : ${t.sel.length?t.sel.map(E).join(", "):'<span class="an-tag">Aucune arme exploitable</span>'}</p>
+ <b>1 · Dégâts moyens théoriques</b><div class="an-kv"><span>Dégâts bruts</span><b>${n1(t.avg)}</b><span>Dégâts effectifs (perte par excès retirée)</span><b>${n1(Math.min(t.eff,t.totalWounds))} / ${t.totalWounds} PV</b><span>Figurines éliminées (approx.)</span><b>${n1(t.killsApprox)} / ${tgt.models}</b><span>Attaques · touches · blessures</span><b>${n1(t.attacks)} · ${n1(t.hits)} · ${n1(t.wounds)}</b></div>
+ <p style="margin:12px 0 4px"><b>2 · Simulation (${s.n.toLocaleString("fr-FR")} tirages de dés virtuels)</b></p><div class="an-kv"><span>Dégâts moyens</span><b>${n1(s.mean)}</b><span>Médiane · plage 10–90 %</span><b>${n1(s.median)} · ${n1(s.p10)}–${n1(s.p90)}</b><span>Figurines éliminées (moyenne)</span><b>${n1(s.killsMean)}</b><span>Probabilité d'anéantir l'unité</span><b>${pct(s.wipeProb)}</b><span>Pertes attendues</span><b>${pct(s.mean/Math.max(1,t.totalWounds))} des PV${simLost!=null?" · ≈ "+Math.round(simLost)+" pts":""}</b></div>${hist(s.hist,s.n)}<p class="mu" style="margin:0">Nombre de figurines éliminées par tirage (axe horizontal) et fréquence. Sur une petite unité, la simulation est la référence : le calcul théorique ne tient pas compte de la mort de la cible en cours de résolution.</p>
+ <p style="margin:12px 0 4px"><b>3 · Dégâts maximums théoriques</b></p><div class="an-kv"><span>Tous les dés au maximum, aucune sauvegarde</span><b>${n1(t.max)}</b><span>Plafonné aux PV de l'unité</span><b>${n1(t.maxCapped)} / ${t.totalWounds}</b></div>
+ ${(res.pr.notes.length||res.pr.missing.length)?`<details><summary>Données manquantes / hypothèses</summary><ul>${res.pr.missing.map(m=>`<li><span class="an-tag">Donnée manquante</span> ${E(m)}</li>`).join("")}${res.pr.notes.map(m=>`<li>${E(m)}</li>`).join("")}${res.pr.unknownCaps.map(m=>`<li>Aptitude non modélisée (effet ignoré) : ${E(m)}</li>`).join("")}</ul></details>`:""}</div>`}
+function secSim(r){const a=st(),A1=r.PA,B1=r.PB;if(a.u1==null||a.u1>=A1.length)a.u1=0;if(a.u2==null||a.u2>=B1.length)a.u2=0;
+ return`<div class="an-c"><h3>Simuler un affrontement</h3><div class="an-sel"><label>Unité de l'armée 1${unitSel(A1,"u1",a.u1)}</label><label>Unité de l'armée 2${unitSel(B1,"u2",a.u2)}</label></div>
+ <div class="an-sel two" style="margin-top:8px"><label>Phase<select data-ans="mode"><option value="shoot"${a.mode==="shoot"?" selected":""}>Tir</option><option value="melee"${a.mode==="melee"?" selected":""}>Mêlée</option></select></label><label>Tirages<select data-ans="n">${[1000,3000,10000].map(n=>`<option${a.n===n?" selected":""}>${n}</option>`).join("")}</select></label></div>
+ <button class="an-btn" data-an="run">${BUSY?"Calcul en cours…":"Simuler"}</button></div>
+ ${RES&&RES.key===[a.a,a.b,a.u1,a.u2,a.mode,a.n,JSON.stringify(a.ctx)].join("|")?dirBlock(RES.ab,r.names[0]+" ("+A1[a.u1].name+") attaque "+B1[a.u2].name,A1[a.u1],B1[a.u2])+dirBlock(RES.ba,"Riposte : "+r.names[1]+" ("+B1[a.u2].name+") attaque "+A1[a.u1].name,B1[a.u2],A1[a.u1]):'<p class="mu">Choisis deux unités puis lance la simulation.</p>'}`}
+function runSim(){const r=data();if(!r||BUSY)return;const a=st();BUSY=true;draw();
+ setTimeout(()=>{try{const A1=r.PA[a.u1],B1=r.PB[a.u2],one=(att,tgt,seed)=>({th:A.theory(att,tgt,a.mode,a.ctx),si:A.simulate(att,tgt,a.mode,a.ctx,a.n,seed),pr:att});
+  RES={key:[a.a,a.b,a.u1,a.u2,a.mode,a.n,JSON.stringify(a.ctx)].join("|"),ab:one(A1,B1,101),ba:one(B1,A1,202)}}catch(e){RES=null;try{toast("Erreur de calcul : "+e.message)}catch(_){}}BUSY=false;draw()},30)}
+/* ---- match-ups ---- */
+function secMat(r){const a=st(),dir=a.dir==="ba"?"ba":"ab",P=dir==="ab"?r.PA:r.PB,Q=dir==="ab"?r.PB:r.PA,M=dir==="ab"?r.mAB:r.mBA,names=dir==="ab"?[r.names[0],r.names[1]]:[r.names[1],r.names[0]];
+ return`<div class="an-c"><h3>Match-ups entre unités</h3><div class="an-pills" style="margin:0"><button data-an="dir" data-v="ab" class="${dir==="ab"?"on":""}">${E(r.names[0])} attaque</button><button data-an="dir" data-v="ba" class="${dir==="ba"?"on":""}">${E(r.names[1])} attaque</button></div>
+ <p class="mu">Part de chaque unité cible détruite en un tour (tir / mêlée), calcul théorique effectif. Ouvre une unité pour voir toutes ses cibles.</p></div>
+ ${P.map((p,i)=>{const row=Q.map((q,j)=>({j,q,s:M[i][j].fs,m:M[i][j].fm})).sort((x,y)=>Math.max(y.s,y.m)-Math.max(x.s,x.m));const b=row[0];
+  return`<details><summary>${E(p.name)} <span class="mu">— meilleure cible : ${b?E(b.q.name)+" ("+pct(Math.max(b.s,b.m))+")":"—"}</span></summary><table class="an-t"><tr><th>Cible</th><th>Tir</th><th>Mêlée</th></tr>${row.map(x=>`<tr><td>${E(x.q.name)}</td><td>${pct(x.s)}</td><td>${pct(x.m)}</td></tr>`).join("")}</table></details>`}).join("")}`}
+/* ---- recommandations ---- */
+function secRec(r){const A1=r.PA,B1=r.PB,vp=(x)=>x==null?"":" ("+x+" pts)";
+ const li=(a,f)=>a.length?`<ul>${a.map(f).join("")}</ul>`:'<p class="mu">Rien de marquant avec les données importées.</p>';
+ return`<div class="an-c"><h3>Quelle unité contre quelle unité</h3>${li(r.assign.filter(x=>x.best),x=>`<li><b>${E(x.name)}</b> → <b>${E(B1[x.best.j].name)}</b> : détruit ${pct(x.best.f)} (${x.best.type}) ; riposte ${pct(x.best.back)} (${x.best.backType})</li>`)}</div>
+ <div class="an-c"><h3>Cibles prioritaires</h3>${li(r.threats.slice(0,5),t=>`<li><b>${E(t.name)}</b> — menace : ${t.bestHit?pct(t.bestHit.f)+" de "+E(A1[t.bestHit.i].name)+" ("+t.bestHit.type+")":"—"}. Meilleurs pour la neutraliser : ${t.killers.map(k=>E(k.name)+" "+pct(k.f)).join(" · ")}</li>`)}</div>
+ <div class="an-c"><h3>Unités à préserver</h3><p class="mu" style="margin:0">Les plus exposées ou les plus rentables, selon les dégâts adverses concentrés sur elles.</p>${li(r.preserve.slice(0,4),p=>`<li><b>${E(p.name)}</b> — ${pct(p.focus)} détruit sous le feu adverse concentré${p.pts?"":' <span class="an-tag">points manquants</span>'}</li>`)}</div>
+ <div class="an-c"><h3>Unités à éviter d'engager</h3><p class="mu" style="margin:0">Le corps-à-corps adverse y détruit plus que ce qu'elles rendent.</p>${li(r.avoid,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : subit ${pct(x.back)} contre ${pct(x.out)} rendus</li>`)}</div>
+ <div class="an-c"><h3>Meilleur rapport efficacité / coût</h3>${li(r.eff.filter(x=>x.j>=0).slice(0,5),x=>`<li><b>${E(x.name)}</b>${x.per!=null?" — "+n2(x.per)+" pt détruit par pt investi":" — "+pct(x.f)+" de "+E(B1[x.j].name)}${x.pts?vp(x.pts):""}</li>`)}</div>
+ <div class="an-c"><h3>Match-ups favorables</h3>${li(r.favorable,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : ${pct(x.out)} détruit (${x.typeOut}) contre ${pct(x.back)} en retour — rapport ${x.ratio>=99?"∞":n1(x.ratio)}</li>`)}</div>
+ <div class="an-c"><h3>Match-ups défavorables</h3>${li(r.unfavorable,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : ${pct(x.out)} détruit contre ${pct(x.back)} subi (${x.typeBack}) — rapport ${n2(x.ratio)}</li>`)}</div>${missingBlock(r)}`}
+/* ---- victoire ---- */
+function secWin(r){const w=r.win,a=st();const ha=Array.isArray(S.ash)?S.ash:[],opp=listOf(a.b)?facOf(listOf(a.b)):"",rel=ha.filter(g=>opp&&g.f2===opp);const hs=rel.length?A.histStats(rel):null;
+ return`<div class="an-c"><h3>Estimation théorique</h3><div class="an-warn"><b>Ce n'est pas un taux de victoire réel.</b> Le modèle compare les deux listes (puissance, objectifs, résistance, mobilité) avec une pondération fixe ; il ignore le déploiement, les décisions, les dés et la mission jouée. Valeur bornée entre 15 % et 85 %.</div>
+ <div class="an-gauge"><i style="width:${w.pA*100}%;background:var(--ac)">${Math.round(w.pA*100)} %</i><i style="width:${w.pB*100}%;background:#e0563f">${Math.round(w.pB*100)} %</i></div>
+ <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mu)"><span>${E(r.names[0])} (J1)</span><span>${E(r.names[1])} (J2)</span></div></div>
+ <div class="an-c"><h3>Facteurs qui influencent l'estimation</h3><table class="an-t"><tr><th>Facteur</th><th>J1</th><th>J2</th><th>Effet</th></tr>${w.factors.map(f=>`<tr><td>${E(f.k)}<div class="mu" style="font-size:11px">${E(f.txt)} · poids ${Math.round(f.w*100)} %</div></td><td>${f.missing?'<span class="an-tag">manquant</span>':n2(f.a)}</td><td>${f.missing?"—":n2(f.b)}</td><td class="${f.contrib>0.01?"an-g":f.contrib<-0.01?"an-r":""}">${f.missing?"—":(f.contrib>0?"+":"")+n2(f.contrib)}</td></tr>`).join("")}</table>
+ <p class="mu">Effet positif = avantage pour le Joueur 1. Mission : ${listOf(a.a)&&listOf(a.a).mission?E(listOf(a.a).mission):"non renseignée"} (les caractéristiques de mission ne modifient pas encore l'estimation).</p></div>
+ <div class="an-c"><h3>Historique réel contre ${E(opp||"cette faction")}</h3>${hs?`<p>${hs.n} partie(s) : <b class="an-g">${hs.V} victoire(s)</b>, ${hs.D} défaite(s), ${hs.E} égalité(s) — taux de victoire <b>${n1(hs.win)} %</b>. ${hs.n<5?'<span class="an-tag">échantillon trop petit pour conclure</span>':""}</p>`:'<p class="mu">Aucune partie enregistrée contre cette faction. Voir l\'onglet Historique.</p>'}</div>${missingBlock(r)}`}
+/* ---- historique ---- */
+const games=()=>{if(!Array.isArray(S.ash))S.ash=[];return S.ash};
+function donut(V,D,Eq){const n=V+D+Eq;if(!n)return"";const R=40,C=2*Math.PI*R;let off=0;const seg=(v,c)=>{const l=v/n*C,s=`<circle r="${R}" cx="50" cy="50" fill="none" stroke="${c}" stroke-width="16" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 50 50)"/>`;off+=l;return s};
+ return`<svg viewBox="0 0 100 100" style="width:130px;height:130px">${seg(V,"#2e9d6b")}${seg(D,"#d1503b")}${seg(Eq,"#9aa5a0")}<text x="50" y="55" text-anchor="middle" font-size="16" font-weight="800" fill="var(--tx)">${n}</text></svg>`}
+function barsOf(rows){if(!rows.length)return"";return`<div>${rows.slice(0,8).map(x=>`<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${E(x.k)} <span class="mu">(${x.n})</span></span><b>${n1(x.win)} %</b></div><div class="an-bar"><i style="width:${x.win}%"></i></div></div>`).join("")}</div>`}
+function table(rows,first){return rows.length?`<table class="an-t"><tr><th>${first}</th><th>N</th><th>V</th><th>D</th><th>É</th><th>% V</th></tr>${rows.map(x=>`<tr><td>${E(x.k)}</td><td>${x.n}</td><td>${x.V}</td><td>${x.D}</td><td>${x.E}</td><td>${n1(x.win)}</td></tr>`).join("")}</table>`:'<p class="mu">Aucune donnée.</p>'}
+function formVals(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);return Object.assign({d:new Date().toISOString().slice(0,10),f1:LA?facOf(LA):"",f2:LB?facOf(LB):"",l1:LA?LA.name:"",l2:LB?LB.name:"",d1:LA?detOf(LA):"",d2:LB?detOf(LB):"",m:"",s1:"",s2:"",first:""},HFORM)}
+function secHis(){const g=games(),hs=A.histStats(g);
+ const F=formVals();
+ const missions=(window.__ms&&window.__ms.cats?window.__ms.cats():[]).map(c=>c.fr);
+ const fld=(k,l,t,ex)=>`<label>${l}<input data-anf="${k}" type="${t||"text"}" value="${E(F[k])}"${ex||""}></label>`;
+ return`<div class="an-c"><h3>Statistiques</h3>${hs.n?`<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">${donut(hs.V,hs.D,hs.E)}<div class="an-kv" style="flex:1;min-width:190px"><span>Parties</span><b>${hs.n}</b><span class="an-g">Victoires</span><b>${hs.V} · ${n1(hs.win)} %</b><span class="an-r">Défaites</span><b>${hs.D} · ${n1(hs.loss)} %</b><span>Égalités (séparées)</span><b>${hs.E} · ${n1(hs.draw)} %</b><span>Score moyen J1 / J2</span><b>${n1(hs.avg1)} / ${n1(hs.avg2)}</b></div></div><p class="mu">Taux de victoire = victoires ÷ nombre total de parties × 100. Les égalités comptent dans le total et sont présentées à part.</p>`:'<p class="mu">Aucune partie enregistrée. Ajoute ta première partie ci-dessous. Tu es toujours le Joueur 1.</p>'}</div>
+ ${hs.n?`<div class="an-c"><h3>Taux de victoire par adversaire</h3>${barsOf(hs.byOpponent)}</div><div class="an-c"><h3>Par faction jouée</h3>${table(hs.byFaction,"Faction")}<h3 style="margin-top:12px">Par détachement</h3>${table(hs.byDetachment,"Détachement")}<h3 style="margin-top:12px">Contre chaque faction</h3>${table(hs.byOpponent,"Adversaire")}<h3 style="margin-top:12px">Qui commence</h3>${table(hs.byFirst,"Premier joueur")}</div>`:""}
+ <div class="an-c"><h3>Ajouter une partie</h3><div class="an-f"><div class="two">${fld("d","Date","date")}<label>Qui a commencé<select data-anf="first"><option value=""${F.first===""?" selected":""}>Non renseigné</option><option value="1"${F.first==="1"?" selected":""}>Moi (J1)</option><option value="2"${F.first==="2"?" selected":""}>Adversaire (J2)</option></select></label></div>
+ <div class="two">${fld("f1","Ma faction (J1)")}${fld("f2","Faction adverse (J2)")}</div><div class="two">${fld("d1","Mon détachement")}${fld("d2","Détachement adverse")}</div><div class="two">${fld("l1","Ma liste")}${fld("l2","Liste adverse")}</div>
+ <label>Mission<input data-anf="m" list="anml" value="${E(F.m)}"><datalist id="anml">${missions.map(m=>`<option value="${E(m)}">`).join("")}</datalist></label><div class="two">${fld("s1","Mon score (J1)","number",' inputmode="numeric" min="0"')}${fld("s2","Score adverse (J2)","number",' inputmode="numeric" min="0"')}</div>
+ <button class="an-btn" data-an="addg">Enregistrer la partie</button><button class="an-btn s" data-an="impg">Importer mes parties terminées de l'appli</button></div></div>
+ <div class="an-c"><h3>Parties enregistrées (${g.length})</h3>${g.length?g.slice().sort((x,y)=>String(y.d).localeCompare(String(x.d))).map(x=>{const rs=x.res||A.resultOf(+x.s1,+x.s2);return`<details><summary>${E(x.d)} — <b class="${rs==="V"?"an-g":rs==="D"?"an-r":""}">${rs==="V"?"Victoire":rs==="D"?"Défaite":"Égalité"}</b> ${E(x.s1)}–${E(x.s2)} <span class="mu">${E(x.f1)} vs ${E(x.f2)}</span></summary><div class="an-kv"><span>Détachements</span><b>${E(x.d1||"—")} / ${E(x.d2||"—")}</b><span>Listes</span><b>${E(x.l1||"—")} / ${E(x.l2||"—")}</b><span>Mission</span><b>${E(x.m||"—")}</b><span>Commence</span><b>${x.first===1?"Moi":x.first===2?"Adversaire":"—"}</b></div><button class="an-btn s" data-an="delg" data-v="${E(x.id)}">Supprimer cette partie</button></details>`}).join(""):'<p class="mu">Aucune partie.</p>'}</div>`}
+function addGame(){const F=formVals();const s1=parseFloat(F.s1),s2=parseFloat(F.s2);
+ if(!Number.isFinite(s1)||!Number.isFinite(s2)){toast("Renseigne les deux scores");return}
+ games().push({id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),d:F.d||new Date().toISOString().slice(0,10),f1:F.f1||"",f2:F.f2||"",l1:F.l1||"",l2:F.l2||"",d1:F.d1||"",d2:F.d2||"",m:F.m||"",s1,s2,res:A.resultOf(s1,s2),first:F.first===""||F.first==null?0:+F.first});
+ HFORM={};save();toast("Partie enregistrée");draw()}
+function importGames(){let n=0;const have=new Set(games().map(g=>g.src).filter(Boolean));
+ (S.games||[]).filter(x=>x.fin&&x.tot&&!have.has(x.id)).forEach(x=>{const s1=+x.tot[0],s2=+x.tot[1];if(!Number.isFinite(s1)||!Number.isFinite(s2))return;
+  const l1=x.l&&x.l[0],l2=x.l&&x.l[1];games().push({id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),src:x.id,d:new Date(x.d||Date.now()).toISOString().slice(0,10),f1:(x.f&&x.f[0])||"",f2:(x.f&&x.f[1])||"",l1:(l1&&l1.name)||x.n&&x.n[0]||"",l2:(l2&&l2.name)||x.n&&x.n[1]||"",d1:((l1&&l1.dets||[])[0]||{}).name||"",d2:((l2&&l2.dets||[])[0]||{}).name||"",m:"",s1,s2,res:A.resultOf(s1,s2),first:0});n++});
+ save();toast(n?n+" partie(s) importée(s) (vérifie la mission et le premier joueur)":"Aucune partie terminée à importer");draw()}
+/* ---- rendu ---- */
+function body(){const a=st();let h=css+hdr(a);const L=lists();
+ if(a.sec==="his")return h+secHis()+"</div>";
+ const r=data();
+ if(!r)return h+`<div class="an-warn">Choisis deux listes contenant des unités pour lancer l'analyse.${L.length<2?"":""}</div></div>`;
+ const f={cmp:secCmp,sim:secSim,mat:secMat,rec:secRec,win:secWin}[a.sec]||secCmp;
+ return h+f(r)+"</div>"}
+window.XV=window.XV||{};window.XV.ana=()=>{try{return body()}catch(e){return`<div class="card"><b>Erreur dans Analyse &amp; Simulation</b><p class="mu">${E(e&&e.message)}</p></div>`}};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-an]");if(!b||!document.querySelector(".an"))return;const k=b.dataset.an,a=st();
+ if(k==="sec"){a.sec=b.dataset.v;RES=RES;save();draw();window.scrollTo(0,0);return}
+ if(k==="dir"){a.dir=b.dataset.v;draw();return}if(k==="run"){runSim();return}if(k==="addg"){addGame();return}if(k==="impg"){importGames();return}
+ if(k==="delg"){S.ash=games().filter(x=>x.id!==b.dataset.v);save();draw();return}});
+document.addEventListener("change",e=>{const t=e.target;if(!t.closest||!t.closest(".an"))return;const a=st();
+ if(t.dataset.ans){const k=t.dataset.ans;a[k]=["u1","u2","n"].includes(k)?+t.value:t.value;if(k==="a"||k==="b"){a.u1=a.u2=0}save();draw();return}
+ if(t.dataset.anac){a.ctx[t.dataset.anac]=t.checked;save();draw();return}
+ if(t.dataset.anf){HFORM[t.dataset.anf]=t.value}});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.anf&&t.closest&&t.closest(".an"))HFORM[t.dataset.anf]=t.value});
+window.ANAUI={data,runSim,addGame,importGames,state:st,_res:()=>RES};
+})();

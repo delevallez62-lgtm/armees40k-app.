@@ -1360,7 +1360,7 @@ function pstList(L){const q=pq.toLowerCase().trim(),names=[...L.dets.map(d=>d.na
 function pstView(L){if(!L)return pNone();return pSearch(L,`<div class="pph">${PH.map(([k,n])=>`<button class="${pph===k?"on":""}" data-act="pph" data-k="${k}">${n}</button>`).join("")}</div>`)+`<div id="pl">${pstList(L)}</div>`}
 function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===S.pm))S.pm=null;if(!S.pm)S.mg=false;if(S.pm&&!S.mg){S.cur=S.pm;if(!GM.includes(tab)&&tab!=="enc")tab="play"}else if(GM.includes(tab))tab="lists"}refreshVar();pushSubs();if(ded==null&&sed==null)libSync(cl());if(tab!=="dets")ded=null;if(tab!=="strats")sed=null;if(tab!=="units")led=false;const L=cl();{const b=$("#sb");b.style.cssText=S.sban?`height:170px;background:url(${S.sban}) ${bp("s")}/cover`:"display:none";$("#dsb").style.display=$("#fsb").style.display=S.sban?"":"none"}$("#cl").textContent=L&&["units","dets","strats","opti","play","pst"].includes(tab)?L.name:"";
  const tabs=[["lists","Mes listes"],["coll","Collection"],...(L?[["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"]]:[]),["imp","Importer"]];
- $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?"":(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["gm","Parties"],["enc","Règles V11"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
+ $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?"":(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["ana","Analyse & Simulation"],["gm","Parties"],["enc","Règles V11"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
  if(tab==="lists")h=`<div class="card row" style="justify-content:space-between"><b>${S.lists.length} liste(s)</b><button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?`<div class="grid">${S.lists.map(l=>`<div class="card"><b style="font-size:17px">${esc(l.name)}</b><div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""}${lpts(l)?" · "+lpts(l)+" pts":""} · ${l.dets.length} détachement(s)</div>${l.mission?`<div class="mu">${esc(misTag(l.mission,l.game))}</div>`:""}<p>${l.id===S.cur?'<span class="mu">● Liste ouverte</span>':""}</p><button class="b p" data-act="gstart" data-id="${l.id}">▶ Jouer</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button> <button class="b" data-act="ren" data-id="${l.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${l.id}">Supprimer</button></div>`).join("")}</div>`:"<p>Aucune liste pour l’instant. Crée-en une avec « + Nouvelle liste » ou importe ton armée.</p>");
  else if(tab==="play")h=playView(L);else if(tab==="pst")h=pstView(L);else if(tab==="coll")h=collView();else if(tab==="bat")h=batView2();else if(window.XV&&XV[tab])h=XV[tab]();else if(tab==="gm")h=gmView();else if(tab==="enc")h=window.encView?window.encView():"";else if(tab==="units"){h=`<div class="card row" style="justify-content:space-between"><span><b>${lcount(L)} unité${lcount(L)>1?"s":""}</b><span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?" · "+esc(misTag(L.mission,L.game)):""}</span></span><span><button class="b" data-act="ledit">Modifier la liste</button> <button class="b" data-act="ren" data-id="${L.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${L.id}">Supprimer la liste</button> <button class="b p" data-act="npick">+ Ajouter une figurine</button> <button class="b" data-act="nunit">Fiche vide</button></span></div>${led?ledForm(L):""}<div class="grid">${L.units.map((u,i)=>`<div class="card hv${S.coll[u.ref]&&S.coll[u.ref].var?" v":""}" data-act="view" data-i="${i}">${S.coll[u.ref]&&S.coll[u.ref].var?'<span class="vr">Variante d’arme</span>':""}<button class="xx" data-act="xunit" data-i="${i}" title="Retirer de la liste">✕</button><div class="row">${pimg(u)}<span><b class="cap">${esc(u.name)}</b>${u.qty>1?` <span class="mu">×${u.qty}</span>`:""}${S.coll[u.ref]&&S.coll[u.ref].var?' <span class="mu">· variante d’arme</span>':""}${mlead(u).length?'<span class="led">Unité menée</span>':""}${mlead(u).map(s=>`<br><span class="mu">${S.imgs[s.ref]?`<img src="${S.imgs[s.ref]}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:4px" alt="">`:""}+ ${esc(cap(s.name))}</span>`).join("")}</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}
  else if(tab==="dets")h=detView(L);else if(tab==="dets0")h=L.dets.map(d=>`<div class="card"><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?d.cost+" pt(s)":""}</span><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement détecté.</p>";
@@ -3772,12 +3772,12 @@ const P={home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 2
  cross:'<path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/>',
  rocket:'<path d="M12 2c4 3 5 8 3 13H9C7 10 8 5 12 2z"/><path d="M9 15l-3 4h4M15 15l3 4h-4"/><circle cx="12" cy="9" r="1.6"/>',
  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
- trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'};
+ trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',chart:'<path d="M4 20V9M10 20V4M16 20v-8M22 20H2"/><circle cx="4" cy="6" r="1.6"/><circle cx="16" cy="8" r="1.6"/>'};
 const ICON_NAMES=Object.keys(P).filter(k=>!["back","plus","edit","trash"].includes(k));
 const ic=n=>`<i class="gi"><svg viewBox="0 0 24 24">${P[n]||""}</svg></i>`;
 const e2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* rubriques : icône par défaut et couleur (comme l'exemple : chaque rubrique a sa teinte) */
-const SEC={home:["home","Accueil","#d8b45e"],lists:["shield","Mes armées","#55c46e"],coll:["layers","Collection","#3fc1b5"],paint:["brush","Peinture & Hobby","#c46be0"],mis:["map","Missions & Layout","#4aa3ff"],gm:["trophy","Parties","#e0563f"],enc:["book","Règles V11","#e8a43c"],imp:["download","Importer","#7f9cff"],play:["dice","Mode jeu","#a77bff"],
+const SEC={home:["home","Accueil","#d8b45e"],lists:["shield","Mes armées","#55c46e"],coll:["layers","Collection","#3fc1b5"],paint:["brush","Peinture & Hobby","#c46be0"],mis:["map","Missions & Layout","#4aa3ff"],ana:["chart","Analyse & Simulation","#5fd0c0"],gm:["trophy","Parties","#e0563f"],enc:["book","Règles V11","#e8a43c"],imp:["download","Importer","#7f9cff"],play:["dice","Mode jeu","#a77bff"],
  q_dice:["dice","Lancer de dés","#ff7a45"],q_play:["play","Mode jeu","#a77bff"],q_enc:["book","Encyclopédie","#e8a43c"],q_pdf:["scroll","Lecteur PDF","#e8a43c"],q_imp:["download","Importer","#7f9cff"],q_new:["plus","Nouvelle liste","#55c46e"],q_paint:["palette","Mes peintures","#c46be0"],q_ico:["gear","Personnaliser","#ffd166"],
  units:["shield","Unités","#55c46e"],dets:["flag","Détachements","#e0563f"],strats:["bolt","Stratagèmes","#ffd166"],opti:["star","Optimisations","#4aa3ff"]};
 const icons=()=>{try{if(!S.icons||typeof S.icons!=="object")S.icons={};return S.icons}catch(_){return{}}};
@@ -3791,7 +3791,7 @@ const lpic=l=>{try{for(const u of l.units||[]){const v=S.imgs&&S.imgs[u.ref];if(
 const lthumb=l=>{const m=LI()[l.id];if(m&&m.src)return imgTag({src:m.src,x:+m.x,y:+m.y,z:+m.z||100},"");const a=lpic(l);return a?`<img src="${a}" alt="">`:""};
 const XV=window.XV=window.XV||{};
 XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],run=!!S.pm,nv=window.__enc&&__enc.nvList?__enc.nvList().length:0,nm=S.pseudo||"Teddy";
- const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
+ const tiles=[["tab","lists","lists",SEC.lists[1],"Créer, gérer et jouer tes listes",pk(0)],["tab","mis","mis",SEC.mis[1],"Secondaires, primaires et layouts",""],["tab","ana","ana",SEC.ana[1],"Comparer, simuler, estimer tes chances",""],["tab","coll","coll",SEC.coll[1],"Toutes tes figurines et leurs fiches",pk(1)],["tab","paint","paint",SEC.paint[1],"Peintures et schémas par figurine",pk(2)],["tab","enc","enc",'Règles <span class="gnum">V11</span>',"Encyclopédie, mots-clés et nouveautés",""],["tab","gm","gm",SEC.gm[1],"Historique des batailles et scores",pk(3)],["act",run?"gresume":"gpick","play",run?"Reprendre la partie":"Mode jeu","Unités, stratagèmes, missions et score",""],["tab","imp","imp",SEC.imp[1],"Ajouter une liste : texte, PDF ou lien",""]];
  const tile=([k,v,key,t,s,p])=>{const mi=menuImg(key,p);return`<button class="gt${mi?(mi.cust?"":" gauto"):" gnp"}" data-${k}="${v}" style="--tc:${col(key)}">${mi?imgTag(mi,"gtimg"):`<span class="gdeco">${icFor(key).replace('class="gi','class="gi gbig')}</span>`}<span>${icFor(key)}<span><b>${t}</b><small>${s}</small></span></span></button>`};
  const quick=[["q_dice","data-g","gdice"],["q_play","data-act",run?"gresume":"gpick"],["q_imp","data-tab","imp"],["q_new","data-act","nlist"],["q_paint","data-tab","paint"],["q_ico","data-g","gico"]];
  const qb=([key,a,v])=>`<button ${a}="${v}" style="--tc:${col(key)}">${icFor(key)}<span>${key==="q_play"&&run?"Reprendre":SEC[key][1]}</span></button>`;
@@ -4790,7 +4790,7 @@ function upd(){ensure();
  document.getElementById("gbn").className="gv-"+((S&&S.gjv)||"in");document.getElementById("gbn").innerHTML=gnav().map(([k,n,key])=>k==="jeu"?`<button class="gjeu" data-act="${run?"gresume":"gpick"}" aria-label="${run?"Reprendre la partie":"Mode jeu"}"><span class="gcirc">${ic("dice")}</span><span class="l">${run?"Reprendre":"Jeu"}</span></button>`:`<button data-tab="${k}" class="${act===k?"on":""}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("");
  const mo=document.getElementById("gmore");if(mo)mo.classList.toggle("on",act==="more");
  if(t!==last){last=t;const m=document.getElementById("m");if(m){m.style.animation="none";void m.offsetWidth;m.style.animation="gfade .22s ease"}try{window.scrollTo(0,0)}catch(_){}}}
-function sheet(){const s=document.getElementById("gsheet"),rows=[["coll","Collection","coll"],["gm","Parties","gm"],["enc","Règles V11","enc"],["imp","Importer","imp"]];
+function sheet(){const s=document.getElementById("gsheet"),rows=[["coll","Collection","coll"],["gm","Parties","gm"],["ana","Analyse & Simulation","ana"],["enc","Règles V11","enc"],["imp","Importer","imp"]];
  s.innerHTML=`<div class="bd" data-sh="x"></div><div class="sh" role="dialog" aria-label="Plus"><div class="gr"></div>${rows.map(([k,n,key])=>`<button class="row" data-tab="${k}" style="--tc:${col(key)}">${G.icFor(key)}<span>${n}</span></button>`).join("")}<button class="row" data-g="gico" style="--tc:#ffd166">${ic("gear")}<span>Personnaliser</span></button></div>`;s.classList.add("on")}
 document.addEventListener("click",e=>{const t=e.target;if(!t.closest)return;
  if(t.closest("#gmore")){e.preventDefault();e.stopPropagation();const s=document.getElementById("gsheet");if(s.classList.contains("on"))s.classList.remove("on");else sheet();return}
@@ -5052,4 +5052,476 @@ setTimeout(inject,50);
 })();
 </script>
 
+<!-- ===== Analyse & Simulation (moteur + interface), 100 % local ===== -->
+<script>
+/* ===== HAMMER · Analyse & Simulation — moteur de calcul local (V11) =====
+   Aucune dépendance, aucun accès réseau, indépendant de l'interface.
+   Règles appliquées : Règles de Base V11 (séquence d'attaque 05, aptitudes d'arme 24, couvert 13.08).
+   Principe : une donnée absente n'est jamais inventée ; elle est signalée dans `missing` / `notes`. */
+(function(root){
+"use strict";
+const nk=s=>String(s==null?"":s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9'+\- ]+/g," ").replace(/\s+/g," ").trim();
+
+/* ---------- 1. dés ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+/* "3", "D6", "D3", "2D6+3", "D6+2" ; renvoie null si la valeur est absente ou illisible */
+function parseDice(s){if(s==null)return null;const t=String(s).replace(/\s+/g,"").toUpperCase();if(!t||t==="-"||t==="—")return null;
+ let m=/^(\d+)$/.exec(t);if(m){const v=+m[1];return{raw:t,n:0,sides:0,add:v,min:v,max:v,avg:v}}
+ m=/^(\d*)D(3|6)([+-]\d+)?$/.exec(t);if(!m)return null;const n=m[1]?+m[1]:1,sd=+m[2],add=m[3]?+m[3]:0,mean=sd===6?3.5:2;
+ return{raw:t,n,sides:sd,add,min:n+add,max:n*sd+add,avg:n*mean+add}}
+function rollDie(sd,rng){const r=Math.floor(rng()*6)+1;return sd===3?Math.ceil(r/2):r}
+function rollDice(d,rng){let v=d.add;for(let i=0;i<d.n;i++)v+=rollDie(d.sides,rng);return v}
+const parseTarget=s=>{const m=/(\d)\s*\+/.exec(String(s==null?"":s));return m?+m[1]:null};
+
+/* ---------- 2. aptitudes d'arme (Règles de Base V11, section 24) ---------- */
+const ABIL=[
+ ["TOUCHES_FATALES",/^touches fatales/],["TOUCHES_SOUTENUES",/^touches soutenues/],["BLESSURES_DEVASTATRICES",/^blessures devastatrices/],
+ ["ANTI",/^anti[- ]/],["DEFLAGRATION",/^deflagration/],["TIR_RAPIDE",/^tir rapide/],["LOURD",/^lourd/],["LANCE",/^lance/],["JUMELE",/^jumele/],
+ ["TORRENT",/^torrent/],["FUSION",/^fusion/],["ABATTAGE",/^abattage/],["IGNORE_COUVERT",/^ignore le couvert/],["PRECISION",/^precision/],
+ ["ATTAQUES_BONUS",/^attaques bonus/],["PISTOLET",/^pistolet/],["COMBAT_RAPPROCHE",/^combat rapproche/],["ASSAUT",/^assaut/],
+ ["TIR_INDIRECT",/^tir indirect/],["TIR_UNIQUE",/^tir unique/],["A_RISQUE",/^a risque/],["PSYCHIQUE",/^psychique/]];
+const SUPPORTED=new Set(["TOUCHES_FATALES","TOUCHES_SOUTENUES","BLESSURES_DEVASTATRICES","ANTI","DEFLAGRATION","TIR_RAPIDE","LOURD","LANCE","JUMELE","TORRENT","FUSION","ABATTAGE","IGNORE_COUVERT","PRECISION","ATTAQUES_BONUS","PISTOLET","COMBAT_RAPPROCHE","ASSAUT","TIR_INDIRECT","TIR_UNIQUE","A_RISQUE","PSYCHIQUE"]);
+/* effet purement informatif (n'altère pas les dégâts moyens du modèle) */
+const INFO_ONLY=new Set(["PRECISION","PISTOLET","COMBAT_RAPPROCHE","ASSAUT","TIR_INDIRECT","TIR_UNIQUE","A_RISQUE","PSYCHIQUE"]);
+function splitCaps(c){const o=[];let d=0,cur="";for(const ch of String(c||"")){if(ch==="("||ch==="[")d++;if(ch===")"||ch==="]")d=Math.max(0,d-1);if(ch===","&&!d){o.push(cur);cur=""}else cur+=ch}o.push(cur);return o.map(x=>x.replace(/^[\s\[]+|[\s\]]+$/g,"")).filter(Boolean)}
+const nkc=s=>String(s==null?"":s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9'+\-:\/ ]+/g," ").replace(/\s+/g," ").trim();
+function parseCaps(caps){const out={list:[],unknown:[]};
+ splitCaps(caps).forEach(raw=>{let t=nkc(raw),kw=[];const ci=t.indexOf(":");if(ci>0){kw=t.slice(ci+1).split("/").map(x=>x.trim()).filter(Boolean);t=t.slice(0,ci).trim()}
+  const hit=ABIL.find(a=>a[1].test(t));if(!hit){out.unknown.push(raw);return}
+  const id=hit[0],o={id,raw,kw,x:null,y:null};
+  if(id==="ANTI"){const m=/^anti[- ]\s*(.+?)\s+(\d)\+?$/.exec(t);if(m){o.kwTarget=m[1].trim();o.y=+m[2]}else{out.unknown.push(raw);return}}
+  else{const m=/(\d+)\s*$/.exec(t);if(m)o.x=+m[1]}
+  out.list.push(o)});return out}
+
+/* ---------- 3. lecture d'une fiche d'unité importée ---------- */
+function parseSave(sv){const s=String(sv==null?"":sv),arm=/(?:^|[^\d])(\d)\+(?!\+)/.exec(s),inv=/(\d)\+\+/.exec(s);return{sv:arm?+arm[1]:null,inv:inv?+inv[1]:null}}
+function parseStats(st){const o={missing:[]};st=st||{};
+ const E=parseInt(st.E,10),PV=parseInt(st.PV,10),sv=parseSave(st.SV),CO=st.CO==null||st.CO===""?null:(String(st.CO).trim()==="-"?0:parseInt(st.CO,10)),M=parseInt(st.M,10);
+ o.E=Number.isFinite(E)?E:null;o.PV=Number.isFinite(PV)?PV:null;o.sv=sv.sv;o.inv=sv.inv;o.CO=Number.isFinite(CO)?CO:null;o.M=Number.isFinite(M)?M:null;o.CD=parseTarget(st.CD);
+ if(o.E==null)o.missing.push("Endurance");if(o.PV==null)o.missing.push("Points de vie");if(o.sv==null&&o.inv==null)o.missing.push("Sauvegarde");return o}
+const fnpOf=u=>{const m=/insensible a la douleur\s*(\d)\+/.exec(nk(u.apt||""));return m?+m[1]:null};
+function weaponCounts(u){const map={};String(u.equip||"").split(",").forEach(p=>{const m=/^(.*?)(?:\s*\((\d+)\))?\s*$/.exec(p.trim());if(m&&m[1])map[nk(m[1])]=m[2]?+m[2]:null});return map}
+function parseWeapon(w){const miss=[],melee=/m[eê]l[eé]e|corps/i.test(String(w.range||"")),a=parseDice(w.a),d=parseDice(w.d),hit=parseTarget(w.hit),f=parseInt(w.f,10),pa=parseInt(String(w.pa).replace("−","-"),10),caps=parseCaps(w.caps);
+ const torrent=caps.list.some(c=>c.id==="TORRENT");
+ if(!a)miss.push("Attaques (A)");if(!d)miss.push("Dégâts (D)");if(hit==null&&!torrent)miss.push(melee?"CC":"CT");if(!Number.isFinite(f))miss.push("Force (F)");if(!Number.isFinite(pa))miss.push("PA");
+ const range=melee?0:parseInt(w.range,10);
+ return{name:String(w.name||"?"),melee,range:Number.isFinite(range)?range:null,a,d,hit,f:Number.isFinite(f)?f:null,pa:Number.isFinite(pa)?pa:null,caps:caps.list,unknownCaps:caps.unknown,bonus:caps.list.some(c=>c.id==="ATTAQUES_BONUS"),torrent,missing:miss,alt:String(w.name||"").includes(" - ")?nk(String(w.name).split(" - ")[0]):null}}
+/* unité → profil de simulation. models : liste de groupes {n,stats,weapons,isLeader,isChar} */
+function toProfile(u,opts){opts=opts||{};const notes=[],missing=[];
+ const kw=new Set([...String(u.kw||"").split(","),...String(u.fkw||"").split(",")].map(x=>nk(x)).filter(Boolean));
+ const base=parseStats(u.stats),subs=(u.subs||[]).map(s=>({label:s.label,name:s.name,stats:parseStats(s.stats),weapons:s.weapons||[]}));
+ let size=parseInt(u.size,10);if(!Number.isFinite(size))size=Math.max(1,parseInt(u.qty,10)||1);
+ const nBase=Math.max(0,size-subs.length);
+ const cnt=weaponCounts(u),fnp=fnpOf(u),isChar=kw.has("personnage"),groups=[];
+ const mkW=(arr,n,exact)=>arr.map(w=>{const pw=parseWeapon(w);const c=exact?null:cnt[nk(w.name)];
+  let k;if(exact)k=n;else if(c===undefined)k=n===1?1:null;else if(c===null)k=n===1?1:null;else k=Math.min(c,n);
+  if(k==null){k=1;notes.push("Nombre d'armes « "+w.name+" » non indiqué : 1 retenu")}
+  pw.count=k;return pw});
+ if(nBase>0)groups.push({n:nBase,stats:base,weapons:mkW(u.weapons||[],nBase,false),isLeader:false,isChar,label:u.name});
+ subs.forEach(s=>groups.push({n:1,stats:s.stats,weapons:mkW(s.weapons,1,true),isLeader:true,isChar:true,label:s.name||s.label}));
+ if(!groups.length)groups.push({n:1,stats:base,weapons:[],isLeader:false,isChar,label:u.name});
+ groups.forEach(g=>{g.stats.missing.forEach(m=>missing.push(m));g.weapons.forEach(w=>w.missing.forEach(m=>missing.push(w.name+" : "+m)))});
+ const uniq=a=>[...new Set(a)];
+ const IGN=new Set(["PRECISION","A_RISQUE","TIR_UNIQUE","PSYCHIQUE","TIR_INDIRECT"]);
+ groups.forEach(g=>g.weapons.forEach(w=>w.caps.forEach(c=>{if(IGN.has(c.id))notes.push("Aptitude d'arme sans effet sur le calcul : "+c.raw+" ("+w.name+")")})));
+ const apts=String(u.apt||"").split(",").map(x=>x.trim()).filter(x=>x&&!/insensible a la douleur/.test(nk(x)));
+ if(apts.length)notes.push("Aptitudes de l'unité non prises en compte dans le calcul : "+apts.join(", "));
+ const unknownCaps=uniq(groups.flatMap(g=>g.weapons.flatMap(w=>w.unknownCaps)));
+ return{name:String(u.name||"?"),ref:u.ref||"",pts:Number.isFinite(parseInt(u.pts,10))&&parseInt(u.pts,10)>0?parseInt(u.pts,10):null,models:groups.reduce((a,g)=>a+g.n,0),groups,kw,fnp,
+  missing:uniq(missing),notes:uniq(notes),unknownCaps,apt:String(u.apt||""),fkw:String(u.fkw||"")}}
+const totalWounds=p=>p.groups.reduce((a,g)=>a+g.n*(g.stats.PV||0),0);
+
+/* ---------- 4. séquence d'attaque V11 ---------- */
+/* seuil de blessure (05.02) : force vs endurance */
+function woundNeeded(F,E){if(F>=2*E)return 2;if(F>E)return 3;if(F===E)return 4;if(F*2<=E)return 6;return 5}
+const hasKw=(set,k)=>!!k&&(set.has(k)||set.has(k+"s")||set.has(k.replace(/s$/,"")));
+function capActive(c,tgtKw){if(!c.kw||!c.kw.length)return true;return c.kw.some(k=>hasKw(tgtKw,k))}
+/* contexte : {half:boolean mi-portée, cover:boolean, charged:boolean, still:boolean, tgtModels:int} */
+function weaponDice(w,tgtModels,ctx,kwT){/* nombre moyen / max / tirage de dés d'attaque */
+ const has=id=>w.caps.find(c=>c.id===id&&capActive(c,kwT));let add=0,addMax=0;
+ const def=has("DEFLAGRATION");if(def)add+=(def.x||1)*Math.floor(tgtModels/5);
+ const ab=has("ABATTAGE");if(ab)add+=(ab.x||1)*Math.floor(tgtModels/5);
+ const tr=has("TIR_RAPIDE");if(tr&&ctx.half)add+=tr.x||0;
+ return add}
+function weaponParams(w,tgtGroup,kwT,ctx){/* paramètres effectifs contre un groupe de cibles */
+ const has=id=>w.caps.find(c=>c.id===id&&capActive(c,kwT));
+ let ct=w.hit;if(ct!=null&&!w.melee&&ctx.cover&&!has("IGNORE_COUVERT"))ct=ct+1; // couvert : CT dégradée de 1 (13.08)
+ const hitMod=(has("LOURD")&&!w.melee&&ctx.still?1:0);
+ const woundMod=(has("LANCE")&&w.melee&&ctx.charged?1:0);
+ let D=w.d,fusion=has("FUSION");const dAdd=fusion&&ctx.half?(fusion.x||0):0;
+ const anti=w.caps.find(c=>c.id==="ANTI"&&hasKw(kwT,c.kwTarget));
+ return{ct,hitMod,woundMod,dAdd,anti:anti?anti.y:null,
+  sustained:(has("TOUCHES_SOUTENUES")||{}).x||0,fatal:!!has("TOUCHES_FATALES"),deva:!!has("BLESSURES_DEVASTATRICES"),torrent:w.torrent,reroll:!!has("JUMELE")}}
+/* probabilités d'un jet de touche : {pc: touche critique, pn: touche normale} */
+function hitProbs(P){if(P.torrent)return{pc:0,pn:1};let pn=0;for(let r=2;r<=5;r++)if(P.ct!=null&&r+P.hitMod>=P.ct)pn++;return{pc:1/6,pn:pn/6}}
+function woundProbs(P,F,E){const need=woundNeeded(F,E);let pn=0,pc=0;
+ for(let r=2;r<=6;r++){const crit=r===6||(P.anti!=null&&r>=P.anti);if(crit)pc++;else if(r+P.woundMod>=need)pn++}
+ pc/=6;pn/=6;if(P.reroll){const q=1-pc-pn;pc+=q*pc;pn+=q*pn}return{pc,pn}}
+function saveFailProb(sv,inv,pa){let ok=0;for(let r=2;r<=6;r++){const byInv=inv!=null&&r>=inv,byArm=sv!=null&&r+pa>=sv;if(byInv||byArm)ok++}return 1-ok/6}
+
+/* touches fatales : blesser automatiquement interdit la blessure critique (24.23) ; on retient l'option la plus avantageuse */
+function fatalAuto(P,wd,w,st,tgtProf){if(!P.fatal)return false;if(!P.deva)return true;
+ const wp=woundProbs(P,w.f,st.E),pf=saveFailProb(st.sv,st.inv,w.pa),fk=tgtProf.fnp?(1-(7-tgtProf.fnp)/6):1,d=Math.max(0,w.d.avg+P.dAdd);
+ const auto=pf*d*fk,roll=wp.pc*Math.min(d,st.PV||d)*fk+wp.pn*pf*d*fk;return auto>=roll}
+/* dégâts effectifs d'une attaque non sauvegardée sur une figurine de PV donnés (aucun dépassement sur la figurine suivante) */
+function binomPmf(n,k,p){let c=1;for(let i=0;i<k;i++)c=c*(n-i)/(i+1);return c*Math.pow(p,k)*Math.pow(1-p,n-k)}
+function effPerAttack(dd,dAdd,PV,keepP){const outs=[];if(dd.sides===0)outs.push(Math.max(0,dd.add+dAdd));else{const sd=dd.sides;let arr=[dd.add+dAdd];for(let i=0;i<dd.n;i++){const nx=[];arr.forEach(v=>{for(let f=1;f<=6;f++)nx.push(v+(sd===3?Math.ceil(f/2):f))});arr=nx}arr.forEach(v=>outs.push(Math.max(0,v)))}
+ let tot=0;outs.forEach(d=>{let e=0;for(let k=0;k<=d;k++)e+=Math.min(k,PV)*binomPmf(d,k,keepP);tot+=e});return tot/outs.length}
+/* espérance exacte (théorique) pour 1 arme × count contre 1 groupe cible — sans perte par excès de dégâts */
+function expectedWeapon(w,tgtGroup,tgtProf,ctx){const kwT=tgtProf.kw,P=weaponParams(w,tgtGroup,kwT,ctx),st=tgtGroup.stats;
+ const out={attacks:0,hits:0,wounds:0,unsaved:0,damage:0,mortal:0,ok:true};
+ if(w.missing.length||st.E==null){out.ok=false;return out}
+ const add=weaponDice(w,tgtProf.models,ctx,kwT),A=(w.a?w.a.avg:0)+add,att=A*w.count;out.attacks=att;
+ const hp=hitProbs(P),wp=woundProbs(P,w.f,st.E),pf=saveFailProb(st.sv,st.inv,w.pa),dAvg=Math.max(0,w.d.avg+P.dAdd);
+
+ const fnpK=tgtProf.fnp?(1-(7-tgtProf.fnp)/6):1,effA=effPerAttack(w.d,P.dAdd,st.PV||1,fnpK);out.eff=0;
+ const critHits=att*hp.pc,normHits=att*hp.pn+att*hp.pc*P.sustained;out.hits=critHits+normHits;
+ const auto=fatalAuto(P,null,w,st,tgtProf);let wN,wC;
+ if(auto){wN=normHits*wp.pn+critHits;wC=normHits*wp.pc}else{wN=(normHits+critHits)*wp.pn;wC=(normHits+critHits)*wp.pc}
+ out.wounds=wN+wC;
+ if(P.deva){out.mortal=wC*effA;out.unsaved=wN*pf;out.damage=out.unsaved*dAvg*fnpK+wC*dAvg*fnpK;out.eff=out.unsaved*effA+out.mortal}
+ else{out.unsaved=(wN+wC)*pf;out.damage=out.unsaved*dAvg*fnpK;out.eff=out.unsaved*effA}
+ return out}
+
+/* ---------- 5. simulation de dés virtuels (allocation figurine par figurine) ---------- */
+function makeTarget(p){/* instances individuelles, groupes ordonnés : non-personnages d'abord, puis personnages (05.03) */
+ const gs=p.groups.map((g,i)=>({g,i,models:Array.from({length:g.n},()=>({pv:g.stats.PV||1}))}));
+ gs.sort((a,b)=>(a.g.isChar?1:0)-(b.g.isChar?1:0));return gs}
+function pickModel(gs){/* groupe courant : un groupe contenant une figurine blessée d'abord (hors personnages), sinon l'ordre */
+ for(const grp of gs){const alive=grp.models.filter(m=>m.pv>0);if(!alive.length)continue;if(!grp.g.isChar&&alive.some(m=>m.pv<grp.g.stats.PV))return{grp,m:alive.find(m=>m.pv<grp.g.stats.PV)}}
+ for(const grp of gs){const alive=grp.models.filter(m=>m.pv>0);if(!alive.length)continue;const w=alive.find(m=>m.pv<grp.g.stats.PV);return{grp,m:w||alive[0]}}
+ return null}
+function loseWounds(m,n,fnp,rng){let lost=0;for(let i=0;i<n&&m.pv>0;i++){if(fnp&&Math.floor(rng()*6)+1>=fnp)continue;m.pv--;lost++}return lost}
+function simulateOnce(att,tgt,sel,ctx,rng){
+ const kwT=tgt.kw,gs=makeTarget(tgt),startM=tgt.models;let dmg=0;const mortalQueue=[],saves=[];
+ const aliveCount=()=>gs.reduce((a,g)=>a+g.models.filter(m=>m.pv>0).length,0);
+ sel.forEach(({w})=>{const P0=weaponParams(w,null,kwT,ctx),add=weaponDice(w,startM,ctx,kwT);
+  let diceN=0;for(let k=0;k<w.count;k++)diceN+=rollDice(w.a,rng)+add;
+  const pend=[];
+  for(let i=0;i<diceN;i++){let isHit=false,isCrit=false;
+   if(P0.torrent)isHit=true;else{const r=Math.floor(rng()*6)+1;if(r===6){isHit=true;isCrit=true}else if(r!==1&&r+P0.hitMod>=P0.ct)isHit=true}
+   if(isHit){pend.push({crit:isCrit});if(isCrit)for(let s=0;s<P0.sustained;s++)pend.push({crit:false})}}
+  /* endurance : celle du groupe majoritaire encore en vie (limite documentée) */
+  const mainG=gs.reduce((b,g)=>{const n=g.models.filter(m=>m.pv>0).length;return!b||n>b.n?{g,n}:b},null);if(!mainG||!mainG.n)return;
+  const st=mainG.g.g.stats,need=woundNeeded(w.f,st.E),auto=fatalAuto(P0,null,w,st,tgt);
+  const roll=()=>{const r=Math.floor(rng()*6)+1;if(r===6)return{wd:true,c:true};if(r===1)return{wd:false,c:false};if(P0.anti!=null&&r>=P0.anti)return{wd:true,c:true};return{wd:r+P0.woundMod>=need,c:false}};
+  pend.forEach(h=>{let wd,c=false;
+   if(h.crit&&auto){wd=true}else{let x=roll();if(!x.wd&&P0.reroll)x=roll();wd=x.wd;c=x.c}
+   if(!wd)return;
+   if(c&&P0.deva)mortalQueue.push({d:Math.max(0,rollDice(w.d,rng)+P0.dAdd)});
+   else saves.push({roll:Math.floor(rng()*6)+1,w,P0})})});
+ saves.sort((a,b)=>a.roll-b.roll);
+ for(const s of saves){const pm=pickModel(gs);if(!pm)break;const st=pm.grp.g.stats;
+  let ok=false;if(s.roll!==1){if(st.inv!=null&&s.roll>=st.inv)ok=true;else if(st.sv!=null&&s.roll+s.w.pa>=st.sv)ok=true}
+  if(ok)continue;const D=Math.max(0,rollDice(s.w.d,rng)+s.P0.dAdd);dmg+=loseWounds(pm.m,D,tgt.fnp,rng)}
+ for(const mq of mortalQueue){const pm=pickModel(gs);if(!pm)break;dmg+=loseWounds(pm.m,mq.d,tgt.fnp,rng)}
+ const alive=aliveCount();return{dmg,killed:startM-alive,wiped:alive===0}}
+function chooseWeapons(att,mode,tgt,ctx,opt){/* sélection des armes utilisées (règles : Attaques Bonus + une arme de mêlée ; profils alternatifs exclusifs) */
+ const sel=[];const kwT=tgt.kw;
+ att.groups.forEach(g=>{let ws=g.weapons.filter(w=>(mode==="melee")===w.melee&&w.count>0&&!w.missing.length);
+  if(opt&&opt.only&&opt.only.length)ws=ws.filter(w=>opt.only.includes(w.name));
+  /* profils alternatifs (« Arme - profil ») : un seul utilisable, le meilleur */
+  const byAlt={};ws.forEach(w=>{const k=w.alt||("_"+w.name);(byAlt[k]=byAlt[k]||[]).push(w)});
+  const tg=tgt.groups[0];let chosen=[];
+  Object.values(byAlt).forEach(arr=>{if(arr.length===1){chosen.push(arr[0]);return}
+   let best=arr[0],bv=-1;arr.forEach(w=>{const e=expectedWeapon(w,tg,tgt,ctx).damage;if(e>bv){bv=e;best=w}});chosen.push(best)});
+  /* mêlée : une seule arme hors [ATTAQUES BONUS] pour une figurine unique */
+  if(mode==="melee"&&g.n===1&&!(opt&&opt.only&&opt.only.length)){const bonus=chosen.filter(w=>w.bonus),other=chosen.filter(w=>!w.bonus);if(other.length>1){let best=other[0],bv=-1;other.forEach(w=>{const e=expectedWeapon(w,tg,tgt,ctx).damage;if(e>bv){bv=e;best=w}});chosen=[...bonus,best]}}
+  chosen.forEach(w=>sel.push({w,tg:g}))});
+ return sel}
+/* simulation de n tirages */
+function simulate(att,tgt,mode,ctx,n,seed,opt){const rng=mulberry32(seed==null?12345:seed),sel=chooseWeapons(att,mode,tgt,ctx,opt);
+ const dm=[],kills=[];let wiped=0,sumD=0,sumK=0;const hist={};
+ for(let i=0;i<n;i++){const r=simulateOnce(att,tgt,sel,ctx,rng);dm.push(r.dmg);kills.push(r.killed);sumD+=r.dmg;sumK+=r.killed;if(r.wiped)wiped++;hist[r.killed]=(hist[r.killed]||0)+1}
+ dm.sort((a,b)=>a-b);const q=p=>dm[Math.min(dm.length-1,Math.floor(p*dm.length))];
+ return{n,mean:sumD/n,median:q(.5),p10:q(.1),p90:q(.9),min:dm[0],max:dm[dm.length-1],killsMean:sumK/n,wipeProb:wiped/n,hist,weapons:sel.map(s=>s.w.name)}}
+/* moyenne théorique + maximum théorique pour le même scénario */
+function theory(att,tgt,mode,ctx,opt){const sel=chooseWeapons(att,mode,tgt,ctx,opt);let avg=0,eff=0,max=0,att_=0,hits=0,wounds=0,mortal=0;const per=[];
+ sel.forEach(({w})=>{const mainG=tgt.groups.reduce((b,g)=>g.n>b.n?g:b,tgt.groups[0]);const e=expectedWeapon(w,mainG,tgt,ctx);avg+=e.damage;eff+=e.eff;att_+=e.attacks;hits+=e.hits;wounds+=e.wounds;mortal+=e.mortal;
+  /* maximum : dés d'attaque maximaux, toutes touches (critiques) et blessures réussies, aucune sauvegarde */
+  const P=weaponParams(w,mainG,tgt.kw,ctx),addD=weaponDice(w,tgt.models,ctx,tgt.kw),Amax=((w.a?w.a.max:0)+addD)*w.count,hmax=Amax*(1+P.sustained);
+  max+=hmax*Math.max(0,(w.d?w.d.max:0)+P.dAdd);per.push({name:w.name,count:w.count,dmg:e.damage,eff:e.eff,attacks:e.attacks})});
+ const wounds0=totalWounds(tgt),wm=tgt.groups.reduce((a,g)=>a+g.n,0);
+ const mainG=tgt.groups.reduce((b,g)=>g.n>b.n?g:b,tgt.groups[0]),pvM=Math.max(1,mainG.stats.PV||1);
+ return{avg,eff,max,maxCapped:Math.min(max,wounds0),totalWounds:wounds0,attacks:att_,hits,wounds,mortal,killsApprox:Math.min(wm,eff/pvM),per,sel:sel.map(s=>s.w.name)}}
+
+/* ---------- 6. comparaison de deux armées ---------- */
+const DEFCTX={half:false,cover:false,charged:false,still:false};
+function ptsOf(p){return p.pts==null?0:p.pts}
+function armyProfiles(units){return units.map(u=>toProfile(u))}
+/* fraction de l'unité cible détruite (espérance, plafonnée à 1) */
+function fracKilled(dmg,tgt){const w=totalWounds(tgt);return w>0?Math.min(1,dmg/w):0}
+function pairMatrix(A,B,ctx){ctx=ctx||DEFCTX;const m=[];
+ A.forEach((a,i)=>{m[i]=[];B.forEach((b,j)=>{const sh=theory(a,b,"shoot",ctx),me=theory(a,b,"melee",ctx);m[i][j]={shoot:sh.eff,melee:me.eff,rawS:sh.avg,rawM:me.avg,fs:fracKilled(sh.eff,b),fm:fracKilled(me.eff,b),killS:sh.killsApprox,killM:me.killsApprox}})});return m}
+function armyStats(P,Q,mat){/* P : armée analysée ; Q : adversaire ; mat[i][j] : P_i contre Q_j */
+ const sum=(a,f)=>a.reduce((x,y)=>x+f(y),0),models=sum(P,p=>p.models),pts=sum(P,p=>ptsOf(p));
+ const o={units:P.length,models,pts,wounds:sum(P,p=>totalWounds(p)),missingPts:P.filter(p=>p.pts==null).length};
+ const useW=Q.every(q=>ptsOf(q)>0),WQ=q=>useW?ptsOf(q):1;o.weighting=useW?"points":"égale";
+ const wavg=(i,key)=>{let v=0,w=0;Q.forEach((q,j)=>{const pj=WQ(q);v+=mat[i][j][key]*pj;w+=pj});return w>0?v/w:0};
+ o.shootPts=sum(P.map((_,i)=>i),i=>wavg(i,"fs"));o.meleePts=sum(P.map((_,i)=>i),i=>wavg(i,"fm"));
+ o.shootDmg=sum(P.map((_,i)=>i),i=>Q.length?Q.reduce((a,q,j)=>a+mat[i][j].shoot,0)/Q.length:0);
+ o.meleeDmg=sum(P.map((_,i)=>i),i=>Q.length?Q.reduce((a,q,j)=>a+mat[i][j].melee,0)/Q.length:0);
+ o.oc=sum(P,p=>p.groups.reduce((a,g)=>a+g.n*(g.stats.CO||0),0));o.ocUnits=P.filter(p=>p.groups.some(g=>(g.stats.CO||0)>0)).length;
+ const ms=P.flatMap(p=>p.groups.filter(g=>g.stats.M!=null).map(g=>[g.stats.M,g.n])),mn=ms.reduce((a,x)=>a+x[1],0);o.moveAvg=mn?ms.reduce((a,x)=>a+x[0]*x[1],0)/mn:null;
+ const hasK=(p,k)=>hasKw(p.kw,k)||nk(p.apt).includes(k);
+ o.fly=P.filter(p=>hasK(p,"vol")).length;o.deep=P.filter(p=>/frappe en profondeur|infiltrateurs|eclaireurs/.test(nk(p.apt))).length;
+ const rng=P.flatMap(p=>p.groups.flatMap(g=>g.weapons.filter(w=>!w.melee&&w.range!=null).map(w=>w.range)));o.maxRange=rng.length?Math.max(...rng):null;o.avgRange=rng.length?rng.reduce((a,b)=>a+b,0)/rng.length:null;
+ const isH=q=>hasKw(q.kw,"vehicule")||hasKw(q.kw,"monstre"),isI=q=>hasKw(q.kw,"infanterie");
+ const vs=pred=>{const idx=Q.map((q,j)=>pred(q)?j:-1).filter(j=>j>=0);if(!idx.length)return null;let s=0,m=0,w=0;idx.forEach(j=>{const pj=WQ(Q[j]);w+=pj;P.forEach((_,i)=>{s+=mat[i][j].fs*pj;m+=mat[i][j].fm*pj})});return{n:idx.length,shoot:w?s/w:0,melee:w?m/w:0}};
+ o.vsHeavy=vs(isH);o.vsInf=vs(isI);
+ o.auras=P.flatMap(p=>String(p.apt).split(",").map(s=>s.trim()).filter(s=>/\(aura\)/i.test(s)).map(s=>({u:p.name,a:s})));
+ o.leaders=P.filter(p=>hasKw(p.kw,"personnage")).length;return o}
+/* danger / vulnérabilité par unité */
+function unitRanking(P,Q,matPQ,matQP){
+ const uQ=Q.every(q=>ptsOf(q)>0),uP=P.every(p=>ptsOf(p)>0),WQ=q=>uQ?ptsOf(q):1;
+ const danger=P.map((p,i)=>{let best=null;Q.forEach((q,j)=>{const m=matPQ[i][j],v=Math.max(m.fs,m.fm)*WQ(q);if(!best||v>best.v)best={j,v,type:m.fs>=m.fm?"tir":"mêlée",f:Math.max(m.fs,m.fm)}});
+  return{i,name:p.name,pts:p.pts,best,perPoint:p.pts?(best?best.v/p.pts:0):null}});
+ const vuln=P.map((p,i)=>{let f=0;Q.forEach((q,j)=>{f+=Math.max(matQP[j][i].fs,matQP[j][i].fm)});return{i,name:p.name,pts:p.pts,focus:Math.min(1,f)}});
+ return{danger:danger.sort((a,b)=>(b.best?b.best.v:0)-(a.best?a.best.v:0)),vuln:vuln.sort((a,b)=>b.focus-a.focus)}}
+
+/* ---------- 7. estimation théorique de victoire ---------- */
+const WEIGHTS={firepower:0.45,objectives:0.25,durability:0.20,mobility:0.10};
+function ratioLog(a,b){a=Math.max(a,1e-6);b=Math.max(b,1e-6);return Math.log(a/b)}
+function winEstimate(sA,sB){/* sA/sB : armyStats de chaque camp contre l'autre */
+ const f=[];const fpA=sA.shootPts+sA.meleePts,fpB=sB.shootPts+sB.meleePts;
+ f.push({k:"Puissance de feu et de mêlée",w:WEIGHTS.firepower,a:fpA,b:fpB,s:ratioLog(fpA+0.02,fpB+0.02),txt:"part des points adverses détruite en un tour (tir + mêlée)"});
+ f.push({k:"Contrôle d'objectifs",w:WEIGHTS.objectives,a:sA.oc,b:sB.oc,s:ratioLog(sA.oc+1,sB.oc+1),txt:"somme des caractéristiques de CO"});
+ const durA=sA.wounds/Math.max(1e-6,sB.shootPts+sB.meleePts+0.02),durB=sB.wounds/Math.max(1e-6,sA.shootPts+sA.meleePts+0.02);
+ f.push({k:"Résistance",w:WEIGHTS.durability,a:sA.wounds,b:sB.wounds,s:ratioLog(durA,durB),txt:"points de vie totaux rapportés aux dégâts reçus"});
+ const mA=sA.moveAvg,mB=sB.moveAvg;f.push({k:"Mobilité",w:WEIGHTS.mobility,a:mA,b:mB,s:mA&&mB?ratioLog(mA,mB):0,txt:"mouvement moyen",missing:!(mA&&mB)});
+ let z=0,wt=0;f.forEach(x=>{if(!x.missing){z+=x.w*x.s;wt+=x.w}});z=wt?z/wt:0;
+ let pA=1/(1+Math.exp(-2.2*z));pA=Math.min(.85,Math.max(.15,pA));
+ return{pA,pB:1-pA,factors:f.map(x=>({...x,contrib:x.missing?0:x.w*x.s/(wt||1)})),z}}
+
+/* ---------- 8. historique des parties ---------- */
+function resultOf(s1,s2){return s1>s2?"V":s1<s2?"D":"E"}
+function histStats(games){const g=(games||[]).filter(x=>x&&Number.isFinite(+x.s1)&&Number.isFinite(+x.s2));const n=g.length;
+ const c={V:0,D:0,E:0};g.forEach(x=>c[x.res||resultOf(+x.s1,+x.s2)]++);
+ const pc=v=>n?v/n*100:null,avg=f=>n?g.reduce((a,x)=>a+(+x[f]),0)/n:null;
+ const by=(key)=>{const m={};g.forEach(x=>{const k=(key(x)||"Non renseigné");const o=m[k]=m[k]||{n:0,V:0,D:0,E:0,s1:0,s2:0};o.n++;o[x.res||resultOf(+x.s1,+x.s2)]++;o.s1+=+x.s1;o.s2+=+x.s2});
+  return Object.entries(m).map(([k,o])=>({k,n:o.n,V:o.V,D:o.D,E:o.E,win:o.V/o.n*100,loss:o.D/o.n*100,draw:o.E/o.n*100,avg1:o.s1/o.n,avg2:o.s2/o.n})).sort((a,b)=>b.n-a.n)};
+ return{n,V:c.V,D:c.D,E:c.E,win:pc(c.V),loss:pc(c.D),draw:pc(c.E),avg1:avg("s1"),avg2:avg("s2"),
+  byFaction:by(x=>x.f1),byDetachment:by(x=>x.d1),byOpponent:by(x=>x.f2),byFirst:by(x=>x.first===1?"J1 commence":x.first===2?"J2 commence":"Non renseigné")}}
+
+
+/* ---------- 9. analyse complète de deux armées (structure + textes justifiés par les chiffres) ---------- */
+const pct=x=>Math.round(x*100)+" %",f1=x=>(Math.round(x*10)/10).toString().replace(".",",");
+function analyseArmies(unitsA,unitsB,ctx,names){ctx=ctx||DEFCTX;names=names||["Armée 1","Armée 2"];
+ const PA=armyProfiles(unitsA),PB=armyProfiles(unitsB);
+ const mAB=pairMatrix(PA,PB,ctx),mBA=pairMatrix(PB,PA,ctx),sA=armyStats(PA,PB,mAB),sB=armyStats(PB,PA,mBA),win=winEstimate(sA,sB);
+ const rA=unitRanking(PA,PB,mAB,mBA),rB=unitRanking(PB,PA,mBA,mAB);
+ const missing=[];[[PA,names[0]],[PB,names[1]]].forEach(([P,n])=>P.forEach(p=>{if(p.missing.length)missing.push({army:n,unit:p.name,what:p.missing.join(", ")});if(p.pts==null)missing.push({army:n,unit:p.name,what:"Points non renseignés (valeurs en points sous-estimées)"});p.unknownCaps.forEach(c=>missing.push({army:n,unit:p.name,what:"Aptitude d'arme non modélisée : "+c}));p.notes.filter(c=>!/^Aptitudes de l.unité/.test(c)).forEach(c=>missing.push({army:n,unit:p.name,what:c}))}));
+ const useA=PA.every(p=>p.pts>0),useB=PB.every(p=>p.pts>0),VA=p=>useA?p.pts:1,VB=p=>useB?p.pts:1;
+ const out=(m,i,j)=>Math.max(m[i][j].fs,m[i][j].fm),outType=(m,i,j)=>m[i][j].fs>=m[i][j].fm?"tir":"mêlée";
+ /* attributions : quelle unité contre quelle unité (meilleure valeur en points, sinon meilleur pourcentage) */
+ const assign=PA.map((a,i)=>{let best=null;PB.forEach((b,j)=>{const f=out(mAB,i,j),v=f*VB(b),back=out(mBA,j,i);const key=v>0?v:f*0.001;if(!best||key>best.key)best={j,f,v,key,type:outType(mAB,i,j),back,backType:outType(mBA,j,i),dmg:Math.max(mAB[i][j].shoot,mAB[i][j].melee)}});return{i,name:a.name,pts:a.pts,best}});
+ const threats=PB.map((b,j)=>{let toA=0,top=[];PA.forEach((a,i)=>{const f=out(mBA,j,i);toA=Math.max(toA,f*VA(a));top.push({i,f:out(mAB,i,j)})});top.sort((x,y)=>y.f-x.f);
+  return{j,name:b.name,pts:b.pts,threat:toA,bestHit:(()=>{let bi=null;PA.forEach((a,i)=>{const f=out(mBA,j,i),v=f*VA(a);if(!bi||v>bi.v)bi={i,f,v,type:outType(mBA,j,i)}});return bi})(),killers:top.slice(0,3).map(t=>({i:t.i,name:PA[t.i].name,f:t.f}))}}).sort((x,y)=>y.threat-x.threat);
+ const preserve=PA.map((a,i)=>{let focus=0;PB.forEach((b,j)=>{focus+=out(mBA,j,i)});focus=Math.min(1,focus);let outBest=0;PB.forEach((b,j)=>{outBest=Math.max(outBest,out(mAB,i,j)*VB(b))});return{i,name:a.name,pts:a.pts,focus,value:outBest,score:focus*VA(a)+outBest*0.5}}).sort((x,y)=>y.score-x.score);
+ const eff=PA.map((a,i)=>{let bv=0,bj=-1,bf=0;PB.forEach((b,j)=>{const f=out(mAB,i,j),v=f*VB(b);if(v>bv||bj<0&&f>bf){bv=v;bj=j;bf=f}});return{i,name:a.name,pts:a.pts,v:bv,per:useA&&useB&&a.pts?bv/a.pts:null,j:bj,f:bf}}).sort((x,y)=>(y.per==null?-1:y.per)-(x.per==null?-1:x.per));
+ const pairs=[];PA.forEach((a,i)=>PB.forEach((b,j)=>{const o=out(mAB,i,j),r=out(mBA,j,i),ov=o*VB(b),rv=r*VA(a);pairs.push({i,j,a:a.name,b:b.name,out:o,back:r,outV:ov,backV:rv,ratio:(rv>0?ov/rv:(ov>0?99:1)),typeOut:outType(mAB,i,j),typeBack:outType(mBA,j,i)})}));
+ const rel=pairs.filter(x=>x.out>0.01||x.back>0.01);
+ const favorable=[...rel].filter(x=>x.ratio>=1.5&&x.out>=0.15).sort((x,y)=>y.ratio*y.out-x.ratio*x.out).slice(0,6);
+ const unfavorable=[...rel].filter(x=>x.ratio<=0.67&&x.back>=0.15).sort((x,y)=>x.ratio/Math.max(.01,x.back)-y.ratio/Math.max(.01,y.back)).slice(0,6);
+ const avoid=[...rel].filter(x=>x.typeBack==="mêlée"&&x.back>=0.5&&x.back>x.out*1.5).sort((x,y)=>y.back-x.back).slice(0,6);
+ /* avantages / faiblesses (comparaison chiffrée) */
+ const adv={A:[],B:[]},weak={A:[],B:[]};
+ const cmpM=(label,a,b,fmt,hi=1.2,lo=1/1.2)=>{if(a==null||b==null)return;const r=(a+1e-9)/(b+1e-9);const t=`${label} : ${fmt(a)} contre ${fmt(b)}`;if(r>=hi){adv.A.push(t);weak.B.push(t)}else if(r<=lo){adv.B.push(t);weak.A.push(t)}};
+ const fpA=sA.shootPts+sA.meleePts,fpB=sB.shootPts+sB.meleePts;
+ cmpM("Puissance totale (équivalent en % des points adverses, un tour)",fpA,fpB,x=>pct(x));
+ cmpM("Puissance de tir",sA.shootPts,sB.shootPts,x=>pct(x));cmpM("Puissance de mêlée",sA.meleePts,sB.meleePts,x=>pct(x));
+ cmpM("Points de vie totaux",sA.wounds,sB.wounds,x=>String(Math.round(x)));
+ cmpM("Contrôle d'objectifs (somme des CO)",sA.oc,sB.oc,x=>String(x));
+ cmpM("Mouvement moyen",sA.moveAvg,sB.moveAvg,x=>f1(x)+"\"");cmpM("Portée maximale",sA.maxRange,sB.maxRange,x=>x+"\"");
+ cmpM("Figurines",sA.models,sB.models,x=>String(x));
+ if(sA.vsHeavy&&sA.vsHeavy.n){const h=sA.vsHeavy.shoot+sA.vsHeavy.melee,i=sA.vsInf?sA.vsInf.shoot+sA.vsInf.melee:null;if(i!=null&&h<i*0.6)weak.A.push(`Capacité antichar limitée : ${pct(h)} des points de véhicules/monstres adverses contre ${pct(i)} d'infanterie`);if(i!=null&&h>i*1.4)adv.A.push(`Bonne capacité antichar : ${pct(h)} des points de véhicules/monstres adverses contre ${pct(i)} d'infanterie`)}
+ if(sB.vsHeavy&&sB.vsHeavy.n){const h=sB.vsHeavy.shoot+sB.vsHeavy.melee,i=sB.vsInf?sB.vsInf.shoot+sB.vsInf.melee:null;if(i!=null&&h<i*0.6)weak.B.push(`Capacité antichar limitée : ${pct(h)} contre ${pct(i)} d'infanterie`);if(i!=null&&h>i*1.4)adv.B.push(`Bonne capacité antichar : ${pct(h)} contre ${pct(i)} d'infanterie`)}
+ if(sA.deep>sB.deep)adv.A.push(`Arrivées par frappe en profondeur / infiltration : ${sA.deep} unités contre ${sB.deep}`);else if(sB.deep>sA.deep)adv.B.push(`Arrivées par frappe en profondeur / infiltration : ${sB.deep} unités contre ${sA.deep}`);
+ if(sA.fly!==sB.fly)(sA.fly>sB.fly?adv.A:adv.B).push(`Unités capables de voler : ${Math.max(sA.fly,sB.fly)} contre ${Math.min(sA.fly,sB.fly)}`);
+ /* stratégies */
+ const strat=[];
+ const rr=(a,b)=>(a+1e-9)/(b+1e-9);
+ if(rr(sA.shootPts,sB.shootPts)>=1.2&&(sA.maxRange||0)>=(sB.maxRange||0))strat.push({t:"Jouer à distance",why:`Tir de ${names[0]} : ${pct(sA.shootPts)} des points adverses par tour contre ${pct(sB.shootPts)} ; portée maximale ${sA.maxRange||"?"}" contre ${sB.maxRange||"?"}".`});
+ if(rr(sB.meleePts,sA.meleePts)>=1.3)strat.push({t:"Éviter les engagements en mêlée",why:`La mêlée adverse détruit ${pct(sB.meleePts)} de vos points en un tour contre ${pct(sA.meleePts)} pour la vôtre : bloquez, ciblez les unités de mêlée en premier, restez hors de portée de charge.`});
+ else if(rr(sA.meleePts,sB.meleePts)>=1.3)strat.push({t:"Chercher la mêlée",why:`Votre mêlée détruit ${pct(sA.meleePts)} des points adverses contre ${pct(sB.meleePts)} dans l'autre sens.`});
+ if(rr(sA.oc,sB.oc)<=0.85)strat.push({t:"Ne pas jouer l'usure sur les objectifs",why:`Contrôle d'objectifs : ${sA.oc} contre ${sB.oc}. Il faut éliminer des unités qui tiennent les objectifs plutôt que de les disputer à nombre égal.`});
+ else if(rr(sA.oc,sB.oc)>=1.15)strat.push({t:"Marquer par les objectifs",why:`Contrôle d'objectifs supérieur : ${sA.oc} contre ${sB.oc} (${sA.ocUnits} unités capables de tenir un objectif).`});
+ if(threats.length)strat.push({t:"Neutraliser en priorité "+threats.slice(0,2).map(x=>x.name).join(" puis "),why:threats.slice(0,2).map(x=>`${x.name} peut détruire ${pct(x.bestHit?x.bestHit.f:0)} de ${x.bestHit?PA[x.bestHit.i].name:"?"} (${x.bestHit?x.bestHit.type:""})`).join(" ; ")});
+ if(sA.deep>0)strat.push({t:"Garder des unités en réserve",why:`${sA.deep} unité(s) peuvent arriver par frappe en profondeur / infiltration : elles permettent de contourner la puissance adverse et de menacer les objectifs.`});
+ return{weighting:{A:useA?"points":"égale",B:useB?"points":"égale"},names,PA,PB,mAB,mBA,sA,sB,win,rankA:rA,rankB:rB,assign,threats,preserve,eff,favorable,unfavorable,avoid,adv,weak,strat,missing,ctx}}
+
+const HYPOTHESES=[
+ "Règles V11 appliquées : séquence d'attaque (05), aptitudes d'arme [TOUCHES FATALES/SOUTENUES], [BLESSURES DÉVASTATRICES], [ANTI], [DÉFLAGRATION], [ABATTAGE], [TIR RAPIDE], [LOURD], [LANCE], [JUMELÉ], [TORRENT], [FUSION], [IGNORE LE COUVERT] ; couvert (CT −1) ; Insensible à la Douleur.",
+ "Les autres aptitudes d'unité, auras, stratagèmes, points de commandement, optimisations et unités attachées ne modifient pas les calculs.",
+ "Unité à endurance mixte : l'endurance du groupe le plus nombreux encore en vie est utilisée (règle V11 non vérifiée pour ce cas).",
+ "Toutes les armes de tir (ou de mêlée) de l'unité sont utilisées ; pour les profils alternatifs (« Arme - profil »), le meilleur est retenu ; en mêlée, une figurine seule garde [ATTAQUES BONUS] + sa meilleure arme.",
+ "Distances, déplacements, ligne de vue et terrain ne sont pas simulés : tu choisis le scénario (mi-portée, couvert, charge, immobile).",
+ "Nombre d'armes absent de la liste : 1 retenu, et signalé."];
+root.ANA={HYPOTHESES,analyseArmies,nk,mulberry32,parseDice,rollDice,parseCaps,parseSave,parseStats,parseWeapon,toProfile,totalWounds,woundNeeded,saveFailProb,hitProbs,woundProbs,weaponParams,weaponDice,
+ expectedWeapon,simulate,simulateOnce,theory,chooseWeapons,pairMatrix,armyStats,unitRanking,winEstimate,histStats,resultOf,fracKilled,DEFCTX,WEIGHTS,SUPPORTED,INFO_ONLY};
+if(typeof module!=="undefined")module.exports=root.ANA;
+})(typeof window!=="undefined"?window:globalThis);
+
+</script>
+<script>
+/* ===== HAMMER · Analyse & Simulation — interface (le moteur est ANA, voir ana-engine) ===== */
+(()=>{
+const A=window.ANA,E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const SECS=[["cmp","Comparer"],["sim","Affrontement"],["mat","Match-ups"],["rec","Conseils"],["win","Victoire"],["his","Historique"]];
+const pct=x=>x==null?"—":Math.round(x*100)+" %",n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
+let CACHE={key:"",res:null},RES=null,BUSY=false,HFORM={};
+const lists=()=>(typeof S!=="undefined"&&S.lists)||[];
+const facOf=l=>{const c={};(l.units||[]).forEach(u=>{const f=String(u.fkw||"").split(",")[0].trim();if(f)c[f]=(c[f]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
+const detOf=l=>((l&&l.dets||[])[0]||{}).name||"";
+const st=()=>{const a=S.ana=S.ana&&typeof S.ana==="object"?S.ana:{};const L=lists();
+ if(!a.sec)a.sec="cmp";if(!a.ctx)a.ctx={half:false,cover:false,charged:false,still:false};if(!a.n)a.n=3000;if(!a.mode)a.mode="shoot";
+ if(!L.some(l=>l.id===a.a))a.a=(L.find(l=>l.id===S.cur)||L[0]||{}).id||"";
+ if(!L.some(l=>l.id===a.b)||a.b===a.a)a.b=(L.find(l=>l.id!==a.a)||{}).id||"";
+ return a};
+const listOf=id=>lists().find(l=>l.id===id);
+const sig=l=>l?(l.id+"|"+(l.units||[]).map(u=>[u.name,u.qty,u.size,u.pts,(u.weapons||[]).length,(u.subs||[]).length,u.equip].join(",")).join(";")):"";
+function data(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);if(!LA||!LB||!(LA.units||[]).length||!(LB.units||[]).length)return null;
+ const key=sig(LA)+"##"+sig(LB)+"##"+JSON.stringify(a.ctx);if(CACHE.key===key)return CACHE.res;
+ const r=A.analyseArmies(LA.units,LB.units,a.ctx,[LA.name||"Armée 1",LB.name||"Armée 2"]);CACHE={key,res:r};return r}
+const css=`<style id="anacss">
+.an h2{margin:0 0 6px;font-family:var(--fs,inherit)}.an .mu{color:var(--mu);font-size:13px}
+.an-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:4px}.an-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.an-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.an-c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}.an-c h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.an-sel{display:grid;grid-template-columns:1fr;gap:8px}.an-sel.two{grid-template-columns:1fr 1fr}.an-sel label{display:block;font-size:12px;color:var(--mu)}.an-sel select{width:100%;min-height:44px;margin-top:3px}
+.an-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.an-row:first-of-type{border-top:0}.an-row b{font-size:15px}.an-row .l{text-align:right}.an-row .k{font-size:12px;color:var(--mu);text-align:center;max-width:110px}
+.an-bar{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin-top:3px}.an-bar i{display:block;height:100%;background:var(--ac)}.an-bar.rb i{background:#e0563f}
+.an ul{margin:4px 0 0;padding-left:18px}.an li{margin:4px 0;font-size:13.5px;line-height:1.35}
+.an .an-g{color:#2e9d6b;font-weight:700}.an .an-r{color:#d1503b;font-weight:700}
+.an-tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:1px 8px;margin-left:6px;background:color-mix(in srgb,#e08a2c 28%,var(--card))}
+.an-kv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:14px}.an-kv b{text-align:right}
+.an-big{font-size:34px;font-weight:800;line-height:1.1}
+.an-gauge{display:flex;height:26px;border-radius:13px;overflow:hidden;margin:10px 0}.an-gauge i{display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-weight:800;font-size:13px}
+.an-warn{border-left:4px solid #e08a2c;background:color-mix(in srgb,#e08a2c 10%,var(--card));padding:8px 10px;border-radius:8px;font-size:13px;margin:8px 0}
+.an-btn{display:block;width:100%;min-height:50px;border-radius:12px;border:0;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer;margin:8px 0}.an-btn.s{background:var(--card);color:var(--tx);border:1px solid var(--bd);font-weight:700;min-height:42px}
+.an details{border:1px solid var(--bd);border-radius:12px;padding:6px 10px;margin:6px 0;background:var(--bg)}.an summary{cursor:pointer;font-weight:700;padding:6px 0}
+.an-t{width:100%;border-collapse:collapse;font-size:13px}.an-t td,.an-t th{padding:5px 4px;border-bottom:1px solid var(--bd);text-align:center}.an-t td:first-child,.an-t th:first-child{text-align:left}
+.an-f{display:grid;gap:8px}.an-f label{display:block;font-size:12px;color:var(--mu)}.an-f input,.an-f select{width:100%;min-height:44px;margin-top:3px}.an-f .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.an-ck{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}.an-ck input{width:22px;height:22px}
+</style>`;
+const hdr=a=>{const L=lists();const opt=(id)=>L.map(l=>`<option value="${E(l.id)}"${l.id===id?" selected":""}>${E(l.name||"Liste")} (${(l.units||[]).length})</option>`).join("");
+ return`<div class="an"><h2>Analyse &amp; Simulation</h2><p class="mu" style="margin:0">Tout est calculé sur cet appareil, sans connexion, à partir des listes importées. Règles V11.</p>
+ <div class="an-c"><div class="an-sel"><label>Armée 1 — moi (Joueur 1)<select data-ans="a">${opt(a.a)}</select></label><label>Armée 2 — adversaire (Joueur 2)<select data-ans="b">${opt(a.b)}</select></label></div>
+ ${L.length<2?`<div class="an-warn">Il faut deux listes. Importe la liste de l'adversaire dans <b>Importer</b>, puis reviens ici.</div>`:""}
+ <details><summary>Scénario de tir et de mêlée</summary>${["half|La cible est à mi-portée (Tir Rapide, Fusion)","cover|La cible a le bénéfice du couvert (CT −1)","charged|L'attaquant a chargé (Lance)","still|L'attaquant n'a pas bougé (Lourd)"].map(x=>{const[k,t]=x.split("|");return`<label class="an-ck"><input type="checkbox" data-anac="${k}"${a.ctx[k]?" checked":""}>${t}</label>`}).join("")}</details></div>
+ <div class="an-pills">${SECS.map(([k,n])=>`<button data-an="sec" data-v="${k}" class="${a.sec===k?"on":""}">${n}</button>`).join("")}</div>`};
+const missingBlock=(r)=>{return`<details><summary>Hypothèses du modèle et données manquantes (${r.missing.length})</summary><ul>${A.HYPOTHESES.map(h=>`<li>${E(h)}</li>`).join("")}</ul>${r.missing.length?"<ul>":""}${r.missing.slice(0,60).map(m=>`<li><b>${E(m.unit)}</b> (${E(m.army)}) — ${E(m.what)}</li>`).join("")}${r.missing.length?"</ul>":""}</details>`};
+function cmpRow(label,a,b,fa,hi){const x=a==null?0:a,y=b==null?0:b,mx=Math.max(x,y,1e-9);const f=fa||n1;
+ return`<div class="an-row"><div class="l"><b>${a==null?'<span class="an-tag">Donnée manquante</span>':f(a)}</b><div class="an-bar" style="direction:rtl"><i style="width:${x/mx*100}%"></i></div></div><div class="k">${label}</div><div><b>${b==null?'<span class="an-tag">Donnée manquante</span>':f(b)}</b><div class="an-bar rb"><i style="width:${y/mx*100}%"></i></div></div></div>`}
+function secCmp(r){const a=r.sA,b=r.sB,pc=x=>pct(x);
+ const wtxt=r.weighting.A==="égale"||r.weighting.B==="égale"?`<div class="an-warn">Points non renseignés pour certaines unités : pour ces calculs, toutes les unités comptent à égalité. Complète les points dans la liste pour des résultats pondérés.</div>`:"";
+ const li=a=>a.length?`<ul>${a.map(t=>`<li>${E(t)}</li>`).join("")}</ul>`:'<p class="mu">Aucun écart marqué sur les données importées.</p>';
+ const top=(rk,P,Q)=>rk.danger.slice(0,3).map(d=>`<li><b>${E(d.name)}</b> — peut détruire ${pct(d.best?d.best.f:0)} de <b>${E(d.best?Q[d.best.j].name:"?")}</b> (${d.best?d.best.type:""})</li>`).join("");
+ const vul=(rk)=>rk.vuln.slice(0,3).map(v=>`<li><b>${E(v.name)}</b> — ${pct(v.focus)} détruit si l'adversaire concentre ses tirs et ses charges</li>`).join("");
+ return`${wtxt}<div class="an-c"><h3>Chiffres clés</h3>
+ <div class="an-row" style="border:0;font-size:12px;color:var(--mu)"><b class="l">${E(r.names[0])}</b><span class="k"></span><b>${E(r.names[1])}</b></div>
+ ${cmpRow("Points",a.pts,b.pts,x=>String(x))}${cmpRow("Unités",a.units,b.units,x=>String(x))}${cmpRow("Figurines",a.models,b.models,x=>String(x))}${cmpRow("Points de vie",a.wounds,b.wounds,x=>String(Math.round(x)))}
+ ${cmpRow("Puissance de tir",a.shootPts,b.shootPts,pc)}${cmpRow("Puissance de mêlée",a.meleePts,b.meleePts,pc)}${cmpRow("Mouvement moyen",a.moveAvg,b.moveAvg,x=>n1(x)+'"')}${cmpRow("Portée max",a.maxRange,b.maxRange,x=>x+'"')}${cmpRow("Portée moyenne",a.avgRange,b.avgRange,x=>n1(x)+'"')}
+ ${cmpRow("Contrôle d'objectifs",a.oc,b.oc,x=>String(x))}${cmpRow("Unités qui tiennent un objectif",a.ocUnits,b.ocUnits,x=>String(x))}
+ ${cmpRow("Antichar (véhicules / monstres adverses)",a.vsHeavy?a.vsHeavy.shoot+a.vsHeavy.melee:null,b.vsHeavy?b.vsHeavy.shoot+b.vsHeavy.melee:null,pc)}${cmpRow("Antipersonnel (infanterie adverse)",a.vsInf?a.vsInf.shoot+a.vsInf.melee:null,b.vsInf?b.vsInf.shoot+b.vsInf.melee:null,pc)}
+ <p class="mu">Puissance : part des points adverses détruite en un tour si chaque unité tire ou charge une cible moyenne. Plusieurs unités peuvent viser la même cible : la valeur peut dépasser 100 %. Compare les deux armées entre elles plus que la valeur absolue.</p></div>
+ <div class="an-c"><h3>Avantages de ${E(r.names[0])}</h3>${li(r.adv.A)}<h3 style="margin-top:12px">Faiblesses de ${E(r.names[0])}</h3>${li(r.weak.A)}</div>
+ <div class="an-c"><h3>Avantages de ${E(r.names[1])}</h3>${li(r.adv.B)}<h3 style="margin-top:12px">Faiblesses de ${E(r.names[1])}</h3>${li(r.weak.B)}</div>
+ <div class="an-c"><h3>Unités les plus dangereuses</h3><p class="mu" style="margin:0">${E(r.names[0])}</p><ul>${top(r.rankA,r.PA,r.PB)}</ul><p class="mu" style="margin:8px 0 0">${E(r.names[1])}</p><ul>${top(r.rankB,r.PB,r.PA)}</ul></div>
+ <div class="an-c"><h3>Unités les plus vulnérables</h3><p class="mu" style="margin:0">${E(r.names[0])}</p><ul>${vul(r.rankA)}</ul><p class="mu" style="margin:8px 0 0">${E(r.names[1])}</p><ul>${vul(r.rankB)}</ul></div>
+ <div class="an-c"><h3>Synergies et règles spéciales</h3><p class="mu" style="margin:0 0 4px">Relevé des aptitudes d'aura et personnages de chaque liste importée (aucune synergie n'est supposée au-delà).</p>
+ <p style="margin:6px 0 2px"><b>${E(r.names[0])}</b> — ${a.leaders} personnage(s), ${a.auras.length} aptitude(s) d'aura</p>${a.auras.length?`<ul>${a.auras.slice(0,8).map(x=>`<li>${E(x.u)} : ${E(x.a)}</li>`).join("")}</ul>`:""}
+ <p style="margin:10px 0 2px"><b>${E(r.names[1])}</b> — ${b.leaders} personnage(s), ${b.auras.length} aptitude(s) d'aura</p>${b.auras.length?`<ul>${b.auras.slice(0,8).map(x=>`<li>${E(x.u)} : ${E(x.a)}</li>`).join("")}</ul>`:""}
+ <p class="mu" style="margin:10px 0 0">Mobilité : ${a.fly} unité(s) volantes et ${a.deep} arrivée(s) par frappe en profondeur / infiltration contre ${b.fly} et ${b.deep}.</p></div>
+ <div class="an-c"><h3>Stratégies recommandées</h3>${r.strat.length?`<ul>${r.strat.map(s=>`<li><b>${E(s.t)}</b><br><span class="mu">${E(s.why)}</span></li>`).join("")}</ul>`:'<p class="mu">Pas assez de données pour recommander une stratégie.</p>'}</div>${missingBlock(r)}`}
+/* ---- affrontement ---- */
+function unitSel(P,key,val){return`<select data-ans="${key}">${P.map((p,i)=>`<option value="${i}"${+val===i?" selected":""}>${E(p.name)}${p.models>1?" ×"+p.models:""}</option>`).join("")}</select>`}
+function hist(h,n){const ks=Object.keys(h).map(Number).sort((a,b)=>a-b),mx=Math.max(...ks.map(k=>h[k]),1),W=300,H=70,bw=Math.max(4,Math.min(26,Math.floor(W/Math.max(1,ks.length))-3));
+ return`<svg viewBox="0 0 ${W} ${H+16}" style="width:100%;max-width:340px">${ks.slice(0,40).map((k,i)=>{const hh=h[k]/mx*H;return`<rect x="${i*(bw+3)}" y="${H-hh}" width="${bw}" height="${hh}" fill="var(--ac)" rx="2"/><text x="${i*(bw+3)+bw/2}" y="${H+12}" font-size="9" text-anchor="middle" fill="var(--mu)">${k}</text>`}).join("")}</svg>`}
+function dirBlock(res,title,att,tgt){if(!res)return"";const t=res.th,s=res.si,pts=tgt.pts;
+ const lostPts=pts?Math.min(1,t.eff/Math.max(1,t.totalWounds))*pts:null,simLost=pts?s.mean/Math.max(1,t.totalWounds)*pts:null;
+ return`<div class="an-c"><h3>${E(title)}</h3>
+ <p class="mu" style="margin:0 0 6px">Armes utilisées : ${t.sel.length?t.sel.map(E).join(", "):'<span class="an-tag">Aucune arme exploitable</span>'}</p>
+ <b>1 · Dégâts moyens théoriques</b><div class="an-kv"><span>Dégâts bruts</span><b>${n1(t.avg)}</b><span>Dégâts effectifs (perte par excès retirée)</span><b>${n1(Math.min(t.eff,t.totalWounds))} / ${t.totalWounds} PV</b><span>Figurines éliminées (approx.)</span><b>${n1(t.killsApprox)} / ${tgt.models}</b><span>Attaques · touches · blessures</span><b>${n1(t.attacks)} · ${n1(t.hits)} · ${n1(t.wounds)}</b></div>
+ <p style="margin:12px 0 4px"><b>2 · Simulation (${s.n.toLocaleString("fr-FR")} tirages de dés virtuels)</b></p><div class="an-kv"><span>Dégâts moyens</span><b>${n1(s.mean)}</b><span>Médiane · plage 10–90 %</span><b>${n1(s.median)} · ${n1(s.p10)}–${n1(s.p90)}</b><span>Figurines éliminées (moyenne)</span><b>${n1(s.killsMean)}</b><span>Probabilité d'anéantir l'unité</span><b>${pct(s.wipeProb)}</b><span>Pertes attendues</span><b>${pct(s.mean/Math.max(1,t.totalWounds))} des PV${simLost!=null?" · ≈ "+Math.round(simLost)+" pts":""}</b></div>${hist(s.hist,s.n)}<p class="mu" style="margin:0">Nombre de figurines éliminées par tirage (axe horizontal) et fréquence. Sur une petite unité, la simulation est la référence : le calcul théorique ne tient pas compte de la mort de la cible en cours de résolution.</p>
+ <p style="margin:12px 0 4px"><b>3 · Dégâts maximums théoriques</b></p><div class="an-kv"><span>Tous les dés au maximum, aucune sauvegarde</span><b>${n1(t.max)}</b><span>Plafonné aux PV de l'unité</span><b>${n1(t.maxCapped)} / ${t.totalWounds}</b></div>
+ ${(res.pr.notes.length||res.pr.missing.length)?`<details><summary>Données manquantes / hypothèses</summary><ul>${res.pr.missing.map(m=>`<li><span class="an-tag">Donnée manquante</span> ${E(m)}</li>`).join("")}${res.pr.notes.map(m=>`<li>${E(m)}</li>`).join("")}${res.pr.unknownCaps.map(m=>`<li>Aptitude non modélisée (effet ignoré) : ${E(m)}</li>`).join("")}</ul></details>`:""}</div>`}
+function secSim(r){const a=st(),A1=r.PA,B1=r.PB;if(a.u1==null||a.u1>=A1.length)a.u1=0;if(a.u2==null||a.u2>=B1.length)a.u2=0;
+ return`<div class="an-c"><h3>Simuler un affrontement</h3><div class="an-sel"><label>Unité de l'armée 1${unitSel(A1,"u1",a.u1)}</label><label>Unité de l'armée 2${unitSel(B1,"u2",a.u2)}</label></div>
+ <div class="an-sel two" style="margin-top:8px"><label>Phase<select data-ans="mode"><option value="shoot"${a.mode==="shoot"?" selected":""}>Tir</option><option value="melee"${a.mode==="melee"?" selected":""}>Mêlée</option></select></label><label>Tirages<select data-ans="n">${[1000,3000,10000].map(n=>`<option${a.n===n?" selected":""}>${n}</option>`).join("")}</select></label></div>
+ <button class="an-btn" data-an="run">${BUSY?"Calcul en cours…":"Simuler"}</button></div>
+ ${RES&&RES.key===[a.a,a.b,a.u1,a.u2,a.mode,a.n,JSON.stringify(a.ctx)].join("|")?dirBlock(RES.ab,r.names[0]+" ("+A1[a.u1].name+") attaque "+B1[a.u2].name,A1[a.u1],B1[a.u2])+dirBlock(RES.ba,"Riposte : "+r.names[1]+" ("+B1[a.u2].name+") attaque "+A1[a.u1].name,B1[a.u2],A1[a.u1]):'<p class="mu">Choisis deux unités puis lance la simulation.</p>'}`}
+function runSim(){const r=data();if(!r||BUSY)return;const a=st();BUSY=true;draw();
+ setTimeout(()=>{try{const A1=r.PA[a.u1],B1=r.PB[a.u2],one=(att,tgt,seed)=>({th:A.theory(att,tgt,a.mode,a.ctx),si:A.simulate(att,tgt,a.mode,a.ctx,a.n,seed),pr:att});
+  RES={key:[a.a,a.b,a.u1,a.u2,a.mode,a.n,JSON.stringify(a.ctx)].join("|"),ab:one(A1,B1,101),ba:one(B1,A1,202)}}catch(e){RES=null;try{toast("Erreur de calcul : "+e.message)}catch(_){}}BUSY=false;draw()},30)}
+/* ---- match-ups ---- */
+function secMat(r){const a=st(),dir=a.dir==="ba"?"ba":"ab",P=dir==="ab"?r.PA:r.PB,Q=dir==="ab"?r.PB:r.PA,M=dir==="ab"?r.mAB:r.mBA,names=dir==="ab"?[r.names[0],r.names[1]]:[r.names[1],r.names[0]];
+ return`<div class="an-c"><h3>Match-ups entre unités</h3><div class="an-pills" style="margin:0"><button data-an="dir" data-v="ab" class="${dir==="ab"?"on":""}">${E(r.names[0])} attaque</button><button data-an="dir" data-v="ba" class="${dir==="ba"?"on":""}">${E(r.names[1])} attaque</button></div>
+ <p class="mu">Part de chaque unité cible détruite en un tour (tir / mêlée), calcul théorique effectif. Ouvre une unité pour voir toutes ses cibles.</p></div>
+ ${P.map((p,i)=>{const row=Q.map((q,j)=>({j,q,s:M[i][j].fs,m:M[i][j].fm})).sort((x,y)=>Math.max(y.s,y.m)-Math.max(x.s,x.m));const b=row[0];
+  return`<details><summary>${E(p.name)} <span class="mu">— meilleure cible : ${b?E(b.q.name)+" ("+pct(Math.max(b.s,b.m))+")":"—"}</span></summary><table class="an-t"><tr><th>Cible</th><th>Tir</th><th>Mêlée</th></tr>${row.map(x=>`<tr><td>${E(x.q.name)}</td><td>${pct(x.s)}</td><td>${pct(x.m)}</td></tr>`).join("")}</table></details>`}).join("")}`}
+/* ---- recommandations ---- */
+function secRec(r){const A1=r.PA,B1=r.PB,vp=(x)=>x==null?"":" ("+x+" pts)";
+ const li=(a,f)=>a.length?`<ul>${a.map(f).join("")}</ul>`:'<p class="mu">Rien de marquant avec les données importées.</p>';
+ return`<div class="an-c"><h3>Quelle unité contre quelle unité</h3>${li(r.assign.filter(x=>x.best),x=>`<li><b>${E(x.name)}</b> → <b>${E(B1[x.best.j].name)}</b> : détruit ${pct(x.best.f)} (${x.best.type}) ; riposte ${pct(x.best.back)} (${x.best.backType})</li>`)}</div>
+ <div class="an-c"><h3>Cibles prioritaires</h3>${li(r.threats.slice(0,5),t=>`<li><b>${E(t.name)}</b> — menace : ${t.bestHit?pct(t.bestHit.f)+" de "+E(A1[t.bestHit.i].name)+" ("+t.bestHit.type+")":"—"}. Meilleurs pour la neutraliser : ${t.killers.map(k=>E(k.name)+" "+pct(k.f)).join(" · ")}</li>`)}</div>
+ <div class="an-c"><h3>Unités à préserver</h3><p class="mu" style="margin:0">Les plus exposées ou les plus rentables, selon les dégâts adverses concentrés sur elles.</p>${li(r.preserve.slice(0,4),p=>`<li><b>${E(p.name)}</b> — ${pct(p.focus)} détruit sous le feu adverse concentré${p.pts?"":' <span class="an-tag">points manquants</span>'}</li>`)}</div>
+ <div class="an-c"><h3>Unités à éviter d'engager</h3><p class="mu" style="margin:0">Le corps-à-corps adverse y détruit plus que ce qu'elles rendent.</p>${li(r.avoid,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : subit ${pct(x.back)} contre ${pct(x.out)} rendus</li>`)}</div>
+ <div class="an-c"><h3>Meilleur rapport efficacité / coût</h3>${li(r.eff.filter(x=>x.j>=0).slice(0,5),x=>`<li><b>${E(x.name)}</b>${x.per!=null?" — "+n2(x.per)+" pt détruit par pt investi":" — "+pct(x.f)+" de "+E(B1[x.j].name)}${x.pts?vp(x.pts):""}</li>`)}</div>
+ <div class="an-c"><h3>Match-ups favorables</h3>${li(r.favorable,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : ${pct(x.out)} détruit (${x.typeOut}) contre ${pct(x.back)} en retour — rapport ${x.ratio>=99?"∞":n1(x.ratio)}</li>`)}</div>
+ <div class="an-c"><h3>Match-ups défavorables</h3>${li(r.unfavorable,x=>`<li><b>${E(x.a)}</b> contre <b>${E(x.b)}</b> : ${pct(x.out)} détruit contre ${pct(x.back)} subi (${x.typeBack}) — rapport ${n2(x.ratio)}</li>`)}</div>${missingBlock(r)}`}
+/* ---- victoire ---- */
+function secWin(r){const w=r.win,a=st();const ha=Array.isArray(S.ash)?S.ash:[],opp=listOf(a.b)?facOf(listOf(a.b)):"",rel=ha.filter(g=>opp&&g.f2===opp);const hs=rel.length?A.histStats(rel):null;
+ return`<div class="an-c"><h3>Estimation théorique</h3><div class="an-warn"><b>Ce n'est pas un taux de victoire réel.</b> Le modèle compare les deux listes (puissance, objectifs, résistance, mobilité) avec une pondération fixe ; il ignore le déploiement, les décisions, les dés et la mission jouée. Valeur bornée entre 15 % et 85 %.</div>
+ <div class="an-gauge"><i style="width:${w.pA*100}%;background:var(--ac)">${Math.round(w.pA*100)} %</i><i style="width:${w.pB*100}%;background:#e0563f">${Math.round(w.pB*100)} %</i></div>
+ <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--mu)"><span>${E(r.names[0])} (J1)</span><span>${E(r.names[1])} (J2)</span></div></div>
+ <div class="an-c"><h3>Facteurs qui influencent l'estimation</h3><table class="an-t"><tr><th>Facteur</th><th>J1</th><th>J2</th><th>Effet</th></tr>${w.factors.map(f=>`<tr><td>${E(f.k)}<div class="mu" style="font-size:11px">${E(f.txt)} · poids ${Math.round(f.w*100)} %</div></td><td>${f.missing?'<span class="an-tag">manquant</span>':n2(f.a)}</td><td>${f.missing?"—":n2(f.b)}</td><td class="${f.contrib>0.01?"an-g":f.contrib<-0.01?"an-r":""}">${f.missing?"—":(f.contrib>0?"+":"")+n2(f.contrib)}</td></tr>`).join("")}</table>
+ <p class="mu">Effet positif = avantage pour le Joueur 1. Mission : ${listOf(a.a)&&listOf(a.a).mission?E(listOf(a.a).mission):"non renseignée"} (les caractéristiques de mission ne modifient pas encore l'estimation).</p></div>
+ <div class="an-c"><h3>Historique réel contre ${E(opp||"cette faction")}</h3>${hs?`<p>${hs.n} partie(s) : <b class="an-g">${hs.V} victoire(s)</b>, ${hs.D} défaite(s), ${hs.E} égalité(s) — taux de victoire <b>${n1(hs.win)} %</b>. ${hs.n<5?'<span class="an-tag">échantillon trop petit pour conclure</span>':""}</p>`:'<p class="mu">Aucune partie enregistrée contre cette faction. Voir l\'onglet Historique.</p>'}</div>${missingBlock(r)}`}
+/* ---- historique ---- */
+const games=()=>{if(!Array.isArray(S.ash))S.ash=[];return S.ash};
+function donut(V,D,Eq){const n=V+D+Eq;if(!n)return"";const R=40,C=2*Math.PI*R;let off=0;const seg=(v,c)=>{const l=v/n*C,s=`<circle r="${R}" cx="50" cy="50" fill="none" stroke="${c}" stroke-width="16" stroke-dasharray="${l} ${C-l}" stroke-dashoffset="${-off}" transform="rotate(-90 50 50)"/>`;off+=l;return s};
+ return`<svg viewBox="0 0 100 100" style="width:130px;height:130px">${seg(V,"#2e9d6b")}${seg(D,"#d1503b")}${seg(Eq,"#9aa5a0")}<text x="50" y="55" text-anchor="middle" font-size="16" font-weight="800" fill="var(--tx)">${n}</text></svg>`}
+function barsOf(rows){if(!rows.length)return"";return`<div>${rows.slice(0,8).map(x=>`<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${E(x.k)} <span class="mu">(${x.n})</span></span><b>${n1(x.win)} %</b></div><div class="an-bar"><i style="width:${x.win}%"></i></div></div>`).join("")}</div>`}
+function table(rows,first){return rows.length?`<table class="an-t"><tr><th>${first}</th><th>N</th><th>V</th><th>D</th><th>É</th><th>% V</th></tr>${rows.map(x=>`<tr><td>${E(x.k)}</td><td>${x.n}</td><td>${x.V}</td><td>${x.D}</td><td>${x.E}</td><td>${n1(x.win)}</td></tr>`).join("")}</table>`:'<p class="mu">Aucune donnée.</p>'}
+function formVals(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);return Object.assign({d:new Date().toISOString().slice(0,10),f1:LA?facOf(LA):"",f2:LB?facOf(LB):"",l1:LA?LA.name:"",l2:LB?LB.name:"",d1:LA?detOf(LA):"",d2:LB?detOf(LB):"",m:"",s1:"",s2:"",first:""},HFORM)}
+function secHis(){const g=games(),hs=A.histStats(g);
+ const F=formVals();
+ const missions=(window.__ms&&window.__ms.cats?window.__ms.cats():[]).map(c=>c.fr);
+ const fld=(k,l,t,ex)=>`<label>${l}<input data-anf="${k}" type="${t||"text"}" value="${E(F[k])}"${ex||""}></label>`;
+ return`<div class="an-c"><h3>Statistiques</h3>${hs.n?`<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">${donut(hs.V,hs.D,hs.E)}<div class="an-kv" style="flex:1;min-width:190px"><span>Parties</span><b>${hs.n}</b><span class="an-g">Victoires</span><b>${hs.V} · ${n1(hs.win)} %</b><span class="an-r">Défaites</span><b>${hs.D} · ${n1(hs.loss)} %</b><span>Égalités (séparées)</span><b>${hs.E} · ${n1(hs.draw)} %</b><span>Score moyen J1 / J2</span><b>${n1(hs.avg1)} / ${n1(hs.avg2)}</b></div></div><p class="mu">Taux de victoire = victoires ÷ nombre total de parties × 100. Les égalités comptent dans le total et sont présentées à part.</p>`:'<p class="mu">Aucune partie enregistrée. Ajoute ta première partie ci-dessous. Tu es toujours le Joueur 1.</p>'}</div>
+ ${hs.n?`<div class="an-c"><h3>Taux de victoire par adversaire</h3>${barsOf(hs.byOpponent)}</div><div class="an-c"><h3>Par faction jouée</h3>${table(hs.byFaction,"Faction")}<h3 style="margin-top:12px">Par détachement</h3>${table(hs.byDetachment,"Détachement")}<h3 style="margin-top:12px">Contre chaque faction</h3>${table(hs.byOpponent,"Adversaire")}<h3 style="margin-top:12px">Qui commence</h3>${table(hs.byFirst,"Premier joueur")}</div>`:""}
+ <div class="an-c"><h3>Ajouter une partie</h3><div class="an-f"><div class="two">${fld("d","Date","date")}<label>Qui a commencé<select data-anf="first"><option value=""${F.first===""?" selected":""}>Non renseigné</option><option value="1"${F.first==="1"?" selected":""}>Moi (J1)</option><option value="2"${F.first==="2"?" selected":""}>Adversaire (J2)</option></select></label></div>
+ <div class="two">${fld("f1","Ma faction (J1)")}${fld("f2","Faction adverse (J2)")}</div><div class="two">${fld("d1","Mon détachement")}${fld("d2","Détachement adverse")}</div><div class="two">${fld("l1","Ma liste")}${fld("l2","Liste adverse")}</div>
+ <label>Mission<input data-anf="m" list="anml" value="${E(F.m)}"><datalist id="anml">${missions.map(m=>`<option value="${E(m)}">`).join("")}</datalist></label><div class="two">${fld("s1","Mon score (J1)","number",' inputmode="numeric" min="0"')}${fld("s2","Score adverse (J2)","number",' inputmode="numeric" min="0"')}</div>
+ <button class="an-btn" data-an="addg">Enregistrer la partie</button><button class="an-btn s" data-an="impg">Importer mes parties terminées de l'appli</button></div></div>
+ <div class="an-c"><h3>Parties enregistrées (${g.length})</h3>${g.length?g.slice().sort((x,y)=>String(y.d).localeCompare(String(x.d))).map(x=>{const rs=x.res||A.resultOf(+x.s1,+x.s2);return`<details><summary>${E(x.d)} — <b class="${rs==="V"?"an-g":rs==="D"?"an-r":""}">${rs==="V"?"Victoire":rs==="D"?"Défaite":"Égalité"}</b> ${E(x.s1)}–${E(x.s2)} <span class="mu">${E(x.f1)} vs ${E(x.f2)}</span></summary><div class="an-kv"><span>Détachements</span><b>${E(x.d1||"—")} / ${E(x.d2||"—")}</b><span>Listes</span><b>${E(x.l1||"—")} / ${E(x.l2||"—")}</b><span>Mission</span><b>${E(x.m||"—")}</b><span>Commence</span><b>${x.first===1?"Moi":x.first===2?"Adversaire":"—"}</b></div><button class="an-btn s" data-an="delg" data-v="${E(x.id)}">Supprimer cette partie</button></details>`}).join(""):'<p class="mu">Aucune partie.</p>'}</div>`}
+function addGame(){const F=formVals();const s1=parseFloat(F.s1),s2=parseFloat(F.s2);
+ if(!Number.isFinite(s1)||!Number.isFinite(s2)){toast("Renseigne les deux scores");return}
+ games().push({id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),d:F.d||new Date().toISOString().slice(0,10),f1:F.f1||"",f2:F.f2||"",l1:F.l1||"",l2:F.l2||"",d1:F.d1||"",d2:F.d2||"",m:F.m||"",s1,s2,res:A.resultOf(s1,s2),first:F.first===""||F.first==null?0:+F.first});
+ HFORM={};save();toast("Partie enregistrée");draw()}
+function importGames(){let n=0;const have=new Set(games().map(g=>g.src).filter(Boolean));
+ (S.games||[]).filter(x=>x.fin&&x.tot&&!have.has(x.id)).forEach(x=>{const s1=+x.tot[0],s2=+x.tot[1];if(!Number.isFinite(s1)||!Number.isFinite(s2))return;
+  const l1=x.l&&x.l[0],l2=x.l&&x.l[1];games().push({id:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),src:x.id,d:new Date(x.d||Date.now()).toISOString().slice(0,10),f1:(x.f&&x.f[0])||"",f2:(x.f&&x.f[1])||"",l1:(l1&&l1.name)||x.n&&x.n[0]||"",l2:(l2&&l2.name)||x.n&&x.n[1]||"",d1:((l1&&l1.dets||[])[0]||{}).name||"",d2:((l2&&l2.dets||[])[0]||{}).name||"",m:"",s1,s2,res:A.resultOf(s1,s2),first:0});n++});
+ save();toast(n?n+" partie(s) importée(s) (vérifie la mission et le premier joueur)":"Aucune partie terminée à importer");draw()}
+/* ---- rendu ---- */
+function body(){const a=st();let h=css+hdr(a);const L=lists();
+ if(a.sec==="his")return h+secHis()+"</div>";
+ const r=data();
+ if(!r)return h+`<div class="an-warn">Choisis deux listes contenant des unités pour lancer l'analyse.${L.length<2?"":""}</div></div>`;
+ const f={cmp:secCmp,sim:secSim,mat:secMat,rec:secRec,win:secWin}[a.sec]||secCmp;
+ return h+f(r)+"</div>"}
+window.XV=window.XV||{};window.XV.ana=()=>{try{return body()}catch(e){return`<div class="card"><b>Erreur dans Analyse &amp; Simulation</b><p class="mu">${E(e&&e.message)}</p></div>`}};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-an]");if(!b||!document.querySelector(".an"))return;const k=b.dataset.an,a=st();
+ if(k==="sec"){a.sec=b.dataset.v;RES=RES;save();draw();window.scrollTo(0,0);return}
+ if(k==="dir"){a.dir=b.dataset.v;draw();return}if(k==="run"){runSim();return}if(k==="addg"){addGame();return}if(k==="impg"){importGames();return}
+ if(k==="delg"){S.ash=games().filter(x=>x.id!==b.dataset.v);save();draw();return}});
+document.addEventListener("change",e=>{const t=e.target;if(!t.closest||!t.closest(".an"))return;const a=st();
+ if(t.dataset.ans){const k=t.dataset.ans;a[k]=["u1","u2","n"].includes(k)?+t.value:t.value;if(k==="a"||k==="b"){a.u1=a.u2=0}save();draw();return}
+ if(t.dataset.anac){a.ctx[t.dataset.anac]=t.checked;save();draw();return}
+ if(t.dataset.anf){HFORM[t.dataset.anf]=t.value}});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.anf&&t.closest&&t.closest(".an"))HFORM[t.dataset.anf]=t.value});
+window.ANAUI={data,runSim,addGame,importGames,state:st,_res:()=>RES};
+})();
+
+</script>
 </body></html>
