@@ -20,7 +20,7 @@ function data(){const a=st(),LA=listOf(a.a),LB=listOf(a.b);if(!LA||!LB||!(LA.uni
 const css=`<style id="anacss">
 .an h2{margin:0 0 6px;font-family:var(--fs,inherit)}.an .mu{color:var(--mu);font-size:13px}
 .an-pills{display:flex;gap:6px;overflow-x:auto;margin:10px 0;padding-bottom:4px}.an-pills button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}.an-pills button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
-.an-c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}.an-c h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.an-c{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}.an-c h3{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}.an-bil{border-width:2px;border-color:var(--ac)}.an-big{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}.an-big b{display:block;font-size:34px;line-height:1.1}.an-big small{font-size:16px;color:var(--mu)}.an-big span{font-size:12px;color:var(--mu)}
 .an-sel{display:grid;grid-template-columns:1fr;gap:8px}.an-sel.two{grid-template-columns:1fr 1fr}.an-sel label{display:block;font-size:12px;color:var(--mu)}.an-sel select{width:100%;min-height:44px;margin-top:3px}
 .an-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.an-row:first-of-type{border-top:0}.an-row b{font-size:15px}.an-row .l{text-align:right}.an-row .k{font-size:12px;color:var(--mu);text-align:center;max-width:110px}
 .an-bar{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin-top:3px}.an-bar i{display:block;height:100%;background:var(--ac)}.an-bar.rb i{background:#e0563f}
@@ -140,6 +140,11 @@ function modeBlock(label,icon,m,nT,def){if(!m)return`<div class="an-mode off"><d
  :`<div class="an-kp"><span class="l">Chance de toucher</span><b>${Math.round(m.hit*100)} %</b></div><div class="an-kp"><span class="l">PV retirés</span><b>${n1(m.mean)}</b><small>80 % des cas : ${n1(m.p10)} à ${n1(m.p90)}</small></div><div class="an-kp"><span class="l">Figurine(s) tuée(s) sur ${nT}</span><b>${n1(m.kills)}</b><small>${wipe} % de tout détruire</small></div>`}</div></div>`}
 function banner(kind,n,name,sub,badges){return`<div class="an-ban ${kind}"><div class="t">${kind==="def"?"🛡 Défenseur":"⚔ Attaquant"}</div><b>${n} × ${E(name)}</b>${sub?`<div class="mu" style="margin-top:2px">${sub}</div>`:""}${badges?`<div class="an-badges">${badges}</div>`:""}</div>`}
 function badgesOf(d){return`<span>E ${d.E==null?"?":d.E}</span><span>Sv ${d.sv?d.sv+"+":"—"}</span>${d.inv?`<span>Inv ${d.inv}++</span>`:""}<span>${d.PV} PV</span>${d.fnp?`<span>FNP ${d.fnp}+</span>`:""}`}
+function bilan(g,tname,nT,lab){const s=g.modes.shoot,m=g.modes.melee,pv=g.totalWounds||0,ts=s?s.effCap:0,tm=m?m.effCap:0;let tot=ts+tm;if(pv>0)tot=Math.min(tot,pv);
+ const ks=s?s.kills:0,km=m?m.kills:0,kills=Math.min(nT,Math.round((ks+km)*10)/10),pc=pv>0?Math.round(tot/pv*100):0;
+ const f1=x=>(Math.round(x*10)/10).toString().replace(".",",");
+ return`<div class="an-c an-bil"><h3>Bilan · ${E(tname)} ${E(lab)}</h3><div class="an-big"><div><b>${f1(tot)}</b><span>PV de dégâts<br>en moyenne</span></div><div><b>${f1(kills)}<small> / ${nT}</small></b><span>figurine${nT>1?"s":""} tuée${kills>=2?"s":""}</span></div></div>
+ <div class="an-leg">Tir ${f1(ts)} PV + Mêlée ${f1(tm)} PV = ${f1(Math.min(ts+tm,pv||ts+tm))} PV${pv>0?` sur ${pv} PV au total (${Math.min(100,pc)} %)`:""}. Les deux phases sont additionnées pour donner un ordre de grandeur : en vrai, les figurines déjà tuées au tir ne peuvent plus être tuées en mêlée.</div></div>`}
 function secDuel(r){const a=st(),FA=A.figures(r.PA),FB=A.figures(r.PB),nm=r.names;
  if(a.fa==null||a.fa>=FA.length)a.fa=0;if(a.fb==null||a.fb>=FB.length)a.fb=0;const fa=FA[a.fa],fb=FB[a.fb];
  const sel=(F,key,val)=>`<select data-ans="${key}">${F.map((f,i)=>`<option value="${i}"${i===val?" selected":""}>${E(f.name)}${f.n>1?" ×"+f.n:""}</option>`).join("")}</select>`;
@@ -158,6 +163,8 @@ function secDuel(r){const a=st(),FA=A.figures(r.PA),FB=A.figures(r.PB),nm=r.name
   banner("def",a.nb,fb.name,"subit les armes de "+E(fa.name)+" (×"+a.na+")",badgesOf(g1.def))+modeBlock("TIR","⌖",g1.modes.shoot,a.nb,true)+modeBlock("MÊLÉE","⚔",g1.modes.melee,a.nb,true)
   +`<h3 style="margin:16px 4px 0;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)">Sa riposte</h3>`+banner("att",a.nb,fb.name,"riposte contre "+a.na+" × "+E(fa.name),"")+modeBlock("TIR","⌖",g2.modes.shoot,a.na,false)+modeBlock("MÊLÉE","⚔",g2.modes.melee,a.na,false)
  :banner("att",a.na,fa.name,"attaque "+a.nb+" × "+E(fb.name),"")+modeBlock("TIR","⌖",g1.modes.shoot,a.nb,false)+modeBlock("MÊLÉE","⚔",g1.modes.melee,a.nb,false)}
+ ${a.dt==="def"?bilan(g1,fb.name,a.nb,"subit ("+a.na+" × "+fa.name+")")+bilan(g2,fa.name,a.na,"subit en riposte")
+  :bilan(g1,fb.name,a.nb,"subit ("+a.na+" × "+fa.name+")")}
  ${(()=>{try{const LA=listOf(a.a),LB=listOf(a.b),uA=LA.units[fa.ui],uB=LB.units[fb.ui],T=window.TRKUI;return T&&T.realBlock&&uA&&uB?T.realBlock(uA,facOf(LA),uB,facOf(LB))+T.realBlock(uB,facOf(LB),uA,facOf(LA)):""}catch(e){return""}})()}
  <div class="an-c"><h3>${E(fa.name)} contre toutes les cibles</h3><div class="an-th"><span>Cible</span><span>Touche</span><span>Inflige</span><span>Reçoit</span></div>
  ${rows.map(x=>`<button class="an-tr${x.j===a.fb?" on":""}" data-an="pickb" data-v="${x.j}"><span class="nm">${figLabel(x.f)}<small>${x.mode} · riposte ${x.bmode}</small></span><span>${Math.round(x.hit*100)} %</span><b style="color:${tone(x.out,x.back)}">${n1(x.out)} PV</b><span>${n1(x.back)} PV</span></button>`).join("")}
