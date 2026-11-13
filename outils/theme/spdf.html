@@ -17,6 +17,8 @@
 #spd .ft .b{flex:1;min-height:48px;font-weight:700}
 #spd .pr{height:8px;border-radius:5px;background:var(--bd);overflow:hidden;margin:10px 0}#spd .pr i{display:block;height:100%;background:var(--ac);width:0;transition:width .2s}
 #spd .mu{color:var(--mu);font-size:13px}
+#spd .rc{display:block;margin-top:6px;font-size:12.5px;color:var(--mu)}#spd .rc select{max-width:100%;min-height:38px;margin:2px 6px 2px 0}#spd .rc.q select{border-color:#e08a2c}
+#spd .dst{margin:10px 0;padding:10px;border:1px dashed var(--ac);border-radius:12px}#spd .dst b{display:block;font-size:13px;margin-bottom:6px}#spd .dst select,#spd .dst input{width:100%;min-height:42px;margin-top:4px}
 #spdcard{margin:12px 0}
 #spdcard .b{width:100%;min-height:52px;font-weight:700}
 </style>
@@ -93,7 +95,7 @@ async function pageImage(doc,n){const pg=await doc.getPage(n),vp=pg.getViewport(
  await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;return c.toDataURL("image/jpeg",.82)}
 /* ---------- 7. fenêtre ---------- */
 let ST=null;
-const root=()=>{let o=document.getElementById("spd");if(!o){o=document.createElement("div");o.id="spd";o.setAttribute("role","dialog");document.body.appendChild(o);o.addEventListener("click",onClick);o.addEventListener("change",e=>{if(e.target.matches&&e.target.matches("[data-s]"))count()})}return o};
+const root=()=>{let o=document.getElementById("spd");if(!o){o=document.createElement("div");o.id="spd";o.setAttribute("role","dialog");document.body.appendChild(o);o.addEventListener("click",onClick);o.addEventListener("change",e=>{if(e.target.matches&&e.target.matches("[data-s]"))count();sync()})}return o};
 const close=()=>{const o=document.getElementById("spd");if(o)o.remove();ST=null};
 const shell=(h)=>{root().innerHTML=`<div class="sh">${h}</div>`};
 const TOP=(t,s)=>`<div class="top"><div><h2>${t}</h2>${s?`<p class="mu" style="margin:0">${s}</p>`:""}</div><button class="sx0" data-s="x" aria-label="Fermer">✕</button></div>`;
@@ -103,34 +105,51 @@ function start(){shell(TOP("Importer un PDF","Choisis un PDF officiel (Règles d
   try{const r=await readPages(f,(n,t)=>{const p=document.getElementById("spdp"),x=document.getElementById("spdt");if(p)p.style.width=Math.round(n/t*100)+"%";if(x)x.textContent="Page "+n+" / "+t})
    ST={file:f.name,doc:r.doc,res:analyse(f.name,r.pages)};review()}
   catch(er){shell(TOP("Lecture impossible","Le PDF n'a pas pu être lu ("+esc(er&&er.message==="lib"?"lecteur indisponible : connexion nécessaire la première fois":er&&er.message||er)+").")+`<div class="ft"><button class="b p" data-s="x">Fermer</button></div>`)}}}
-function review(){const R=ST.res,n0=R.rules.nv.length,m0=R.rules.md.length,L=R.lay.filter(x=>!x.have),C=R.cards;
- const rule=(x,i,k)=>`<label class="it"><input type="checkbox" data-s="${k}" data-i="${i}" checked><span class="tx"><b>${esc(x.title)}${k==="md"?'<span class="bd m">modifiée</span>':'<span class="bd">nouvelle</span>'}</b><small>${x.ref?"§ "+esc(x.ref)+" · ":""}page ${x.pg}</small><p>${esc(x.def)}</p>${k==="md"&&x.old?`<details><summary>Voir l'ancienne version</summary><p>${esc(x.old)}</p></details>`:""}</span></label>`;
+const DEFC=[["kw",/mots?[- ]cles?/],["det",/detachement/],["terr",/terrain|ruine|couvert|obstacle|decor/],["arm",/\b(arme|armes|equipement|portee|pistolet|torrent|lourde|assaut|tir rapide|devastateur)\b/],["fac",/aptitudes? de faction|regle de faction/],["apt",/aptitude/],["unit",/\b(unite|escouade|fiche technique)\b/]];
+function guessCat(x){const ti=nk(x.title),hits=DEFC.filter(([,re])=>re.test(ti)).map(h=>h[0]);
+ if(hits.length===1)return{c:hits[0],ok:true};if(!hits.length&&x.ref)return{c:"gen",ok:true};
+ const tx=nk(x.text.slice(0,300)),h2=DEFC.filter(([,re])=>re.test(tx)).map(h=>h[0]);return{c:h2.length===1?h2[0]:"",ok:false}}
+const GRP=[["e","Élimination"],["c","Contrôle du champ de bataille"],["a","Action"]];
+function guessGrp(x){const t=nk(x.title+" "+x.d+" "+x.lines.map(l=>l.tx).join(" "));const h=[/action|accomplir|entreprendre/.test(t)?"a":"",/controle|objectif|zone/.test(t)?"c":"",/detruire|detruit|elimin|ennemi/.test(t)?"e":""].filter(Boolean);return h.length===1?{c:h[0],ok:true}:{c:h[0]||"",ok:false}}
+const opts=(a,sel,blank)=>(blank?`<option value=""${sel?"":" selected"}>— à choisir —</option>`:"")+a.map(([v,n])=>`<option value="${esc(v)}"${v===sel?" selected":""}>${esc(n)}</option>`).join("");
+const folderBlock=(kind,label,dflt)=>{const fs=(window.__mxFolders?window.__mxFolders():[]).filter(f=>f.k===kind);
+ return`<div class="dst"><b>${label}</b><select data-d="${kind}"><option value="__new">➕ Nouveau dossier sur mesure…</option>${fs.map(f=>`<option value="${esc(f.id)}">${esc(f.nm)} (${f.n})</option>`).join("")}</select><input data-dn="${kind}" value="${esc(dflt)}" placeholder="Nom du nouveau dossier"></div>`};
+function review(){const R=ST.res,n0=R.rules.nv.length,m0=R.rules.md.length,L=R.lay.filter(x=>!x.have),C=R.cards,CT=window.encApi&&window.encApi.cats?window.encApi.cats().map(c=>[c[0],c[2]+" "+c[1]]):[],MC=(window.__ms&&window.__ms.cats?window.__ms.cats():[]).map(c=>[c.id,c.fr]),day=new Date().toISOString().slice(0,10);
+ R.rules.nv.forEach(x=>{x.g=guessCat(x)});C.forEach(x=>{x.gg=guessGrp(x)});
+ const tgl=k=>`<button class="b" style="min-height:30px;padding:2px 10px;font-size:12px;margin-left:6px;text-transform:none;letter-spacing:0" data-s="tg" data-k="${k}">Tout cocher / décocher</button>`;
+ const rule=(x,i,k)=>`<label class="it"><input type="checkbox" data-s="${k}" data-i="${i}" checked><span class="tx"><b>${esc(x.title)}${k==="md"?'<span class="bd m">modifiée</span>':'<span class="bd">nouvelle</span>'}</b><small>${x.ref?"§ "+esc(x.ref)+" · ":""}page ${x.pg}</small><p>${esc(x.def)}</p>${k==="md"&&x.old?`<details><summary>Voir l'ancienne version</summary><p>${esc(x.old)}</p></details>`:""}${k==="nv"?`<span class="rc${x.g.ok?"":" q"}">Rangée dans <select data-rc="${i}">${opts(CT,x.g.c,true)}</select>${x.g.ok?"":'<span class="bd m">à confirmer</span>'}</span>`:""}</span></label>`;
  shell(TOP("Ce que j'ai trouvé",`${esc(ST.file)} · ${R.pages} page${R.pages>1?"s":""}`)
   +(R.full&&!R.rules.nv.length&&!R.rules.md.length&&!R.lay.length&&!C.length?`<p class="mu">Rien de nouveau : ${R.rules.same} règle(s) déjà connue(s). Ce document est enregistré comme référence : la prochaine version sera comparée à celle-ci.</p>`:"")
-  +(n0?`<h3>Règles nouvelles (${n0}) <button class="b" style="min-height:30px;padding:2px 10px;font-size:12px;margin-left:6px;text-transform:none;letter-spacing:0" data-s="tg" data-k="nv">Tout cocher / décocher</button></h3>${R.rules.nv.map((x,i)=>rule(x,i,"nv")).join("")}`:"")
-  +(m0?`<h3>Règles modifiées (${m0}) <button class="b" style="min-height:30px;padding:2px 10px;font-size:12px;margin-left:6px;text-transform:none;letter-spacing:0" data-s="tg" data-k="md">Tout cocher / décocher</button></h3>${R.rules.md.map((x,i)=>rule(x,i,"md")).join("")}`:"")
-  +(L.length?`<h3>Layouts nouveaux (${L.length})</h3>${L.map((x,i)=>`<label class="it"><input type="checkbox" data-s="ly" data-i="${R.lay.indexOf(x)}" checked><span class="tx"><b>${esc(x.a.fr)} vs ${esc(x.b.fr)} — Agencement ${x.l}<span class="bd">nouveau</span></b><small>page ${x.pg} · l'image de la page sera enregistrée</small></span></label>`).join("")}`:"")
+  +(n0?`<h3>Règles nouvelles (${n0}) ${tgl("nv")}</h3>${R.rules.nv.map((x,i)=>rule(x,i,"nv")).join("")}`:"")
+  +(m0?`<h3>Règles modifiées (${m0}) ${tgl("md")}</h3><p class="mu">Elles restent à leur place actuelle.</p>${R.rules.md.map((x,i)=>rule(x,i,"md")).join("")}`:"")
+  +(L.length?`<h3>Layouts nouveaux (${L.length}) ${tgl("ly")}</h3>${L.map(x=>`<label class="it"><input type="checkbox" data-s="ly" data-i="${R.lay.indexOf(x)}" checked><span class="tx"><b>${esc(x.a.fr)} vs ${esc(x.b.fr)} — Agencement ${x.l}<span class="bd">nouveau</span></b><small>page ${x.pg} · l'image de la page sera enregistrée</small></span></label>`).join("")}${folderBlock("lay","Ranger les layouts dans","Layouts PDF "+day)}`:"")
   +(R.lay.length&&!L.length?`<p class="mu">${R.lay.length} layout(s) reconnu(s), tous déjà présents.</p>`:"")
-  +(C.length?`<h3>Cartes de mission à vérifier (${C.length})</h3>${C.map((x,i)=>`<label class="it"><input type="checkbox" data-s="cd" data-i="${i}"><span class="tx"><b>${esc(x.title)}<span class="bd m">${x.kind==="sec"?"secondaire":"primaire"}</span></b><small>page ${x.pg} · ${x.lines.map(l=>l.pts+" PdV").join(" · ")}</small><p>${esc(x.d)}</p></span></label>`).join("")}<p class="mu">Analyse automatique prudente : relis les points après l'ajout.</p>`:"")
+  +(C.length?`<h3>Cartes de mission (${C.length})</h3>${C.map((x,i)=>`<label class="it"><input type="checkbox" data-s="cd" data-i="${i}"><span class="tx"><b>${esc(x.title)}</b><small>page ${x.pg} · ${x.lines.map(l=>l.pts+" PdV").join(" · ")}</small><p>${esc(x.d)}</p><span class="rc q">Type <select data-ct="${i}"><option value="sec"${x.kind==="sec"?" selected":""}>Secondaire</option><option value="pri"${x.kind==="pri"?" selected":""}>Primaire</option></select> <span data-gw="${i}">Groupe <select data-cg="${i}">${opts(GRP,x.gg.c,true)}</select></span> <span data-cw="${i}" hidden>Catégorie <select data-cc="${i}">${opts(MC,"",true)}</select></span>${x.gg.ok&&x.kind==="sec"?"":'<span class="bd m">à confirmer</span>'}</span></span></label>`).join("")}${folderBlock("sec","Secondaires : ranger dans","Secondaires PDF "+day)}${folderBlock("pri","Primaires : ranger dans","Primaires PDF "+day)}<p class="mu">Analyse automatique prudente : relis les points après l'ajout.</p>`:"")
   +(R.event?`<p class="mu">Document de type « Compagnon de rencontre » : je cherche les layouts et les cartes de mission, pas les règles.</p>`:"")
   +(!n0&&!m0&&!L.length&&!C.length&&!(R.full&&!R.rules.nv.length)?`<p class="mu">Je n'ai rien reconnu de nouveau dans ce document (${R.sections} section(s) lues).</p>`:"")
-  +`<div class="ft"><button class="b" data-s="x">Fermer</button><button class="b p" data-s="go" id="spdgo">Ajouter</button></div>`);count()}
+  +`<p class="mu" id="spderr" style="color:#c0392b" hidden></p><div class="ft"><button class="b" data-s="x">Fermer</button><button class="b p" data-s="go" id="spdgo">Ajouter</button></div>`);count();sync()}
+function sync(){const o=document.getElementById("spd");if(!o)return;
+ o.querySelectorAll("[data-d]").forEach(s=>{const n=o.querySelector(`[data-dn="${s.dataset.d}"]`);if(n)n.style.display=s.value==="__new"?"":"none"});
+ o.querySelectorAll("[data-ct]").forEach(s=>{const i=s.dataset.ct,sec=s.value==="sec",g=o.querySelector(`[data-gw="${i}"]`),c=o.querySelector(`[data-cw="${i}"]`);if(g)g.hidden=!sec;if(c)c.hidden=sec})}
 function count(){const o=document.getElementById("spd");if(!o)return;const n=o.querySelectorAll("input[data-s]:checked").length,b=document.getElementById("spdgo");if(b){b.textContent=n?`Ajouter (${n})`:"Terminer";}}
 async function apply(){const o=document.getElementById("spd"),R=ST.res,api=window.encApi,sel=k=>[...o.querySelectorAll(`input[data-s="${k}"]:checked`)].map(x=>+x.dataset.i);
+ const q=s=>o.querySelector(s),err=m=>{const e=document.getElementById("spderr");if(e){e.textContent=m;e.hidden=false}const b=document.getElementById("spdgo");if(b)b.disabled=false};
+ // en cas de doute : on demande
+ for(const i of sel("nv")){if(!q(`[data-rc="${i}"]`).value){q(`[data-rc="${i}"]`).scrollIntoView({block:"center"});return err("Choisis où ranger les règles marquées « à choisir » (ou décoche-les).")}}
+ for(const i of sel("cd")){const t=q(`[data-ct="${i}"]`).value;if(t==="sec"&&!q(`[data-cg="${i}"]`).value||t==="pri"&&!q(`[data-cc="${i}"]`).value){q(`[data-ct="${i}"]`).scrollIntoView({block:"center"});return err("Choisis le groupe (secondaire) ou la catégorie (primaire) des cartes cochées.")}}
+ const dest=k=>{const s=q(`[data-d="${k}"]`);if(!s)return{name:"PDF",id:""};if(s.value==="__new")return{name:(q(`[data-dn="${k}"]`).value||"").trim()||("PDF "+day),id:""};return{name:"",id:s.value}};
  const day=new Date().toISOString().slice(0,10),src=f=>"PDF importé : "+ST.file+" (p."+f.pg+")";let nr=0,nm=0,nl=0,nc=0;
  S.spdf=S.spdf&&typeof S.spdf==="object"?S.spdf:{h:{},log:[]};S.spdf.h=S.spdf.h||{};
- sel("nv").forEach(i=>{const x=R.rules.nv[i];api.addRule({n:x.title,al:[],cat:"gen",fac:"",def:x.def,how:x.how,cond:"",rest:"",src:src(x),url:"",v:"Import "+day,st:"new"});nr++});
+ sel("nv").forEach(i=>{const x=R.rules.nv[i];api.addRule({n:x.title,al:[],cat:q(`[data-rc="${i}"]`).value,fac:"",def:x.def,how:x.how,cond:"",rest:"",src:src(x),url:"",v:"Import "+day,st:"new"});nr++});
  sel("md").forEach(i=>{const x=R.rules.md[i];api.setRule(x.id,{def:x.def,how:x.how,src:src(x),st:"new",v:"Import "+day});nm++});
- // mémoriser une référence pour toutes les sections lues (comparaison à la prochaine version)
  R.rules.nv.concat(R.rules.md).forEach(x=>{S.spdf.h[x.key]=x.h});
- if(sel("ly").length||sel("cd").length){const T=document.getElementById("spd").querySelector(".sh");
-  if(window.__mxAdd){
-   const fname="PDF "+day;
-   for(const i of sel("ly")){const x=R.lay[i];let img="";try{img=await pageImage(ST.doc,x.pg)}catch(e){}
-    window.__mxAdd("lay",{nm:x.a.fr+" vs "+x.b.fr+" — Agencement "+x.l,note:"Importé de "+ST.file+" (p."+x.pg+")",ck:[x.a.id,x.b.id].sort().join("__")},fname,img);nl++}
-   for(const i of sel("cd")){const x=R.cards[i];
-    if(x.kind==="sec")window.__mxAdd("sec",{nm:x.title,g:"c",d:x.d,tx:x.lines.map(l=>l.tx).join("\n"),k:"chk",pts:Math.max(...x.lines.map(l=>l.pts))},fname);
-    else window.__mxAdd("pri",{nm:x.title,cat:"",d:x.d,lines:x.lines.map(l=>({tx:l.tx,pts:l.pts,k:l.k,mo:"tour"}))},fname);nc++}}}
+ if((sel("ly").length||sel("cd").length)&&window.__mxAdd){
+  const dl=dest("lay"),ds=dest("sec"),dp=dest("pri");
+  for(const i of sel("ly")){const x=R.lay[i];let img="";try{img=await pageImage(ST.doc,x.pg)}catch(e){}
+   window.__mxAdd("lay",{nm:x.a.fr+" vs "+x.b.fr+" — Agencement "+x.l,note:"Importé de "+ST.file+" (p."+x.pg+")",ck:[x.a.id,x.b.id].sort().join("__")},dl.name,img,dl.id);nl++}
+  for(const i of sel("cd")){const x=R.cards[i],t=q(`[data-ct="${i}"]`).value;
+   if(t==="sec")window.__mxAdd("sec",{nm:x.title,g:q(`[data-cg="${i}"]`).value,d:x.d,tx:x.lines.map(l=>l.tx).join("\n"),k:"chk",pts:Math.max(...x.lines.map(l=>l.pts))},ds.name,"",ds.id);
+   else window.__mxAdd("pri",{nm:x.title,cat:q(`[data-cc="${i}"]`).value,d:x.d,lines:x.lines.map(l=>({tx:l.tx,pts:l.pts,k:l.k,mo:"tour"}))},dp.name,"",dp.id);nc++}}
  S.spdf.log=(S.spdf.log||[]).concat([{d:day,f:ST.file,r:nr,m:nm,l:nl,c:nc}]).slice(-20);
  try{if(api&&api.commit)api.commit();else save()}catch(e){try{save()}catch(_){}}try{draw()}catch(e){}
  const out=[nr?nr+" règle(s) ajoutée(s)":"",nm?nm+" règle(s) mise(s) à jour":"",nl?nl+" layout(s)":"",nc?nc+" carte(s)":""].filter(Boolean).join(" · ")||"Référence enregistrée";
