@@ -53,8 +53,8 @@ function sections(pages,lines){const V=vocab(pages),all=lines;
  all.forEach(l=>{const head=isCaps(l.t)&&l.t.length<=60&&!/[.;,]$/.test(l.t)&&l.f!==body&&!/^\d+$/.test(l.t);
   if(head){if(cur&&!cur.body.length&&l.pg===cur.pg&&l.col===cur.col&&Math.abs(cur.lastY-l.y)<l.h*2.2){cur.title+=" "+l.t;cur.lastY=l.y}else{cur={title:l.t,pg:l.pg,col:l.col,body:[],lastY:l.y};out.push(cur)}}
   else if(cur)cur.body.push(l.t)});
- return out.map(s=>{let t=s.title.replace(/\s+/g," ").trim(),ref="";const m=/(\d{2}\.\d{2})\s*$/.exec(t)||/^(\d{2}\.\d{2})\s/.exec(t);if(m){ref=m[1];t=t.replace(m[1],"").trim()}t=t.replace(/^[\d�]+\s*/,"");
-  return{title:fixTitle(t,V),ref,pg:s.pg,text:s.body.join(" ").replace(/\s+/g," ").trim()}}).filter(s=>s.text.length>25&&s.title.length>2&&s.title.length<=60&&!/[�▪►]/.test(s.title)&&!/^(MISES? À JOUR|ERRATA|FAQ|INTRODUCTION|SOMMAIRE|QUOI DE NEUF|NOTES? DE CONCEPTION)\b/i.test(s.title)&&!/^\d/.test(s.title))}
+ return out.map(s=>{let t=s.title.replace(/\s+/g," ").trim(),ref="";const m=/(\d{2}\.\d{2})\s*$/.exec(t)||/^(\d{2}\.\d{2})\s/.exec(t);if(m){ref=m[1];t=t.replace(m[1],"").trim()}t=t.replace(/^[\d\uFFFD]+\s*/,"");
+  return{title:fixTitle(t,V),ref,pg:s.pg,text:s.body.join(" ").replace(/\s+/g," ").trim()}}).filter(s=>s.text.length>25&&s.title.length>2&&s.title.length<=60&&!/[\uFFFD▪►]/.test(s.title)&&!/^(MISES? À JOUR|ERRATA|FAQ|INTRODUCTION|SOMMAIRE|QUOI DE NEUF|NOTES? DE CONCEPTION)\b/i.test(s.title)&&!/^\d/.test(s.title))}
 const cap1=t=>t.charAt(0)+t.slice(1).toLowerCase();
 const sent=t=>t.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý“«(▪])/).filter(Boolean);
 function excerpt(text){const ss=sent(text);let d="",i=0;while(i<ss.length&&(d+ss[i]).length<=330){d+=(d?" ":"")+ss[i];i++}if(!d)d=text.slice(0,330);
