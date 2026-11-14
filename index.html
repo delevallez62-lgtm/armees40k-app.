@@ -169,6 +169,10 @@ details.op{margin-top:8px;border:1px solid #d9a93a;background:rgba(240,190,60,.1
 .mzlh b{font-size:17px;line-height:1.15;flex:1;text-transform:uppercase;letter-spacing:.3px}
 .mzlt{background:#fff;color:#b5651a;font-weight:800;font-size:11px;letter-spacing:.8px;text-transform:uppercase;padding:3px 9px;border-radius:999px;flex:none}
 #sy{font-size:11px;font-weight:600;margin-left:8px;opacity:.55;cursor:pointer;vertical-align:middle;padding:2px 4px}#sy[data-s=err]{opacity:1;color:#c0392b}#sy[data-s=run]{opacity:.8}
+.abw{border:1px solid #d9a93a;background:rgba(240,190,60,.14);border-radius:10px;padding:8px 12px;margin:10px 0}.abw ul,.abwl{margin:4px 0 8px;padding-left:18px;font-size:13px}.abfx{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:10px 0}.abfi{display:flex;flex-direction:column;border-top:1px solid var(--bd);padding:5px 0;font-size:13px}.abfi span{color:var(--mu)}.abfi.no b{color:#c07a00}.abfh{font-size:12px;color:var(--mu);margin:6px 0}
+.mdls{margin:8px 0 4px}.mdl{margin:3px 0;padding:5px 10px;border-left:3px solid var(--ac);background:var(--bg);border-radius:8px;font-size:13px}.mdl small{display:block;color:var(--mu);font-size:12px}
+.cfba .bx{cursor:pointer;-webkit-tap-highlight-color:transparent}.cfba .bx.pick{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}.cfba .bx.off{opacity:.42}.cfb2{display:flex;justify-content:center;margin:8px 0 2px}.cfb2 .b{min-height:42px}
+.dtog{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--tx);margin:0 0 6px}.dtog input{width:20px;height:20px}.card.doff>.row,.card.doff>p{opacity:.5}
 /* ===== Missions & préparation de bataille ===== */
 .ml,.gph{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:700;margin:12px 0 4px}
 .mpk{display:grid}.mo{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:9px 11px;margin:5px 0;cursor:pointer}
@@ -1158,7 +1162,7 @@ button.hfov-l:active{background:rgba(120,80,20,.18)}
 <input type="file" id="file" accept="image/*" hidden>
 <script>
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const K=["M","E","SV","PV","CD","CO"],FOOT=/©\s*\d{4}\s*https?:\/\/\S+/g,CATS=/^(Héros épiques|Bêtes|Montés|Véhicules|Infanterie|Monstres|Personnages|Titanesques)$/i,
+const K=["M","E","SV","PV","CD","CO"],FOOT=/©\s*\d{4}\s*https?:\/\/\S+/g,CATS=/^(Héros épiques|Bêtes|Montés|Véhicules|Infanterie|Monstres|Personnages|Titanesques|Ligne|Transports? dédiés?|Fortifications?|Alliés|Unités alliées|Autres)$/i,
 STAT=/^M\s+E\s+SV\s+PV\s+CD\s+CO$/,PC=/^(\d+)\s*PC$/,SUB=/^(Meneur|Appui)\s*:\s*(.+)$/,HD=/^[^\d:]{2,30}\s-(\s|$)/,
 RW=/^(.*?)\s*(Mêlée|\d+)\s+(\S+)\s+(\d\+|-)\s+(\S+)\s+(-?\d+)\s+(\S+)(?:\s+(.*))?$/;
 let S={lists:[],cur:null},tab="home",ed=null,edit=false;
@@ -1251,9 +1255,9 @@ const SYS={w40k:{id:"w40k",name:"Warhammer 40 000",ed:"V11",missions:[
  {id:"priority-assets",fr:"Atouts prioritaires",en:"Priority Assets",ic:"📦",d:"Marque en sécurisant, récupérant ou sabotant des atouts stratégiques et en menant des opérations."}]}};
 const misL=g=>(SYS[g||"w40k"]||SYS.w40k).missions,misG=(id,g)=>misL(g).find(m=>m.id===id)||null,misTag=(id,g)=>{const m=misG(id,g);return m?m.ic+" "+m.fr:""};
 const misPick=(sel,t,full,g)=>`<div class="mpk" data-mt="${t}" data-sys="${g||"w40k"}">${misL(g).map(m=>`<button type="button" class="mo${m.id===sel?" on":""}" data-m="${m.id}" aria-pressed="${m.id===sel}"><span class="mi">${m.ic}</span><span class="mt"><b>${esc(m.fr)}</b> <small>${esc(m.en)}</small>${full||m.id===sel?`<span class="md">${esc(m.d)}</span>`:""}</span></button>`).join("")}</div>`;
-const cl=()=>S.lists.find(l=>l.id===S.cur),rid=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),clone=o=>o===undefined?o:JSON.parse(JSON.stringify(o)),im=u=>S.imgs[u.ref]||"",SH=["name","stats","weapons","equip","apt","kw","fkw","text","xab"];
+const cl=()=>S.lists.find(l=>l.id===S.cur),rid=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),clone=o=>o===undefined?o:JSON.parse(JSON.stringify(o)),im=u=>S.imgs[u.ref]||"",SH=["name","stats","weapons","equip","apt","kw","fkw","text","xab","mdl"];
 S.imgs=S.imgs||{};{const m={};S.lists.forEach(l=>l.units.forEach(u=>{const k=u.name.toLowerCase().trim();if(!u.ref)u.ref=m[k]||rid();m[k]=u.ref;if(u.img){if(!S.imgs[u.ref])S.imgs[u.ref]=u.img;delete u.img}}))}
-function sync(u){let m=S.coll[u.ref];if(!m)m=S.coll[u.ref]={ref:u.ref,pts:u.pts||0};if(m!==u)SH.forEach(k=>m[k]=clone(u[k]));S.lists.forEach(l=>l.units.forEach(o=>{if(o!==u&&o.ref===u.ref)SH.forEach(k=>o[k]=clone(u[k]))}));syncSubs(u.ref,u)}
+function sync(u){let m=S.coll[u.ref];if(!m)m=S.coll[u.ref]={ref:u.ref,pts:u.pts||0};if(m!==u)SH.forEach(k=>m[k]=clone(u[k]));S.lists.forEach(l=>l.units.forEach(o=>{if(o!==u&&o.ref===u.ref)SH.forEach(k=>o[k]=clone(u[k]))}));syncSubs(u.ref,u);try{syncSame(u)}catch(_){}(u.subs||[]).forEach(s=>{try{if(s.ref){const c=S.coll[s.ref];if(c&&c!==s)SH.forEach(k=>{if(k!=="name")c[k]=clone(s[k])});syncSubs(s.ref,s)}syncSame(s)}catch(_){}})}
 S.coll=S.coll||{};S.lists.forEach(l=>l.units.forEach(u=>{if(!S.coll[u.ref]){S.coll[u.ref]={ref:u.ref};SH.forEach(k=>S.coll[u.ref][k]=clone(u[k]))}if(S.coll[u.ref].pts==null)S.coll[u.ref].pts=u.pts||0}));
 function parseW(wl){const ws=[];let pend=[];
  for(const l of wl){const m=RW.exec(l);
@@ -1264,16 +1268,21 @@ function parseW(wl){const ws=[];let pend=[];
 function parseSeg(seg){const wh=seg.findIndex(l=>/^Portée\s+A/.test(l)),ei=seg.findIndex(l=>/^Equipement\s*:/.test(l)),v=(seg[1]||"").split(/\s+/);
  const o={stats:Object.fromEntries(K.map((k,i)=>[k,v[i]||""])),weapons:wh<0?[]:parseW(seg.slice(wh+1,ei<0?seg.length:ei)),equip:"",apt:"",kw:"",fkw:"",text:[]};
  let cur=null;const map={"Equipement":"equip","Aptitudes":"apt","Mots-clés":"kw","Mots-clés de faction":"fkw"};
- for(const l of ei<0?[]:seg.slice(ei)){const m=/^(Equipement|Aptitudes|Mots-clés de faction|Mots-clés)\s*:\s*(.*)$/.exec(l);
+ const tl=ei<0?[]:seg.slice(ei),KR=/^(Equipement|Aptitudes|Mots-clés de faction|Mots-clés)\s*:\s*(.*)$/;let md=null;
+ for(let q=0;q<tl.length;q++){const l=tl[q],m=KR.exec(l);
+  if(m&&m[1]==="Equipement"&&(cur==="mdl")){md.eq=m[2];cur="mdleq";continue}
+  if(!m&&(cur==="apt"||cur==="mdleq"||cur==="equip")&&o.apt!==undefined&&/^Equipement\s*:/.test(tl[q+1]||"")&&!/[,:]$/.test(l)&&l.length<=60){md={n:l.trim(),eq:""};(o.mdl=o.mdl||[]).push(md);cur="mdl";continue}
   if(m){cur=map[m[1]];o[cur]=m[2];continue}
+  if(cur==="mdleq"){md.eq+=" "+l;continue}
   if(cur==="fkw")o.text.push(l);else if(cur)o[cur]+=" "+l}
+ if(o.apt){const sn=new Set();o.apt=o.apt.split(",").map(x=>x.trim()).filter(x=>{const k=abK(x);if(!x||sn.has(k))return false;sn.add(k);return true}).join(", ")}
  return o}
 function parse(txt){
  const tm=/(\d+)\s*points\s*-\s*(\d+)\s*figurines/.exec(txt);
- const lines=txt.replace(FOOT,"\n").split("\n").map(s=>s.trim()).filter(s=>s&&!CATS.test(s)&&!/^Total$/i.test(s)&&!/figurines/.test(s));
+ const lines=txt.replace(FOOT,"\n").split("\n").map(s=>s.trim()).map(s=>/^Total$/i.test(s)?"§TOTAL§":s).filter(s=>s&&!CATS.test(s)&&!/figurines/.test(s)),tot=lines.indexOf("§TOTAL§");if(tot>=0)lines.splice(tot,1);
  const hdr=p=>{for(let k=p-1;k>=Math.max(0,p-6);k--)if(HD.test(lines[k]))return k;return p};
  const pcs=[];lines.forEach((l,i)=>PC.test(l)&&pcs.push(i));
- const ss=pcs.length?hdr(pcs[0]):lines.length,R=lines.slice(0,ss),si=[];R.forEach((l,i)=>STAT.test(l)&&si.push(i));
+ const ss=Math.min(pcs.length?hdr(pcs[0]):lines.length,tot>=0?tot:lines.length),R=lines.slice(0,ss),si=[];R.forEach((l,i)=>STAT.test(l)&&si.push(i));
  const hs=si.map(i=>{const sub=SUB.exec(R[i-1]||"");if(sub)return{i,hs:i-1,sub};let h=i-1,nums=[];
   while(nums.length<2&&/^\d{2,4}$/.test(R[h-1]||"")){h--;nums.push(+R[h])}return{i,hs:h,line:R[i-1],nums}});
  const units=[];
@@ -1295,13 +1304,16 @@ function parse(txt){
   return{det:(x<0?"":head.slice(0,x)).replace(/^.*? - /,""),name:x<0?head:head.slice(x+3),cp:+PC.exec(lines[p])[1],body:cutBody(lines.slice(p+1,nx),units)}});
  {const dn=dets.map(d=>d.name).filter(Boolean);if(dn.length)units.forEach(u=>{[u,...u.subs].forEach(p=>{const o=cutDet(p,dn);if(o)u.opti=(u.opti?u.opti+"\n":"")+o})})}
  return{units,dets,strats,optis,total:tm?tm[1]:""}}
-const apNames=p=>[...(p.apt||"").split(",").map(x=>x.trim()).filter(Boolean),...(p.xab||[]).map(x=>String(x&&x.n||"").trim()).filter(Boolean)];
-function abil0(p){const t=p.text.join(" "),xs=(p.xab||[]).filter(x=>x&&String(x.n||"").trim());if(!t&&!xs.length)return"";
+const abK=n=>String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9+]+/g," ").trim();
+const apNames=p=>{const seen=new Set();return[...(p.apt||"").split(",").map(x=>x.trim()).filter(Boolean),...(p.xab||[]).map(x=>String(x&&x.n||"").trim()).filter(Boolean)].filter(n=>{const k=abK(n);if(seen.has(k))return false;seen.add(k);return true})};
+function abil0(p){const t=(p.text||[]).join(" "),xs=(p.xab||[]).filter(x=>x&&String(x.n||"").trim()),cores=String(p.apt||"").split(",").map(x=>x.trim()).filter(n=>n&&!xs.some(x=>String(x.n).trim()===n));if(!t&&!xs.length&&!cores.length)return"";
  const mk=[];let pos=0,pre="",ps=[];
- if(t){for(const {n,strict} of abNames(p)){const i=findH(t,n,pos,strict);if(i>=0){mk.push([i,n]);pos=i+n.length}}
+ const SEEN=new Set();
+ if(t){for(const {n,strict} of abNames(p)){if(SEEN.has(abK(n)))continue;const i=findH(t,n,pos,strict);if(i>=0){mk.push([i,n]);pos=i+n.length;SEEN.add(abK(n))}}
   if(!mk.length)pre=`<p class="pre">${hm(p,t)}</p>`;
   else{pre=hm(p,t.slice(0,mk[0][0]));ps=mk.map(([i,n],k)=>({h:hlOn(p,n),s:`<p class="${hlOn(p,n)?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${hlOn(p,n)?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":" "+hm(p,t.slice(i+n.length,k+1<mk.length?mk[k+1][0]:t.length))}</p>`}))}}
- xs.forEach(x=>{const n=String(x.n).trim(),h=hlOn(p,n);ps.push({h,s:`<p class="${h?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${h?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":` <span class="pre">${hm(p,String(x.d||""))}</span>`}</p>`})});
+ xs.forEach(x=>{const n=String(x.n).trim(),h=hlOn(p,n);if(SEEN.has(abK(n)))return;SEEN.add(abK(n));ps.push({h,s:`<p class="${h?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${h?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":` <span class="pre">${hm(p,String(x.d||""))}</span>`}</p>`})});
+ const used=new Set(mk.map(x=>x[1]));cores.filter(n=>!used.has(n)&&!(t&&t.indexOf(n)>=0)).forEach(n=>{if(SEEN.has(abK(n)))return;SEEN.add(abK(n));const d=window.abCoreDef?window.abCoreDef(n):"",h=hlOn(p,n);ps.push({h,s:`<p class="abcore ${h?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${h?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":d?` <span class="pre">${hm(p,d)}</span>`:` <span class="mu">— pas encore de description (✎ Modifier)</span>`}</p>`})});
  return pre+[...ps.filter(x=>x.h),...ps.filter(x=>!x.h)].map(x=>x.s).join("")}
 const stx=s=>`<div class="sg">${K.map(k=>k==="SV"?`<div class="sx svb" data-dzsv="${esc(s[k]||"")}" role="button" tabindex="0" title="Lancer les sauvegardes"><i>SV 🎲</i><b>${esc(s[k])||"–"}</b></div>`:`<div class="sx"><i>${k}</i><b>${esc(s[k])||"–"}</b></div>`).join("")}</div>`;
 const WF=["name","range","a","hit","f","pa","d","caps"],WP=["Arme","Portée","A","C/T","F","PA","D","Capacités"];
@@ -1312,11 +1324,15 @@ const wtbl=(ws,un)=>{if(!ws.length)return"";const row=(w,t)=>{const c=String(w.c
  gp=[["r","Armes à distance"],["m","Armes de corps à corps"]].map(([t,n])=>[t,n,ws.filter(w=>(isMel(w)?"m":"r")===t)]).filter(g=>g[2].length);
  return `<div class="w wz"><table><tr>${WP.slice(0,7).map(h=>`<th>${h}</th>`).join("")}</tr>${gp.map(([t,n,a],gi)=>(gi?`<tr class="wts g"><td colspan="7"></td></tr>`:"")+`<tr class="wtg ${t}"><td colspan="7"><span class="wti">${WI[t]}</span>${n} <span class="wzk">${a.length}</span></td></tr>`+a.map((w,i)=>(i?`<tr class="wts"><td colspan="7"></td></tr>`:"")+row(w,t)).join("")).join("")}</table><div class="wzh">Touche le nombre d'attaques <b>(A)</b> pour lancer les dés</div></div>`};
 const sec=(t,b)=>b?`<div class="sech">${t}</div>${b}`:"";
-const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+stx(p.stats)+wtbl(p.weapons,p.name)+sec("Aptitudes",(apNames(p).length?`<p class="apn">${(a=>[...a.filter(x=>hlOn(p,x)),...a.filter(x=>!hlOn(p,x))])(apNames(p)).map(x=>`<span class="an${hlOn(p,x.trim())?" hl":""}${fdOn(p,x.trim())?" fold":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(x.trim())}">${esc(x.trim())}</span>`).join("")}</p>`:"")+abil(p))+(p.equip?(k=>`<details class="eq" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""}><summary>Équipement <span style="opacity:.8;font-weight:400">· ${String(p.equip).split(",").filter(x=>x.trim()).length}</span></summary><p>${esc(p.equip)}</p></details>`)("e:"+(p.ref||p.name)):"")+sec("Mots-clés",p.kw||p.fkw?`<p class="mu enckw">${window.encKw?window.encKw(p):esc(p.kw)+(p.fkw?" · "+esc(p.fkw):"")}</p>`:"")+(window.encXtra?window.encXtra(p):"")+`</div>`;
+const abWarn=p=>{if(S.pm&&!S.mg)return"";const d=abDoubt(p);return d.length?`<div class="abw"><b>⚠ Aptitudes à vérifier</b><ul>${d.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><button class="b" data-abed="${window.abKey?window.abKey(p):""}">✎ Corriger les aptitudes</button></div>`:""};
+const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+stx(p.stats)+wtbl(p.weapons,p.name)+abWarn(p)+((p.mdl||[]).length?`<div class="mdls">${p.mdl.map(m=>`<p class="mdl"><b>${esc(m.n)}</b>${m.eq?` <small>${esc(m.eq)}</small>`:""}</p>`).join("")}</div>`:"")+sec(`Aptitudes${window.abKey?`<button type="button" class="abedb" data-abed="${window.abKey(p)}">✎ Modifier</button>`:""}`,(apNames(p).length?`<p class="apn">${(a=>[...a.filter(x=>hlOn(p,x)),...a.filter(x=>!hlOn(p,x))])(apNames(p)).map(x=>`<span class="an${hlOn(p,x.trim())?" hl":""}${fdOn(p,x.trim())?" fold":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(x.trim())}">${esc(x.trim())}</span>`).join("")}</p>`:"")+abil(p))+(p.equip?(k=>`<details class="eq" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""}><summary>Équipement <span style="opacity:.8;font-weight:400">· ${String(p.equip).split(",").filter(x=>x.trim()).length}</span></summary><p>${esc(p.equip)}</p></details>`)("e:"+(p.ref||p.name)):"")+sec("Mots-clés",p.kw||p.fkw?`<p class="mu enckw">${window.encKw?window.encKw(p):esc(p.kw)+(p.fkw?" · "+esc(p.fkw):"")}</p>`:"")+(window.encXtra?window.encXtra(p):"")+`</div>`;
 const ei=(p,v,ph)=>`<input data-p="${p}" value="${esc(v)}" placeholder="${ph||""}">`;
-const xabE=(p,b)=>`<h4>Aptitudes ajoutées</h4>`+(p.xab||[]).map((x,i)=>`<details class="card xd" data-xk="${b}${i}"${window.xo===b+i?" open":""}><summary><b>${esc(x.n||"Sans nom")}</b> <span class="mu">· touche pour écrire la description</span></summary><label>Nom<input data-p="${b}xab.${i}.n" value="${esc(x.n||"")}"></label><label>Description<textarea data-p="${b}xab.${i}.d" rows="4">${esc(x.d||"")}</textarea></label><button class="b x" data-act="delab" data-b="${b}" data-k="${i}">Supprimer cette aptitude</button></details>`).join("")+`<p><button class="b" data-act="addab" data-b="${b}">+ Aptitude</button></p>`;
+const abFixBox=(p,b)=>{if(!(p.text||[]).join("").trim())return"";const sp=abSplit(p),dz=abDoubt(p);return`<div class="abfx"><h4>Aptitudes lues sur la fiche</h4>${dz.length?`<ul class="abwl">${dz.map(x=>`<li>⚠ ${esc(x)}</li>`).join("")}</ul>`:""}${sp.map(x=>`<div class="abfi${x.n?"":" no"}"><b>${x.n?esc(x.n):"⚠ Sans nom"}</b><span>${esc(x.b.length>110?x.b.slice(0,107)+"…":x.b)||"<i>pas de description</i>"}</span></div>`).join("")}<p class="mu">Pour corriger un mauvais découpage, sépare les aptitudes : chacune devient un bloc avec son nom et sa description, que tu peux renommer, couper en deux ou supprimer.</p><button class="b p" data-act="abfix" data-b="${b}">✂ Séparer les aptitudes une par une</button></div>`};
+const xabE=(p,b)=>`<h4>${(p.text||[]).join("").trim()?"Aptitudes ajoutées":"Aptitudes (nom et description)"}</h4>`+(p.xab||[]).map((x,i)=>`<details class="card xd" data-xk="${b}${i}"${window.xo===b+i?" open":""}><summary><b>${esc(x.n||"Sans nom")}</b> <span class="mu">· ${String(x.d||"").trim()?esc(String(x.d).slice(0,60))+(String(x.d).length>60?"…":""):"touche pour écrire la description"}</span></summary><label>Nom<input data-p="${b}xab.${i}.n" value="${esc(x.n||"")}"></label><label>Description<textarea data-p="${b}xab.${i}.d" data-abta="${b}|${i}" rows="5">${esc(x.d||"")}</textarea></label><p class="abfh">Pour couper : place le curseur juste avant le nom de l’aptitude suivante, puis touche « Couper ici ».</p><div class="row" style="gap:6px"><button class="b" data-act="absplit" data-b="${b}" data-k="${i}">✂ Couper ici</button>${i>0?`<button class="b" data-act="abup" data-b="${b}" data-k="${i}">↑</button>`:""}<button class="b x" data-act="delab" data-b="${b}" data-k="${i}">Supprimer cette aptitude</button></div></details>`).join("")+`<p><button class="b" data-act="addab" data-b="${b}">+ Aptitude</button></p>`;
 const pe=(p,b)=>`<div class="sg">${K.map(k=>`<label>${k}${ei(b+"stats."+k,p.stats[k])}</label>`).join("")}</div><h4>Armes</h4><div class="w">${p.weapons.map((w,k)=>`<div class="wr">${WF.map((f,i)=>ei(`${b}weapons.${k}.${f}`,w[f],WP[i])).join("")}<button class="b x" data-act="delw" data-b="${b}" data-k="${k}">✕</button></div>`).join("")}</div><button class="b" data-act="addw" data-b="${b}">+ Arme</button>
-<label>Aptitudes (séparées par des virgules)${ei(b+"apt",p.apt)}</label><label>Description des aptitudes<textarea data-p="${b}text" rows="6">${esc(p.text.join("\n"))}</textarea></label>${xabE(p,b)}<label>Équipement${ei(b+"equip",p.equip)}</label><label>Mots-clés${ei(b+"kw",p.kw)}</label><label>Mots-clés de faction${ei(b+"fkw",p.fkw)}</label>`;
+<div class="abpe"><h4>Aptitudes</h4><p class="mu">${esc(apNames(p).join(", ")||"Aucune aptitude")}</p><button class="b p" data-abed="${window.abKey?window.abKey(p):""}">✎ Modifier les aptitudes (nom et description)</button></div><label>Équipement${ei(b+"equip",p.equip)}</label><label>Mots-clés${ei(b+"kw",p.kw)}</label><label>Mots-clés de faction${ei(b+"fkw",p.fkw)}</label>`;
+document.addEventListener("selectionchange",()=>{const el=document.activeElement;if(el&&el.dataset&&el.dataset.abta)window.__abPos={el,p:el.selectionStart}});
+document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest('[data-act="absplit"]');if(!b)return;const ta=document.querySelector(`[data-abta="${b.dataset.b}|${b.dataset.k}"]`);if(ta&&document.activeElement===ta)window.__abPos={el:ta,p:ta.selectionStart}},true);
 const blank=()=>({stats:Object.fromEntries(K.map(k=>[k,""])),weapons:[],equip:"",apt:"",kw:"",fkw:"",text:[]});
 const getB=(u,b)=>b?u.subs[+b.split(".")[1]]:u;
 function setP(o,path,v){const a=path.split(".");let t=o;for(let i=0;i<a.length-1;i++)t=t[a[i]];const k=a.at(-1);t[k]=k==="text"?v.split("\n").filter(Boolean):k==="size"?(+v||null):k==="pts"||k==="optc"?(+v||0):v}
@@ -1331,7 +1347,7 @@ function modal(){const u=ed==null?null:cl().units[ed];if(!u){$("#md").innerHTML=
 
 const batTot=(i,u)=>S.bat.t.slice(0,u+1).reduce((a,r)=>a+r.p[i]+r.s[i]+(r.m?r.m[i]:0)+(r.x?r.x[i]:0),0);
 function miniBar(){const B=S.bat,c=B.cur||0,CL=["#3ddc97","#f0a54a"],cb=(i,v)=>`<button data-act="bd" data-k="cp" data-t="-1" data-i="${i}" data-v="${v}" aria-label="${v>0?"Ajouter":"Retirer"} un PC">${v>0?"+":"−"}</button>`;
- return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div></div>`}
+ return `<div class="mzb"><div class="mbp">${[0,1].map(i=>`<div class="mbq" style="border-left:4px solid ${CL[i]}"><div class="mbl" data-tab="bat"><span class="mbn">${esc(B.n[i])}</span><b>${batTot(i,4)}</b><small>pts</small></div><div class="mbc">${cb(i,-1)}<b>${B.cp[i]}</b><small>PC</small>${cb(i,1)}</div></div>`).join("")}</div>${window.chrPill?window.chrPill():""}</div>`}
 function gReset(){const B=S.bat;B.cp=[0,0];B.t=[0,1,2,3,4].map(()=>({p:[0,0],s:[0,0]}));B.cur=0;B.gid=null;B.ms=null;B.sx=null;S.pm=null;S.mg=false;pq="";pph="";pAll=false;pop.clear()}
 function barDraw(){const P=tab==="play"||tab==="pst"||tab==="bat"||(tab==="enc"&&!!S.pm&&!S.mg),run=!!S.pm,g=run&&!S.mg;document.querySelector("header").classList.toggle("hpl",P);
  $("#bar").style.display=g?"flex":"none";$("#m").classList.toggle("gm",g);$("#fab").style.display=g?"none":"";$("#fab").textContent=run?"▶ Reprendre la partie":"🎲 Mode jeu";$("#fab").dataset.act=run?"gresume":"gpick";
@@ -1360,13 +1376,13 @@ function pstList(L){const q=pq.toLowerCase().trim(),names=[...L.dets.map(d=>d.na
 function pstView(L){if(!L)return pNone();return pSearch(L,`<div class="pph">${PH.map(([k,n])=>`<button class="${pph===k?"on":""}" data-act="pph" data-k="${k}">${n}</button>`).join("")}</div>`)+`<div id="pl">${pstList(L)}</div>`}
 function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===S.pm))S.pm=null;if(!S.pm)S.mg=false;if(S.pm&&!S.mg){S.cur=S.pm;if(!GM.includes(tab)&&tab!=="enc")tab="play"}else if(GM.includes(tab))tab="lists"}refreshVar();pushSubs();if(ded==null&&sed==null)libSync(cl());if(tab!=="dets")ded=null;if(tab!=="strats")sed=null;if(tab!=="units")led=false;const L=cl();{const b=$("#sb");b.style.cssText=S.sban?`height:170px;background:url(${S.sban}) ${bp("s")}/cover`:"display:none";$("#dsb").style.display=$("#fsb").style.display=S.sban?"":"none"}$("#cl").textContent=L&&["units","dets","strats","opti","play","pst"].includes(tab)?L.name:"";
  const tabs=[["lists","Mes listes"],["coll","Collection"],...(L?[["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"]]:[]),["imp","Importer"]];
- $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?"":(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["ana","Centre de commandement"],["enc","Règles V11"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
+ $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?(window.chrPill?`<div class="mzb">${window.chrPill()}</div>`:""):(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["ana","Centre de commandement"],["enc","Règles V11"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
  if(tab==="lists")h=`<div class="card row" style="justify-content:space-between"><b>${S.lists.length} liste(s)</b><button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?`<div class="grid">${S.lists.map(l=>`<div class="card"><b style="font-size:17px">${esc(l.name)}</b><div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""}${lpts(l)?" · "+lpts(l)+" pts":""} · ${l.dets.length} détachement(s)</div>${l.mission?`<div class="mu">${esc(misTag(l.mission,l.game))}</div>`:""}<p>${l.id===S.cur?'<span class="mu">● Liste ouverte</span>':""}</p><button class="b p" data-act="gstart" data-id="${l.id}">▶ Jouer</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button> <button class="b" data-act="ren" data-id="${l.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${l.id}">Supprimer</button></div>`).join("")}</div>`:"<p>Aucune liste pour l’instant. Crée-en une avec « + Nouvelle liste » ou importe ton armée.</p>");
  else if(tab==="play")h=playView(L);else if(tab==="pst")h=pstView(L);else if(tab==="coll")h=collView();else if(tab==="bat")h=batView2();else if(window.XV&&XV[tab])h=XV[tab]();else if(tab==="gm")h=gmView();else if(tab==="enc")h=window.encView?window.encView():"";else if(tab==="units"){h=`<div class="card row" style="justify-content:space-between"><span><b>${lcount(L)} unité${lcount(L)>1?"s":""}</b><span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?" · "+esc(misTag(L.mission,L.game)):""}</span></span><span><button class="b" data-act="ledit">Modifier la liste</button> <button class="b" data-act="ren" data-id="${L.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${L.id}">Supprimer la liste</button> <button class="b p" data-act="npick">+ Ajouter une figurine</button> <button class="b" data-act="nunit">Fiche vide</button></span></div>${led?ledForm(L):""}<div class="grid">${L.units.map((u,i)=>`<div class="card hv${S.coll[u.ref]&&S.coll[u.ref].var?" v":""}" data-act="view" data-i="${i}">${S.coll[u.ref]&&S.coll[u.ref].var?'<span class="vr">Variante d’arme</span>':""}<button class="xx" data-act="xunit" data-i="${i}" title="Retirer de la liste">✕</button><div class="row">${pimg(u)}<span><b class="cap">${esc(u.name)}</b>${u.qty>1?` <span class="mu">×${u.qty}</span>`:""}${S.coll[u.ref]&&S.coll[u.ref].var?' <span class="mu">· variante d’arme</span>':""}${mlead(u).length?'<span class="led">Unité menée</span>':""}${mlead(u).map(s=>`<br><span class="mu">${S.imgs[s.ref]?`<img src="${S.imgs[s.ref]}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:4px" alt="">`:""}+ ${esc(cap(s.name))}</span>`).join("")}</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}
  else if(tab==="dets")h=detView(L);else if(tab==="dets0")h=L.dets.map(d=>`<div class="card"><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?d.cost+" pt(s)":""}</span><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement détecté.</p>";
  else if(tab==="strats")h=stView(L);else if(tab==="opti")h=optiView2(L);else if(tab==="strats0"){const g={};L.strats.forEach(s=>(g[s.det]=g[s.det]||[]).push(s));
   h=Object.entries(g).map(([d,a])=>`<details class="card" ${d===window.po?"open":""}><summary><b>${esc(d)}</b> <span class="mu">${a.length} stratagèmes</span></summary>${a.map(s=>`<div class="card"><b>${esc(s.name)}</b> <span class="mu">${s.cp} PC</span><p class="pre">${esc(s.body)}</p></div>`).join("")}</details>`).join("")||"<p>Aucun stratagème détecté.</p>"}
- else h=`<div class="card"><p>Colle ici tout le texte d’une armée, ou choisis un PDF ou un lien. Chaque import crée une nouvelle liste, sauf si tu coches l’option ci-dessous.</p><label>Nom de la liste<input id="nm" placeholder="ex. Ma liste Nécrons"></label><label>Points de l’armée (facultatif)<input id="ptsin" inputmode="numeric" placeholder="ex. 2000"></label><label>Faction des figurines<select id="impfac" style="width:100%"><option value="auto">Automatique (mot-clé de faction de chaque unité)</option>${S.fac.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}<option value="">Ne pas changer</option></select></label><label>…ou créer une nouvelle faction<input id="newfac" placeholder="ex. Nécrons"></label><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="onlyc" style="width:auto">Ajouter seulement les figurines à la collection (sans créer de liste)</label><label>Importer depuis un lien armylistnetwork<input id="lnk" inputmode="url" placeholder="https://40k.armylistnetwork.com/liste-….html" style="width:100%"></label><p><button class="b" data-act="implink">Lire le lien</button></p><p class="mu" style="margin:0 0 8px">La page publique ne contient que les noms des aptitudes (pas leur texte de règle). Si le site bloque la lecture directe, un relais public est utilisé : il ne voit que ce lien.</p><label>Importer depuis un PDF<input type="file" id="pdf" accept="application/pdf,.pdf" style="width:100%"></label><p class="mu" style="margin:0 0 8px">Choisis le PDF de ton armée : le texte est lu puis importé comme s’il était collé ci-dessous. Il doit contenir du texte (pas une image scannée).</p><label>…ou colle le texte de la liste<textarea id="raw" rows="12"></textarea></label><p><button class="b p" data-act="imp">Importer</button></p></div>`;
+ else h=`<div class="card"><p>Choisis le PDF de ton armée, ou colle son texte. Chaque import crée une nouvelle liste, sauf si tu coches l’option ci-dessous.</p><label>Nom de la liste<input id="nm" placeholder="ex. Ma liste Nécrons"></label><label>Points de l’armée (facultatif)<input id="ptsin" inputmode="numeric" placeholder="ex. 2000"></label><label>Faction des figurines<select id="impfac" style="width:100%"><option value="auto">Automatique (mot-clé de faction de chaque unité)</option>${S.fac.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}<option value="">Ne pas changer</option></select></label><label>…ou créer une nouvelle faction<input id="newfac" placeholder="ex. Nécrons"></label><label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="onlyc" style="width:auto">Ajouter seulement les figurines à la collection (sans créer de liste)</label><label>Importer depuis un PDF<input type="file" id="pdf" accept="application/pdf,.pdf" style="width:100%"></label><p class="mu" style="margin:0 0 8px">Choisis le PDF de ton armée : le texte est lu puis importé comme s’il était collé ci-dessous. Il doit contenir du texte (pas une image scannée).</p><label>…ou colle le texte de la liste<textarea id="raw" rows="12"></textarea></label><p><button class="b p" data-act="imp">Importer</button></p></div>`;
  $("#m").innerHTML=h;modal();barDraw();if(window.tbPost)window.tbPost()}
 document.addEventListener("click-old",e=>{const t=e.target.closest("[data-tab],[data-act]");if(!t)return;
  if(t.dataset.tab){tab=t.dataset.tab;window.po=null;draw();return}
@@ -1386,6 +1402,11 @@ document.addEventListener("click-old",e=>{const t=e.target.closest("[data-tab],[
  else if(a==="dphoto")u.img="";
  else if(a==="addw")getB(u,d.b).weapons.push(Object.fromEntries(WF.map(f=>[f,""])));
  else if(a==="delw")getB(u,d.b).weapons.splice(+d.k,1);
+ else if(a==="abfix"){const t=getB(u,d.b);abFix(t);window.xo=null}
+ else if(a==="absplit"){const t=getB(u,d.b),k=+d.k,ta=document.querySelector(`[data-abta="${d.b}|${k}"]`);if(ta)t.xab[k].d=ta.value;const pos=ta?(window.__abPos&&window.__abPos.el===ta?window.__abPos.p:ta.selectionStart):0;if(abSplitAt(t,k,pos)===false)return;window.xo=d.b+(k+1)}
+ else if(a==="abup"){const t=getB(u,d.b),k=+d.k;if(k>0){const x=t.xab.splice(k,1)[0];t.xab.splice(k-1,0,x);window.xo=d.b+(k-1)}}
+ else if(a==="addab"){const t=getB(u,d.b);t.xab=t.xab||[];t.xab.push({n:"Nouvelle aptitude",d:""});window.xo=d.b+(t.xab.length-1)}
+ else if(a==="delab"){const t=getB(u,d.b);t.xab.splice(+d.k,1);window.xo=null}
  else if(a==="asub")u.subs.push({label:"Meneur",name:"",...blank()});
  else if(a==="dsub"){if(confirm("Supprimer ce profil ?"))u.subs.splice(+d.k,1)}
  else if(a==="dunit"){if(!confirm("Supprimer cette unité ?"))return;L.units.splice(ed,1);ed=null;edit=false}
@@ -1432,6 +1453,9 @@ function upsert(p,facFn,x){const k=nn(p.name),same=Object.values(S.coll).filter(
  if(x.role)m.role=x.role;const f=facFn(p);if(f)m.fac=f;return m}
 function link(units,facFn,keep){facFn=facFn||(()=>"");units.forEach(u=>{delete u.img;upsert(u,facFn,{pts:u.pts,nb:u.size||0,keep});(u.subs||[]).forEach(s=>upsert(s,facFn,{keep,nb:1,role:s.label,pts:s.pts}))})}
 function syncSubs(ref,src){if(!ref)return;S.lists.forEach(l=>l.units.forEach(o=>(o.subs||[]).forEach(s=>{if(s.ref===ref&&s!==src)SH.forEach(k=>s[k]=clone(src[k]))})))}
+function syncSame(src){if(!src||!src.name)return;const k=nn(String(src.name)),F=["stats","apt","kw","fkw","text","xab"];const fOk=o=>!src.fac||!o.fac||o.fac===src.fac;
+ const put=o=>{if(!o||o===src||(src.ref&&o.ref===src.ref)||nn(String(o.name||""))!==k||!fOk(o))return;F.forEach(f=>{if(src[f]!==undefined)o[f]=clone(src[f])})};
+ Object.values(S.coll).forEach(put);S.lists.forEach(l=>l.units.forEach(u=>{put(u);(u.subs||[]).forEach(put)}))}
 function syncAll(units){units.forEach(u=>{sync(u);(u.subs||[]).forEach(s=>syncSubs(s.ref,s))})}
 function pushSubs(){if(ed&&ctx==="list"&&ed.subs)ed.subs.forEach(s=>{if(s.ref&&S.coll[s.ref]){SH.forEach(f=>S.coll[s.ref][f]=clone(s[f]));syncSubs(s.ref,s)}})}
 function linkSub(s,p){const k=nn(s.name),m=Object.values(S.coll).find(y=>nn(y.name)===k&&wsig(y)===wsig(s));if(m){s.ref=m.ref;return}s.ref=rid();const c=S.coll[s.ref]={ref:s.ref,pts:0,nb:1,subs:[],role:s.label,fac:(S.coll[p.ref]||p).fac||""};SH.forEach(f=>c[f]=clone(s[f]))}
@@ -1444,7 +1468,7 @@ const snap=id=>{const l=S.lists.find(x=>x.id===id);return l?{name:l.name,units:l
 const lp=s=>+((S.coll[s.ref]||{}).pts??s.pts)||0,mlead=u=>u.subs||[],upts=u=>(u.pts||0)+mlead(u).reduce((a,s)=>a+lp(s),0),lcnt0=l=>l.units.length,lpts0=l=>l.units.reduce((a,u)=>a+upts(u),0),lfig0=l=>l.units.reduce((a,u)=>a+(+u.size||0)+(u.subs||[]).reduce((b,s)=>b+((S.coll[s.ref]||{}).nb||1),0),0),ov=v=>v!==undefined&&v!==null&&v!=="",lcount=l=>ov(l.ovU)?+l.ovU||0:lcnt0(l),lpts=l=>ov(l.ovP)?+l.ovP||0:(+l.total||0),lfig=l=>ov(l.ovF)?+l.ovF||0:lfig0(l);
 S.hl=S.hl||{};S.fold=S.fold||{};let ded=null,sed=null;
 const hlOn=(p,n)=>((S.hl[p.ref]||[]).indexOf(String(n).toLowerCase())>=0),fdOn=(p,n)=>((S.fold[p.ref]||[]).indexOf(String(n).toLowerCase())>=0);
-function detView(L){return`<div class="card row" style="justify-content:space-between"><b>${L.dets.length} détachement(s)</b><span><button class="b" data-act="npickd">Bibliothèque (${(S.dlib||[]).length})</button> <button class="b p" data-act="dnew">+ Détachement</button></span></div>`+(L.dets.map((d,i)=>ded===i?`<div class="card"><label>Nom<input data-dx="${i}.name" value="${esc(d.name)}"></label><label>Coût (points)<input data-dx="${i}.cost" inputmode="numeric" value="${esc(d.cost||"")}"></label><label>Règle du détachement<textarea data-dx="${i}.rule" rows="6">${esc(d.rule||"")}</textarea></label><p><button class="b p" data-act="dok">Terminé</button> <button class="b x" data-act="ddel" data-i="${i}">Supprimer</button></p></div>`:`<div class="card"><div class="row" style="justify-content:space-between"><span><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?esc(d.cost)+" pt(s)":""}</span></span><span><button class="b" data-act="dedit" data-i="${i}">Modifier</button> <button class="b x" data-act="ddel" data-i="${i}">Supprimer</button></span></div><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement. Ajoutes-en un avec « + Détachement ».</p>")}
+function detView(L){return`<div class="card row" style="justify-content:space-between"><span><b>${L.dets.length} détachement(s)</b>${L.dets.length?` <span class="mu">· ${L.dets.filter(d=>!d.off).length} utilisé(s)</span>`:""}</span><span><button class="b" data-act="npickd">Bibliothèque (${(S.dlib||[]).length})</button> <button class="b p" data-act="dnew">+ Détachement</button></span></div>`+(L.dets.map((d,i)=>ded===i?`<div class="card"><label>Nom<input data-dx="${i}.name" value="${esc(d.name)}"></label><label>Coût (points)<input data-dx="${i}.cost" inputmode="numeric" value="${esc(d.cost||"")}"></label><label>Règle du détachement<textarea data-dx="${i}.rule" rows="6">${esc(d.rule||"")}</textarea></label><p><button class="b p" data-act="dok">Terminé</button> <button class="b x" data-act="ddel" data-i="${i}">Supprimer</button></p></div>`:`<div class="card${d.off?" doff":""}"><label class="dtog"><input type="checkbox" data-dsel="${i}"${d.off?"":" checked"}> Utilisé dans cette liste <span class="mu">(${d.off?"ses stratagèmes sont masqués":"ses stratagèmes sont visibles"})</span></label><div class="row" style="justify-content:space-between"><span><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?esc(d.cost)+" pt(s)":""}</span></span><span><button class="b" data-act="dedit" data-i="${i}">Modifier</button> <button class="b x" data-act="ddel" data-i="${i}">Supprimer</button></span></div><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement. Ajoutes-en un avec « + Détachement ».</p>")}
 function stView(L){const g={};L.strats.forEach((s,i)=>(g[s.det||""]=g[s.det||""]||[]).push([s,i]));
  const card=([s,i])=>sed===i?`<div class="card"><label>Nom<input data-sx="${i}.name" value="${esc(s.name)}"></label><div class="row"><label style="flex:1">Coût (PC)<input data-sx="${i}.cp" inputmode="numeric" value="${esc(s.cp)}"></label><label style="flex:2">Détachement<select data-sx="${i}.det" style="width:100%"><option value=""${s.det?"":" selected"}>— Aucun —</option>${L.dets.map(d=>`<option value="${esc(d.name)}"${d.name===s.det?" selected":""}>${esc(d.name)}</option>`).join("")}</select></label></div><label>Texte du stratagème<textarea data-sx="${i}.body" rows="6">${esc(s.body)}</textarea></label><p><button class="b p" data-act="sok">Terminé</button> <button class="b x" data-act="sdel" data-i="${i}">Supprimer</button></p></div>`:`<div class="card"><div class="row" style="justify-content:space-between"><span><b>${esc(s.name)}</b> <span class="mu">${esc(s.cp)} PC</span></span><span><button class="b" data-act="sedit" data-i="${i}">Modifier</button> <button class="b x" data-act="sdel" data-i="${i}">Supprimer</button></span></div><p class="pre">${esc(s.body)}</p></div>`;
  return`<div class="card row" style="justify-content:space-between"><b>${L.strats.length} stratagème(s)</b><button class="b p" data-act="snew">+ Stratagème</button></div>`+(Object.entries(g).map(([d,a])=>`<details class="card" ${d===window.po||a.some(([,i])=>i===sed)?"open":""}><summary><b>${esc(d||"Sans détachement")}</b> <span class="mu">${a.length} stratagèmes</span></summary>${a.map(card).join("")}</details>`).join("")||"<p>Aucun stratagème. Ajoutes-en un avec « + Stratagème ».</p>")}
@@ -1467,6 +1491,18 @@ function wdiff(a,b){const A=String(a||"").split(/\s+/).filter(Boolean),B=String(
  return g.map(([t,w],k)=>{if(t==="-")return dD(w.join(" "));if(t==="+")return dI(w.join(" "));if(w.length>24){const a=k>0?w.slice(0,8).join(" "):"",z=k<g.length-1?w.slice(-8).join(" "):"";return esc((a?a+" ":"")+"… "+(z?z:""))}return esc(w.join(" "))}).join(" ")}
 const dlist=(a,b)=>{const L=x=>String(x||"").split(",").map(v=>v.trim()).filter(Boolean),A=L(a),B=L(b),la=new Set(A.map(v=>v.toLowerCase())),lb=new Set(B.map(v=>v.toLowerCase())),rm=A.filter(v=>!lb.has(v.toLowerCase())),ad=B.filter(v=>!la.has(v.toLowerCase()));
  return(rm.map(dD).join(" ")+" "+ad.map(dI).join(" ")).trim()||'<span class="mu">ordre ou mise en forme modifiés</span>'};
+function abDoubt(p){const r=[],t=(p.text||[]).join(" "),xs=(p.xab||[]).map(x=>String(x&&x.n||"").trim());
+ (p.apt||"").split(",").map(s=>s.trim()).filter(Boolean).forEach(n=>{if(t.indexOf(n)>=0||xs.includes(n))return;let e=null;try{e=window.encApi&&window.encApi.find(n.replace(/\s+\d+\+?$/,"").trim())}catch(_){}if(e&&e.def)return;r.push(`« ${n} » : aucune description trouvée (nom mal découpé ?)`)});
+ if(t.trim()){const sp=abSplit(p);if(sp[0]&&!sp[0].n&&sp[0].b)r.push("du texte n’est rattaché à aucune aptitude")}
+ xs.forEach((n,i)=>{const d=String((p.xab[i]||{}).d||"");if(n&&!d.trim())r.push(`« ${n} » : description vide`)});
+ return r}
+const AB_ST=/^(Au|Aux|À|A|Quand|Lorsque|Si|Chaque|Une|Un|Les|Le|La|L['’]|Cette|Ces|Pendant|Vous|Tant|Jusqu['’]|Une fois|Dans|Après|Avant|Tous|Toutes|Toute|Tout|Lors|Sauf|Ajoutez|Relancez|Choisissez|Cet|Ce)$/i;
+function abGuess(t){const w=String(t).trim().split(/\s+/);let k=0;while(k<w.length&&k<7&&!AB_ST.test(w[k])&&!/[:.]$/.test(w[k]))k++;if(k<w.length&&/:$/.test(w[k])&&k<7){return{n:w.slice(0,k+1).join(" ").replace(/:$/,""),d:w.slice(k+1).join(" ")}}if(k>0&&k<7&&k<w.length)return{n:w.slice(0,k).join(" "),d:w.slice(k).join(" ")};return{n:"Nouvelle aptitude",d:String(t).trim()}}
+function abFix(t){const parts=abSplit(t),found=new Set(parts.map(x=>x.n).filter(Boolean)),xs=[];
+ parts.forEach(x=>{if(!x.b)return;if(!x.n){xs.push(Object.assign(abGuess(x.b),{}));return}xs.push({n:x.n,d:x.b})});
+ const aptN=(t.apt||"").split(",").map(s=>s.trim()).filter(Boolean),keep=aptN.filter(n=>!xs.some(x=>x.n===n));
+ t.apt=keep.join(", ");t.text=[];t.xab=[...xs,...(t.xab||[])]}
+function abSplitAt(t,k,pos){const x=t.xab[k];if(!x)return;const d=String(x.d||"");pos=Math.max(0,Math.min(d.length,pos|0));const a=d.slice(0,pos).trim(),b=d.slice(pos).trim();if(!b){toast("Place le curseur dans la description, juste avant la nouvelle aptitude");return false}x.d=a;t.xab.splice(k+1,0,abGuess(b));return true}
 function abSplit(p){const t=(p.text||[]).join(" ").replace(/\s+/g," ").trim(),o=[];if(!t)return o;const mk=[];let pos=0;for(const {n,strict} of abNames(p)){const i=findH(t,n,pos,strict);if(i>=0){mk.push([i,n]);pos=i+n.length}}
  if(!mk.length)return[{n:"",b:t}];if(mk[0][0]>0)o.push({n:"",b:t.slice(0,mk[0][0]).trim()});mk.forEach(([i,n],k)=>o.push({n,b:t.slice(i+n.length,k+1<mk.length?mk[k+1][0]:t.length).trim()}));return o}
 function diffHtml(m,p,pts){const r=[],row=(t,b)=>r.push(`<div style="margin:6px 0"><b>${t}</b><div>${b}</div></div>`);
@@ -1502,25 +1538,75 @@ function cfSheet(p,o,side){const c=side==="o"?"rgba(214,69,65,.25)":"rgba(28,140
  return st+sec("Armes",wt)+sec("Aptitudes",an+abs)+fl("Équipement","",q=>q.equip||"")+fl("Mots-clés","mu",q=>(q.kw||"")+(q.fkw?" · "+q.fkw:""))}
 function cfDraw(){const c=cfs,sc=$("#cfl")?$("#cfl").scrollTop:0,na=$("#cfl")?" na":"",cnt=v=>c?c.items.filter(x=>x.ch===v).length:0;
 const box=(sd,x)=>{const o=sd==="o",k=x.ch==="both"||(o?x.ch==="old":x.ch==="new"),tag=o?"AVANT · fiche actuelle":"APRÈS · nouvelle fiche",st=x.ch==="both"?"✔ Gardée"+(o?"":" (renommée « … (nouvelle) »)"):k?(o?"✔ Gardée":"✔ Enregistrée"):(o?"✘ Supprimée":"✘ Ignorée"),u=o?x.m:x.nw;
- return `<div class="bx ${o?"cbo":"cbn"}${k?"":" off"}"><div class="bh"><b>${tag}</b><span class="bdg ${k?"k":"x"}">${st}</span></div><h4 class="cap" style="margin:6px 0">${esc(u.name)}</h4>${cfSheet(u,o?x.nw:x.m,sd)}</div>`};
+ return `<div class="bx ${o?"cbo":"cbn"}${k?" pick":" off"}" data-act="cfc" data-i="${c.items.indexOf(x)}" data-c="${o?"old":"new"}" role="button" tabindex="0" aria-pressed="${k}"><div class="bh"><b>${o?"Ma fiche actuelle":"Nouvelle fiche"}</b><span class="bdg ${k?"k":"x"}">${k?"✔ Gardée":"✘"}</span></div><h4 class="cap" style="margin:6px 0">${esc(u.name)}</h4>${cfSheet(u,o?x.nw:x.m,sd)}</div>`};
  const opt=(i,x,v,t,d)=>`<div class="opt${x.ch===v?" on":""}" data-act="cfc" data-i="${i}" data-c="${v}"><div class="rd"></div><div><b>${t}</b><div class="mu">${d}</div></div></div>`;
  const lab={old:["Ancienne gardée · nouvelle ignorée","k"],new:["Ancienne supprimée · nouvelle enregistrée",""],both:["Les deux gardées",""]},OKm='<b style="color:var(--ac)">✔</b>',NOm='<b style="color:#d64541">✘</b>';
  const sum=c?[cnt("new")&&cnt("new")+" ancienne(s) supprimée(s) et remplacée(s)",cnt("old")&&cnt("old")+" ancienne(s) gardée(s), nouvelle(s) ignorée(s)",cnt("both")&&cnt("both")+" fiche(s) gardée(s) en double"].filter(Boolean).join(" · "):"";
- $("#cf").innerHTML=c?`<div class="ov ovd${na}" style="z-index:45"><div class="pn dlgp${na}" style="width:min(980px,100%)!important;max-height:92vh;overflow:auto"><div class="top"><h3 style="margin:0 0 8px">Fiches déjà existantes</h3><button class="b cx" data-act="cfno" aria-label="Annuler l’import">✕</button></div><p style="margin:0 0 6px">${c.items.length} figurine(s) existent déjà dans ta collection avec des différences. Pour chacune, choisis : <b>garder l’ancienne</b> (la nouvelle est ignorée), <b>la remplacer</b> (l’ancienne est supprimée) ou <b>garder les deux</b>.</p><p class="mu" style="margin:0 0 8px">Sur les fiches : ${dD("rouge")} = ce qui change sur ta fiche actuelle, ${dI("vert")} = ce qui change sur la nouvelle fiche. Les deux fiches sont côte à côte ; la fiche grisée est celle qui ne sera pas gardée.</p><div class="row" style="flex-wrap:wrap;align-items:center"><span class="mu">Pour toutes :</span><button class="b" data-act="cfall" data-c="old">Tout garder (ignorer les nouvelles)</button><button class="b" data-act="cfall" data-c="new">Tout remplacer (supprimer les anciennes)</button></div><div id="cfl" style="max-height:60vh;overflow:auto;margin:8px 0">${c.items.map((x,i)=>`<div class="card" style="margin:8px 0"><b class="cap">${esc(x.label)}</b><span class="bdg ${lab[x.ch][1]}">${lab[x.ch][0]}</span><div class="mu">Change : ${esc(x.diff.join(", "))}</div><details data-cx="${i}"${x.open?" open":""} style="margin:6px 0"><summary><b>Voir les fiches avant / après</b></summary><div class="ba">${box("o",x)}${box("n",x)}</div></details><details data-cy="${i}"${x.open2?" open":""} style="margin:6px 0"><summary class="mu">Liste détaillée des différences</summary><div style="font-size:14px;word-break:break-word">${x.html}</div></details><div style="margin-top:8px"><b>Que faire de cette fiche ?</b></div>${opt(i,x,"old","Garder ma fiche actuelle",OKm+" L’ancienne fiche reste telle quelle (photo, aptitudes…).<br>"+NOm+" La nouvelle fiche n’est <b>pas enregistrée</b> : elle est ignorée.")}${opt(i,x,"new","Remplacer par la nouvelle fiche",OKm+" La nouvelle fiche est enregistrée.<br>"+NOm+" L’ancienne fiche est <b>supprimée</b> et remplacée dans la collection"+(x.inl.length?" et dans : "+esc(x.inl.join(", ")):"")+". Ta photo est conservée.")}${opt(i,x,"both","Garder les deux",OKm+" L’ancienne fiche reste.<br>"+OKm+" La nouvelle est ajoutée à part, sous le nom « … (nouvelle) ».<br>Rien n’est supprimé.")}</div>`).join("")}</div><p class="mu" style="margin:0 0 6px;text-align:center">${sum}</p><p><button class="b p" data-act="cfok" style="width:100%;padding:10px">Importer avec ces choix</button> </p></div></div>`:"";if(c&&$("#cfl"))$("#cfl").scrollTop=sc}
+ $("#cf").innerHTML=c?`<div class="ov ovd${na}" style="z-index:45"><div class="pn dlgp${na}" style="width:min(980px,100%)!important;max-height:92vh;overflow:auto"><div class="top"><h3 style="margin:0 0 8px">Fiches déjà existantes</h3><button class="b cx" data-act="cfno" aria-label="Annuler l’import">✕</button></div><p style="margin:0 0 6px">${c.items.length} figurine(s) existent déjà dans ta collection avec des différences. Pour chacune, <b>touche la fiche à garder</b>, ou « Garder les deux ».</p><p class="mu" style="margin:0 0 8px">Sur les fiches : ${dD("rouge")} = ce qui change sur ta fiche actuelle, ${dI("vert")} = ce qui change sur la nouvelle fiche. Les deux fiches sont côte à côte ; la fiche grisée est celle qui ne sera pas gardée.</p><div class="row" style="flex-wrap:wrap;align-items:center"><span class="mu">Pour toutes :</span><button class="b" data-act="cfall" data-c="old">Tout garder (ignorer les nouvelles)</button><button class="b" data-act="cfall" data-c="new">Tout remplacer (supprimer les anciennes)</button></div><div id="cfl" style="max-height:60vh;overflow:auto;margin:8px 0">${c.items.map((x,i)=>`<div class="card" style="margin:8px 0"><b class="cap">${esc(x.label)}</b><span class="bdg ${lab[x.ch][1]}">${lab[x.ch][0]}</span><div class="mu">Change : ${esc(x.diff.join(", "))}</div><div class="ba cfba">${box("o",x)}${box("n",x)}</div><div class="cfb2"><button type="button" class="b${x.ch==="both"?" p":""}" data-act="cfc" data-i="${i}" data-c="both">${x.ch==="both"?"✔ ":""}Garder les deux</button></div><details data-cy="${i}"${x.open2?" open":""} style="margin:6px 0"><summary class="mu">Liste détaillée des différences</summary><div style="font-size:14px;word-break:break-word">${x.html}</div></details></div>`).join("")}</div><p class="mu" style="margin:0 0 6px;text-align:center">${sum}</p><p><button class="b p" data-act="cfok" style="width:100%;padding:10px">Importer avec ces choix</button> </p></div></div>`:"";if(c&&$("#cfl"))$("#cfl").scrollTop=sc}
 function doImport(r,items,o){const keep=new Set();(items||[]).forEach(x=>{if(x.ch==="old")x.ps.forEach(p=>keep.add(p));else if(x.ch==="both")x.ps.forEach(p=>{const t=new Set(Object.values(S.coll).map(m=>nn(m.name)));let n=p.name+" (nouvelle)",k=2;while(t.has(nn(n)))n=p.name+" (nouvelle "+(k++)+")";p.name=n})});
  link(r.units,mkFac(),keep);
  if(o.only){syncAll(r.units);tab="coll";warnImport(r,true,r.units.length+" figurine(s) ajoutée(s) ou mise(s) à jour dans la collection.");save();draw();return}
  const l={id:"l"+Date.now(),name:o.name||"Liste "+(S.lists.length+1),...r};if(o.pts)l.ovP=o.pts;S.lists.push(l);syncAll(r.units);S.cur=l.id;tab="units";warnImport(r,false,"");save();draw()}
 const PDFV="3.11.174";
-function pdfLines(items){const a=(items||[]).filter(i=>typeof i.str==="string"&&i.str!==""&&i.transform).map(i=>({s:i.str,x:i.transform[4],y:i.transform[5],w:i.width||0,h:Math.abs(i.transform[3])||i.height||10})).sort((p,q)=>q.y-p.y||p.x-q.x);
+function pdfLines(items){const a=(items||[]).filter(i=>typeof i.str==="string"&&i.str.trim()!==""&&i.transform).map(i=>({s:i.str,x:i.transform[4],y:i.transform[5],w:i.width||0,h:Math.abs(i.transform[3])||i.height||10})).sort((p,q)=>q.y-p.y||p.x-q.x);
+ if(!a.length)return[];
  const rows=[];a.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=Math.max(2,.45*Math.min(r.h,i.h)))r.it.push(i);else rows.push({y:i.y,h:i.h,it:[i]})});
- return rows.map(r=>{r.it.sort((p,q)=>p.x-q.x);let o="",end=null;r.it.forEach(i=>{if(end!==null&&i.x-end>.12*r.h&&!/\s$/.test(o)&&!/^\s/.test(i.s))o+=" ";o+=i.s;end=i.x+i.w});return o.replace(/\s+/g," ").trim()}).filter(l=>l&&!/^\d+\s*\/\s*\d+$/.test(l)&&!/^page\s+\d+(\s+(sur|de|\/)\s+\d+)?$/i.test(l))}
+ const lineOf=its=>{its=its.slice().sort((p,q)=>p.x-q.x);const h=Math.max(...its.map(i=>i.h));let o="",end=null;its.forEach(i=>{if(end!==null&&i.x-end>.12*h&&!/\s$/.test(o)&&!/^\s/.test(i.s))o+=" ";o+=i.s;end=i.x+i.w});return o.replace(/\s+/g," ").trim()};
+ /* gouttière verticale : une page en deux colonnes (armes à gauche, aptitudes à droite…) se lit colonne par colonne, sinon les lignes des deux colonnes se collent */
+ const X0=Math.min(...a.map(i=>i.x)),X1=Math.max(...a.map(i=>i.x+i.w)),sp=X1-X0;let g=null;
+ if(sp>150&&a.length>=12){let best=null;for(let gx=X0+sp*.28;gx<=X0+sp*.72;gx+=2){let c=0,L=0,R=0;for(const i of a){if(i.x<gx-1.5&&i.x+i.w>gx+1.5)c++;else if(i.x+i.w<=gx+1.5)L++;else R++}if(L>=4&&R>=4&&(!best||c<best.c||(c===best.c&&Math.abs(L-R)<Math.abs(best.L-best.R))))best={x:gx,c,L,R}}
+  if(best){const both=rows.filter(r=>r.it.some(i=>i.x+i.w<=best.x+1.5)&&r.it.some(i=>i.x>=best.x-1.5)).length;const cr=rows.filter(r=>r.it.some(i=>i.x<best.x-1.5&&i.x+i.w>best.x+1.5)).length;const rt=a.filter(i=>i.x>=best.x-1.5).map(i=>i.s).join(" "),lt=rt.replace(/[^A-Za-zÀ-ÿ]/g,"").length,rl=rows.map(r=>r.it.filter(i=>i.x>=best.x-1.5).map(i=>i.s).join(" ").trim()).filter(Boolean);if(both>=3&&both>=cr&&cr<=rows.length*.5&&lt>=rt.replace(/\s/g,"").length*.55&&rl.reduce((x,y)=>x+y.length,0)/Math.max(1,rl.length)>=12)g=best.x}}
+ const keep=l=>l&&!/^\d+\s*\/\s*\d+$/.test(l)&&!/^page\s+\d+(\s+(sur|de|\/)\s+\d+)?$/i.test(l);
+ if(g===null)return rows.map(r=>lineOf(r.it)).filter(keep);
+ const out=[];let L=[],R=[];const flush=()=>{out.push(...L,...R);L=[];R=[]};
+ rows.forEach(r=>{if(r.it.some(i=>i.x<g-1.5&&i.x+i.w>g+1.5)){flush();out.push(lineOf(r.it));return}const l=r.it.filter(i=>i.x+i.w<=g+1.5),rr=r.it.filter(i=>i.x+i.w>g+1.5);if(l.length)L.push(lineOf(l));if(rr.length)R.push(lineOf(rr))});
+ flush();return out.filter(keep)}
+/* ===== PDF armylistnetwork : lecture structurée (colonnes nom/texte, tableau d'armes, stratagèmes) ===== */
+window.pdfText=pages=>pages.some(it=>(it||[]).some(i=>/armylistnetwork/i.test(i.str||"")))?alnLines(pages).join("\n"):pages.map(pdfLines).flat().join("\n");
+function pdfText(pages){return window.pdfText(pages)}
+function alnLines(pages){const out=[];let known=[],LX=null,CBX=null,EQN=[],OPTN=[],TBL=null;const nz=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+ const isKnown=l=>{const k=nz(l);return!!k&&known.some(n=>nz(n)===k)},isPref=l=>{const k=nz(l);return!!k&&known.some(n=>{const m=nz(n);return m===k||m.startsWith(k+" ")})};
+ for(const items of pages){const a=(items||[]).filter(i=>typeof i.str==="string"&&i.str.trim()!==""&&i.transform).map(i=>({s:i.str,x:i.transform[4],y:i.transform[5],w:i.width||0,h:Math.abs(i.transform[3])||i.height||10})).sort((p,q)=>q.y-p.y||p.x-q.x);
+  if(!a.length)continue;const rows=[];a.forEach(i=>{const r=rows[rows.length-1];if(r&&Math.abs(r.y-i.y)<=Math.max(2,.45*Math.min(r.h,i.h)))r.it.push(i);else rows.push({y:i.y,h:i.h,it:[i]})});
+  rows.forEach(r=>r.it.sort((p,q)=>p.x-q.x));
+  const X0=Math.min(...a.map(i=>i.x)),lineOf=its=>{let o="",end=null;its.forEach(i=>{if(end!==null&&i.x-end>1.2&&!/\s$/.test(o)&&!/^\s/.test(i.s))o+=" ";o+=i.s;end=i.x+i.w});return o.replace(/\s+/g," ").trim()};
+  let k=0,blk=null,lx=LX==null?X0:LX,cbx=CBX,eqN=EQN,optN=OPTN;const emit=l=>{if(l)out.push(l)};
+  const doTable=(tr,xP,xD)=>{const isNum=r2=>r2.it.some(i=>i.x>=xP&&i.x<xD);const nr=tr.filter(isNum).map(r2=>({y:r2.y,name:[],caps:[],nums:r2.it.filter(i=>i.x>=xP&&i.x<xD)}));tr.forEach(r2=>{const near=nr.length?nr.reduce((b,n)=>Math.abs(n.y-r2.y)<Math.abs(b.y-r2.y)?n:b):null;if(!near)return;r2.it.forEach(i=>{if(i.x<xP)near.name.push(i);else if(i.x>=xD)near.caps.push(i)})});nr.forEach(n=>{const o=f=>n[f].sort((p,q)=>q.y-p.y||p.x-q.x).map(i=>i.s.trim()).join(" ").replace(/\s+/g," ").replace(/-\s+(?=[A-ZÀ-Ý])/g,"-");emit([o("name"),n.nums.map(i=>i.s.trim()).join(" "),o("caps")].filter(Boolean).join(" "))})};
+  const grab=j=>{const tr=[];while(j<rows.length&&!/^Equipement\b/.test(lineOf(rows[j].it))&&!rows[j].it.some(i=>/Portée/.test(i.s))){if(!/©\s*\d{4}/.test(lineOf(rows[j].it)))tr.push(rows[j]);j++}return{tr,j,end:j>=rows.length}};
+  if(TBL){const g=grab(0);doTable(g.tr,TBL.xP,TBL.xD);k=g.j;if(!g.end)TBL=null}
+  const close=()=>{if(!blk)return;const lab=blk.lab.join(" ").replace(/\s+/g," ").trim(),bd=blk.body;
+   if(bd.length&&/^\d+\s*PC$/i.test(bd[0])){emit(lab);bd.forEach(emit)}
+   else if(/\(\d+\s*points?\)/i.test(lab)&&bd.length){emit(lab);emit("Disposition : "+bd.join(" "))}
+   else if(bd.length){emit(lab+" "+bd[0]);bd.slice(1).forEach(emit)}else emit(lab);blk=null};
+  while(k<rows.length){const r=rows[k],txt=lineOf(r.it);
+   if(/©\s*\d{4}/.test(txt)){close();emit(txt);k++;continue}
+   /* tableau d'armes */
+   const hP=r.it.find(i=>/Portée/.test(i.s)),hC=r.it.find(i=>/Capacités/.test(i.s));
+   if(hP&&hC){close();emit(txt);const numIt=r.it.filter(i=>i.x<hC.x&&i.x>=hP.x),xP=hP.x-14,last=numIt[numIt.length-1],xD=(last?last.x+last.w:hP.x+hP.w)+14;
+    const g=grab(k+1);doTable(g.tr,xP,xD);TBL=g.end?{xP,xD}:null;k=g.j;continue}
+   /* liste des aptitudes de l'unité (même sur plusieurs lignes) : sert à fermer les noms écrits sur plusieurs lignes */
+   if(/^(Equipement|Aptitudes|Mots-clés)\b/.test(r.it[0].s)){lx=r.it[0].x;cbx=null}
+   if(/^Aptitudes\s*:/.test(txt)){let acc=txt.replace(/^Aptitudes\s*:\s*/,""),q=k+1;while(q<rows.length){const t2=lineOf(rows[q].it);if(/^(Equipement|Mots-clés|Aptitudes|Optimisations?)\b/.test(t2))break;const nxt=rows[q+1]?lineOf(rows[q+1].it):"";if(/,\s*$/.test(acc)||/,/.test(t2)||!/^Equipement\b/.test(nxt)){acc+=" "+t2;q++}else break}known=[...acc.split(","),...eqN,...optN].map(s=>s.replace(/\s+/g," ").trim()).filter(Boolean)}
+   if(/^Optimisations?\s*:/.test(txt)){optN=txt.replace(/^Optimisations?\s*:\s*/,"").split(/,(?![^\[]*\])/).map(x=>x.replace(/\s*\[\d+\]\s*$/,"").trim()).filter(Boolean);known=known.concat(optN)}
+   if(/^Equipement\s*:/.test(txt)){optN=[];let acc=txt.replace(/^Equipement\s*:\s*/,""),q=k+1;while(q<rows.length){const t2=lineOf(rows[q].it);if(/^(Equipement|Mots-clés|Aptitudes)\b/.test(t2))break;acc+=" "+t2;q++}eqN=acc.split(",").map(x=>x.replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean)}
+   const f=r.it[0],nx=r.it[1],stats=r.it.every(i=>i.s.trim().length<=4);
+   const lbl=Math.abs(f.x-lx)<15&&!stats&&!/^(Equipement|Aptitudes|Mots-clés)\b/.test(f.s);let bodyIt=[];if(lbl){if(cbx&&cbx>f.x+30&&r.it.some(i=>i.x>=cbx-4))bodyIt=r.it.filter(i=>i.x>=cbx-4);else{let e=f.x+f.w,q=1;while(q<r.it.length&&r.it[q].x-e<=12){e=Math.max(e,r.it[q].x+r.it[q].w);q++}bodyIt=r.it.slice(q);if(bodyIt.length&&bodyIt[0].x>f.x+40)cbx=bodyIt[0].x}}
+   const bodyOnly=!lbl&&f.x>lx+60&&r.it.every(i=>i.x>lx+60);
+   if(lbl){const lt=lineOf(r.it.filter(i=>!bodyIt.includes(i))),bt=bodyIt.length?lineOf(bodyIt):"",lab=blk?blk.lab.join(" "):"";
+    const base=blk&&blk.body.length>0&&blk.lastLbl===k-1&&Math.abs(blk.lastY-r.y)<=1.7*r.h&&!(bt&&/^\d+\s*PC$/i.test(bt)),pref=base&&!isKnown(lab)&&isPref(lab+" "+lt);
+    const open=pref||base&&!isKnown(lab)&&!/\(\d+\s*points?\)/i.test(lab)&&!(bt&&/^\d+\s*PC$/i.test(bt))&&!(bt&&blk.body.length&&/[.!]$/.test(blk.body[blk.body.length-1])&&/^[A-ZÀ-Ý]/.test(bt)&&!blk.body.some(x=>/^\d+\s*PC$/i.test(x)));
+    if(open){blk.lab.push(lt);blk.lastLbl=k;blk.lastY=r.y;if(bt)blk.body.push(bt)}else{close();blk={lab:[lt],body:bt?[bt]:[],lastLbl:k,lastY:r.y}}
+    k++;continue}
+   if(bodyOnly&&blk){blk.body.push(txt);k++;continue}
+   close();emit(txt);k++}
+  close();LX=lx;CBX=cbx;EQN=eqN;OPTN=optN}
+ return out}
 const loadJs=u=>new Promise((ok,ko)=>{const e=document.createElement("script");e.src=u;e.onload=ok;e.onerror=()=>ko(new Error(u));document.head.appendChild(e)});
 async function pdfLib(){if(window.pdfjsLib)return window.pdfjsLib;
  for(const b of["lib/pdfjs/","https://cdnjs.cloudflare.com/ajax/libs/pdf.js/"+PDFV+"/","https://cdn.jsdelivr.net/npm/pdfjs-dist@"+PDFV+"/build/"]){try{await loadJs(b+"pdf.min.js");if(!window.pdfjsLib)continue;pdfjsLib.GlobalWorkerOptions.workerSrc=b+"pdf.worker.min.js";try{await loadJs(b+"pdf.worker.min.js")}catch(e){}return pdfjsLib}catch(e){}}
  throw new Error("lib")}
 async function readPdf(f){if(!f)return;toast("Lecture du PDF…");let txt="";
- try{const lib=await pdfLib(),doc=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,out=[];for(let n=1;n<=doc.numPages;n++){const pg=await doc.getPage(n),tc=await pg.getTextContent();out.push(...pdfLines(tc.items))}txt=out.join("\n")}
+ try{const lib=await pdfLib(),doc=await lib.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,pages=[];for(let n=1;n<=doc.numPages;n++){const pg=await doc.getPage(n),tc=await pg.getTextContent();pages.push(tc.items)}txt=pdfText(pages)}
  catch(e){info(e&&e.message==="lib"?"Impossible de charger le lecteur de PDF (connexion ?). Ouvre le PDF, copie son texte et colle-le dans la zone de texte.":"Ce PDF n’a pas pu être lu. Essaie de copier son texte et de le coller dans la zone de texte.");return}
  const raw=$("#raw");if(!raw){return}raw.value=txt;const nm=$("#nm");if(nm&&!nm.value.trim())nm.value=f.name.replace(/\.pdf$/i,"");
  if(txt.trim().length<30){info("Aucun texte lisible dans ce PDF (image scannée ?). Utilise un PDF avec du texte, ou colle le texte de la liste.");return}
@@ -1555,7 +1641,8 @@ function checkImport(r,onlyc){const w=[],K0=["M","E","SV","PV","CD","CO"];
  const prof=(p,who,top)=>{const st=p.stats||{},miss=K0.filter(k=>!String(st[k]||"").trim());if(miss.length)w.push(`${who} : caractéristiques manquantes (${miss.join(", ")})`);
   if(!(p.weapons||[]).length)w.push(`${who} : aucune arme détectée`);
   const t=(p.text||[]).join(" "),na=(p.apt||"").split(",").map(x=>x.trim()).filter(Boolean).filter(n=>t.indexOf(n)<0&&!(p.xab||[]).some(x=>x.n===n));
-  if(!(p.apt||"").trim())w.push(`${who} : aucune aptitude détectée`);else if(na.length)w.push(`${who} : description introuvable pour ${na.join(", ")}`);
+  if(!(p.apt||"").trim()&&!(p.xab||[]).length)w.push(`${who} : aucune aptitude détectée`);else{try{abDoubt(p).forEach(x=>w.push(`${who} : ${x}`))}catch(_){if(na.length)w.push(`${who} : description introuvable pour ${na.join(", ")}`)}}
+  (p.weapons||[]).forEach(x=>{const bad=!/^(\d+"?|m[eê]l[eé]e)$/i.test(String(x.range||"").trim())||!String(x.a||"").trim()||!/^(\d\+|N\/A|-)$/i.test(String(x.hit||"").trim())||!/^\d+$/.test(String(x.f||"").trim())||!/^[-−]?\d+$/.test(String(x.pa||"").trim())||!String(x.d||"").trim()||/\d+\+?\s*$/.test(String(x.name||""))&&/\s\d/.test(String(x.name||""));if(bad)w.push(`${who} : arme « ${x.name} » au profil incomplet ou mal lu`)});
   if(!(p.kw||"").trim())w.push(`${who} : mots-clés manquants`);
   };
  r.units.forEach(u=>{const n=cap(u.name);prof(u,n,true);(u.subs||[]).forEach(s=>prof(s,n+" › "+cap(s.name),false))});
@@ -1564,13 +1651,13 @@ function checkImport(r,onlyc){const w=[],K0=["M","E","SV","PV","CD","CO"];
   (r.dets||[]).forEach(d=>{if(!String(d.rule||"").replace(/^Disposition\s*:/,"").trim())w.push(`Détachement « ${d.name} » : règle manquante`);if((r.strats||[]).length&&!r.strats.some(x=>x.det===d.name))w.push(`Détachement « ${d.name} » : aucun stratagème trouvé`)});
   if(!(r.strats||[]).length)w.push("Aucun stratagème détecté");
   const orph=[...new Set((r.strats||[]).filter(x=>!dn.has(x.det)).map(x=>x.name))];if(orph.length&&(r.dets||[]).length)w.push(`Stratagème(s) sans détachement reconnu : ${orph.join(", ")}`);
-  (r.strats||[]).forEach(x=>{if(!String(x.body||"").trim())w.push(`Stratagème « ${x.name} » : texte manquant`)})}
+  (r.strats||[]).forEach(x=>{if(!String(x.body||"").trim())w.push(`Stratagème « ${x.name} » : texte manquant`);if(!String(x.name||"").trim()||String(x.name).length>60||/^(QUAND|CIBLE|EFFET|À votre|A votre|À la|A la)\b/i.test(String(x.name)))w.push(`Stratagème « ${String(x.name||"sans nom").slice(0,50)} » : nom mal lu`)})}
  return w.length>14?[...w.slice(0,14),`… et ${w.length-14} autre(s) point(s)`]:w}
 function warnImport(r,onlyc,head){head=head||window.impNote||"";window.impNote="";const w=checkImport(r,onlyc);if(w.length)ask({t:"Éléments manquants ou douteux",p:(head?head+" ":"")+"Vérifie ces points dans ton texte, ou complète-les avec « Modifier » :",items:w,ok:"Compris"},()=>{});else if(head)info(head)}
 function optItems(raw){const t=String(raw||"").replace(/\s+/g," ").trim(),o=[],re=/(.+?)\s*\[(\d{1,3})\]\s*[,;]?\s*/g;let m,last=0;while(m=re.exec(t)){o.push({name:m[1].trim(),cost:+m[2]});last=re.lastIndex}if(!o.length)return[];const rest=t.slice(last).trim();if(rest)o.push({name:rest,cost:0});return o}
 const headOk=(t,i)=>{const b=t.slice(0,i).trimEnd();return!b||/[.!?)\]:;▪»”"’*]$/.test(b)};
 function findH(t,n,pos,strict){let j=pos,first=-1;while((j=t.indexOf(n,j))>=0){if(first<0)first=j;if(headOk(t,j))return j;j+=n.length}return strict?-1:first}
-function abNames(p){const w=new Set((p.weapons||[]).map(x=>String(x.name||"").toLowerCase().trim()));return[...(p.equip||"").split(",").map(s=>s.trim()).filter(s=>s&&(/\(Aura\)/.test(s)||!w.has(s.toLowerCase()))).map(s=>({n:s,strict:!/\(Aura\)/.test(s)})),...(p.apt||"").split(",").map(s=>s.trim()).filter(Boolean).map(s=>({n:s,strict:false}))]}
+function abNames(p){const w=new Set((p.weapons||[]).map(x=>String(x.name||"").toLowerCase().trim()));return[...(p.equip||"").split(",").map(s=>s.trim().replace(/\s*\(\d+\)\s*$/,"")).filter(s=>s&&(/\(Aura\)/.test(s)||!w.has(s.toLowerCase()))).map(s=>({n:s,strict:!/\(Aura\)/.test(s)})),...(p.apt||"").split(",").map(s=>s.trim()).filter(Boolean).map(s=>({n:s,strict:false}))]}
 function moveOpti(p){const it=optItems(p.opti);if(!it.length)return;let t=(p.text||[]).join(" ").replace(/\s+/g," ").trim();const names=abNames(p).map(x=>x.n),out=[];
  it.forEach((o,k)=>{const rx=new RegExp(o.name.trim().split(/\s+/).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("\\s+"),"i"),m=t?rx.exec(t):null;let body="";
   if(m){const from=m.index+m[0].length;let end=t.length;[...names,...it.filter((_,j)=>j!==k).map(x=>x.name)].forEach(n=>{const j=findH(t,n,from,false);if(j>=0&&j<end)end=j});body=t.slice(from,end).trim();t=(t.slice(0,m.index)+" "+t.slice(end)).replace(/\s+/g," ").trim()}
@@ -1594,7 +1681,7 @@ function batView2(){const B=S.bat,c=B.cur||0,CL=["#1fae7c","#e08a2c"],xx=(r,i)=>
  nc=hasX?5:4,
  tbl=dp("b:t","📊 Détail par round")+`<div class="w bzw"><table><tr><th>Round</th><th colspan="${nc}" style="color:${CL[0]}">${esc(B.n[0])}</th><th colspan="${nc}" style="color:${CL[1]}">${esc(B.n[1])}</th></tr><tr><th></th>${[0,1].map(()=>`<th>P</th><th>S</th><th>M</th>${hasX?"<th>O</th>":""}<th>Σ</th>`).join("")}</tr>${B.t.map((x,t)=>`<tr${t===c?' style="background:var(--bg)"':""}><td>R${t+1}</td>${[0,1].map(i=>`<td>${x.p[i]}</td><td>${x.s[i]}</td><td>${x.m?x.m[i]:0}</td>${hasX?`<td>${xx(x,i)}</td>`:""}<td><b>${tt(i,t)}</b></td>`).join("")}</tr>`).join("")}</table><div class="mu">P = primaire · S = secondaire · M = missions (auto)${hasX?" · O = objectifs secondaires (cartes)":""} · Σ = cumul</div></div></details>`,
  set=dp("b:s","👥 Joueurs · factions · listes")+[0,1].map(i=>`<div style="margin:10px 0;border-left:5px solid ${CL[i]};padding-left:10px"><b>${esc(B.n[i])}</b><input data-bf="${i}" list="fl" value="${esc(B.f[i])}" placeholder="Faction jouée" style="width:100%;margin-top:6px"><select data-bl="${i}" style="width:100%;margin-top:6px">${lopts(i)}</select></div>`).join("")+`</details>`;
- return`<div class="tbw">${window.tbScene?window.tbScene(dr):""}`+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p></div>`}
+ return`<div class="tbw">${window.tnTools?window.tnTools():""}${window.tbScene?window.tbScene(dr):""}`+hist+tbl+set+`<datalist id="fl">${S.fac.map(f=>`<option value="${esc(f.name)}">`).join("")}</datalist><p style="text-align:center;margin:14px 0 4px"><button class="b x" data-act="brst">Réinitialiser les scores</button></p></div>`}
 let ftab=0,fedLast=null;
 function cutDet(p,dn){const t=(p.text||[]).join(" ");if(!t)return"";const x=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),re=new RegExp("((?:[\\p{L}'’]+\\s-\\s)?(?:"+dn.map(x).join("|")+"))\\s*\\[([^\\]]+)\\]","giu"),tags=[];let m;while(m=re.exec(t))tags.push({i:m.index,l:m[0].length});if(!tags.length)return"";const names=[...(p.equip||"").split(",").map(s=>s.trim()).filter(s=>/\(Aura\)/.test(s)),...(p.apt||"").split(",").map(s=>s.trim())].filter(Boolean),out=[];let keep=t.slice(0,tags[0].i);tags.forEach((g,k)=>{const from=g.i+g.l,nx=k+1<tags.length?tags[k+1].i:t.length;let end=nx;names.forEach(n=>{const j=t.indexOf(n,from);if(j>=0&&j<end)end=j});out.push(t.slice(g.i,end).trim());keep+=" "+t.slice(end,nx)});p.text=[keep.replace(/\s+/g," ").trim()].filter(Boolean);return out.join("\n")}
 const octot=u=>(u.optc||0)+(u.subs||[]).reduce((a,x)=>a+(x.optc||0),0);
@@ -1638,7 +1725,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data
  if(t.classList.contains("ov")&&e.target!==t)return;
  if(a==="dgno"){dlg=null;dgDraw();return}
  if(a==="dgalt"&&dlg){const f=dlg.o.altcb;dlg=null;dgDraw();if(f)f();save();draw();return}
- if(a==="implink"){readLink();return}
+
  if(a==="cfno"){cfs=null;cfDraw();return}
  if(a==="cfc"&&cfs){cfs.items[+d.i].ch=d.c;cfDraw();return}
  if(a==="cfall"&&cfs){cfs.items.forEach(x=>x.ch=d.c);cfDraw();return}
@@ -1727,13 +1814,16 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data
  else if(a==="dphoto")delete S.imgs[u.ref];
  else if(a==="addw"){getB(u,d.b).weapons.push(Object.fromEntries(WF.map(f=>[f,""])));sync(u)}
  else if(a==="delw"){getB(u,d.b).weapons.splice(+d.k,1);sync(u)}
+ else if(a==="abfix"){const t=getB(u,d.b);abFix(t);window.xo=null;sync(u)}
+ else if(a==="absplit"){const t=getB(u,d.b),k=+d.k,ta=document.querySelector(`[data-abta="${d.b}|${k}"]`);if(ta)t.xab[k].d=ta.value;const pos=ta?(window.__abPos&&window.__abPos.el===ta?window.__abPos.p:ta.selectionStart):0;if(abSplitAt(t,k,pos)===false)return;window.xo=d.b+(k+1);sync(u)}
+ else if(a==="abup"){const t=getB(u,d.b),k=+d.k;if(k>0){const x=t.xab.splice(k,1)[0];t.xab.splice(k-1,0,x);window.xo=d.b+(k-1)}sync(u)}
  else if(a==="addab"){const t=getB(u,d.b);t.xab=t.xab||[];t.xab.push({n:"Nouvelle aptitude",d:""});window.xo=d.b+(t.xab.length-1);sync(u)}
  else if(a==="delab"){const t=getB(u,d.b);t.xab.splice(+d.k,1);window.xo=null;sync(u)}
  else if(a==="asub"){u.subs.push({label:"Meneur",name:"",...blank()});sync(u)}
  else if(a==="dsub"){const k=+d.k;ask({t:"Supprimer ce profil ?",ok:"Supprimer",dg:1},()=>{u.subs.splice(k,1);sync(u)});return}
  else if(a==="dunit"){const co=ctx==="coll";ask({t:co?"Supprimer de la collection ?":"Supprimer de cette liste ?",p:co?"Cette figurine disparaît de la collection et de toutes les listes.":"Elle reste dans les autres listes.",ok:"Supprimer",dg:1},()=>{if(co){delRef(u.ref)}else L.units=L.units.filter(x=>x!==u);ed=null;edit=false});return}
  save();draw()});
-document.addEventListener("change",e=>{if(e.target.dataset.att!=null){const m=S.coll[e.target.value];if(m&&ed&&ctx==="list"){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref,man:1};SH.forEach(f=>s[f]=clone(m[f]));ed.subs.push(s);toast("Meneur ajouté")}save();draw();return}if(e.target.dataset.bl!=null){S.bat.l[+e.target.dataset.bl]=e.target.value;save();return}if(e.target.dataset.fc!=null){if(ed&&S.coll[ed.ref])S.coll[ed.ref].fac=e.target.value;save();draw();return}if(e.target.dataset.bn!=null){S.bat.n[+e.target.dataset.bn]=e.target.value.trim()||"Joueur "+(+e.target.dataset.bn+1);save();return}const p=e.target.dataset.p;if(!p||!ed)return;setP(ed,p,e.target.value);if(p!=="size"&&p!=="pts")sync(ed);if(p==="pts"&&ctx==="coll")S.lists.forEach(l=>l.units.forEach(o=>{if(o.ref===ed.ref)o.pts=ed.pts}));save()});
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.dsel!=null){const L=cl(),d=L&&L.dets[+e.target.dataset.dsel];if(d){if(e.target.checked)delete d.off;else d.off=1;save();draw()}return}if(e.target.dataset.att!=null){const m=S.coll[e.target.value];if(m&&ed&&ctx==="list"){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref,man:1};SH.forEach(f=>s[f]=clone(m[f]));ed.subs.push(s);toast("Meneur ajouté")}save();draw();return}if(e.target.dataset.bl!=null){S.bat.l[+e.target.dataset.bl]=e.target.value;save();return}if(e.target.dataset.fc!=null){if(ed&&S.coll[ed.ref])S.coll[ed.ref].fac=e.target.value;save();draw();return}if(e.target.dataset.bn!=null){S.bat.n[+e.target.dataset.bn]=e.target.value.trim()||"Joueur "+(+e.target.dataset.bn+1);save();return}const p=e.target.dataset.p;if(!p||!ed)return;setP(ed,p,e.target.value);if(p!=="size"&&p!=="pts")sync(ed);if(p==="pts"&&ctx==="coll")S.lists.forEach(l=>l.units.forEach(o=>{if(o.ref===ed.ref)o.pts=ed.pts}));save()});
 document.addEventListener("input",e=>{if(e.target.id==="ps"){pq=e.target.value;[...pop].forEach(k=>{if(k.indexOf("u:")===0||k.indexOf("l:")===0||k.indexOf("r:")===0)pop.delete(k)});const L=cl();if(L&&$("#pl"))$("#pl").innerHTML=tab==="pst"||tab==="strats"?pstList(L):playList(L);return}if(e.target.id==="q"){q=e.target.value;$("#res").innerHTML=cres()}if(e.target.id==="pq"){pk.q=e.target.value;$("#pr").innerHTML=pkRes()}if(e.target.dataset.oo){const[i,f]=e.target.dataset.oo.split("."),L=cl();if(L&&L.optis&&L.optis[+i]){L.optis[+i][f]=e.target.value;save()}}
 if(e.target.dataset.lo){const L=cl(),k=e.target.dataset.lo;if(L){if(k==="name")L.name=e.target.value;else L[k]=e.target.value;save()}}
 if(e.target.dataset.o!=null){const L=cl();if(L&&L.units[+e.target.dataset.o]){L.units[+e.target.dataset.o].opti=e.target.value;save()}}
@@ -2619,6 +2709,7 @@ function logHtml1(e,names){
  else if(e.k==="md")what=`mode des secondaires : ${e.v==="f"?"Fixe":"Tactique"}`;
  return`<div class="mlg${neg?" neg":""}"><span class="mlt">${meta}</span><div>${who?`<b>${esc(who)}</b> · `:""}${nm?`<b>${esc(nm)}</b> — `:""}${esc(what)}${pts?` <b class="pd">${pts}</b>`:""}</div></div>`}
 window.sxLogN=()=>view().log.length;
+window.__sxRecap=()=>{try{if(!S.bat||!S.bat.sx)return null;const v=view();return[0,1].map(pl=>{const cs=(v.pl[pl]||{}).cards||{};return SXD.filter(d=>cs[d.id]).map(d=>({nm:d.nm,st:cs[d.id].st,pts:cardPts(cs[d.id],d,v.mode).tot})).filter(x=>x.pts>0)})}catch(e){return null}};
 window.sxHist=(mlog,names)=>{const L=[];(mlog||[]).forEach(e=>L.push({t:e.t,h:()=>M().logLine?M().logLine(e,names):""}));view().log.forEach(e=>L.push({t:e.t,h:()=>logHtml1(e,names)}));return L.sort((a,b)=>b.t-a.t).map(x=>x.h()).join("")};
 const ICO='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5.5 7.5v10a2.5 2.5 0 0 0 2.5 2.5h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="9" y="3" width="11" height="14.5" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M14.5 7v6.5M11.25 10.25h6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
 /* ---------- v94 : cartes secondaires « physiques » (face complète + main de petites cartes) ---------- */
@@ -3540,8 +3631,9 @@ function list(L,mg){const q=pq.toLowerCase().trim(),pf=pph||"",f=!!(q||pf||pSrc)
  if(pSrc!=="liste"){const cs=coreAll().filter(o=>visible(o,q,pf));
   if(cs.length||ced)out+=grp(pre+"@base",f,"Stratagèmes de base",cs.length,
    `<div class="sc-info"><p>Utilisables par toutes les armées. ${SRC_NOTE}</p><ul>${GEN.map(g=>`<li>${g}</li>`).join("")}</ul></div>`+cs.map(o=>ced===o.id&&mg?editCore(o):card(o,`<div class="sc-b">${mg?`<button class="b" data-act="cedit" data-i="${o.id}">Modifier</button>`:""}${o.enc&&window.encGo?`<button class="b" data-act="cenc" data-i="${o.enc}">Voir la règle</button>`:""}</div>`)).join(""))}
- if(pSrc!=="base"){const names=[...L.dets.map(d=>d.name),...L.strats.map(s=>s.det||"")].filter((n,i,a)=>a.indexOf(n)===i);
-  names.forEach(n=>{const d=L.dets.find(x=>x.name===n),all=L.strats.map((s,i)=>[s,i]).filter(([s])=>(s.det||"")===n).map(([s,i])=>fromList(s,i)),ss=all.filter(o=>(mg&&sed===o.i)||visible(o,q,pf)),dm=d&&q&&(d.name+" "+d.rule).toLowerCase().includes(q);
+ if(pSrc!=="base"){const dk=x=>String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim(),onD=L.dets.filter(d=>!d.off),okDet=n=>!L.dets.length||!dk(n)||onD.some(d=>dk(d.name)===dk(n)),seenD=new Set();
+  const names=[...onD.map(d=>d.name),...L.strats.map(s=>s.det||"")].filter(n=>{const k=dk(n);if(seenD.has(k)||!okDet(n))return false;seenD.add(k);return true});
+  names.forEach(n=>{const d=L.dets.find(x=>dk(x.name)===dk(n)),all=L.strats.map((s,i)=>[s,i]).filter(([s])=>dk(s.det)===dk(n)).map(([s,i])=>fromList(s,i)),ss=all.filter(o=>(mg&&sed===o.i)||visible(o,q,pf)),dm=d&&q&&(d.name+" "+d.rule).toLowerCase().includes(q);
    if(!ss.length&&!(dm&&!pf))return;const k=pre+n,df=false;
    out+=grp(k,df,esc(n||"Sans détachement"),ss.length,(d&&d.rule&&!pf?`<details class="pr" data-pk="r:${esc(n)}" data-pd="${q?1:0}"${(q?!pop.has("r:"+n):pop.has("r:"+n))?" open":""}><summary>Règle du détachement</summary><p class="pre">${esc(d.rule)}</p></details>`:"")+ss.map(o=>mg&&sed===o.i?editListCard(L,o):card(o,mg?`<div class="sc-b"><button class="b" data-act="sedit" data-i="${o.i}">Modifier</button> <button class="b x" data-act="sdel" data-i="${o.i}">Supprimer</button></div>`:"")).join(""))})}
  return out||`<p class="mu" style="text-align:center;margin:24px 0">${L.strats.length||pSrc!=="liste"?"Aucun stratagème ne correspond.":"Aucun stratagème dans cette liste (Gestion → Importer, ou + Stratagème)."}</p>`}
@@ -4427,7 +4519,7 @@ async function load(ab,nm){const lib=await pdfLib();buf=ab;name=nm||"PDF";doc=aw
 async function openFile(f){if(!f)return;say("Ouverture du PDF…");try{await load(await f.arrayBuffer(),f.name)}catch(e){say(e&&e.message==="lib"?"Lecteur de PDF indisponible (connexion ?)":"Ce PDF n'a pas pu être ouvert")}}
 function pick(){let i=document.getElementById("gpvfile");if(!i){i=document.createElement("input");i.type="file";i.accept="application/pdf,.pdf";i.id="gpvfile";i.hidden=true;document.body.appendChild(i)}i.value="";i.click()}
 function close(){if(el)el.innerHTML="";if(obs)obs.disconnect();document.body.classList.remove("jclk")}
-async function pagesText(a,b){const out=[];for(let n=a;n<=b;n++){const pg=await doc.getPage(n),tc=TC[n]||(TC[n]=await pg.getTextContent());out.push(...pdfLines(tc.items))}return out.join("\n")}
+async function pagesText(a,b){const pages=[];for(let n=a;n<=b;n++){const pg=await doc.getPage(n),tc=TC[n]||(TC[n]=await pg.getTextContent());pages.push(tc.items)}return window.pdfText?window.pdfText(pages):pages.map(pdfLines).flat().join("\n")}
 function toImportTab(cb){if(typeof tab!=="undefined"&&tab!=="imp"){tab="imp";try{draw()}catch(_){}}setTimeout(cb,60)}
 function insert(t,txt){const s=t.selectionStart!=null?t.selectionStart:t.value.length,e=t.selectionEnd!=null?t.selectionEnd:t.value.length;const pre=t.value.slice(0,s),sep=pre&&!/\s$/.test(pre)?"\n":"";t.value=pre+sep+txt+t.value.slice(e);t.dispatchEvent(new Event("input",{bubbles:true}));t.dispatchEvent(new Event("change",{bubbles:true}))}
 window.PDFV={open:openFile,async openLast(){try{const l=await IDB.get("lastpdf");if(l&&l.buf){say("Ouverture du dernier PDF…");await load(l.buf,l.name);return}}catch(_){}pick()},pick};
@@ -4622,6 +4714,131 @@ window.PAINTOCR={pick,readFiles,entries,splitBrand};
 })();
 </script>
 
+<script>
+/* ===== Table de jeu : écran allumé, pendule de tournoi, récapitulatif de partie ===== */
+(()=>{
+const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const say=m=>{try{toast(m)}catch(_){}};
+const CL=["#1fae7c","#e08a2c"];
+const B=()=>S.bat;
+/* ---------- 1. écran toujours allumé pendant une partie ---------- */
+let WL=null,FB=null,wlBusy=false;
+const want=()=>!!S.pm;
+async function wlOn(){if(WL||wlBusy||document.visibilityState!=="visible")return;wlBusy=true;
+ try{if(navigator.wakeLock&&navigator.wakeLock.request){WL=await navigator.wakeLock.request("screen");WL.addEventListener("release",()=>{WL=null});wlBusy=false;return}}catch(e){WL=null}
+ try{if(!FB){const c=document.createElement("canvas");c.width=c.height=2;const x=c.getContext("2d");let t=0;setInterval(()=>{if(FB&&!FB.paused){x.fillStyle=(t++%2)?"#000":"#010101";x.fillRect(0,0,2,2)}},1000);
+   const v=document.createElement("video");v.muted=true;v.playsInline=true;v.setAttribute("playsinline","");v.setAttribute("muted","");v.loop=true;v.style.cssText="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0";v.srcObject=c.captureStream?c.captureStream(1):null;document.body.appendChild(v);FB=v}
+  if(FB.srcObject)await FB.play()}catch(e){}
+ wlBusy=false}
+function wlOff(){try{WL&&WL.release()}catch(_){}WL=null;try{FB&&FB.pause()}catch(_){}}
+function wlSync(){want()?wlOn():wlOff()}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")wlSync()});
+document.addEventListener("click",()=>{if(want()&&!WL)wlSync()},true);
+window.wlState=()=>({on:!!WL||!!(FB&&!FB.paused),api:!!navigator.wakeLock});
+/* ---------- 2. chrono de partie : démarre au lancement, s'arrête à la fin ---------- */
+function fmt(ms){const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s/60)%60,x=s%60;return(h?h+":"+String(m).padStart(2,"0"):String(m))+":"+String(x).padStart(2,"0")}
+const chrMs=()=>{const c=B()&&B().chr;return c?((c.done||Date.now())-c.st):0};
+function chrSync(){const b=B();if(!b)return;if(S.pm){if(!b.chr||b.chr.done){b.chr={st:Date.now()};try{save()}catch(_){}}}else if(b.chr&&!b.chr.done){b.chr.done=Date.now();try{save()}catch(_){}}}
+setInterval(()=>{const b=B();if(!b||!b.chr||b.chr.done)return;const t=fmt(chrMs());document.querySelectorAll("[data-chr]").forEach(n=>{n.textContent=t})},1000);
+window.chrPill=()=>{const b=B();if(!b||!b.chr)return"";return`<div class="chrp${b.chr.done?" off":""}" role="timer" aria-label="Durée de la partie">⏱ <span data-chr>${fmt(chrMs())}</span></div>`};
+/* ---------- 3. récapitulatif de fin de partie ---------- */
+function recap(){const b=B(),tt=i=>batTot(i,4),w=tt(0)===tt(1)?-1:tt(0)>tt(1)?0:1,L=i=>{const l=S.lists.find(x=>x.id===(b.l||[])[i]);return l?l.name:""},sx=window.__sxRecap?window.__sxRecap():null;
+ const rows=b.t.map((r,t)=>[0,1].map(i=>({p:r.p[i],s:r.s[i]+(r.x?r.x[i]:0),m:r.m?r.m[i]:0,c:batTot(i,t)})));
+ const d=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+ let txt=`RÉCAPITULATIF DE PARTIE — ${d}\n`;[0,1].forEach(i=>{txt+=`\n${b.n[i]}${b.f[i]?" ("+b.f[i]+")":""}${L(i)?" — liste : "+L(i):""}\n  Total : ${tt(i)} PdV\n  Par round (primaire / secondaire${rows.some(r=>r[i].m)?" / missions":""}) : ${rows.map((r,t)=>`R${t+1} ${r[i].p}/${r[i].s}${rows.some(r=>r[i].m)?"/"+r[i].m:""}`).join(" · ")}\n`;if(sx&&sx[i]&&sx[i].length)txt+=`  Secondaires : ${sx[i].map(c=>c.nm+" "+c.pts).join(" · ")}\n`;if(b.cp)txt+=`  PC restants : ${b.cp[i]}\n`});
+ txt+=`\nRésultat : ${w<0?"égalité "+tt(0)+" – "+tt(1):b.n[w]+" gagne "+tt(w)+" – "+tt(1-w)}\n`;
+ if(b.chr)txt+=`Durée de la partie : ${fmt(chrMs())}\n`;
+ const html=`<div class="rcpw" role="dialog" aria-modal="true" aria-label="Récapitulatif de partie"><div class="rcph"><b>Récapitulatif de partie</b><button class="b" data-rcp="x" aria-label="Fermer">✕</button></div><p class="mu">${E(d)}</p>
+ <div class="rcps">${[0,1].map(i=>`<div class="rcpp${w===i?" win":""}" style="--c:${CL[i]}"><span class="rcpn">${E(b.n[i])}${w===i?" 🏆":""}</span><span class="rcpf">${E([b.f[i],L(i)].filter(Boolean).join(" · ")||"—")}</span><b class="rcpt">${tt(i)}</b><small>PdV</small></div>`).join("")}</div>
+ <p class="rcpr">${w<0?"Égalité":E(b.n[w])+" l’emporte"} · ${tt(0)} – ${tt(1)}</p>
+ <div class="rcpt2"><table><tr><th>Round</th>${[0,1].map(i=>`<th colspan="3" style="color:${CL[i]}">${E(b.n[i])}</th>`).join("")}</tr><tr><th></th>${[0,1].map(()=>"<th>Prim.</th><th>Sec.</th><th>Cumul</th>").join("")}</tr>${rows.map((r,t)=>`<tr><td>R${t+1}</td>${r.map(x=>`<td>${x.p+x.m}</td><td>${x.s}</td><td><b>${x.c}</b></td>`).join("")}</tr>`).join("")}</table></div>
+ ${sx?`<div class="rcpx">${[0,1].map(i=>`<div><h4 style="color:${CL[i]}">Secondaires · ${E(b.n[i])}</h4>${sx[i]&&sx[i].length?sx[i].map(c=>`<div class="rcpc"><span>${E(c.nm)}</span><b>${c.pts}</b></div>`).join(""):`<p class="mu">Aucune carte comptée.</p>`}</div>`).join("")}</div>`:""}
+ ${b.cp?`<p class="mu">PC restants : ${E(b.n[0])} ${b.cp[0]} · ${E(b.n[1])} ${b.cp[1]}</p>`:""}${b.chr?`<p class="mu">Durée de la partie : ${fmt(chrMs())}</p>`:""}
+ <div class="rcpf2"><button class="b" data-rcp="copy">📋 Copier</button>${navigator.share?`<button class="b" data-rcp="share">↗ Partager</button>`:""}<button class="b p" data-rcp="dl">⬇ Télécharger</button></div></div>`;
+ return{txt,html}}
+let RTX="";
+function openRecap(){const r=recap();RTX=r.txt;let o=document.getElementById("rcpo");if(!o){o=document.createElement("div");o.id="rcpo";document.body.appendChild(o)}o.innerHTML=r.html;document.body.classList.add("jclk")}
+function closeRecap(){const o=document.getElementById("rcpo");if(o)o.remove();document.body.classList.remove("jclk")}
+async function copyTxt(t){try{await navigator.clipboard.writeText(t);say("Récapitulatif copié");return}catch(_){}try{const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();say("Récapitulatif copié")}catch(e){say("Copie impossible")}}
+window.tnTools=()=>`<div class="tnt"><button class="b" data-rcp="open">📋 Récapitulatif de la partie</button></div>`;
+document.addEventListener("click",async e=>{const t=e.target.closest&&e.target.closest("[data-rcp]");if(!t)return;
+ const r=t.dataset.rcp;
+ if(r){e.preventDefault();if(r==="open"){openRecap();return}if(r==="x"){closeRecap();return}
+  if(r==="copy"){copyTxt(RTX);return}
+  if(r==="share"){try{await navigator.share({title:"Récapitulatif de partie",text:RTX})}catch(_){}return}
+  if(r==="dl"){const fn="partie-"+new Date().toISOString().slice(0,10)+".txt";let d=null;try{d=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(_){}
+   if(d){try{await d.save({filename:fn,data:RTX});return}catch(er){if(er&&er.code==="declined")return}}
+   try{const u=URL.createObjectURL(new Blob([RTX],{type:"text/plain"})),x=document.createElement("a");x.href=u;x.download=fn;document.body.appendChild(x);x.click();setTimeout(()=>{x.remove();URL.revokeObjectURL(u)},4000)}catch(_){copyTxt(RTX)}return}}});
+{const _d=window.draw;if(typeof _d==="function"){window.draw=function(){try{chrSync()}catch(_){}const r=_d.apply(this,arguments);try{wlSync()}catch(_){}return r}}}
+setTimeout(()=>{chrSync();wlSync()},800);
+const st=document.createElement("style");st.textContent=`
+.chrp{display:inline-flex;align-items:center;gap:5px;align-self:center;margin-top:5px;background:rgba(255,255,255,.14);color:#fff;border-radius:99px;padding:3px 12px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}.chrp.off{opacity:.6}
+.tnt{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.tnt .b{flex:1;min-height:46px;font-weight:700}
+#rcpo{position:fixed;inset:0;z-index:61;background:rgba(5,9,7,.86);overflow-y:auto;overscroll-behavior:contain;padding:12px}
+.rcpw{max-width:560px;margin:0 auto;background:var(--card);color:var(--tx);border-radius:18px;padding:14px 14px 18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.rcph{display:flex;justify-content:space-between;align-items:center}.rcph b{font-size:19px}
+.rcps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.rcpp{border:2px solid var(--bd);border-top:6px solid var(--c);border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}.rcpp.win{border-color:var(--c)}
+.rcpn{font-weight:800;font-size:16px;overflow-wrap:anywhere}.rcpf{font-size:12px;color:var(--mu);overflow-wrap:anywhere}.rcpt{font-size:44px;line-height:1.05;margin-top:4px;font-variant-numeric:tabular-nums}.rcpp small{color:var(--mu)}
+.rcpr{text-align:center;font-weight:700;margin:4px 0 10px}.rcpt2 table{width:100%;font-size:13px}.rcpt2 td,.rcpt2 th{padding:4px 2px}
+.rcpx{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}.rcpx h4{margin:6px 0;font-size:13px}.rcpc{display:flex;justify-content:space-between;gap:6px;font-size:13px;border-top:1px solid var(--bd);padding:4px 0}
+.rcpf2{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px}.rcpf2 .b{min-height:44px}
+@media(max-width:420px){.rcpx{grid-template-columns:1fr}}
+.prm{border-left:4px solid #f0b43c}.prm>summary{cursor:pointer;list-style:none}.prm>summary::-webkit-details-marker{display:none}.prmi{border-top:1px solid var(--bd);padding:7px 0}.prmi:first-of-type{border-top:0}.prmi p{margin:3px 0 0;font-size:13.5px;line-height:1.35}`;document.head.appendChild(st);
+})();
+</script>
+<script>
+/* ===== Aptitudes : éditeur unique (nom + description), partout (collection, listes, partie) ===== */
+(()=>{
+const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const say=m=>{try{toast(m)}catch(_){}};
+const WM=new WeakMap(),OB=new Map();let N=0;
+window.abKey=p=>{if(p&&p.ref)return"r:"+p.ref;let k=WM.get(p);if(!k){k="o:"+(++N);WM.set(p,k);OB.set(k,p)}return k};
+function copies(key){if(key.startsWith("o:")){const o=OB.get(key);return o?[o]:[]}const ref=key.slice(2),out=[];if(S.coll&&S.coll[ref])out.push(S.coll[ref]);
+ S.lists.forEach(l=>l.units.forEach(u=>{if(u.ref===ref)out.push(u);(u.subs||[]).forEach(s=>{if(s.ref===ref)out.push(s)})}));const b=out[0];if(b&&b.name&&typeof nn==="function"){const k=nn(String(b.name)),ok=o=>o&&!out.includes(o)&&nn(String(o.name||""))===k&&(!b.fac||!o.fac||o.fac===b.fac);Object.values(S.coll||{}).forEach(o=>{if(ok(o))out.push(o)});S.lists.forEach(l=>l.units.forEach(u=>{if(ok(u))out.push(u);(u.subs||[]).forEach(x=>{if(ok(x))out.push(x)})}))}return out}
+const coreDef=n=>{try{const r=window.encApi&&window.encApi.find(String(n).replace(/\s+\d+\+?$/,"").trim());return r&&r.def?String(r.def):""}catch(_){return""}};
+window.abCoreDef=coreDef;
+function abAll(p){const out=[],K=n=>typeof abK==="function"?abK(n):n,S0=new Set(),seen={has:n=>S0.has(K(n)),add:n=>S0.add(K(n))};
+ (typeof abSplit==="function"?abSplit(p):[]).forEach(x=>{if(!x.n&&!x.b)return;const n=x.n||"À renommer";seen.add(n);out.push({n,d:x.b||"",src:"txt"})});
+ (p.xab||[]).forEach(x=>{const n=String(x&&x.n||"").trim();if(!n)return;seen.add(n);out.push({n,d:String(x.d||""),src:"xab"})});
+ String(p.apt||"").split(",").map(s=>s.trim()).filter(Boolean).forEach(n=>{if(seen.has(n))return;seen.add(n);const d=coreDef(n);out.push({n,d,src:"core",o:{n,d}})});
+ return out}
+let KEY=null,ROWS=[],WHO="",CP=null;
+document.addEventListener("selectionchange",()=>{const el=document.activeElement;if(el&&el.closest&&el.closest("#abedo")&&el.tagName==="TEXTAREA")CP={el,p:el.selectionStart}});
+function rowsHtml(){return ROWS.map((r,i)=>`<div class="abr" data-i="${i}"><div class="abrh"><input class="abn" data-abf="n" data-i="${i}" value="${E(r.n)}" placeholder="Nom de l’aptitude" aria-label="Nom de l’aptitude"><button class="b" data-abx="cut" data-i="${i}" aria-label="Couper la description au curseur">✂</button>${i>0?`<button class="b" data-abx="up" data-i="${i}" aria-label="Monter">↑</button>`:""}<button class="b x" data-abx="del" data-i="${i}" aria-label="Supprimer">✕</button></div>
+ <textarea data-abf="d" data-i="${i}" rows="${Math.min(10,Math.max(3,Math.ceil((r.d||"").length/48)))}" placeholder="Description complète de l’aptitude">${E(r.d)}</textarea>${r.src==="core"&&r.n===r.o.n&&r.d===r.o.d?`<p class="abnt">Texte de l’encyclopédie : il reste à jour tant que tu ne le modifies pas.</p>`:""}</div>`).join("")}
+function draw2(){const o=document.getElementById("abedo");if(!o)return;o.querySelector(".abrl").innerHTML=rowsHtml()}
+function open(key){const cs=copies(key);if(!cs.length){say("Fiche introuvable");return}const p=cs.find(x=>x!==S.coll[(key.slice(2))])||cs[0];KEY=key;WHO=p.name||"";ROWS=abAll(p).map(r=>Object.assign({},r));
+ let o=document.getElementById("abedo");if(!o){o=document.createElement("div");o.id="abedo";document.body.appendChild(o)}
+ o.innerHTML=`<div class="abew" role="dialog" aria-modal="true" aria-label="Modifier les aptitudes"><div class="abeh"><b>Aptitudes · ${E(cap?cap(WHO):WHO)}</b><button class="b" data-abx="x" aria-label="Fermer">✕</button></div>
+ <p class="mu">Chaque aptitude a son nom et sa description complète, affichée sous son nom sur la fiche. Si deux aptitudes sont collées, place le curseur juste avant la seconde et touche ✂. ${cs.length>1?`Les changements s’appliquent aux ${cs.length} exemplaires de cette fiche (collection et listes).`:""}</p>
+ <div class="abrl">${rowsHtml()}</div><button class="b" data-abx="add">+ Ajouter une aptitude</button>
+ <div class="abef"><button class="b" data-abx="x">Annuler</button><button class="b p" data-abx="ok">Enregistrer</button></div></div>`;document.body.classList.add("jclk")}
+function close(){const o=document.getElementById("abedo");if(o)o.remove();document.body.classList.remove("jclk");KEY=null}
+function commit(){const rows=ROWS.map(r=>({...r,n:String(r.n||"").trim(),d:String(r.d||"").trim()})).filter(r=>r.n||r.d);
+ if(rows.some(r=>!r.n)){say("Donne un nom à chaque aptitude");return false}
+ const apt=[],xab=[];rows.forEach(r=>{if(r.src==="core"&&r.n===r.o.n&&r.d===String(r.o.d).trim())apt.push(r.n);else xab.push({n:r.n,d:r.d})});
+ copies(KEY).forEach(o=>{o.apt=apt.join(", ");o.text=[];o.xab=JSON.parse(JSON.stringify(xab))});return true}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-abed],[data-abx]");if(!b)return;e.preventDefault();e.stopPropagation();
+ if(b.dataset.abed){open(b.dataset.abed);return}
+ const a=b.dataset.abx,i=+b.dataset.i;
+ if(a==="x"){close();return}
+ if(a==="add"){ROWS.push({n:"",d:"",src:"new"});draw2();setTimeout(()=>{const l=document.querySelectorAll("#abedo .abn");l[l.length-1]&&l[l.length-1].focus()},30);return}
+ if(a==="cut"){const ta=document.querySelector(`#abedo textarea[data-i="${i}"]`),r=ROWS[i];if(!ta||!r)return;const pos=CP&&CP.el===ta?CP.p:ta.selectionStart;const d=String(ta.value),A=d.slice(0,pos).trim(),B=d.slice(pos).trim();if(!pos||!B){say("Place le curseur dans le texte, juste avant le nom de l’aptitude suivante, puis touche ✂");return}
+  r.d=A;const g=typeof abGuess==="function"?abGuess(B):{n:"",d:B};ROWS.splice(i+1,0,{n:g.n==="Nouvelle aptitude"?"":g.n,d:g.d,src:"new"});CP=null;draw2();say("Aptitude coupée en deux : vérifie le nom");return}
+ if(a==="del"){ROWS.splice(i,1);draw2();return}
+ if(a==="up"&&i>0){const r=ROWS.splice(i,1)[0];ROWS.splice(i-1,0,r);draw2();return}
+ if(a==="ok"){if(commit()===false)return;close();try{save()}catch(_){}try{draw()}catch(_){}say("Aptitudes enregistrées")}},true);
+document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.abf||!document.getElementById("abedo"))return;const r=ROWS[+t.dataset.i];if(r)r[t.dataset.abf]=t.value});
+const st=document.createElement("style");st.textContent=`#abedo{position:fixed;inset:0;z-index:64;background:rgba(5,9,7,.82);overflow-y:auto;overscroll-behavior:contain;padding:10px}
+.abew{max-width:640px;margin:0 auto;background:var(--card);color:var(--tx);border-radius:16px;padding:12px 12px 16px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.abeh{display:flex;justify-content:space-between;align-items:center;gap:8px}.abeh b{font-size:18px}
+.abr{border:1px solid var(--bd);border-radius:12px;padding:8px;margin:8px 0;background:var(--bg)}.abrh{display:flex;gap:6px;align-items:center}.abrh .abn{flex:1;min-width:0;font-weight:700;font-size:16px}
+.abr textarea{width:100%;margin-top:6px;font-size:15px;line-height:1.35}.abnt{font-size:11.5px;color:var(--mu);margin:4px 0 0}
+.abef{position:sticky;bottom:-16px;display:flex;gap:8px;justify-content:flex-end;background:var(--card);padding:10px 0 2px;margin-top:8px}.abef .b{min-height:44px}
+.sech .abedb{float:right;margin-top:-3px;font-size:12px;padding:3px 10px;min-height:0;background:rgba(255,255,255,.18);color:inherit;border:1px solid rgba(255,255,255,.35);letter-spacing:0;text-transform:none}
+.abcore{opacity:.95}.abcore .abtag{font-size:10.5px;color:var(--mu);margin-left:6px;font-weight:400}`;document.head.appendChild(st);
+})();
+</script>
 </body></html>
 <script>
 /* ===== v94 : layouts de terrain (Compagnon de Rencontre) tirés au sort au lancement + mini-onglet en partie ===== */
@@ -6186,4 +6403,5 @@ window.TRKUI.realBlock=(uA,facA,uB,facB)=>{try{const a=T.uidOf(uA,{fac:T.facOfUn
 })();
 
 </script>
+</body></html>
 </body></html>
