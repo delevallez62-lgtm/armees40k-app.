@@ -44,11 +44,11 @@ function equipString(models){return[...countsOf(models)].map(([w,n])=>`${w} (${n
 /* ---------- restrictions ---------- */
 let SEQ=0;const cid=()=>"c"+Date.now().toString(36)+(SEQ++).toString(36);
 function describe(c){const w=S1(c.w||"");switch(c.t){
- case"max":return`${w} : ${c.per?c.n+" par tranche de "+c.per+" figurines":"maximum "+c.n+" par unité"}${c.ifmin||c.ifmax?" ("+(c.ifmin?"unité ≥ "+c.ifmin:"")+(c.ifmin&&c.ifmax?", ":"")+(c.ifmax?"unité ≤ "+c.ifmax:"")+")":""}`;
- case"min":return`${w} : minimum ${c.n} par unité`;
- case"role":return`${w} : réservé à la figurine « ${cap(c.role)} »${c.n?" (maximum "+c.n+")":""}`;
- case"excl":return`${S1(c.ws[0])} et ${S1(c.ws[1])} : incompatibles sur une même figurine`;
- case"fixed":return"Aucune option d'équipement";
+ case"max":return`Maximum ${c.n} × ${w}${c.per?" par tranche de "+c.per+" figurines":" par unité"}${c.ifmin||c.ifmax?" ("+(c.ifmin?"unité ≥ "+c.ifmin:"")+(c.ifmin&&c.ifmax?", ":"")+(c.ifmax?"unité ≤ "+c.ifmax:"")+")":""}`;
+ case"min":return`Minimum ${c.n} × ${w} par unité`;
+ case"role":return`${w} : réservé à « ${cap(c.role)} »${c.n?" (maximum "+c.n+")":""}`;
+ case"excl":return`${S1(c.ws[0])} et ${S1(c.ws[1])} : jamais sur la même figurine`;
+ case"fixed":return"Aucune option : l'unité garde son équipement de base";
  case"size":return`Effectif : ${c.min===c.max?c.min:"de "+c.min+" à "+c.max} figurine${c.max>1?"s":""}`;
  default:return c.t}}
 function sig(c){return[c.t,nk(c.w||""),(c.ws||[]).map(nk).sort().join("+"),c.n||"",c.per||"",nk(c.role||"")].join("|")}
