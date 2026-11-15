@@ -1,0 +1,12 @@
+.lrn h2{margin:0 0 4px;font-size:22px}
+.lr-hero{border:2px solid var(--ac);border-radius:16px;padding:12px 14px;margin:10px 0;background:color-mix(in srgb,var(--ac) 9%,var(--card))}.lr-hero b{font-size:15px}.lr-hero ul{margin:6px 0 0;padding-left:18px}.lr-hero li{margin:5px 0;line-height:1.4}
+.lr-d{margin:8px 0;border:1px solid var(--bd);border-radius:14px;background:var(--card);overflow:hidden}
+.lr-d>summary{list-style:none;display:flex;gap:12px;align-items:center;padding:12px 14px;min-height:60px;cursor:pointer;position:relative}.lr-d>summary::-webkit-details-marker{display:none}
+.lr-d>summary::after{content:"›";position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--mu);transition:transform .2s}.lr-d[open]>summary::after{transform:translateY(-50%) rotate(90deg)}
+.lr-i{font-size:24px;flex:none;width:32px;text-align:center}.lr-d>summary b{display:block;font-size:15.5px}.lr-d>summary small{display:block;font-size:12.5px;color:var(--mu);font-weight:400}
+.lr-b{padding:4px 14px 14px;border-top:1px solid var(--bd);font-size:14.5px;line-height:1.5}.lr-b ul,.lr-b ol{margin:8px 0;padding-left:20px}.lr-b li{margin:6px 0}
+.lr-p{margin:10px 0;padding:8px 10px;border-left:4px solid var(--ac);background:var(--bg);border-radius:8px}.lr-p>b{display:block;margin-bottom:2px}
+.lr-g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.lr-g div{padding:6px 8px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);font-size:13px}.lr-g b{color:var(--ac)}
+.lr-t{width:auto;margin:6px 0}.lr-t td{padding:4px 14px 4px 0;border:0;text-align:left}.lr-t b{font-size:16px;color:var(--ac)}
+.lr-steps{display:grid;gap:6px;margin:8px 0}.lr-s{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);margin:0;cursor:pointer;color:var(--tx);font-size:14px}.lr-s.on{border-color:#2e9d6b;background:color-mix(in srgb,#2e9d6b 12%,var(--card))}.lr-s input{width:26px;height:26px;flex:none;margin:0}.lr-s b{display:block;font-size:14.5px}.lr-s small{display:block;color:var(--mu);font-size:12.5px;margin-top:2px;line-height:1.35}
+.lr-src{margin:14px 2px 0;font-size:11.5px;color:var(--mu)}
