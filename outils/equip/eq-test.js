@@ -82,4 +82,15 @@ const c0=SD.eqc["macrocytes canopteks"].length;EQ.enrich(SD,DATA);t("enrichissem
 EQ.rejectCons(SD,{name:"macrocytes canopteks"},SD.eqc["macrocytes canopteks"][0].id);EQ.enrich(SD,DATA);t("rejet respecté",SD.eqc["macrocytes canopteks"].length===c0-1);
 const eo=EQ.officialFor(DATA,"macrocytes canopteks",[W2("Scalpel Gauss")]);t("officialFor",!!eo&&!EQ.officialFor(DATA,"macrocytes canopteks",[W2("Arme inventée")]));
 t("ruleText",eo.opt.map(EQ.ruleText).some(x=>/remplacer Scalpel Gauss ou projecteur Tesla par Faisceau atomiseur \+ Projecteur de nanoscarabées/i.test(x)&&/1 figurine au maximum/.test(x)),eo.opt.map(EQ.ruleText));
+// Wahapedia V11 (source secondaire)
+const WPD=JSON.parse(require("fs").readFileSync(__dirname+"/data/eq-wahapedia.json","utf8"));
+t("wahapedia : plusieurs centaines de fiches",Object.keys(WPD.units).length>1000&&WPD.meta.sources.length>10);
+const ic=WPD.units["intercessor squad"];t("wahapedia : Intercessor Squad lu",ic&&ic.st==="sec"&&ic.comp.length===2&&ic.opt.some(r=>r.who==="role"&&/sergeant/i.test(r.role)&&r.to.some(x=>/chainsword/i.test(x))),ic);
+t("wahapedia : 1 lance-grenades par tranche de 5",ic.opt.some(r=>r.per===5&&r.n===1&&r.to.some(x=>/grenade launcher/i.test(x))),ic.opt);
+global.EQ_WP=WPD;
+const SW={coll:{i1:{ref:"i1",name:"intercessor squad",weapons:[W2("Bolt Rifle"),W2("Bolt Pistol"),W2("Knives and Fists"),W2("Grenade Launcher")],text:[]}},lists:[]};EQ.enrich(SW,EQ.mergedData(SW,undefined));
+const cw=SW.eqc["intercessor squad"]||[];t("wahapedia : restrictions appliquées avec statut secondaire",cw.length>0&&cw.every(c=>c.st==="sec"||c.st==="off"),cw.map(c=>c.st));
+const IS={name:"intercessor squad",size:10,equip:"Bolt Rifle (9), Bolt Pistol (10), Knives and Fists (10), Grenade Launcher (2)",weapons:[W2("Bolt Rifle"),W2("Bolt Pistol"),W2("Knives and Fists"),W2("Grenade Launcher")]};
+let vi=EQ.validate(IS,cw);t("wahapedia : 2 lance-grenades pour 10 figurines = valide (1 par tranche de 5)",!vi.issues.some(i=>i.lvl==="red"),vi.issues.map(i=>i.msg));
+IS.equip="Bolt Rifle (7), Bolt Pistol (10), Knives and Fists (10), Grenade Launcher (3)";vi=EQ.validate(IS,cw);t("wahapedia : 3 lance-grenades = refusé",vi.issues.some(i=>/Grenade Launcher/.test(i.msg)&&/maximum autorisé : 2/.test(i.msg)),vi.issues.map(i=>i.msg));
 console.log(ok+" OK, "+ko+" échec(s)");process.exit(ko?1:0);

@@ -110,7 +110,7 @@ function regroup(S){S.eqc=S.eqc&&typeof S.eqc==="object"?S.eqc:{};S.eqx=Array.is
   a.forEach(m=>{if(!(m.text&&m.text.length))return;extract(m.text,names,m.name).forEach(c=>{const s=sig(c);if(have.has(s)||rej.has(k+"#"+s))return;have.add(s);cons.push(c)})})});
  try{enrich(S,mergedData(S,root.EQ_DATA))}catch(e){}
  return n}
-function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel",ver:"V11",p:e.p,passage:"Pack de Faction officiel, page "+e.p},base={st:"off",src,auto:1},out=[];
+function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel",ver:"V11",p:e.p||0,passage:e.p?"Pack de Faction officiel, page "+e.p:"Wahapedia V11"},base={st:e.st||"off",src,auto:1},out=[];
  const push=c=>out.push(Object.assign({},base,c));
  if(e.none&&!e.x)push({t:"fixed"});
  if(e.comp&&e.comp.length===1&&(e.none&&!e.x||e.comp[0][0]!==e.comp[0][1]))push({t:"size",min:e.comp[0][0],max:e.comp[0][1]});
@@ -119,10 +119,10 @@ function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel
    if(r.who!=="all")(r.to||[]).forEach(t=>role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0)}
   else if(r.t==="add"){(r.to||[]).forEach(t=>{role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0;(r.not||[]).forEach(x=>push({t:"excl",ws:[x,t]}))})}});
  return out}
-function mergedData(S,base){const imp=S&&S.eqimp&&S.eqimp.units?S.eqimp:null;if(!imp)return base;
- const srcs=((base&&base.meta&&base.meta.sources)||[]).concat((imp.meta&&imp.meta.sources)||[]);return{meta:{ver:"V11",sources:srcs},units:Object.assign({},(base&&base.units)||{},imp.units)}}
+function mergedData(S,base){const imp=S&&S.eqimp&&S.eqimp.units?S.eqimp:null,wp=root.EQ_WP&&root.EQ_WP.units?root.EQ_WP:null;if(!imp&&!wp)return base;
+ const srcs=((wp&&wp.meta.sources)||[]).concat((base&&base.meta&&base.meta.sources)||[]).concat((imp&&imp.meta&&imp.meta.sources)||[]);return{meta:{ver:"V11",sources:srcs},units:Object.assign({},wp?wp.units:{},(base&&base.units)||{},imp?imp.units:{})}}
 function officialFor(data,name,pool){const e=data&&data.units&&data.units[nk(nn(name))];if(!e)return null;const ws=e.w||[];return(!ws.length||!pool||!pool.length||pool.some(w=>ws.some(x=>same(x,wbase(w.name)))))?e:null}
-function whoText(r){switch(r.who){case"all":return"Toutes les figurines";case"role":return(r.role&&r.role!=="cette figurine"?S1(r.role):"Cette figurine")+" uniquement";default:return(r.per?"Par tranche de "+r.per+" figurines : ":"")+(r.n?(r.n===1?"1 figurine au maximum":"jusqu'à "+r.n+" figurines"):"quelques figurines")}}
+function whoText(r){switch(r.who){case"all":return"Toutes les figurines";case"unit":return"Toute l'unité";case"role":return(r.role&&r.role!=="cette figurine"?S1(r.role):"Cette figurine")+" uniquement";default:return(r.per?"Par tranche de "+r.per+" figurines : ":"")+(r.n?(r.n===1?"1 figurine au maximum":"jusqu'à "+r.n+" figurines"):"quelques figurines")}}
 function toText(r){return r.alt&&r.alt.length>1?r.alt.map(x=>x.map(S1).join(" + ")).join(" ou "):(r.to||[]).map(S1).join(" + ")}
 function ruleText(r){const to=toText(r);return r.t==="repl"?`${whoText(r)} peut remplacer ${(r.from||[]).join(" ou ")} par ${to}`:`${whoText(r)} peut ajouter ${to}`}
 function enrich(S,data){if(!data||!data.units)return 0;S.eqd=S.eqd&&typeof S.eqd==="object"?S.eqd:{};S.eqc=S.eqc||{};S.eqx=S.eqx||[];

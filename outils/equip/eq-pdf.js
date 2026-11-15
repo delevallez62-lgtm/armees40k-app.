@@ -7,12 +7,12 @@ const num=s=>{s=String(s||"").toLowerCase().trim();return NUMW[s]!=null?NUMW[s]:
 const q=s=>String(s||"").replace(/[’‘`]/g,"'").replace(/[­\u0000-\u0008\u000b-\u001f]/g,"").replace(/\s+/g," ").trim();
 const title=s=>String(s||"").toLowerCase().replace(/(^|[\s(\-])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
 const HDR_COMP=/^(UNIT COMPOSITION|COMPOSITION D'UNITÉ)$/i,HDR_OPT=/^(WARGEAR OPTIONS|OPTIONS D'ÉQUIPEMENT)$/i,STOP=/^(FACTION )?(KEYWORDS|MOTS-CLÉS)/i;
-function clean(s){s=q(s).replace(/■/g," ");s=s.replace(/^(?:\d+|an?|the|one|un|une)\s+/i,"").replace(/^(?:its|their|his|her|this model's|son|sa|ses|leur|leurs|le|la|les|l'|du|de la|des|d')\s*/i,"");return s.replace(/^\d+\s+/,"").replace(/[.;*\s]+$/,"").trim()}
+function clean(s){s=q(s).replace(/■/g," ").replace(/\([^)]*\)/g," ").replace(/\s+/g," ");s=s.replace(/^(?:\d+|an?|the|one|un|une)\s+/i,"").replace(/^(?:its|their|his|her|this model's|son|sa|ses|leur|leurs|le|la|les|l'|du|de la|des|d')\s*/i,"");return s.replace(/^\d+\s+/,"").replace(/[.;*\s]+$/,"").trim()}
 function alts(s){s=q(s).replace(/\.$/,"");const ch=/^(?:\d+|one|un) (?:of the following|des choix suivants)\s*:?\s*/i.test(s)||/\|/.test(s)&&/(?:of the following|choix suivants)/i.test(s);
- const body=s.replace(/^.*?(?:of the following|des choix suivants)\s*:?\s*/i,"");const parts=body.replace(/^\|\s*/,"").split(/\s*\|\s*/).map(x=>x.split(/\s+and\s+|\s+et\s+/i).map(clean).filter(Boolean)).filter(a=>a.length);
+ const body=s.replace(/^.*?(?:of the following|des choix suivants)\s*:?\s*/i,"");const parts=body.replace(/^\|\s*/,"").split(/\s*\|\s*|,\s*(?=\d+\s)/).map(x=>x.split(/\s+and\s+|\s+et\s+/i).map(clean).filter(Boolean)).filter(a=>a.length);
  return ch&&parts.length>1?parts:null}
 function tos(s){s=q(s).replace(/\.$/,"").replace(/^(?:\d+|one) of the following\s*:?\s*/i,"").replace(/^\d+ des choix suivants\s*:?\s*/i,"");
- return s.replace(/^\|\s*/,"").split(/\s*\|\s*|\s*;\s*|\s+and\s+(?=\d+\s|an?\s)|\s+et\s+(?=\d+\s|une?\s)|\s+or\s+(?=\d+\s)|\s+ou\s+(?=\d+\s)/i).map(clean).filter(Boolean)}
+ return s.replace(/^\|\s*/,"").split(/\s*\|\s*|,\s*(?=\d+\s)|\s*;\s*|\s+and\s+(?=\d+\s|an?\s)|\s+et\s+(?=\d+\s|une?\s)|\s+or\s+(?=\d+\s)|\s+ou\s+(?=\d+\s)/i).map(clean).filter(Boolean)}
 const NS="(\\d+|one|two|three|four|five|six|un|une|deux|trois|quatre|cinq)";
 function build(rest,who,n,per,role){
  let m=/^replace (?:its|their|his|her)?\s*(.+?) with (.+)$/i.exec(rest)||/^remplacer (?:leur|leurs|son|sa|ses)?\s*(.+?) par (.+)$/i.exec(rest);
@@ -35,6 +35,8 @@ m=/^Any number of (?:[\w' -]+? )?(?:models?|[A-Z][\w' -]*?) can (?:each )?(.+)$/
  if(m&&!/^(this|the|cette)\b/i.test(m[2])&&!/model's/i.test(m[2])){const r=build(m[3],"any",num(m[1]),per,null);if(r)return[r,null]}
  m=/^(?:every|each|all) models?(?: in this unit)? can (?:each )?(.+)$/i.exec(t)||/^Toutes? les figurines de cette unité peuvent chacune (.+)$/i.exec(t)||/^Chaque figurine(?: \([^)]*\))? peut (.+)$/i.exec(t);
  if(m){const r=build(m[1],"all",null,per,null);if(r)return[r,null]}
+ m=/^All [\w' -]+? models? in this unit can (?:each )?(.+)$/i.exec(t);if(m){const r=build(m[1],"all",null,per,null);if(r)return[r,null]}
+ m=/^This unit can (.+)$/i.exec(t);if(m){const r=build(m[1],"unit",null,per,null);if(r)return[r,null]}
  m=/^This model can (.+)$/i.exec(t)||/^Cette figurine peut (.+)$/i.exec(t);if(m){const r=build(m[1],"role",1,per,"cette figurine");if(r)return[r,null]}
  m=/^This model's (.+?) can (?:be )?replaced with (.+)$/i.exec(t);if(m)return[[{t:"repl",who:"role",role:"cette figurine",from:m[1].split(/\s+and\s+/i).map(clean),to:tos(m[2]),alt:alts(m[2])||undefined,n:1}],null];
  m=/^The ([\w' -]+?)'s (.+?) can be replaced with (.+)$/i.exec(t);if(m)return[[{t:"repl",who:"role",role:m[1].toLowerCase(),from:m[2].split(/\s+and\s+/i).map(clean),to:tos(m[3]),alt:alts(m[3])||undefined,n:1}],null];
@@ -42,6 +44,8 @@ m=/^Any number of (?:[\w' -]+? )?(?:models?|[A-Z][\w' -]*?) can (?:each )?(.+)$/
  m=new RegExp("^"+NS+"\\s+([\\w' -]+?)\\s+that is not equipped with (.+?) can be equipped with (.+)$","i").exec(t);
  if(m)return[[{t:"add",who:"any",to:tos(m[4]),n:num(m[1]),not:[clean(m[3])]}],null];
  return[null,t]}
+function rejoin(arr,def){if(!arr||arr.length<2||!def||!def.length)return arr;const D=def.map(nk);const out=[];for(let i=0;i<arr.length;i++){let done=false;for(let j=arr.length-1;j>i;j--){const jn=arr.slice(i,j+1).join(" and ");if(D.includes(nk(jn))){out.push(jn);i=j;done=true;break}}if(!done)out.push(arr[i])}return out}
+function fixRules(rules,def){rules.forEach(r=>{if(r.from)r.from=rejoin(r.from,def);if(r.to)r.to=rejoin(r.to,def);if(r.alt)r.alt=r.alt.map(a=>rejoin(a,def))});return rules}
 function lineText(its){return q(its.slice().sort((a,b)=>a.x-b.x).map(i=>i.s).join(" "))}
 function groupLines(its){const L=[];its.slice().sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{const l=L.find(z=>Math.abs(z.y-i.y)<2.2);if(l)l.its.push(i);else L.push({y:i.y,its:[i]})});L.sort((a,b)=>b.y-a.y);return L}
 function bullets(lines){const out=[];let cur=null;lines.forEach(l=>{const t=lineText(l.its);if(!t)return;if(/^■/.test(t)){if(cur)out.push(cur);cur=t.replace(/^■\s*/,"")}else if(cur!=null)cur+=" "+t;else cur=t});if(cur)out.push(cur);return out}
@@ -60,9 +64,9 @@ function parseSheet(sh,page,meta){if(!sh.name)return null;const opts=sh.optH?bul
  const comp=[],def=[];bullets(sh.right).forEach(t=>{
   if(/(?:is|are|est|sont) (?:equipped with|équipée?s? de)/i.test(t)||/équipée? de ?:/i.test(t)){const e=t.split(/equipped with\s*:|équipée? de\s*:/i)[1]||"";e.split(/\.\s/)[0].split(/\s*;\s*/).forEach(x=>{x=q(x).replace(/\.$/,"");if(x&&x.length<=60)def.push(x.toLowerCase())});const pre=/^(\d+)(?:\s*-\s*(\d+))?\s+(.+?)\s+(?:Every|Each|This|Chaque|Cette)\b/i.exec(t);if(pre)comp.push([+pre[1],+(pre[2]||pre[1])]);return}
   const m=/^(\d+)(?:\s*[-–]\s*(\d+))?\s+([^:]+)$/.exec(t);if(m&&!/can be attached|peut être attachée/i.test(t))comp.push([+m[1],+(m[2]||m[1])])});
- const w=new Set(def);rules.forEach(r=>(r.from||[]).concat(r.to||[]).forEach(x=>w.add(String(x).toLowerCase())));
+ fixRules(rules,def);const w=new Set(def);rules.forEach(r=>(r.from||[]).concat(r.to||[]).forEach(x=>w.add(String(x).toLowerCase())));
  return{key:nk(sh.name),e:{n:title(sh.name),fac:meta.fac||"",doc:meta.file,p:page,none:none||!sh.optH,x:unk.length,opt:rules,comp:comp.slice(0,4),def:[...new Set(def)],w:[...w]}}}
 function parsePages(pages,meta){const units={};pages.forEach((items,i)=>{sheetsOfPage(items).forEach(sh=>{const r=parseSheet(sh,i+1,meta||{});if(r&&!units[r.key])units[r.key]=r.e})});return units}
-root.EQPDF={parsePages,parseItem,sheetsOfPage,nk};
+root.EQPDF={fixRules,parsePages,parseItem,sheetsOfPage,nk};
 if(typeof module!=="undefined")module.exports=root.EQPDF;
 })(typeof window!=="undefined"?window:globalThis);
