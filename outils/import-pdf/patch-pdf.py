@@ -5,7 +5,7 @@ def rep(a,b,n=1):
     global s
     c=s.count(a);assert c==n,(c,a[:90]);s=s.replace(a,b)
 # 1. seule la ligne de total est ignorée (et non toute ligne contenant « figurines »)
-rep('.filter(s=>s&&!CATS.test(s)&&!/figurines/.test(s))','.filter(s=>s&&!CATS.test(s)&&!/^\\d+\\s*points?\\s*-\\s*\\d+\\s*figurines?\\b/i.test(s)&&!/^\\d+\\s*figurines?$/i.test(s))')
+rep('.filter(s=>s&&!CATS.test(s)&&!/figurines/.test(s))','.filter((s,i,a)=>s&&(!CATS.test(s)||/(?:^(?:Aptitudes|Equipement|Mots-clés(?: de faction)?)\\s*:|,\\s*$)/.test(a[i-1]||""))&&!/^\\d+\\s*points?\\s*-\\s*\\d+\\s*figurines?\\b/i.test(s)&&!/^\\d+\\s*figurines?$/i.test(s))')
 # 2. titres de catégories supplémentaires
 rep('|Transports? dédiés?|','|Transports? (?:dédiés?|assignés?)|Transports?|Aéronefs?|Drones?|')
 # 3. noms d'armes : « Kombi-karbo - Fling\' » et « Multi-klateur » (le tiret collé n'est recollé qu'avant une minuscule)
@@ -17,4 +17,35 @@ rep('rule:lines.slice(d,end).join(" ").replace(','rule:lines.slice(d,end).join("
 # 5. nom d'aptitude contenant une virgule (« Makai, Lèv' c'te Bannière ! ») : gardé en un seul nom
 rep(' if(o.apt){const sn=new Set();',' if(o.apt){const pa=o.apt.split(",").map(x=>x.trim()).filter(Boolean),LK=(o.text||[]).map(x=>abK(x)),mo=[];for(let i=0;i<pa.length;i++){let b=null;for(let n=Math.min(3,pa.length-i);n>=2;n--){const j=pa.slice(i,i+n).join(", "),k=abK(j);if(k&&LK.some(l=>l===k||l.startsWith(k+" "))){b=[n,j];break}}if(b){mo.push(b[1].replace(/,/g,"\u201a"));i+=b[0]-1}else mo.push(pa[i])}o.apt=mo.join(", ")}\n if(o.apt){const sn=new Set();')
 rep('function findH(t,n,pos,strict){let j=pos,first=-1;','function findH(t,n,pos,strict){n=String(n).replace(/\u201a/g,",");let j=pos,first=-1;')
+# 6. unités à plusieurs profils de caractéristiques (ex. Boyz / Boss Nob) : profils gardés
+rep(' let cur=null;const map={"Equipement":"equip"',' {const pf=[],SR=/^[\\d"+\\/\\-]+$/;for(let q=1;q<(wh<0?Math.min(seg.length,4):wh);q++){const t=(seg[q]||"").trim().split(/\\s+/);if(t.length>=6&&t.slice(0,6).every(x=>SR.test(x)))pf.push({n:t.slice(6).join(" "),st:Object.fromEntries(K.map((k,i)=>[k,t[i]]))})}o._pf=pf.length>1?pf:null}\n let cur=null;const map={"Equipement":"equip"')
+rep(' if(o.apt){const pa=o.apt.split',' if(o._pf){const mdl=o.mdl||[],ky=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"");o._pf.forEach((p,i)=>{const m=mdl.find(x=>ky(x.n)===ky(p.n));if(m)m.st=p.st;else if(p.n)mdl.splice(Math.min(i,mdl.length),0,{n:p.n,eq:i===0?o.equip:"",st:p.st})});o.mdl=mdl}delete o._pf\n if(o.apt){const pa=o.apt.split')
+rep('<p class="mdl"><b>${esc(m.n)}</b>${m.eq?','<p class="mdl"><b>${esc(m.n)}</b>${m.st?` <small>${K.map(k=>k+" "+esc(m.st[k])).join(" · ")}</small>`:""}${m.eq?')
+# 7. un mot du libellé n'est « collé » au précédent que si l'écart est faible ; noms d'aptitudes avec virgule connus
+rep('while(q<r.it.length&&r.it[q].x-e<=12){','while(q<r.it.length&&r.it[q].x-e<=6){')
+rep('known=[...acc.split(","),...eqN,...optN]','known=[...acc.split(","),...(()=>{const pz=acc.split(",").map(x=>x.trim()),o=[];for(let i=0;i<pz.length;i++)for(let n=2;n<=3&&i+n<=pz.length;n++)o.push(pz.slice(i,i+n).join(", "));return o})(),...eqN,...optN]')
+# 8. un libellé ne continue sur la ligne suivante que si le mot suivant ne tenait plus dans la colonne
+rep('const base=blk&&blk.body.length>0','const lit=r.it.filter(i=>!bodyIt.includes(i)),lq=lit.length?lit[lit.length-1].x+lit[lit.length-1].w:null,fw=(()=>{const i0=lit[0];if(!i0)return 0;const t0=i0.s.trim();return i0.w*(t0.split(/\\s+/)[0].length/Math.max(1,t0.length))})(),cont=!!(blk&&blk.lr!=null&&cbx&&blk.lr+3.5+fw>cbx-9);\n    const base=blk&&blk.body.length>0')
+rep('const open=pref||base&&!isKnown(lab)','const open=pref||cont&&base&&!isKnown(lab)&&!/\\(\\d+\\s*points?\\)/i.test(lab)&&!(bt&&/^\\d+\\s*PC$/i.test(bt))||base&&!isKnown(lab)')
+rep('if(open){blk.lab.push(lt);blk.lastLbl=k;blk.lastY=r.y;if(bt)blk.body.push(bt)}else{close();blk={lab:[lt],body:bt?[bt]:[],lastLbl:k,lastY:r.y}}','if(open){blk.lab.push(lt);blk.lastLbl=k;blk.lastY=r.y;blk.lr=lq;if(bt)blk.body.push(bt)}else{close();blk={lab:[lt],body:bt?[bt]:[],lastLbl:k,lastY:r.y,lr:lq}}')
+# 9. tableau d'armes : noms et capacités répartis par BLOCS centrés sur la ligne de chiffres (et non ligne par ligne)
+a=s.index('const doTable=(tr,xP,xD)=>{');b=s.index('\n  const grab=',a)
+NEW="""const doTable=(tr,xP,xD)=>{const isNum=r2=>r2.it.some(i=>i.x>=xP&&i.x<xD);const nr=tr.filter(isNum).map(r2=>({y:r2.y,name:[],caps:[],nums:r2.it.filter(i=>i.x>=xP&&i.x<xD)}));
+   if(nr.length)["name","caps"].forEach(f=>{const its=[];tr.forEach(r2=>r2.it.forEach(i=>{if(f==="name"?i.x<xP:i.x>=xD)its.push(i)}));its.sort((p,q)=>q.y-p.y||p.x-q.x);const bl=[];its.forEach(i=>{const bk=bl[bl.length-1];if(bk&&bk[bk.length-1].y-i.y<=1.6*(i.h||11.4))bk.push(i);else bl.push([i])});
+    bl.forEach(bk=>{const cy=bk.reduce((t,i)=>t+i.y,0)/bk.length,nn2=nr.reduce((p,q)=>Math.abs(q.y-cy)<Math.abs(p.y-cy)?q:p);nn2[f].push(...bk)})});
+   nr.forEach(n=>{const o=f=>{const t=n[f].sort((p,q)=>q.y-p.y||p.x-q.x).map(i=>i.s.trim()).join(" ").replace(/\\s+/g," ");return f==="caps"?t.replace(/-\\s+(?=[A-ZÀ-Ý])/g,"-"):t.replace(/(\\S)-\\s+(?=[a-zà-ÿ])/g,"$1-")};emit([o("name"),n.nums.map(i=>i.s.trim()).join(" "),o("caps")].filter(Boolean).join(" "))})};"""
+s=s[:a]+NEW+s[b:]
+# 10. un libellé ou un corps coupé par un saut de page est recollé (nom d'aptitude connu ou corps sans libellé)
+a=s.index('  const close=()=>{if(!blk)return;');b=s.index('blk=null};',a)+len('blk=null};')
+oldclose=s[a:b]
+body=oldclose[oldclose.index('const lab=blk.lab'):oldclose.rindex('blk=null};')].replace('blk.lab','b.lab').replace('bd=blk.body','bd=b.body').replace('emit(','E0(').replace('forEach(emit)','forEach(E0)')
+s=s[:a]+'  const close=()=>{if(!blk)return;closeB(blk);blk=null};'+s[b:]
+rep('function alnLines(pages){const out=[];','function alnLines(pages){const out=[],E0=l=>{if(l)out.push(l)};let carry=null;const closeB=b=>{'+body+'};')
+rep('if(/©\\s*\\d{4}/.test(txt)){close();emit(txt);k++;continue}','if(/©\\s*\\d{4}/.test(txt)){if(blk){carry=blk;blk=null}emit(txt);k++;continue}')
+rep('  const close=()=>{if(!blk)return;closeB','  if(carry&&k<rows.length){const r0=rows[k],f0=r0.it[0],bo=f0.x>lx+60&&r0.it.every(i=>i.x>lx+60),c2=cbx?r0.it.filter(i=>i.x<cbx-4):[f0],t0=c2.length?lineOf(c2):"",l0=carry.lab.join(" ");blk=carry;carry=null;if(bo){blk.lastLbl=k-1;blk.lastY=r0.y}else if(Math.abs(f0.x-lx)<15&&t0&&!isKnown(l0)&&isPref(l0+" "+t0)){const bi=r0.it.filter(i=>cbx&&i.x>=cbx-4);blk.lab.push(t0);if(bi.length)blk.body.push(lineOf(bi));blk.lastLbl=k;blk.lastY=r0.y;blk.lr=c2[c2.length-1].x+c2[c2.length-1].w;k++}else{blk=blk;closeB(blk);blk=null}}\n  const close=()=>{if(!blk)return;closeB')
+rep('  close();LX=lx;CBX=cbx;EQN=eqN;OPTN=optN}\n return out}','  if(blk&&!carry){close()}LX=lx;CBX=cbx;EQN=eqN;OPTN=optN}\n if(carry)closeB(carry);\n return out}')
+# 11. une ligne très courte (« 4+ ») qui complète un nom d'aptitude connu n'est pas une ligne de caractéristiques
+rep('stats=r.it.every(i=>i.s.trim().length<=4);','stats=r.it.every(i=>i.s.trim().length<=4)&&!(blk&&blk.body.length&&isPref(blk.lab.join(" ")+" "+lineOf(r.it.filter(i=>!cbx||i.x<cbx-4))));')
+# 12. nom de la liste : lu dans l'en-tête du PDF (« Zektail : [Orks] Test »), sinon le nom du fichier
+rep('if(nm&&!nm.value.trim())nm.value=f.name.replace(/\\.pdf$/i,"");','if(nm&&!nm.value.trim()){const h0=(txt.split("\\n")[0]||"").trim(),hd=h0.replace(/\\s*\\[[^\\]]*\\]\\s*/g," ").replace(/\\s+/g," ").trim();nm.value=/^[^:]{1,40}:\\s*\\[/.test(h0)&&hd.length<=60?hd:f.name.replace(/\\.pdf$/i,"")}')
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
