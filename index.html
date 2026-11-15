@@ -1372,9 +1372,9 @@ function msplit(p){const ex=(p.mdl||[]).filter(m=>m.eq&&wnk(m.eq)!==wnk(p.equip)
  const sg=a=>a.map(w=>wnk(w.name)).sort().join("|");if(ws.every(x=>sg(x.w)===sg(B)))return null;
  const used=new Set([...B,...ws.flatMap(x=>x.w)]);return{B:B.concat(A.filter(w=>!used.has(w))),ws,ex}}
 function mblk(p){const sp=msplit(p);if(!sp)return pstx(p)+wtbl(p.weapons,p.name,p);
- const ms=(p.mdl||[]).filter(m=>m.st),lb=n=>`<div class="mpf"><b class="mpn">${esc(n)}</b></div>`;
- return(ms.length>1?lb(ms[0].n):"")+stx(p.stats)+ms.slice(1).filter(m=>!sp.ex.includes(m)).map(m=>lb(m.n)+stx(m.st)).join("")+wtbl(sp.B,p.name,Object.assign({},p,{mdl:[]}))
-  +sp.ws.map(x=>lb(x.m.n)+(x.m.st?stx(x.m.st):"")+wtbl(x.w,p.name+" ("+x.m.n+")",{name:x.m.n,size:1,equip:x.m.eq,mdl:[],weapons:x.w})).join("")}
+ const sep=n=>`<div class="msep"><span>⚔ Armes du ${esc(n)}</span></div>`;
+ return pstx(p)+wtbl(sp.B,p.name,Object.assign({},p,{mdl:[]}))
+  +sp.ws.map(x=>sep(x.m.n)+wtbl(x.w,p.name+" ("+x.m.n+")",{name:x.m.n,size:1,equip:x.m.eq,mdl:[],weapons:x.w})).join("")}
 const pstx=p=>{const ms=(p.mdl||[]).filter(m=>m.st);if(ms.length<2)return stx(p.stats);return`<div class="mpf"><b class="mpn">${esc(ms[0].n)}</b></div>`+stx(p.stats)+ms.slice(1).map(m=>`<div class="mpf"><b class="mpn">${esc(m.n)}</b></div>`+stx(m.st)).join("")};
 const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+mblk(p)+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?`<div class="mdls">${p.mdl.map(m=>`<p class="mdl"><b>${esc(m.n)}</b>${m.eq?` <small>${esc(m.eq)}</small>`:""}</p>`).join("")}</div>`:"")+sec(`Aptitudes${window.abKey?`<button type="button" class="abedb" data-abed="${window.abKey(p)}">✎ Modifier</button>`:""}`,(apNames(p).length?`<p class="apn">${(a=>[...a.filter(x=>hlOn(p,x)),...a.filter(x=>!hlOn(p,x))])(apNames(p)).map(x=>`<span class="an${hlOn(p,x.trim())?" hl":""}${fdOn(p,x.trim())?" fold":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(x.trim())}">${esc(x.trim())}</span>`).join("")}</p>`:"")+abil(p))+(p.equip?(k=>`<details class="eq" data-pk="${k}" data-pd="0"${pop.has(k)?" open":""}><summary>Équipement <span style="opacity:.8;font-weight:400">· ${String(p.equip).split(",").filter(x=>x.trim()).length}</span></summary><p>${esc(p.equip)}</p></details>`)("e:"+(p.ref||p.name)):"")+sec("Mots-clés",p.kw||p.fkw?`<p class="mu enckw">${window.encKw?window.encKw(p):esc(p.kw)+(p.fkw?" · "+esc(p.fkw):"")}</p>`:"")+(window.encXtra?window.encXtra(p):"")+`</div>`;
 const ei=(p,v,ph)=>`<input data-p="${p}" value="${esc(v)}" placeholder="${ph||""}">`;
@@ -6918,6 +6918,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 .wpc{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid var(--bd,#777);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ac,#c9a227)}
 .wpr.on .wpc{border-color:var(--ac,#c9a227)}
 .mpf{margin:8px 0 2px}.mpn{font-size:13px;color:var(--ac,#c9a227);text-transform:capitalize}
+.msep{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--ac,#c9a227);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}.msep:before,.msep:after{content:'';flex:1;height:2px;background:var(--ac,#c9a227);opacity:.55}
 </style>
 <script>
 /* Armes d'une unité : fiche unique en collection + choix des armes à l'ajout dans une liste (100 % local) */

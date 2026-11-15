@@ -4,3 +4,4 @@
 .wpc{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid var(--bd,#777);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ac,#c9a227)}
 .wpr.on .wpc{border-color:var(--ac,#c9a227)}
 .mpf{margin:8px 0 2px}.mpn{font-size:13px;color:var(--ac,#c9a227);text-transform:capitalize}
+.msep{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--ac,#c9a227);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}.msep:before,.msep:after{content:'';flex:1;height:2px;background:var(--ac,#c9a227);opacity:.55}

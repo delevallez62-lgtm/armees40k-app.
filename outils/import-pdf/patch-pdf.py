@@ -57,9 +57,9 @@ function msplit(p){const ex=(p.mdl||[]).filter(m=>m.eq&&wnk(m.eq)!==wnk(p.equip)
  const sg=a=>a.map(w=>wnk(w.name)).sort().join("|");if(ws.every(x=>sg(x.w)===sg(B)))return null;
  const used=new Set([...B,...ws.flatMap(x=>x.w)]);return{B:B.concat(A.filter(w=>!used.has(w))),ws,ex}}
 function mblk(p){const sp=msplit(p);if(!sp)return pstx(p)+wtbl(p.weapons,p.name,p);
- const ms=(p.mdl||[]).filter(m=>m.st),lb=n=>`<div class="mpf"><b class="mpn">${esc(n)}</b></div>`;
- return(ms.length>1?lb(ms[0].n):"")+stx(p.stats)+ms.slice(1).filter(m=>!sp.ex.includes(m)).map(m=>lb(m.n)+stx(m.st)).join("")+wtbl(sp.B,p.name,Object.assign({},p,{mdl:[]}))
-  +sp.ws.map(x=>lb(x.m.n)+(x.m.st?stx(x.m.st):"")+wtbl(x.w,p.name+" ("+x.m.n+")",{name:x.m.n,size:1,equip:x.m.eq,mdl:[],weapons:x.w})).join("")}
+ const sep=n=>`<div class="msep"><span>⚔ Armes du ${esc(n)}</span></div>`;
+ return pstx(p)+wtbl(sp.B,p.name,Object.assign({},p,{mdl:[]}))
+  +sp.ws.map(x=>sep(x.m.n)+wtbl(x.w,p.name+" ("+x.m.n+")",{name:x.m.n,size:1,equip:x.m.eq,mdl:[],weapons:x.w})).join("")}
 const pstx=p=>{''')
 rep('+pstx(p)+wtbl(p.weapons,p.name,p)+abWarn(p)+((p.mdl||[]).length?','+mblk(p)+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?')
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
