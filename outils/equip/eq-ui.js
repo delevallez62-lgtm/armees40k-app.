@@ -45,15 +45,15 @@ function consBlock(u,withImpact){const cs=consOf(u),n=cs.length,unc=cs.filter(c=
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.eqdr)OPEN=d.open},true);
 function offInfo(u){const d=(S.eqd||{})[EQ.consKey(u)];if(!d)return"";
  if(d.nocompat)return`<div class="eq-i orange"><span>⚠ Une fiche officielle V11 existe pour « ${E(d.n)} » (${E(d.doc)}${d.p?", page "+d.p:""}) mais ses armes ne correspondent pas à celles de cette fiche : aucune restriction appliquée, version à vérifier.</span></div>`;
- return`<div class="eq-ok">✔ ${d.st==="sec"?"Données Wahapedia V11":"Données officielles V11"} : ${E(d.doc)}${d.p?", page "+d.p:""}.${d.st==="sec"?" (powered by Wahapedia)":""}${d.x?` ${d.x} option${d.x>1?"s":""} complexe${d.x>1?"s":""} non reprise${d.x>1?"s":""} automatiquement : à vérifier dans le document.`:""}</div>`}
+ return`<div class="eq-ok">${d.al?`🔗 Association par profil${d.alok?" (confirmée)":" (à confirmer)"} avec « ${E(d.n)} ». `:""}✔ ${d.st==="sec"?"Données Wahapedia V11":"Données officielles V11"} : ${E(d.doc)}${d.p?", page "+d.p:""}.${d.st==="sec"?" (powered by Wahapedia)":""}${d.x?` ${d.x} option${d.x>1?"s":""} complexe${d.x>1?"s":""} non reprise${d.x>1?"s":""} automatiquement : à vérifier dans le document.`:""}</div>`}
 
 /* ---------- menu « ce que je peux équiper, et qui peut le porter » ---------- */
 const chipsW=a=>a.map(w=>`<span>${E(EQ.S1(w))}</span>`).join("");
-function equipMenu(p){const pool=(p.eqw||p.weapons||[]),off=EQ.officialFor(EQ.mergedData(S,window.EQ_DATA),p.name,pool),k=EQ.consKey(p),cons=(S.eqc&&S.eqc[k]||[]).filter(c=>!c.off);
- const baseW=off&&off.def&&off.def.length?off.def:(p.weapons||[]).map(w=>EQ.wbase(w.name)).filter((x,i,a)=>a.findIndex(y=>EQ.same(x,y))===i);
+function equipMenu(p){const pool=(p.eqw||p.weapons||[]),MD=EQ.mergedData(S,window.EQ_DATA),off=EQ.officialFor(MD,p.name,pool,S),al=off?EQ.aliasFor(S,MD,p.name):null,rv={};if(al)Object.entries(al.w||{}).forEach(([fr,en])=>{rv[EQ.nk(en)]=fr});const lc=n=>{const f=rv[EQ.nk(n)];return f||n},lt=r=>r.alt&&r.alt.length>1?r.alt.map(x=>x.map(y=>EQ.S1(lc(y))).join(" + ")).join(" ou "):(r.to||[]).map(y=>EQ.S1(lc(y))).join(" + "),k=EQ.consKey(p),cons=(S.eqc&&S.eqc[k]||[]).filter(c=>!c.off);
+ const baseW=off&&off.def&&off.def.length?off.def.map(lc):(p.weapons||[]).map(w=>EQ.wbase(w.name)).filter((x,i,a)=>a.findIndex(y=>EQ.same(x,y))===i);
  const rules=off?off.opt||[]:[];const cards=[];
- rules.forEach(r=>{const to=EQ.toText(r),ic=r.t==="repl"?"🔁":"➕";
-  cards.push(`<div class="eq-oc"><div class="eq-oh"><span>${ic}</span><b>${E(to)}</b><em class="eq-p ok">${off.st==="sec"?"✔ Wahapedia V11":"✔ Officiel V11"}</em></div><div class="eq-ol"><i>👥 Qui</i> ${E(EQ.whoText(r))}</div>${r.t==="repl"?`<div class="eq-ol"><i>🔁 Remplace</i> ${E((r.from||[]).map(EQ.S1).join(" ou "))}</div>`:'<div class="eq-ol"><i>➕ En plus</i> de son équipement</div>'}</div>`)});
+ rules.forEach(r=>{const to=lt(r),ic=r.t==="repl"?"🔁":"➕";
+  cards.push(`<div class="eq-oc"><div class="eq-oh"><span>${ic}</span><b>${E(to)}</b><em class="eq-p ok">${off.st==="sec"?"✔ Wahapedia V11":"✔ Officiel V11"}</em></div><div class="eq-ol"><i>👥 Qui</i> ${E(EQ.whoText(r))}</div>${r.t==="repl"?`<div class="eq-ol"><i>🔁 Remplace</i> ${E((r.from||[]).map(y=>EQ.S1(lc(y))).join(" ou "))}</div>`:'<div class="eq-ol"><i>➕ En plus</i> de son équipement</div>'}</div>`)});
  cons.filter(c=>c.st!=="off"&&!c.auto&&["max","role","excl","min"].includes(c.t)).forEach(c=>{const pl=pill(c),w=c.t==="excl"?EQ.S1(c.ws[0])+" / "+EQ.S1(c.ws[1]):EQ.S1(c.w);
   cards.push(`<div class="eq-oc"><div class="eq-oh"><span>${ICON[c.t]||"•"}</span><b>${E(w)}</b><em class="eq-p ${pl[0]}">${pl[1]}</em></div><div class="eq-ol">${E(EQ.describe(c))}</div></div>`)});
  const known=new Set(rules.flatMap(r=>(r.to||[]).concat(r.from||[])).map(EQ.nk));const free=(pool||[]).map(w=>EQ.wbase(w.name)).filter((x,i,a)=>a.findIndex(y=>EQ.same(x,y))===i).filter(w=>!baseW.some(b=>EQ.same(b,w))&&!cons.some(c=>(c.w&&EQ.same(c.w,w))||(c.ws||[]).some(x=>EQ.same(x,w)))&&![...known].some(x=>EQ.same(x,w)));
@@ -61,9 +61,12 @@ function equipMenu(p){const pool=(p.eqw||p.weapons||[]),off=EQ.officialFor(EQ.me
  return`<div class="eq-menu"><div class="eq-mt">🧰 Ce que je peux équiper</div>
  <div class="eq-base"><b>🔹 Équipement de base</b><div class="eq-w">${chipsW(baseW)||'<span class="mu">inconnu</span>'}</div><small>${off?(off.st==="sec"?"Chaque figurine commence avec cet équipement (Wahapedia V11).":"Chaque figurine commence avec cet équipement (fiche officielle V11)."):"Équipement de la fiche enregistrée."}</small></div>
  ${cards.length?`<div class="eq-mt2">Options : quoi, et pour qui</div><div class="eq-oc-g">${cards.join("")}</div>`:'<p class="mu">Aucune option d\'équipement connue pour cette unité.</p>'}</div>`}
+function aliasBlock(p){const MD=EQ.mergedData(S,window.EQ_DATA),key=EQ.consKey(p),direct=MD.units[EQ.nk(key)],al=direct?null:EQ.aliasFor(S,MD,p.name);if(direct)return"";
+ if(al){const e=MD.units[al.k];return`<div class="eq-al ${al.ok?"ok":"to"}"><div><b>🔗 ${al.ok?"Associée à":"Associée automatiquement à"} « ${E(e.n)} »</b><div class="eq-s">${E(e.fac||"")} · ${al.ok?"association confirmée par toi":"même profil et mêmes armes ("+al.s+" %) — à confirmer"}</div></div><div class="eq-a">${al.ok?"":`<button class="b" data-eq="alok" data-k="${E(key)}">✔ Confirmer</button>`}<button class="b" data-eq="alsel" data-k="${E(key)}">🔎 Changer</button><button class="b x" data-eq="alrm" data-k="${E(key)}">✕ Retirer</button></div></div>`}
+ return`<div class="eq-al to"><div><b>🔗 Aucune fiche officielle associée</b><div class="eq-s">Les noms français ne correspondent pas toujours : cherche l'unité en anglais pour récupérer ses restrictions.</div></div><div class="eq-a"><button class="b p" data-eq="alsel" data-k="${E(key)}">🔎 Associer à une fiche</button></div></div>`}
 function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],lists=(S.lists||[]);
  const used=c=>lists.filter(l=>(l.units||[]).some(x=>x.ref===c.ref)).map(l=>l.name||"Liste");
- return`<div class="eq-sec" data-eqsec="coll">${equipMenu(p)}
+ return`<div class="eq-sec" data-eqsec="coll">${aliasBlock(p)}${equipMenu(p)}
  ${cf.length>1?`<div class="eq-mt2">Variantes d'équipement connues (${cf.length})</div><div class="eq-cfgs">${cf.map(c=>{const us=used(c);return`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${chipsW(c.w)||'<span class="mu">aucune arme</span>'}</div><small>${us.length?"Dans : "+E(us.join(", ")):"Dans aucune de tes listes"}</small></div>`}).join("")}</div>`:""}
  ${consBlock(p,true)}</div>`}
 function listSection(u){const v=vOf(u),L=LV[v.st];
@@ -95,6 +98,7 @@ function drawSheet(){if(!SHT)return;const u=SHT.u,cons=consOf(u),pool=poolOf(u),
 function setModels(M){const u=SHT.u;EQ.applyModels(u,M,poolOf(u));sv();drawSheet()}
 function curModels(){const u=SHT.u;return vOf(u).models.m.map(m=>({r:m.r,w:m.w.slice()}))}
 function onSheet(e){const b=e.target.closest&&e.target.closest("[data-eq]");if(!b){if(e.target.id==="eqs")closeSheet();return}const k=b.dataset.eq;
+ if(k==="alpick"&&SHT&&SHT.al){const key=SHT.al,MD=EQ.mergedData(S,window.EQ_DATA),en=MD.units[b.dataset.k],cu=Object.values(S.coll||{}).find(m=>EQ.consKey(m)===key);if(en){S.eqal=S.eqal||{};S.eqc[key]=(S.eqc[key]||[]).filter(c=>!c.al);S.eqal[key]={k:b.dataset.k,s:100,a:0,ok:1,w:cu?EQ.mapWeapons(cu,en):{}};try{EQ.regroup(S)}catch(_){}sv();closeSheet();modalRefresh();toast("Associée à « "+en.n+" »")}return}
  if(CACT.includes(k)){if(SHT&&SHT.u)consAction(k,b,SHT.u);return}
  if(k==="close"){closeSheet();return}
  if(k==="fix"){SHT.focus=+b.dataset.m;drawSheet();return}
@@ -110,6 +114,16 @@ function armyPanel(L){const ar=EQ.validateArmy(L.units,u=>consOf(u)),l=LV[ar.st]
  root().innerHTML=`<div class="eq-sh"><div class="eq-top"><div><h2>Validation de l'armée</h2><p class="mu" style="margin:0">${E(L.name||"")}</p></div><button class="eq-x" data-eq="close" aria-label="Fermer">✕</button></div><div class="eq-st ${ar.st}">${l[0]} ${l[1]}</div>
  <p class="mu">Rouge : une restriction confirmée est enfreinte. Orange : information absente ou non confirmée. L'orange ne bloque rien.</p>
  ${ar.rs.map((r,i)=>{const x=LV[r.v.st];return`<div class="eq-ur"><div class="eq-uh"><b>${x[0]} ${E(EQ.cap(r.u.name))}</b><button class="b" data-eq="openu" data-i="${i}">Ouvrir</button></div>${r.v.issues.map(s=>`<div class="eq-i ${s.lvl}"><span>${s.lvl==="red"?"⛔":"⚠"} ${E(s.msg)}</span>${s.m&&s.m.length?`<button class="b" data-eq="fixu" data-i="${i}" data-m="${s.m[0]}">Corriger</button>`:""}</div>`).join("")||'<div class="eq-ok">Tout est conforme.</div>'}</div>`}).join("")}</div>`;SHT={army:L}}
+function aliasAction(k,key){S.eqal=S.eqal||{};const a=S.eqal[key];
+ if(k==="alok"&&a){a.ok=1;try{EQ.regroup(S)}catch(_){}sv();rerender();toast("Association confirmée");return}
+ if(k==="alrm"){S.eqal[key]={rm:1};S.eqc[key]=(S.eqc[key]||[]).filter(c=>!c.al);delete (S.eqd||{})[key];sv();rerender();toast("Association retirée");return}
+ if(k==="alsel"){openAlias(key)}}
+function openAlias(key){SHT={al:key,q:""};drawAlias()}
+function aliasList(key,q){const MD=EQ.mergedData(S,window.EQ_DATA),cu=Object.values(S.coll||{}).find(m=>EQ.consKey(m)===key)||{},fe=EQ.nk(String(cu.fkw||"").split(",")[0]),s=EQ.nk(q);let r=Object.entries(MD.units).filter(([k,e])=>!s||k.includes(s)||EQ.nk(e.n).includes(s));
+ r.sort((a,b)=>{const fa=EQ.nk(a[1].fac)===fe?0:1,fb=EQ.nk(b[1].fac)===fe?0:1;return fa-fb||a[1].n.localeCompare(b[1].n)});return r.slice(0,40)}
+function drawAlias(){if(!SHT||!SHT.al)return;const key=SHT.al;root().innerHTML=`<div class="eq-sh"><div class="eq-top"><div><h2>Associer à une fiche officielle</h2><p class="mu" style="margin:0">${E(EQ.cap(key))}</p></div><button class="eq-x" data-eq="close" aria-label="Fermer">✕</button></div><label class="eq-n">Nom de l'unité (en anglais)<input data-eqq="1" value="${E(SHT.q)}" placeholder="ex. Intercessor Squad" style="width:100%;min-height:48px"></label><div id="eqal">${aliasRes(key,SHT.q)}</div></div>`}
+function aliasRes(key,q){return aliasList(key,q).map(([k,e])=>`<button class="b eq-alr" data-eq="alpick" data-k="${E(k)}"><b>${E(e.n)}</b><small>${E(e.fac||"")}${(e.comp||[]).length?" · "+e.comp.map(c=>c[0]===c[1]?c[0]:c[0]+"-"+c[1]).join(" + ")+" fig.":""}</small></button>`).join("")||'<p class="mu">Aucune fiche trouvée.</p>'}
+document.addEventListener("input",e=>{const t=e.target;if(t&&t.dataset&&t.dataset.eqq&&SHT&&SHT.al){SHT.q=t.value;const el=document.getElementById("eqal");if(el)el.innerHTML=aliasRes(SHT.al,t.value)}});
 const CACT=["cedit","ccancel","csave","ctog","crest","crm","cfm","cfix","cnew"];
 const snap=c=>JSON.parse(JSON.stringify({t:c.t,w:c.w,ws:c.ws,n:c.n,per:c.per,role:c.role,min:c.min,max:c.max,st:c.st,src:c.src}));
 function logChange(u,m){S.eqlog=S.eqlog||[];S.eqlog.push({k:EQ.consKey(u),m,t:Date.now()});if(S.eqlog.length>300)S.eqlog=S.eqlog.slice(-300)}
@@ -145,6 +159,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(k==="fix"&&u){e.stopPropagation();openSheet(u,+b.dataset.m);return}
  if(k==="army"){e.stopPropagation();const L=cl();if(L)armyPanel(L);return}
  if(k==="goto"){e.stopPropagation();const m=document.querySelector(".eq-menu");if(m)m.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(k==="alok"||k==="alrm"||k==="alsel"){e.stopPropagation();aliasAction(k,b.dataset.k);return}
  if(CACT.includes(k)){e.stopPropagation();consAction(k,b,u);return}},true);
 document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.eqf==="t"){const f=t.closest(".eq-f");if(!f)return;const fs=FIELDS[t.value]||[];f.querySelectorAll("[data-eqrow]").forEach(r=>{r.hidden=!fs.includes(r.dataset.eqrow)})}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#eqs [data-eq]");if(!b||!SHT||!SHT.army)return;const k=b.dataset.eq,L=SHT.army;

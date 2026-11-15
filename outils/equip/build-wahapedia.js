@@ -8,7 +8,10 @@ function csv(f){const t=fs.readFileSync(path.join(dir,f),"utf8").replace(/^﻿/,
  if(val||cur.length){cur.push(val);rows.push(cur)}const h=rows[0].filter((x,j)=>x!==""||j<rows[0].length-1);return rows.slice(1).filter(r=>r.length>=h.length).map(r=>Object.fromEntries(h.map((k,j)=>[k,r[j]])))}
 const txt=s=>String(s||"").replace(/<br\s*\/?>/gi," ").replace(/<ul[^>]*>/gi," | ").replace(/<\/li>\s*<li>/gi," | ").replace(/<[^>]+>/g," ").replace(/&amp;/g,"&").replace(/&nbsp;/g," ").replace(/&#?\w+;/g," ").replace(/\s+/g," ").trim();
 const fac=Object.fromEntries(csv("Factions.csv").map(r=>[r.id,r.name])),src=Object.fromEntries(csv("Source.csv").map(r=>[r.id,r]));
+const MD=csv("Datasheets_models.csv"),WG=csv("Datasheets_wargear.csv");
+const nz=s=>{s=String(s||"").trim();return s},num=s=>{const m=/-?\d+/.exec(String(s||""));return m?m[0]:"-"};
 const D=csv("Datasheets.csv"),O=csv("Datasheets_options.csv"),C=csv("Datasheets_unit_composition.csv"),upd=csv("Last_update.csv")[0].last_update;
+const M2=(()=>{const m={};MD.forEach(r=>(m[r.datasheet_id]=m[r.datasheet_id]||[]).push(r));return m})(),G2=(()=>{const m={};WG.forEach(r=>(m[r.datasheet_id]=m[r.datasheet_id]||[]).push(r));return m})();
 const by=(a)=>{const m={};a.forEach(r=>(m[r.datasheet_id]=m[r.datasheet_id]||[]).push(r));return m};
 const O2=by(O),C2=by(C);const units={},sources={};let n=0,withOpt=0,unk=0,none=0;
 D.forEach(d=>{const s=src[d.source_id];if(!s||s.edition!=="11"||d.virtual==="true")return;if(!d.name)return;
@@ -18,7 +21,9 @@ D.forEach(d=>{const s=src[d.source_id];if(!s||s.edition!=="11"||d.virtual==="tru
  P.fixRules(rules,def);const w=new Set(def);rules.forEach(r=>(r.from||[]).concat(r.to||[]).forEach(z=>w.add(String(z).toLowerCase())));
  const key=P.nk(d.name);if(units[key]&&units[key].comp&&units[key].comp.length&&!comp.length)return;
  const sid="wp"+d.source_id;sources[sid]=sources[sid]||{file:sid,doc:"Wahapedia V11 — "+s.name+" (v"+s.version+")",date:(s.errata_date||"").slice(0,10)};
- units[key]={n:d.name,fac:fac[d.faction_id]||"",doc:sid,st:"sec",none:isNone||!(O2[d.id]||[]).length,x,opt:rules,comp:comp.slice(0,4),def,w:[...w]};
+ const ms=[...new Set((M2[d.id]||[]).map(r=>[num(r.M),num(r.T),num(r.Sv),num(r.W),num(r.Ld),num(r.OC)].join("|")))];
+ const gs=[];(G2[d.id]||[]).forEach(r=>{const rg=/melee/i.test(r.type||r.range)?"M":num(r.range);const sk=/^(-|n\/a|)$/i.test(nz(r.BS_WS))?"0":num(r.BS_WS);gs.push([nz(r.name),rg,nz(r.A).toUpperCase(),sk,nz(r.S),num(r.AP).replace("-","")?nz(r.AP).replace(/^\+/,""):"0",nz(r.D).toUpperCase()].join("|"))});
+ units[key]={m:ms,g:gs,n:d.name,fac:fac[d.faction_id]||"",doc:sid,st:"sec",none:isNone||!(O2[d.id]||[]).length,x,opt:rules,comp:comp.slice(0,4),def,w:[...w]};
  n++;if(rules.length)withOpt++;unk+=x;if(units[key].none)none++});
 const out={meta:{ver:"V11",credit:"powered by Wahapedia",updated:upd,sources:Object.values(sources)},units};
 const js=JSON.stringify(out);fs.mkdirSync(path.join(__dirname,"data"),{recursive:true});

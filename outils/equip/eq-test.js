@@ -93,4 +93,14 @@ const cw=SW.eqc["intercessor squad"]||[];t("wahapedia : restrictions appliquées
 const IS={name:"intercessor squad",size:10,equip:"Bolt Rifle (9), Bolt Pistol (10), Knives and Fists (10), Grenade Launcher (2)",weapons:[W2("Bolt Rifle"),W2("Bolt Pistol"),W2("Knives and Fists"),W2("Grenade Launcher")]};
 let vi=EQ.validate(IS,cw);t("wahapedia : 2 lance-grenades pour 10 figurines = valide (1 par tranche de 5)",!vi.issues.some(i=>i.lvl==="red"),vi.issues.map(i=>i.msg));
 IS.equip="Bolt Rifle (7), Bolt Pistol (10), Knives and Fists (10), Grenade Launcher (3)";vi=EQ.validate(IS,cw);t("wahapedia : 3 lance-grenades = refusé",vi.issues.some(i=>/Grenade Launcher/.test(i.msg)&&/maximum autorisé : 2/.test(i.msg)),vi.issues.map(i=>i.msg));
+// association automatique FR <-> EN par profil
+const im=WPD.units["immortals"];const gp=im.g.map(x=>x.split("|"));
+const frw=gp.filter(p=>p[0].toLowerCase().includes("gauss blaster")||p[1]==="M").slice(0,2).map((p,i)=>({name:i?"Arme de corps à corps":"Éclateur Gauss",range:p[1]==="M"?"Mêlée":p[1],a:p[2],hit:p[3]==="0"?"N/A":p[3]+"+",f:p[4],pa:p[5],d:p[6]}));
+const sm=im.m[0].split("|");const FRU={ref:"f1",name:"immortels",fkw:"Nécrons",size:10,stats:{M:sm[0],E:sm[1],SV:sm[2]+"+",PV:sm[3],CD:sm[4]+"+",CO:sm[5]},weapons:frw,text:[]};
+const SA={coll:{f1:FRU},lists:[]};const dA=EQ.mergedData(SA,undefined);const nA=EQ.autoLink(SA,dA);
+t("association auto : unité française liée à Immortals",nA===1&&SA.eqal["immortels"]&&SA.eqal["immortels"].k==="immortals"&&SA.eqal["immortels"].ok===0,SA.eqal);
+t("association auto : armes traduites",SA.eqal["immortels"]&&Object.keys(SA.eqal["immortels"].w).length>=1,SA.eqal["immortels"]);
+EQ.enrich(SA,dA);t("association auto : restrictions non confirmées (orange)",(SA.eqc["immortels"]||[]).length>0&&SA.eqc["immortels"].every(c=>c.al===1&&c.st==="pdf"),SA.eqc);
+SA.eqal["immortels"].ok=1;EQ.enrich(SA,dA);t("confirmation : restrictions promues en source secondaire",SA.eqc["immortels"].every(c=>c.st==="sec"&&!c.al),SA.eqc["immortels"].map(c=>[c.st,c.al]));
+const FRX=JSON.parse(JSON.stringify(FRU));FRX.name="unité mystère";FRX.stats.PV="99";const SB={coll:{f2:FRX},lists:[]};t("pas de fausse association",EQ.autoLink(SB,EQ.mergedData(SB,undefined))===0);
 console.log(ok+" OK, "+ko+" échec(s)");process.exit(ko?1:0);

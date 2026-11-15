@@ -121,7 +121,30 @@ function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel
  return out}
 function mergedData(S,base){const imp=S&&S.eqimp&&S.eqimp.units?S.eqimp:null,wp=root.EQ_WP&&root.EQ_WP.units?root.EQ_WP:null;if(!imp&&!wp)return base;
  const srcs=((wp&&wp.meta.sources)||[]).concat((base&&base.meta&&base.meta.sources)||[]).concat((imp&&imp.meta&&imp.meta.sources)||[]);return{meta:{ver:"V11",sources:srcs},units:Object.assign({},wp?wp.units:{},(base&&base.units)||{},imp?imp.units:{})}}
-function officialFor(data,name,pool){const e=data&&data.units&&data.units[nk(nn(name))];if(!e)return null;const ws=e.w||[];return(!ws.length||!pool||!pool.length||pool.some(w=>ws.some(x=>same(x,wbase(w.name)))))?e:null}
+function aliasFor(S,data,name){const a=S&&S.eqal&&S.eqal[nn(name)];return a&&!a.rm&&data&&data.units[a.k]?a:null}
+
+/* ---------- association automatique FR ↔ EN par profil (caractéristiques + armes) ---------- */
+const dig=s=>{const m=/-?\d+/.exec(String(s==null?"":s));return m?m[0]:"-"};
+const FRFAC={necrons:"necrons","empire t au":"t au empire","cultes genestealers":"genestealer cults","demons du chaos":"chaos daemons","space marines du chaos":"chaos space marines","chevaliers imperiaux":"imperial knights","chevaliers du chaos":"chaos knights","agents imperiaux":"imperial agents","ligues de votann":"leagues of votann","adeptus astartes":"space marines","emperor s children":"emperor s children","orks":"orks"};
+const facOfUnit=u=>nk(String((u&&u.fkw)||"").split(",")[0]);
+function statKey(st){if(!st)return"";const k=[dig(st.M),dig(st.E),dig(String(st.SV||"").split("/")[0]),dig(st.PV),dig(st.CD),dig(st.CO)];return k.some(x=>x==="-")?"":k.join("|")}
+function wKey(w){const rg=/m[eê]l[eé]e|melee|cac/i.test(String(w.range||""))?"M":dig(w.range),a=String(w.a==null?"":w.a).trim().toUpperCase(),sk=/^(-|n\/a|)$/i.test(String(w.hit||"").trim())?"0":dig(w.hit),pa=String(w.pa==null?"0":w.pa).replace(/[−–]/g,"-").trim(),ap=/^-?\d+$/.test(pa)?pa:"0";return[rg,a,sk,dig(w.f),ap,String(w.d==null?"":w.d).trim().toUpperCase()].join("|")}
+let IDX=null,IDXD=null;
+function buildIndex(data){if(IDX&&IDXD===data)return IDX;const m=new Map();Object.entries(data.units).forEach(([k,e])=>(e.m||[]).forEach(s=>{(m.get(s)||m.set(s,[]).get(s)).push(k)}));IDX=m;IDXD=data;return m}
+function mapWeapons(cu,e){const out={};const prof=(e.g||[]).map(x=>{const p=x.split("|");return{n:p[0],k:p.slice(1).join("|")}});
+ (cu.weapons||[]).forEach(w=>{const k=wKey(w),h=prof.filter(p=>p.k===k);if(h.length){const base=wbase(h[0].n);out[nk(wbase(w.name))]=base}});return out}
+function matchUnit(cu,data){const sk=statKey(cu.stats);if(!sk)return null;const idx=buildIndex(data),cands=idx.get(sk);if(!cands||!cands.length)return null;
+ if(!data._fs)data._fs=new Set(Object.values(data.units).map(u=>nk(u.fac)));
+ const fr=facOfUnit(cu),fe=FRFAC[fr]||fr,size=sizeOf(cu),know=fe&&data._fs.has(fe);const rs=[];
+ cands.forEach(k=>{const e=data.units[k];if(!e)return;if(know&&nk(e.fac)!==fe)return;
+  if(e.comp&&e.comp.length&&cu.size){const tot=[e.comp.reduce((a,c)=>a+c[0],0),e.comp.reduce((a,c)=>a+c[1],0)];if(!(size>=tot[0]&&size<=tot[1])&&!e.comp.some(c=>size>=c[0]&&size<=c[1]))return}
+  const prof=new Set((e.g||[]).map(x=>x.split("|").slice(1).join("|"))),ws=cu.weapons||[],hit=ws.filter(w=>prof.has(wKey(w))).length;rs.push({k,sc:ws.length?hit/ws.length:0.5,n:ws.length})});
+ if(!rs.length)return null;rs.sort((a,b)=>b.sc-a.sc);const top=rs[0];if(top.n&&top.sc<0.5)return null;
+ const tied=rs.filter(r=>r.sc===top.sc);if(tied.length>1)return{amb:tied.map(r=>r.k),sc:top.sc};return{k:top.k,sc:top.sc}}
+function autoLink(S,data){if(!data||!data.units)return 0;S.eqal=S.eqal&&typeof S.eqal==="object"?S.eqal:{};let n=0;
+ const cands=[];Object.values(S.coll||{}).forEach(m=>{if(!m.mrg)cands.push(m)});(S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>cands.push(u)));
+ cands.forEach(c=>{const key=nn(c.name);if(!key||S.eqal[key]||data.units[nk(key)])return;const r=matchUnit(c,data);if(!r||r.amb)return;const e=data.units[r.k];S.eqal[key]={k:r.k,s:Math.round(r.sc*100),a:1,ok:0,w:mapWeapons(c,e)};n++});return n}
+function officialFor(data,name,pool,S){let e=data&&data.units&&data.units[nk(nn(name))];if(!e){const a=aliasFor(S,data,name);return a?data.units[a.k]:null}const ws=e.w||[];return(!ws.length||!pool||!pool.length||pool.some(w=>ws.some(x=>same(x,wbase(w.name)))))?e:null}
 function whoText(r){switch(r.who){case"all":return"Toutes les figurines";case"unit":return"Toute l'unité";case"role":return(r.role&&r.role!=="cette figurine"?S1(r.role):"Cette figurine")+" uniquement";default:return(r.per?"Par tranche de "+r.per+" figurines : ":"")+(r.n?(r.n===1?"1 figurine au maximum":"jusqu'à "+r.n+" figurines"):"quelques figurines")}}
 function toText(r){return r.alt&&r.alt.length>1?r.alt.map(x=>x.map(S1).join(" + ")).join(" ou "):(r.to||[]).map(S1).join(" + ")}
 function ruleText(r){const to=toText(r);return r.t==="repl"?`${whoText(r)} peut remplacer ${(r.from||[]).join(" ou ")} par ${to}`:`${whoText(r)} peut ajouter ${to}`}
@@ -129,13 +152,14 @@ function enrich(S,data){if(!data||!data.units)return 0;S.eqd=S.eqd&&typeof S.eqd
  const docs=new Map((data.meta&&data.meta.sources||[]).map(s=>[s.file,s])),rej=new Set(S.eqx);let n=0;
  const cands=[];Object.values(S.coll||{}).forEach(m=>{if(!m.mrg)cands.push({name:m.name,pool:(m.eqw||m.weapons||[])})});
  (S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>cands.push({name:u.name,pool:u.weapons||[]})));
- cands.forEach(c=>{const e=data.units[nk(nn(c.name))];if(!e)return;const key=nn(c.name),src=docs.get(e.doc)||{};
-  const ok=!!officialFor(data,c.name,c.pool);
-  const info={doc:src.doc||"",date:src.date||"",p:e.p,x:e.x||0,ver:"V11",n:e.n};
+ try{autoLink(S,data)}catch(_){}
+ cands.forEach(c=>{const direct=data.units[nk(nn(c.name))],al=direct?null:aliasFor(S,data,c.name),e=direct||(al&&data.units[al.k]);if(!e)return;const key=nn(c.name),src=docs.get(e.doc)||{};
+  const ok=direct?!!officialFor(data,c.name,c.pool,S):true;
+  const info={doc:src.doc||"",date:src.date||"",p:e.p,x:e.x||0,ver:"V11",n:e.n,st:e.st||"off",al:al?1:0,alok:al&&al.ok?1:0,als:al?al.s:0};
   if(!ok){S.eqd[key]=Object.assign({},info,{nocompat:1});return}
   S.eqd[key]=info;const cons=S.eqc[key]=S.eqc[key]||[],have=new Set(cons.map(sig));
-  dataCons(e,(src.doc||"Pack de Faction officiel")+(src.date?" ("+src.date+")":"")).forEach(k=>{const s=sig(k);if(have.has(s)||rej.has(key+"#"+s))return;
-   const dup=cons.findIndex(x=>sig(x)===s);if(dup>=0){const d=cons[dup];if(d.st==='pdf'&&!d.manual&&d.ok!==1){d.st='off';d.src=k.src;d.auto=1;n++}return}have.add(s);k.id=cid();cons.push(k);n++})});
+  dataCons(e,(src.doc||"Pack de Faction officiel")+(src.date?" ("+src.date+")":"")+(al?" · associée par profil à « "+e.n+" »":"")).forEach(k=>{if(al){const rv={};Object.entries(al.w||{}).forEach(([fr,en])=>{rv[nk(en)]=fr});const tr=x=>{const f=rv[nk(x)];return f?f:x};if(k.w)k.w=tr(k.w);if(k.ws)k.ws=k.ws.map(tr);if(!al.ok)k.st="pdf",k.al=1}const s=sig(k);if(rej.has(key+"#"+s))return;
+   const dup=cons.findIndex(x=>sig(x)===s);if(dup>=0){const d=cons[dup];if(d.st==='pdf'&&!d.manual&&d.ok!==1&&k.st!=='pdf'){d.st=k.st;d.src=k.src;d.auto=1;delete d.al;n++}return}if(have.has(s))return;have.add(s);k.id=cid();cons.push(k);n++})});
  return n}
 const consKey=u=>nn(u&&u.name);
 const consOf=(S,u)=>(S.eqc&&S.eqc[consKey(u)])||[];
@@ -146,6 +170,6 @@ function rejectCons(S,u,id){const k=consKey(u),a=S.eqc[k]||[],c=a.find(x=>x.id==
 function applyModels(unit,models,pool){const names=new Set();models.forEach(m=>m.w.forEach(w=>names.add(nk(w))));
  const prof=[];(pool||[]).concat(unit.weapons||[]).forEach(w=>{if(names.has(nk(wbase(w.name)))&&!prof.some(x=>nk(x.name)===nk(w.name)))prof.push(JSON.parse(JSON.stringify(w)))});
  unit.weapons=prof;unit.equip=equipString(models);unit.eq={m:models.map(m=>({r:m.r||"",w:m.w.slice()})),cust:1}}
-root.EQ={toText,mergedData,officialFor,whoText,ruleText,dataCons,enrich,S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
+root.EQ={aliasFor,autoLink,matchUnit,mapWeapons,statKey,wKey,toText,mergedData,officialFor,whoText,ruleText,dataCons,enrich,S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
 if(typeof module!=="undefined")module.exports=root.EQ;
 })(typeof window!=="undefined"?window:globalThis);
