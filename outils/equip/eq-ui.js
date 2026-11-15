@@ -15,8 +15,28 @@ const consOf=u=>EQ.consOf(S,u);
 const poolOf=u=>{const p=primOf(u),a=((p&&p.eqw)||[]).concat(u.weapons||[]),seen=new Set(),o=[];a.forEach(w=>{const b=EQ.wbase(w.name),k=EQ.nk(b);if(k&&!seen.has(k)){seen.add(k);o.push(w)}});return o};
 const vOf=u=>EQ.validate(u,consOf(u));
 /* ---------- section « fiche » (collection / liste) ---------- */
-function consRows(u,edit){const cs=consOf(u);return cs.length?cs.map(c=>`<div class="eq-c ${EQ.isConf(c)?"ok":"pdf"}"><div><b>${E(EQ.describe(c))}</b><div class="eq-s">${E(EQ.stLabel(c))}${c.st==="off"&&c.src?` · ${E(c.src.doc||"")}${c.src.p?", page "+c.src.p:""}`:c.src&&c.src.passage?` · <i>« ${E(c.src.passage)} »</i>`:""}</div></div>${edit?`<span class="eq-a">${EQ.isConf(c)?"":`<button class="b" data-eq="cfm" data-id="${E(c.id)}">Confirmer</button>`}<button class="b x" data-eq="crm" data-id="${E(c.id)}" aria-label="Retirer">✕</button></span>`:""}</div>`).join(""):'<p class="mu">Aucune restriction connue : « À vérifier » tant qu\'elle n\'est pas renseignée. HAMMER n\'invente aucune règle.</p>'}
-function addForm(u){const pool=poolOf(u).map(w=>EQ.wbase(w.name)),opts=pool.map(n=>`<option>${E(n)}</option>`).join("");return`<details class="eq-add"><summary>+ Ajouter une restriction</summary><div class="eq-f"><label>Type<select data-eqf="t"><option value="max">Maximum par unité</option><option value="role">Réservée à une figurine (ex. sergent)</option><option value="excl">Deux équipements incompatibles</option><option value="min">Minimum obligatoire</option></select></label><label>Équipement<select data-eqf="w">${opts}</select></label><label data-eqrow="w2" hidden>Incompatible avec<select data-eqf="w2">${opts}</select></label><label data-eqrow="n">Nombre<input data-eqf="n" type="number" min="1" value="1" inputmode="numeric"></label><label data-eqrow="role" hidden>Figurine concernée<input data-eqf="role" value="Sergent"></label><button class="b p" data-eq="cadd">Enregistrer (confirmée par moi)</button></div></details>`}
+let EDI=null,DEL=null,FLASH=null;
+const TYPES=[["max","Maximum par unité"],["min","Minimum obligatoire"],["role","Réservée à une figurine (rôle)"],["excl","Deux équipements incompatibles"],["size","Effectif de l'unité"],["fixed","Aucune option d'équipement"]];
+const FIELDS={max:["w","n","per"],min:["w","n"],role:["w","role","n"],excl:["w","w2"],size:["min","max"],fixed:[]};
+const wnames=(u,extra)=>{const s=new Set(),o=[];poolOf(u).map(w=>EQ.wbase(w.name)).concat(extra||[]).forEach(n=>{const k=EQ.nk(n);if(k&&!s.has(k)){s.add(k);o.push(n)}});return o};
+const wsel=(name,val,names)=>{const l=val&&!names.includes(val)?names.concat([val]):names;return`<select data-eqf="${name}">${l.map(n=>`<option${n===val?" selected":""}>${E(n)}</option>`).join("")}</select>`};
+function consForm(u,c){const nw=!c;c=c||{t:"max",n:1};const nm=wnames(u,(c.ws||[]).concat(c.w?[c.w]:[])),show=k=>(FIELDS[c.t]||[]).includes(k)?"":" hidden";
+ return`<div class="eq-f" data-eqform="${E(c.id||"new")}"><label>Type de restriction<select data-eqf="t">${TYPES.map(([k,n])=>`<option value="${k}"${c.t===k?" selected":""}>${n}</option>`).join("")}</select></label>
+ <label data-eqrow="w"${show("w")}>Équipement${wsel("w",c.t==="excl"?(c.ws&&c.ws[0])||nm[0]||"":c.w||nm[0]||"",nm)}</label>
+ <label data-eqrow="w2"${show("w2")}>Incompatible avec${wsel("w2",(c.ws&&c.ws[1])||nm[1]||nm[0]||"",nm)}</label>
+ <label data-eqrow="n"${show("n")}>Nombre autorisé<input data-eqf="n" type="number" min="1" inputmode="numeric" value="${c.n||1}"></label>
+ <label data-eqrow="per"${show("per")}>Par tranche de … figurines <span class="mu">(0 = pour toute l'unité)</span><input data-eqf="per" type="number" min="0" inputmode="numeric" value="${c.per||0}"></label>
+ <label data-eqrow="role"${show("role")}>Figurine concernée (rôle)<input data-eqf="role" value="${E(c.role||"Sergent")}"></label>
+ <label data-eqrow="min"${show("min")}>Effectif minimum<input data-eqf="min" type="number" min="1" inputmode="numeric" value="${c.min||1}"></label>
+ <label data-eqrow="max"${show("max")}>Effectif maximum<input data-eqf="max" type="number" min="1" inputmode="numeric" value="${c.max||c.min||1}"></label>
+ <div class="eq-row"><button class="b p" data-eq="csave" data-id="${E(c.id||"")}">${nw?"Ajouter":"Enregistrer"}</button><button class="b" data-eq="ccancel">Annuler</button></div></div>`}
+function consRows(u,edit){const cs=consOf(u);return cs.length?cs.map(c=>{if(edit&&EDI===c.id)return`<div class="eq-c">${consForm(u,c)}</div>`;
+ const conf=EQ.isConf(c),lab=c.mod?"Modifiée par toi":EQ.stLabel(c),srcT=c.st==="off"&&c.src?` · ${E(c.src.doc||"")}${c.src.p?", page "+c.src.p:""}`:c.src&&c.src.passage&&!c.mod?` · <i>« ${E(c.src.passage)} »</i>`:"";
+ return`<div class="eq-c ${conf?"ok":"pdf"}${c.off?" off":""}${FLASH===c.id?" eq-flash":""}"><div><b>${E(EQ.describe(c))}</b>${c.mod?'<span class="eq-mod">✎ modifiée</span>':""}${c.off?'<span class="eq-mod off">désactivée</span>':""}<div class="eq-s">${E(lab)}${srcT}${c.orig?` · valeur officielle : ${E(EQ.describe(c.orig))}`:""}</div></div>${edit?`<span class="eq-a"><button class="b" data-eq="cedit" data-id="${E(c.id)}" aria-label="Modifier">✎</button><button class="b" data-eq="ctog" data-id="${E(c.id)}" title="${c.off?"Réactiver":"Désactiver"}">${c.off?"▶":"⏸"}</button>${!conf&&!c.off?`<button class="b" data-eq="cfm" data-id="${E(c.id)}">Confirmer</button>`:""}${c.orig?`<button class="b" data-eq="crest" data-id="${E(c.id)}" title="Rétablir la valeur officielle">↺</button>`:""}<button class="b x${DEL===c.id?" cf":""}" data-eq="crm" data-id="${E(c.id)}" aria-label="Supprimer">${DEL===c.id?"Sûr ?":"✕"}</button></span>`:""}</div>`}).join(""):'<p class="mu">Aucune restriction connue : « À vérifier » tant qu\'elle n\'est pas renseignée. HAMMER n\'invente aucune règle.</p>'}
+const logs=u=>(S.eqlog||[]).filter(x=>x.k===EQ.consKey(u)).slice(-6).reverse();
+function histRows(u){const l=logs(u);return l.length?`<details class="eq-add"><summary>Historique de mes modifications (${l.length})</summary>${l.map(x=>`<div class="eq-lg"><span>${new Date(x.t).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span> ${E(x.m)}</div>`).join("")}</details>`:""}
+function impact(u){const k=EQ.consKey(u),r=[];(S.lists||[]).forEach(l=>(l.units||[]).forEach(x=>{if(EQ.consKey(x)===k){const v=vOf(x);r.push(`${LV[v.st][0]} ${E(l.name||"Liste")}`)}}));return r.length?`<div class="eq-imp">Effet sur tes listes : ${r.join(" · ")}</div>`:'<div class="eq-imp mu">Cette unité n\'est dans aucune liste pour l\'instant.</div>'}
+function consBlock(u,withImpact){return`<div class="eq-cb">${offInfo(u)}${consRows(u,true)}${EDI==="new"?`<div class="eq-c">${consForm(u,null)}</div>`:`<div class="eq-row"><button class="b p" data-eq="cnew">+ Ajouter une restriction</button><button class="b" data-eq="cfix">Aucune option (confirmé)</button></div>`}${withImpact?impact(u):""}${histRows(u)}</div>`}
 function offInfo(u){const d=(S.eqd||{})[EQ.consKey(u)];if(!d)return"";
  if(d.nocompat)return`<div class="eq-i orange"><span>⚠ Une fiche officielle V11 existe pour « ${E(d.n)} » (${E(d.doc)}, page ${d.p}) mais ses armes ne correspondent pas à celles de cette fiche : aucune restriction appliquée, version à vérifier.</span></div>`;
  return`<div class="eq-ok">✔ Données officielles V11 : ${E(d.doc)}, page ${d.p}.${d.x?` ${d.x} option${d.x>1?"s":""} complexe${d.x>1?"s":""} non reprise${d.x>1?"s":""} automatiquement : à vérifier dans le document.`:""}</div>`}
@@ -25,14 +45,13 @@ function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],pool=(p.eqw||[]);
  ${cf.length>1?`<p class="mu" style="margin:6px 0">${cf.length} configurations d'équipement regroupées dans cette fiche :</p>`:""}
  ${cf.map((c,i)=>`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${c.w.map(w=>`<span>${E(EQ.S1(w))}</span>`).join("")||'<span class="mu">aucune arme</span>'}</div></div>`).join("")}
  <p class="mu" style="margin:8px 0 2px">Toutes les armes connues pour cette unité : ${pool.length?pool.map(w=>E(EQ.S1(EQ.wbase(w.name)))).filter((x,i,a)=>a.indexOf(x)===i).join(", "):"—"}. Dans une armée, seules les armes réellement choisies apparaissent.</p>
- <div class="sech">📏 Restrictions d'équipement</div>${offInfo(p)}${consRows(p,true)}
- <div class="eq-row"><button class="b" data-eq="cfix">Cette unité n'a aucune option (confirmé)</button></div>${addForm(p)}</div>`}
+ <div class="sech">📏 Restrictions d'équipement</div>${consBlock(p,true)}</div>`}
 function listSection(u){const v=vOf(u),L=LV[v.st];
  return`<div class="eq-sec" data-eqsec="list"><div class="sech">⚙ Équipement de l'unité <span class="eq-b ${v.st}">${L[0]} ${L[1]}</span></div>
  <div class="eq-sum">${v.lines.length?v.lines.map(l=>`<div>${E(l.t)}</div>`).join(""):'<span class="mu">Aucun équipement.</span>'}</div>
  ${v.issues.length?`<div class="eq-is">${v.issues.map(i=>`<div class="eq-i ${i.lvl}"><span>${i.lvl==="red"?"⛔":"⚠"} ${E(i.msg)}</span>${i.m&&i.m.length?`<button class="b" data-eq="fix" data-m="${i.m[0]}">Corriger</button>`:""}</div>`).join("")}</div>`:'<p class="eq-ok">Toutes les contraintes connues sont respectées.</p>'}
  <div class="eq-row"><button class="b p" data-eq="cfg">Configurer les figurines (${EQ.sizeOf(u)})</button></div>
- ${offInfo(u)}<details class="eq-add"><summary>Restrictions connues (${consOf(u).length})</summary>${consRows(u,false)}</details></div>`}
+ <div class="sech">📏 Restrictions de cette unité</div>${consBlock(u,false)}</div>`}
 /* ---------- feuille de configuration individuelle ---------- */
 let SHT=null;
 const root=()=>{let o=document.getElementById("eqs");if(!o){o=document.createElement("div");o.id="eqs";o.setAttribute("role","dialog");o.setAttribute("aria-label","Équipement des figurines");document.body.appendChild(o);o.addEventListener("click",onSheet);o.addEventListener("change",onSheetCh)}return o};
@@ -49,11 +68,13 @@ function drawSheet(){if(!SHT)return;const u=SHT.u,cons=consOf(u),pool=poolOf(u),
  <label class="eq-n">Nombre de figurines dans l'unité<div class="tk-step eq-step"><button data-eq="dn" data-v="-1">−</button><input data-eqn="1" type="number" min="1" inputmode="numeric" value="${N}"><button data-eq="dn" data-v="1">+</button></div></label>
  ${v.models.asm&&!v.models.cust?'<p class="mu">Répartition proposée automatiquement d\'après les quantités de la liste : modifie-la si besoin.</p>':""}
  <div class="eq-ms">${M.map((m,i)=>`<div class="eq-m${bad.has(i)?" bad":""}${SHT.focus===i?" foc":""}" id="eqm${i}"><div class="eq-mh"><b>Figurine ${i+1}</b><input data-eqr="${i}" list="eqro" value="${E(m.r)}" placeholder="Rôle (ex. Sergent)"></div><div class="eq-chs">${pool.map(w=>{const b=EQ.wbase(w.name),on=m.w.some(x=>EQ.same(x,b));return`<button class="eq-ch${on?" on":""}" data-eq="tw" data-m="${i}" data-w="${E(b)}">${on?"✓ ":""}${E(EQ.S1(b))}</button>`}).filter((x,i,a)=>a.indexOf(x)===i).join("")}</div></div>`).join("")}</div><datalist id="eqro">${roles.map(r=>`<option value="${E(r)}">`).join("")}</datalist>
+ <div class="sech" style="margin-top:14px">📏 Restrictions de cette unité</div>${consBlock(u,false)}
  <div class="eq-row"><button class="b" data-eq="reset">↺ Répartition automatique</button><button class="b p" data-eq="close">Terminer</button></div></div>`;
  if(SHT.focus>=0){const el=document.getElementById("eqm"+SHT.focus);if(el&&el.scrollIntoView)el.scrollIntoView({block:"center"})}}
 function setModels(M){const u=SHT.u;EQ.applyModels(u,M,poolOf(u));sv();drawSheet()}
 function curModels(){const u=SHT.u;return vOf(u).models.m.map(m=>({r:m.r,w:m.w.slice()}))}
 function onSheet(e){const b=e.target.closest&&e.target.closest("[data-eq]");if(!b){if(e.target.id==="eqs")closeSheet();return}const k=b.dataset.eq;
+ if(CACT.includes(k)){if(SHT&&SHT.u)consAction(k,b,SHT.u);return}
  if(k==="close"){closeSheet();return}
  if(k==="fix"){SHT.focus=+b.dataset.m;drawSheet();return}
  if(k==="tw"){const M=curModels(),m=M[+b.dataset.m],w=b.dataset.w,i=m.w.findIndex(x=>EQ.same(x,w));if(i>=0)m.w.splice(i,1);else m.w.push(w);SHT.focus=+b.dataset.m;setModels(M);return}
@@ -68,20 +89,42 @@ function armyPanel(L){const ar=EQ.validateArmy(L.units,u=>consOf(u)),l=LV[ar.st]
  root().innerHTML=`<div class="eq-sh"><div class="eq-top"><div><h2>Validation de l'armée</h2><p class="mu" style="margin:0">${E(L.name||"")}</p></div><button class="eq-x" data-eq="close" aria-label="Fermer">✕</button></div><div class="eq-st ${ar.st}">${l[0]} ${l[1]}</div>
  <p class="mu">Rouge : une restriction confirmée est enfreinte. Orange : information absente ou non confirmée. L'orange ne bloque rien.</p>
  ${ar.rs.map((r,i)=>{const x=LV[r.v.st];return`<div class="eq-ur"><div class="eq-uh"><b>${x[0]} ${E(EQ.cap(r.u.name))}</b><button class="b" data-eq="openu" data-i="${i}">Ouvrir</button></div>${r.v.issues.map(s=>`<div class="eq-i ${s.lvl}"><span>${s.lvl==="red"?"⛔":"⚠"} ${E(s.msg)}</span>${s.m&&s.m.length?`<button class="b" data-eq="fixu" data-i="${i}" data-m="${s.m[0]}">Corriger</button>`:""}</div>`).join("")||'<div class="eq-ok">Tout est conforme.</div>'}</div>`}).join("")}</div>`;SHT={army:L}}
+const CACT=["cedit","ccancel","csave","ctog","crest","crm","cfm","cfix","cnew"];
+const snap=c=>JSON.parse(JSON.stringify({t:c.t,w:c.w,ws:c.ws,n:c.n,per:c.per,role:c.role,min:c.min,max:c.max,st:c.st,src:c.src}));
+function logChange(u,m){S.eqlog=S.eqlog||[];S.eqlog.push({k:EQ.consKey(u),m,t:Date.now()});if(S.eqlog.length>300)S.eqlog=S.eqlog.slice(-300)}
+function rerender(){if(SHT&&SHT.u)drawSheet();else modalRefresh();try{decorate()}catch(_){}}
+function announce(u,msg){let t=msg;try{const k=EQ.consKey(u),us=[];(S.lists||[]).forEach(l=>(l.units||[]).forEach(x=>{if(EQ.consKey(x)===k)us.push(x)}));if(us.length){const w=us.map(x=>vOf(x).st),st=w.includes("red")?"red":w.includes("orange")?"orange":"green";t+=" · "+LV[st][0]+" "+LV[st][1]}}catch(_){}toast(t)}
+function readForm(root){const g=n=>{const el=root.querySelector('[data-eqf="'+n+'"]');return el?el.value:""},t=g("t"),c={t};
+ if(t==="max"||t==="min"||t==="role"){c.w=g("w");c.n=Math.max(1,parseInt(g("n"),10)||1);if(!c.w)return{err:"Choisis un équipement"}}
+ if(t==="max")c.per=Math.max(0,parseInt(g("per"),10)||0);
+ if(t==="role")c.role=g("role").trim()||"Sergent";
+ if(t==="excl"){const a=g("w"),b=g("w2");if(!a||!b||EQ.same(a,b))return{err:"Choisis deux équipements différents"};c.ws=[a,b]}
+ if(t==="size"){c.min=Math.max(1,parseInt(g("min"),10)||1);c.max=Math.max(c.min,parseInt(g("max"),10)||c.min)}
+ return c}
+function consAction(k,b,u){if(!u)return;const p=primOf(u)||u,cons=EQ.consOf(S,p),id=b.dataset.id,c=id?cons.find(x=>x.id===id):null,root=document.getElementById("eqs")||document;
+ if(k==="cnew"){EDI="new";rerender();return}
+ if(k==="ccancel"){EDI=null;rerender();return}
+ if(k==="cedit"&&c){EDI=c.id;rerender();return}
+ if(k==="cfix"){const n=EQ.addCons(S,p,{t:"fixed",st:"user",ok:1,manual:1,src:{doc:"Saisie utilisateur"}});FLASH=n[n.length-1].id;logChange(p,"Ajoutée : Aucune option d'équipement");sv();rerender();announce(u,"Restriction ajoutée");return}
+ if(k==="csave"){const f=b.closest(".eq-f")||root,v=readForm(f);if(v.err){toast(v.err);return}
+  if(c){const was=EQ.describe(c);if(!c.orig&&!c.manual)c.orig=snap(c);const keep={id:c.id,orig:c.orig,manual:c.manual,src:c.src};["w","ws","n","per","role","min","max"].forEach(x=>delete c[x]);Object.assign(c,v);c.id=keep.id;if(keep.orig)c.orig=keep.orig;c.manual=keep.manual;c.st="user";c.ok=1;c.mod=1;c.src=keep.manual?keep.src:{doc:"Modifiée par l'utilisateur"};delete c.off;
+   FLASH=c.id;logChange(p,"Modifiée : "+was+" → "+EQ.describe(c))}
+  else{const n=EQ.addCons(S,p,Object.assign(v,{st:"user",ok:1,manual:1,src:{doc:"Saisie utilisateur"}}));FLASH=n[n.length-1].id;logChange(p,"Ajoutée : "+EQ.describe(n[n.length-1]))}
+  EDI=null;sv();rerender();announce(u,c?"Restriction modifiée":"Restriction ajoutée");setTimeout(()=>{FLASH=null},2200);return}
+ if(!c)return;
+ if(k==="ctog"){c.off=!c.off;FLASH=c.id;logChange(p,(c.off?"Désactivée : ":"Réactivée : ")+EQ.describe(c));sv();rerender();announce(u,c.off?"Restriction désactivée":"Restriction réactivée");setTimeout(()=>{FLASH=null},2200);return}
+ if(k==="cfm"){c.ok=1;FLASH=c.id;logChange(p,"Confirmée : "+EQ.describe(c));sv();rerender();announce(u,"Restriction confirmée");setTimeout(()=>{FLASH=null},2200);return}
+ if(k==="crest"&&c.orig){const was=EQ.describe(c);["w","ws","n","per","role","min","max"].forEach(x=>delete c[x]);Object.assign(c,c.orig);delete c.orig;delete c.mod;delete c.off;c.ok=0;FLASH=c.id;logChange(p,"Valeur officielle rétablie : "+was+" → "+EQ.describe(c));sv();rerender();announce(u,"Valeur officielle rétablie");setTimeout(()=>{FLASH=null},2200);return}
+ if(k==="crm"){if(DEL!==c.id){DEL=c.id;rerender();setTimeout(()=>{if(DEL===c.id){DEL=null;if(document.querySelector(".eq-sec,#eqs"))rerender()}},3500);return}
+  DEL=null;logChange(p,"Supprimée : "+EQ.describe(c));EQ.rejectCons(S,p,c.id);sv();rerender();announce(u,"Restriction supprimée");return}}
 /* ---------- actions fiches / restrictions ---------- */
 function curU(){return typeof ed!=="undefined"?ed:null}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-eq]");if(!b||b.closest("#eqs"))return;const k=b.dataset.eq,u=curU();
  if(k==="cfg"&&u){e.stopPropagation();openSheet(u);return}
  if(k==="fix"&&u){e.stopPropagation();openSheet(u,+b.dataset.m);return}
  if(k==="army"){e.stopPropagation();const L=cl();if(L)armyPanel(L);return}
- const p=u&&primOf(u)||u;
- if(k==="cfm"&&p){e.stopPropagation();const c=EQ.consOf(S,p).find(x=>x.id===b.dataset.id);if(c){c.ok=1;sv();modalRefresh()}return}
- if(k==="crm"&&p){e.stopPropagation();EQ.rejectCons(S,p,b.dataset.id);sv();modalRefresh();return}
- if(k==="cfix"&&p){e.stopPropagation();EQ.addCons(S,p,{t:"fixed",st:"user",ok:1,manual:1,src:{doc:"Saisie utilisateur"}});sv();modalRefresh();return}
- if(k==="cadd"&&p){e.stopPropagation();const g=n=>{const el=document.querySelector(`[data-eqf="${n}"]`);return el?el.value:""},t=g("t"),w=g("w"),n=Math.max(1,parseInt(g("n"),10)||1);if(!w){toast("Choisis un équipement");return}
-  const c={t,w,st:"user",ok:1,manual:1,src:{doc:"Saisie utilisateur"}};if(t==="max"||t==="min")c.n=n;else if(t==="role"){c.role=g("role").trim()||"Sergent";c.n=n}else if(t==="excl"){const w2=g("w2");if(!w2||EQ.same(w,w2)){toast("Choisis deux équipements différents");return}c.ws=[w,w2];delete c.w}
-  EQ.addCons(S,p,c);sv();modalRefresh();toast("Restriction enregistrée");return}},true);
-document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.eqf==="t"){const f=t.closest(".eq-f");if(!f)return;const v=t.value;f.querySelector('[data-eqrow="w2"]').hidden=v!=="excl";f.querySelector('[data-eqrow="role"]').hidden=v!=="role";f.querySelector('[data-eqrow="n"]').hidden=v==="excl"}});
+ if(CACT.includes(k)){e.stopPropagation();consAction(k,b,u);return}},true);
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.eqf==="t"){const f=t.closest(".eq-f");if(!f)return;const fs=FIELDS[t.value]||[];f.querySelectorAll("[data-eqrow]").forEach(r=>{r.hidden=!fs.includes(r.dataset.eqrow)})}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#eqs [data-eq]");if(!b||!SHT||!SHT.army)return;const k=b.dataset.eq,L=SHT.army;
  if(k==="close"){e.stopPropagation();closeSheet();return}
  if(k==="openu"||k==="fixu"){e.stopPropagation();const u=L.units[+b.dataset.i];if(u)openSheet(u,k==="fixu"?+b.dataset.m:-1)}},true);
