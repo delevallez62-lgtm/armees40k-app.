@@ -49,6 +49,7 @@ coll:["Collection","Toutes tes figurines, une fiche par unité.",[
  ["🧰","2 configurations","Variantes regroupées","Les variantes d'armes d'une même unité sont dans une seule fiche. Le badge indique leur nombre."],
  ["👥","","Qui peut porter quoi","Dans la fiche : l'équipement de base, puis chaque option avec les figurines concernées."],
  ["📏","","Restrictions","Tiroir pour modifier, désactiver, ajouter ou supprimer une restriction. L'effet est visible tout de suite."],
+ ["📥","📥 Importer des fiches officielles (PDF)","Fiches officielles (PDF)","Choisis un PDF de fiches d'unité officielles, en anglais ou en français : les options d'équipement de chaque figurine sont lues et gardées, même pour les unités que tu n'as pas. Elles s'appliquent dès que l'unité est dans ta collection."],
  ["💾","Exporter mes restrictions","Sauvegarde","Exporte ou importe toutes tes restrictions. Une sauvegarde d'avant le regroupement peut être restaurée."]]],
 paint:["Peinture & Hobby","Suis l'avancement de tes figurines.",[
  ["🖌","🖌 Schémas par figurine","Schémas","Note les couleurs et recettes utilisées pour chaque figurine."],

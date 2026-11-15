@@ -108,7 +108,7 @@ function regroup(S){S.eqc=S.eqc&&typeof S.eqc==="object"?S.eqc:{};S.eqx=Array.is
   const cons=S.eqc[k]=S.eqc[k]||[],have=new Set(cons.map(sig)),rej=new Set(S.eqx);
   const names=[...pool.values()].map(w=>wbase(w.name));
   a.forEach(m=>{if(!(m.text&&m.text.length))return;extract(m.text,names,m.name).forEach(c=>{const s=sig(c);if(have.has(s)||rej.has(k+"#"+s))return;have.add(s);cons.push(c)})})});
- try{enrich(S,root.EQ_DATA)}catch(e){}
+ try{enrich(S,mergedData(S,root.EQ_DATA))}catch(e){}
  return n}
 function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel",ver:"V11",p:e.p,passage:"Pack de Faction officiel, page "+e.p},base={st:"off",src,auto:1},out=[];
  const push=c=>out.push(Object.assign({},base,c));
@@ -119,9 +119,12 @@ function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel
    if(r.who!=="all")(r.to||[]).forEach(t=>role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0)}
   else if(r.t==="add"){(r.to||[]).forEach(t=>{role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0;(r.not||[]).forEach(x=>push({t:"excl",ws:[x,t]}))})}});
  return out}
+function mergedData(S,base){const imp=S&&S.eqimp&&S.eqimp.units?S.eqimp:null;if(!imp)return base;
+ const srcs=((base&&base.meta&&base.meta.sources)||[]).concat((imp.meta&&imp.meta.sources)||[]);return{meta:{ver:"V11",sources:srcs},units:Object.assign({},(base&&base.units)||{},imp.units)}}
 function officialFor(data,name,pool){const e=data&&data.units&&data.units[nk(nn(name))];if(!e)return null;const ws=e.w||[];return(!ws.length||!pool||!pool.length||pool.some(w=>ws.some(x=>same(x,wbase(w.name)))))?e:null}
-function whoText(r){switch(r.who){case"all":return"Toutes les figurines";case"role":return(r.role&&r.role!=="cette figurine"?S1(r.role):"Une figurine précise")+" uniquement";default:return(r.per?"Par tranche de "+r.per+" figurines : ":"")+(r.n?(r.n===1?"1 figurine au maximum":"jusqu'à "+r.n+" figurines"):"quelques figurines")}}
-function ruleText(r){const to=(r.to||[]).map(S1).join(" + ");return r.t==="repl"?`${whoText(r)} peut remplacer ${(r.from||[]).join(" ou ")} par ${to}`:`${whoText(r)} peut ajouter ${to}`}
+function whoText(r){switch(r.who){case"all":return"Toutes les figurines";case"role":return(r.role&&r.role!=="cette figurine"?S1(r.role):"Cette figurine")+" uniquement";default:return(r.per?"Par tranche de "+r.per+" figurines : ":"")+(r.n?(r.n===1?"1 figurine au maximum":"jusqu'à "+r.n+" figurines"):"quelques figurines")}}
+function toText(r){return r.alt&&r.alt.length>1?r.alt.map(x=>x.map(S1).join(" + ")).join(" ou "):(r.to||[]).map(S1).join(" + ")}
+function ruleText(r){const to=toText(r);return r.t==="repl"?`${whoText(r)} peut remplacer ${(r.from||[]).join(" ou ")} par ${to}`:`${whoText(r)} peut ajouter ${to}`}
 function enrich(S,data){if(!data||!data.units)return 0;S.eqd=S.eqd&&typeof S.eqd==="object"?S.eqd:{};S.eqc=S.eqc||{};S.eqx=S.eqx||[];
  const docs=new Map((data.meta&&data.meta.sources||[]).map(s=>[s.file,s])),rej=new Set(S.eqx);let n=0;
  const cands=[];Object.values(S.coll||{}).forEach(m=>{if(!m.mrg)cands.push({name:m.name,pool:(m.eqw||m.weapons||[])})});
@@ -143,6 +146,6 @@ function rejectCons(S,u,id){const k=consKey(u),a=S.eqc[k]||[],c=a.find(x=>x.id==
 function applyModels(unit,models,pool){const names=new Set();models.forEach(m=>m.w.forEach(w=>names.add(nk(w))));
  const prof=[];(pool||[]).concat(unit.weapons||[]).forEach(w=>{if(names.has(nk(wbase(w.name)))&&!prof.some(x=>nk(x.name)===nk(w.name)))prof.push(JSON.parse(JSON.stringify(w)))});
  unit.weapons=prof;unit.equip=equipString(models);unit.eq={m:models.map(m=>({r:m.r||"",w:m.w.slice()})),cust:1}}
-root.EQ={officialFor,whoText,ruleText,dataCons,enrich,S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
+root.EQ={toText,mergedData,officialFor,whoText,ruleText,dataCons,enrich,S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
 if(typeof module!=="undefined")module.exports=root.EQ;
 })(typeof window!=="undefined"?window:globalThis);
