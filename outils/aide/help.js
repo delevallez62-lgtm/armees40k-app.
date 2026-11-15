@@ -18,15 +18,13 @@ lists:["Mes armées","Toutes tes listes d'armée au même endroit.",[
  ["📂","Gérer","Gérer","Ouvre la liste : unités, détachements, stratagèmes, optimisations."],
  ["✏","Renommer","Renommer","Change le nom de la liste."],
  ["🗑","Supprimer","Supprimer","Retire la liste. Tes figurines restent dans la collection."]]],
-units:["Unités d'une liste","Les figurines de ta liste, avec leur équipement vérifié.",[
- ["🛡","","Bannière de validation","🟢 valide, 🟠 à vérifier, 🔴 invalide : un résumé de toute l'armée. « Détail » liste les problèmes."],
- ["🃏","","Carte d'unité","Touche une carte pour ouvrir la fiche : profil, armes, aptitudes, équipement."],
- ["🟢","","Pastille d'équipement","Sur chaque carte : l'équipement respecte-t-il les restrictions connues ?"],
- ["➕","+ Ajouter une figurine","Ajouter","Choisis une unité de ta collection, puis son équipement."],
+units:["Unités d'une liste","Les figurines de ta liste.",[
+ ["🃏","","Carte d'unité","Touche une carte pour ouvrir la fiche : profil, armes, aptitudes."],
+ ["➕","+ Ajouter une figurine","Ajouter","Choisis une unité de ta collection, puis coche les armes qu'elle aura dans cette liste. Seules les armes validées sont visibles dans la liste."],
  ["📄","Fiche vide","Fiche vide","Crée une fiche à la main (nom, profil, armes)."],
  ["✏","Modifier la liste","Modifier la liste","Réorganise la liste, change son nom ou ses points."],
  ["✕","✕","Retirer","Enlève l'unité de la liste (elle reste en collection)."],
- ["⚙","","Dans une fiche","« Configurer les figurines » règle l'équipement figurine par figurine ; le tiroir 📏 gère les restrictions."]],
+ ["⚔","","Armes de l'unité","Dans la fiche d'une unité de liste, les armes affichées sont celles que tu as validées à l'ajout."]],
  ["Les onglets du haut changent de vue : Unités, Règles de détachement, Stratagèmes, Optimisations."]],
 dets:["Règles de détachement","Les règles spéciales de ton détachement.",[
  ["📚","Bibliothèque (3)","Bibliothèque","Tous les détachements déjà enregistrés. Touche-en un pour l'utiliser."],
@@ -42,15 +40,10 @@ opti:["Optimisations","Les améliorations attachées à tes unités.",[
  ["➕","+ Optimisation","Ajouter","Note une optimisation (visible dans les listes)."],
  ["🧹","Effacer","Effacer","Supprime le texte d'une optimisation."]]],
 coll:["Collection","Toutes tes figurines, une fiche par unité.",[
- ["🔎","Rechercher","Recherche","Par nom, mot-clé, équipement ou liste."],
+ ["🔎","Rechercher","Recherche","Par nom, mot-clé ou liste."],
  ["☑","Sélectionner","Sélection multiple","Coche plusieurs fiches puis supprime-les d'un coup."],
  ["🏳","+ Faction","Factions","Crée une faction avec sa bannière. Les figurines sont rangées par faction."],
- ["🃏","","Fiche d'unité","Touche une carte : profil, armes, et le menu 🧰 « Ce que je peux équiper »."],
- ["🧰","2 configurations","Variantes regroupées","Les variantes d'armes d'une même unité sont dans une seule fiche. Le badge indique leur nombre."],
- ["👥","","Qui peut porter quoi","Dans la fiche : l'équipement de base, puis chaque option avec les figurines concernées."],
- ["📏","","Restrictions","Tiroir pour modifier, désactiver, ajouter ou supprimer une restriction. L'effet est visible tout de suite."],
- ["📥","📥 Importer des fiches officielles (PDF)","Fiches officielles (PDF)","Choisis un PDF de fiches d'unité officielles, en anglais ou en français : les options d'équipement de chaque figurine sont lues et gardées, même pour les unités que tu n'as pas. Elles s'appliquent dès que l'unité est dans ta collection."],
- ["💾","Exporter mes restrictions","Sauvegarde","Exporte ou importe toutes tes restrictions. Une sauvegarde d'avant le regroupement peut être restaurée."]]],
+ ["🃏","","Fiche d'unité","Touche une carte : profil, armes, aptitudes. Si tu importes une fiche du même nom avec d'autres armes, elles sont ajoutées à cette même fiche."]]],
 paint:["Peinture & Hobby","Suis l'avancement de tes figurines.",[
  ["🖌","🖌 Schémas par figurine","Schémas","Note les couleurs et recettes utilisées pour chaque figurine."],
  ["🎨","🎨 Mes peintures","Peintures","Ta collection de pots de peinture."],
@@ -71,7 +64,7 @@ ana:["Centre de commandement","Parties, analyses et journal de bataille.",[
  ["🛡","Armées","Armées","Comparer deux armées, simuler une bataille, estimer tes chances de victoire."]],
  ["Choisis tes deux armées en haut : elles servent aux analyses."]],
 imp:["Importer","Ajoute des listes et des règles.",[
- ["📄","Importer depuis un PDF","Liste en PDF","Choisis ton PDF : les unités, armes et équipements sont lus et ajoutés."],
+ ["📄","Importer depuis un PDF","Liste en PDF","Choisis ton PDF : les unités, armes sont lues et ajoutés."],
  ["📋","…ou colle le texte de la liste","Texte","Colle la liste copiée depuis une autre appli."],
  ["🏳","…ou créer une nouvelle faction","Faction","Range les unités importées dans une faction."],
  ["🔁","📄 Rouvrir le dernier PDF","Dernier PDF","Reprend le dernier PDF sans le rechoisir."],
@@ -89,11 +82,10 @@ learn:["Apprendre à jouer","Les bases d'une première partie.",[
 play:["Mode jeu : Unités","Ta liste, pendant la partie.",[
  ["🔎","","Recherche","Unité, arme, aptitude ou stratagème."],
  ["↕","Tout déplier","Déplier / replier","Ouvre ou ferme toutes les fiches d'un coup."],
- ["🃏","","Fiche d'unité","Touche une unité : profil, armes, aptitudes, équipement."],
+ ["🃏","","Fiche d'unité","Touche une unité : profil, armes, aptitudes."],
  ["🎲","3+/4++","Lancer les sauvegardes","Touche la valeur SV 🎲 pour lancer les dés de sauvegarde."],
  ["⚄","A","Lancer les attaques","Dans une arme, touche le nombre d'attaques (A) pour ouvrir le lanceur de dés. Quand c'est fini, 💾 enregistre le tir."],
- ["🩸","🩸","Noter des dégâts","Touche 🩸 à côté d'un nom : dégâts infligés ou subis, tour, figurines perdues. Une unité tombée devient grise et passe en bas."],
- ["🟢","","Pastille d'équipement","Vert, orange ou rouge selon les restrictions."]],
+ ["🩸","🩸","Noter des dégâts","Touche 🩸 à côté d'un nom : dégâts infligés ou subis, tour, figurines perdues. Une unité tombée devient grise et passe en bas."]],
  ["La barre du bas : Unités, Stratagèmes, Score, Règles, Gestion, Terminer."]],
 pst:["Mode jeu : Stratagèmes","Les astuces de ton armée.",[
  ["🔎","Tir","Filtres par phase","Commandement, Mouvement, Tir, Charge, Combat : n'affiche que la phase en cours."],
