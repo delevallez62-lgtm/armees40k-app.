@@ -46,17 +46,32 @@ document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.datas
 function offInfo(u){const d=(S.eqd||{})[EQ.consKey(u)];if(!d)return"";
  if(d.nocompat)return`<div class="eq-i orange"><span>⚠ Une fiche officielle V11 existe pour « ${E(d.n)} » (${E(d.doc)}, page ${d.p}) mais ses armes ne correspondent pas à celles de cette fiche : aucune restriction appliquée, version à vérifier.</span></div>`;
  return`<div class="eq-ok">✔ Données officielles V11 : ${E(d.doc)}, page ${d.p}.${d.x?` ${d.x} option${d.x>1?"s":""} complexe${d.x>1?"s":""} non reprise${d.x>1?"s":""} automatiquement : à vérifier dans le document.`:""}</div>`}
-function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],pool=(p.eqw||[]);
- return`<div class="eq-sec" data-eqsec="coll"><div class="sech">🧰 Équipements connus</div>
- ${cf.length>1?`<p class="mu" style="margin:6px 0">${cf.length} configurations d'équipement regroupées dans cette fiche :</p>`:""}
- ${cf.map((c,i)=>`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${c.w.map(w=>`<span>${E(EQ.S1(w))}</span>`).join("")||'<span class="mu">aucune arme</span>'}</div></div>`).join("")}
- <p class="mu" style="margin:8px 0 2px">Toutes les armes connues pour cette unité : ${pool.length?pool.map(w=>E(EQ.S1(EQ.wbase(w.name)))).filter((x,i,a)=>a.indexOf(x)===i).join(", "):"—"}. Dans une armée, seules les armes réellement choisies apparaissent.</p>
+
+/* ---------- menu « ce que je peux équiper, et qui peut le porter » ---------- */
+const chipsW=a=>a.map(w=>`<span>${E(EQ.S1(w))}</span>`).join("");
+function equipMenu(p){const pool=(p.eqw||p.weapons||[]),off=EQ.officialFor(window.EQ_DATA,p.name,pool),k=EQ.consKey(p),cons=(S.eqc&&S.eqc[k]||[]).filter(c=>!c.off);
+ const baseW=off&&off.def&&off.def.length?off.def:(p.weapons||[]).map(w=>EQ.wbase(w.name)).filter((x,i,a)=>a.findIndex(y=>EQ.same(x,y))===i);
+ const rules=off?off.opt||[]:[];const cards=[];
+ rules.forEach(r=>{const to=(r.to||[]).map(EQ.S1).join(" + "),ic=r.t==="repl"?"🔁":"➕";
+  cards.push(`<div class="eq-oc"><div class="eq-oh"><span>${ic}</span><b>${E(to)}</b><em class="eq-p ok">✔ Officiel V11</em></div><div class="eq-ol"><i>👥 Qui</i> ${E(EQ.whoText(r))}</div>${r.t==="repl"?`<div class="eq-ol"><i>🔁 Remplace</i> ${E((r.from||[]).map(EQ.S1).join(" ou "))}</div>`:'<div class="eq-ol"><i>➕ En plus</i> de son équipement</div>'}</div>`)});
+ cons.filter(c=>c.st!=="off"&&["max","role","excl","min"].includes(c.t)).forEach(c=>{const pl=pill(c),w=c.t==="excl"?EQ.S1(c.ws[0])+" / "+EQ.S1(c.ws[1]):EQ.S1(c.w);
+  cards.push(`<div class="eq-oc"><div class="eq-oh"><span>${ICON[c.t]||"•"}</span><b>${E(w)}</b><em class="eq-p ${pl[0]}">${pl[1]}</em></div><div class="eq-ol">${E(EQ.describe(c))}</div></div>`)});
+ const known=new Set(rules.flatMap(r=>(r.to||[]).concat(r.from||[])).map(EQ.nk));const free=(pool||[]).map(w=>EQ.wbase(w.name)).filter((x,i,a)=>a.findIndex(y=>EQ.same(x,y))===i).filter(w=>!baseW.some(b=>EQ.same(b,w))&&!cons.some(c=>(c.w&&EQ.same(c.w,w))||(c.ws||[]).some(x=>EQ.same(x,w)))&&![...known].some(x=>EQ.same(x,w)));
+ free.forEach(w=>cards.push(`<div class="eq-oc"><div class="eq-oh"><span>❔</span><b>${E(EQ.S1(w))}</b><em class="eq-p pdf">⚠ À vérifier</em></div><div class="eq-ol">Arme connue de cette fiche, mais aucune limite connue : qui peut la porter ?</div></div>`));
+ return`<div class="eq-menu"><div class="eq-mt">🧰 Ce que je peux équiper</div>
+ <div class="eq-base"><b>🔹 Équipement de base</b><div class="eq-w">${chipsW(baseW)||'<span class="mu">inconnu</span>'}</div><small>${off?"Chaque figurine commence avec cet équipement (fiche officielle V11).":"Équipement de la fiche enregistrée."}</small></div>
+ ${cards.length?`<div class="eq-mt2">Options : quoi, et pour qui</div><div class="eq-oc-g">${cards.join("")}</div>`:'<p class="mu">Aucune option d\'équipement connue pour cette unité.</p>'}</div>`}
+function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],lists=(S.lists||[]);
+ const used=c=>lists.filter(l=>(l.units||[]).some(x=>x.ref===c.ref)).map(l=>l.name||"Liste");
+ return`<div class="eq-sec" data-eqsec="coll">${equipMenu(p)}
+ ${cf.length>1?`<div class="eq-mt2">Variantes d'équipement connues (${cf.length})</div><div class="eq-cfgs">${cf.map(c=>{const us=used(c);return`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${chipsW(c.w)||'<span class="mu">aucune arme</span>'}</div><small>${us.length?"Dans : "+E(us.join(", ")):"Dans aucune de tes listes"}</small></div>`}).join("")}</div>`:""}
  ${consBlock(p,true)}</div>`}
 function listSection(u){const v=vOf(u),L=LV[v.st];
  return`<div class="eq-sec" data-eqsec="list"><div class="sech">⚙ Équipement de l'unité <span class="eq-b ${v.st}">${L[0]} ${L[1]}</span></div>
  <div class="eq-sum">${v.lines.length?v.lines.map(l=>`<div>${E(l.t)}</div>`).join(""):'<span class="mu">Aucun équipement.</span>'}</div>
  ${v.issues.length?`<div class="eq-is">${v.issues.map(i=>`<div class="eq-i ${i.lvl}"><span>${i.lvl==="red"?"⛔":"⚠"} ${E(i.msg)}</span>${i.m&&i.m.length?`<button class="b" data-eq="fix" data-m="${i.m[0]}">Corriger</button>`:""}</div>`).join("")}</div>`:'<p class="eq-ok">Toutes les contraintes connues sont respectées.</p>'}
  <div class="eq-row"><button class="b p" data-eq="cfg">Configurer les figurines (${EQ.sizeOf(u)})</button></div>
+ <details class="eq-dr"><summary><span>🧰 Ce que cette unité peut équiper</span><em>Qui peut porter quoi</em></summary><div class="eq-cb">${equipMenu(primOf(u)||u)}</div></details>
  ${consBlock(u,false)}</div>`}
 /* ---------- feuille de configuration individuelle ---------- */
 let SHT=null;
@@ -129,6 +144,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(k==="cfg"&&u){e.stopPropagation();openSheet(u);return}
  if(k==="fix"&&u){e.stopPropagation();openSheet(u,+b.dataset.m);return}
  if(k==="army"){e.stopPropagation();const L=cl();if(L)armyPanel(L);return}
+ if(k==="goto"){e.stopPropagation();const m=document.querySelector(".eq-menu");if(m)m.scrollIntoView({behavior:"smooth",block:"start"});return}
  if(CACT.includes(k)){e.stopPropagation();consAction(k,b,u);return}},true);
 document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.eqf==="t"){const f=t.closest(".eq-f");if(!f)return;const fs=FIELDS[t.value]||[];f.querySelectorAll("[data-eqrow]").forEach(r=>{r.hidden=!fs.includes(r.dataset.eqrow)})}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#eqs [data-eq]");if(!b||!SHT||!SHT.army)return;const k=b.dataset.eq,L=SHT.army;
@@ -141,7 +157,7 @@ function decorate(){if(busy)return;busy=true;try{
  const md=document.getElementById("md");
  if(md){const pn=md.querySelector(".pn"),u=curU();
   if(pn&&u&&typeof edit!=="undefined"&&!edit&&!pn.querySelector(".eq-sec")){const co=typeof ctx!=="undefined"&&ctx==="coll",sub=typeof ftab!=="undefined"&&ftab>0&&!co;
-   if(!sub){const h=co?collSection(u):listSection(u),sv2=pn.querySelector(".sv");if(sv2)sv2.insertAdjacentHTML("beforebegin",h);else pn.insertAdjacentHTML("beforeend",h)}}}
+   if(!sub){const h=co?collSection(u):listSection(u),sv2=pn.querySelector(".sv");if(sv2)sv2.insertAdjacentHTML("beforebegin",h);else pn.insertAdjacentHTML("beforeend",h);if(co&&!pn.querySelector(".eq-go")){const tp=pn.querySelector(".top");if(tp)tp.insertAdjacentHTML("afterend",'<button class="b p eq-go" data-eq="goto" style="width:100%;margin:8px 0;min-height:46px">🧰 Ce que je peux équiper ↓</button>')}}}}
  const m=document.getElementById("m");
  if(m&&typeof tab!=="undefined"){
   if(tab==="units"){const L=typeof cl==="function"?cl():null;if(L&&L.units&&L.units.length){const g=m.querySelector(".grid");
@@ -149,12 +165,16 @@ function decorate(){if(busy)return;busy=true;try{
     else if(m.querySelector(".eq-army")){const ar=m.querySelector(".eq-army"),n=armyBanner(L);if(ar.outerHTML!==n){const t=document.createElement("div");t.innerHTML=n;ar.replaceWith(t.firstChild)}}
     m.querySelectorAll('.card.hv[data-act="view"][data-i]').forEach(c=>{const u=L.units[+c.dataset.i];if(!u)return;const v=vOf(u),x=LV[v.st];let d=c.querySelector(".eq-dot");if(!d){d=document.createElement("span");d.className="eq-dot";const nb=c.querySelector("b.cap");if(nb)nb.after(d)}if(d.dataset.s!==v.st){d.dataset.s=v.st;d.textContent=x[0];d.title="Équipement : "+x[1]}})}}
   if(tab==="coll"){m.querySelectorAll('[data-act="cview"][data-r]').forEach(c=>{const p=S.coll[c.dataset.r];if(!p||!p.cfgs||p.cfgs.length<2||c.querySelector(".eq-cf"))return;const s=document.createElement("span");s.className="eq-cf";s.textContent=p.cfgs.length+" configurations";const t=c.querySelector("b.cap,.tn");if(t&&t.parentNode)t.parentNode.insertBefore(s,t.nextSibling)});
-   if(!m.querySelector(".eq-bk")){const bk=getBackup();m.insertAdjacentHTML("beforeend",`<div class="card eq-bk"><b>🧰 Regroupement des variantes d'armes</b><p class="mu" style="margin:4px 0">Les unités à plusieurs configurations d'armes sont regroupées en une seule fiche. Aucune donnée n'est supprimée.${bk?" Sauvegarde faite le "+new Date(bk.ts).toLocaleString("fr-FR")+".":""}</p>${S.eqoff?'<button class="b p" data-eqx="redo">Regrouper à nouveau</button>':bk?'<button class="b" data-eqx="restore">Restaurer la sauvegarde d\'avant le regroupement</button>':""}</div>`)}}}
+   if(!m.querySelector(".eq-bk")){const bk=getBackup();m.insertAdjacentHTML("beforeend",`<div class="card eq-bk"><b>🧰 Regroupement des variantes d'armes</b><p class="mu" style="margin:4px 0">Les unités à plusieurs configurations d'armes sont regroupées en une seule fiche. Aucune donnée n'est supprimée.${bk?" Sauvegarde faite le "+new Date(bk.ts).toLocaleString("fr-FR")+".":""}</p>${S.eqoff?'<button class="b p" data-eqx="redo">Regrouper à nouveau</button>':bk?'<button class="b" data-eqx="restore">Restaurer la sauvegarde d\'avant le regroupement</button>':""}<div class="eq-row"><button class="b" data-eqx="exp">⬇ Exporter mes restrictions (.json)</button><label class="b" style="cursor:pointer;display:inline-flex;align-items:center">⬆ Importer des restrictions<input type="file" accept=".json,application/json" data-eqj="1" hidden></label></div><p class="mu" style="margin:4px 0 0;font-size:12px">Toutes les restrictions (officielles, lues dans tes PDF, ou saisies par toi) sont gardées sur ton téléphone. Exporte-les pour les conserver ou les transférer.</p></div>`)}}}
  if(typeof tab!=="undefined"&&tab==="play"){const L=typeof cl==="function"?cl():null;if(L)document.querySelectorAll('#pl .puh[data-k^="u:"]').forEach(h=>{const i=+h.dataset.k.split(":")[2],u=L.units[i];if(!u)return;const v=vOf(u),x=LV[v.st];let d=h.querySelector(".eq-dot");if(!d){d=document.createElement("span");d.className="eq-dot";const nb=h.querySelector("b.cap");if(nb)nb.after(d)}if(d.dataset.s!==v.st){d.dataset.s=v.st;d.textContent=x[0];d.title="Équipement : "+x[1]}})}
- }catch(e){}finally{busy=false}}
+ }catch(e){console.warn("eq decorate",e)}finally{busy=false}}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-eqx]");if(!b)return;e.stopPropagation();const k=b.dataset.eqx;
  if(k==="restore")ask({t:"Restaurer la sauvegarde ?",p:"Les fiches et les listes reviennent exactement à l'état d'avant le regroupement des variantes. Le regroupement automatique est alors désactivé.",ok:"Restaurer",dg:1},()=>{restore();toast("Sauvegarde restaurée")});
+ if(k==="exp"){exportR();return}
  if(k==="redo"){migrate(true);sv();try{draw()}catch(_){}toast("Variantes regroupées")}},true);
+function exportR(){try{const d=JSON.stringify({app:"armees40k",v:1,kind:"restrictions",exp:new Date().toISOString(),eqc:S.eqc||{},eqx:S.eqx||[],eqlog:S.eqlog||[]},null,1),b=new Blob([d],{type:"application/json"}),url=URL.createObjectURL(b),a=document.createElement("a");a.href=url;a.download="restrictions-armees40k.json";document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},800);toast("Restrictions exportées")}catch(e){toast("Export impossible : "+e.message)}}
+function importR(file){const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);if(!j||j.kind!=="restrictions"||typeof j.eqc!=="object")throw new Error("fichier non reconnu");S.eqc=S.eqc||{};let n=0;Object.entries(j.eqc).forEach(([k,a])=>{const cur=S.eqc[k]=S.eqc[k]||[],have=new Set(cur.map(EQ.sig));(a||[]).forEach(c=>{if(c&&c.t&&!have.has(EQ.sig(c))){c.id=c.id||EQ.cid();cur.push(c);have.add(EQ.sig(c));n++}})});S.eqx=[...new Set((S.eqx||[]).concat(j.eqx||[]))];sv();toast(n+" restriction(s) importée(s)");try{draw()}catch(_){}}catch(e){toast("Import impossible : "+e.message)}};rd.readAsText(file)}
+document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&t.dataset.eqj==="1"){if(t.files&&t.files[0])importR(t.files[0]);t.value=""}});
 let tmr=null;const obs=new MutationObserver(()=>{if(busy)return;clearTimeout(tmr);tmr=setTimeout(decorate,60)});
 function start(){obs.observe(document.body,{childList:true,subtree:true});decorate()}
 /* nouvelle unité ajoutée à la main : choisir l'équipement */

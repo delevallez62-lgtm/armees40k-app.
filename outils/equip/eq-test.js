@@ -80,4 +80,6 @@ const SD2={coll:{m1:{ref:"m1",name:"macrocytes canopteks",weapons:[W2("Arme inve
 // idempotent + rejet
 const c0=SD.eqc["macrocytes canopteks"].length;EQ.enrich(SD,DATA);t("enrichissement idempotent",SD.eqc["macrocytes canopteks"].length===c0);
 EQ.rejectCons(SD,{name:"macrocytes canopteks"},SD.eqc["macrocytes canopteks"][0].id);EQ.enrich(SD,DATA);t("rejet respecté",SD.eqc["macrocytes canopteks"].length===c0-1);
+const eo=EQ.officialFor(DATA,"macrocytes canopteks",[W2("Scalpel Gauss")]);t("officialFor",!!eo&&!EQ.officialFor(DATA,"macrocytes canopteks",[W2("Arme inventée")]));
+t("ruleText",eo.opt.map(EQ.ruleText).some(x=>/remplacer Scalpel Gauss ou projecteur Tesla par Faisceau atomiseur \+ Projecteur de nanoscarabées/i.test(x)&&/1 figurine au maximum/.test(x)),eo.opt.map(EQ.ruleText));
 console.log(ok+" OK, "+ko+" échec(s)");process.exit(ko?1:0);
