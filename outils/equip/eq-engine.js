@@ -6,10 +6,12 @@ const nn=s=>String(s==null?"":s).replace(/\s+[x×]\s?\d+(?=\s|$)/i,"").toLowerCa
 const wbase=n=>String(n||"").split(/\s+[-–—]\s+/)[0].trim();
 const S1=s=>{s=String(s||"");return s.charAt(0).toUpperCase()+s.slice(1)};
 const cap=s=>String(s||"").replace(/(^|[\s(])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase());
-const ST={off:"Confirmée (source officielle)",sec:"Confirmée (source secondaire fiable)",pdf:"Extraite du PDF — à vérifier",unk:"Inconnue",user:"Confirmée par toi"};
+const ST={off:"Confirmée (source officielle V11)",sec:"Confirmée (source secondaire fiable)",pdf:"Extraite du PDF — à vérifier",unk:"Inconnue",user:"Confirmée par toi"};
 const isConf=c=>c.st==="off"||c.st==="sec"||c.ok===1;
 const stLabel=c=>c.ok===1&&c.st!=="off"&&c.st!=="sec"?ST.user:(ST[c.st]||ST.unk);
-const same=(a,b)=>{const x=nk(a),y=nk(b);return !!x&&!!y&&(x===y||(" "+y+" ").includes(" "+x+" ")||(" "+x+" ").includes(" "+y+" "))};
+const stem=t=>t.length>3?t.replace(/[sx]$/,""):t;
+const nks=s=>nk(s).split(" ").map(stem).join(" ");
+const same=(a,b)=>{const x=nks(a),y=nks(b);return !!x&&!!y&&(x===y||(" "+y+" ").includes(" "+x+" ")||(" "+x+" ").includes(" "+y+" "))};
 
 /* ---------- équipement : lecture, modèles, résumé ---------- */
 function parseEquip(str){const out=[];String(str||"").split(/,(?![^(]*\))/).forEach(p=>{p=p.trim();if(!p)return;const m=/^(.*?)\s*\((\d+)\)\s*$/.exec(p);out.push(m?{name:m[1].trim(),n:+m[2]}:{name:p,n:null})});return out}
@@ -47,6 +49,7 @@ function describe(c){const w=S1(c.w||"");switch(c.t){
  case"role":return`${w} : réservé à la figurine « ${cap(c.role)} »${c.n?" (maximum "+c.n+")":""}`;
  case"excl":return`${S1(c.ws[0])} et ${S1(c.ws[1])} : incompatibles sur une même figurine`;
  case"fixed":return"Aucune option d'équipement";
+ case"size":return`Effectif : ${c.min===c.max?c.min:"de "+c.min+" à "+c.max} figurine${c.max>1?"s":""}`;
  default:return c.t}}
 function sig(c){return[c.t,nk(c.w||""),(c.ws||[]).map(nk).sort().join("+"),c.n||"",c.per||"",nk(c.role||"")].join("|")}
 function ruleIf(c,N){return !((c.ifmin&&N<c.ifmin)||(c.ifmax&&N>c.ifmax))}
@@ -55,6 +58,7 @@ function validate(unit,cons,opt){opt=opt||{};const mm=opt.models||modelsOf(unit,
  const holders=w=>M.map((m,i)=>m.w.some(x=>same(w,x))?i:-1).filter(i=>i>=0);
  let unconf=0,conf=0;
  live.forEach(c=>{if(c.t==="fixed"){isConf(c)?conf++:unconf++;return}
+  if(c.t==="size"){isConf(c)?conf++:unconf++;if(N<c.min||N>c.max)issues.push({lvl:isConf(c)?"red":"orange",msg:`${nm} : ${N} figurine${N>1?"s":""}, l'unité doit compter ${c.min===c.max?c.min:"de "+c.min+" à "+c.max}.`,m:[],cid:c.id});return}
   if(!ruleIf(c,N))return;const sev=isConf(c)?"red":"orange";isConf(c)?conf++:unconf++;
   const add=(msg,m)=>issues.push({lvl:sev,msg:sev==="orange"?msg+" (restriction non confirmée : à vérifier)":msg,m:m||[],cid:c.id});
   if(c.t==="max"){const h=holders(c.w),lim=c.per?Math.floor(N/c.per)*c.n:c.n;if(h.length>lim)add(`${nm} : ${h.length} × ${S1(c.w)} sélectionné${h.length>1?"s":""}, maximum autorisé : ${lim}.`,h)}
@@ -104,16 +108,38 @@ function regroup(S){S.eqc=S.eqc&&typeof S.eqc==="object"?S.eqc:{};S.eqx=Array.is
   const cons=S.eqc[k]=S.eqc[k]||[],have=new Set(cons.map(sig)),rej=new Set(S.eqx);
   const names=[...pool.values()].map(w=>wbase(w.name));
   a.forEach(m=>{if(!(m.text&&m.text.length))return;extract(m.text,names,m.name).forEach(c=>{const s=sig(c);if(have.has(s)||rej.has(k+"#"+s))return;have.add(s);cons.push(c)})})});
+ try{enrich(S,root.EQ_DATA)}catch(e){}
+ return n}
+function dataCons(e,docTitle){const src={doc:docTitle||"Pack de Faction officiel",ver:"V11",p:e.p,passage:"Pack de Faction officiel, page "+e.p},base={st:"off",src,auto:1},out=[];
+ const push=c=>out.push(Object.assign({},base,c));
+ if(e.none&&!e.x)push({t:"fixed"});
+ if(e.comp&&e.comp.length===1&&(e.none&&!e.x||e.comp[0][0]!==e.comp[0][1]))push({t:"size",min:e.comp[0][0],max:e.comp[0][1]});
+ (e.opt||[]).forEach(r=>{const role=r.who==="role"&&r.role&&r.role!=="cette figurine"?r.role:"";
+  if(r.t==="repl"){(r.from||[]).forEach(f=>(r.to||[]).forEach(t=>push({t:"excl",ws:[f,t]})));
+   if(r.who!=="all")(r.to||[]).forEach(t=>role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0)}
+  else if(r.t==="add"){(r.to||[]).forEach(t=>{role?push({t:"role",w:t,role,n:r.n||1}):r.n?push({t:"max",w:t,n:r.n,per:r.per||0}):0;(r.not||[]).forEach(x=>push({t:"excl",ws:[x,t]}))})}});
+ return out}
+function enrich(S,data){if(!data||!data.units)return 0;S.eqd=S.eqd&&typeof S.eqd==="object"?S.eqd:{};S.eqc=S.eqc||{};S.eqx=S.eqx||[];
+ const docs=new Map((data.meta&&data.meta.sources||[]).map(s=>[s.file,s])),rej=new Set(S.eqx);let n=0;
+ const cands=[];Object.values(S.coll||{}).forEach(m=>{if(!m.mrg)cands.push({name:m.name,pool:(m.eqw||m.weapons||[])})});
+ (S.lists||[]).forEach(l=>(l.units||[]).forEach(u=>cands.push({name:u.name,pool:u.weapons||[]})));
+ cands.forEach(c=>{const e=data.units[nk(nn(c.name))];if(!e)return;const key=nn(c.name),src=docs.get(e.doc)||{},ws=e.w||[];
+  const ok=!ws.length||!c.pool.length||c.pool.some(w=>ws.some(x=>same(x,wbase(w.name))));
+  const info={doc:src.doc||"",date:src.date||"",p:e.p,x:e.x||0,ver:"V11",n:e.n};
+  if(!ok){S.eqd[key]=Object.assign({},info,{nocompat:1});return}
+  S.eqd[key]=info;const cons=S.eqc[key]=S.eqc[key]||[],have=new Set(cons.map(sig));
+  dataCons(e,(src.doc||"Pack de Faction officiel")+(src.date?" ("+src.date+")":"")).forEach(k=>{const s=sig(k);if(have.has(s)||rej.has(key+"#"+s))return;
+   const dup=cons.findIndex(x=>sig(x)===s);if(dup>=0){const d=cons[dup];if(d.st==='pdf'&&!d.manual&&d.ok!==1){d.st='off';d.src=k.src;d.auto=1;n++}return}have.add(s);k.id=cid();cons.push(k);n++})});
  return n}
 const consKey=u=>nn(u&&u.name);
 const consOf=(S,u)=>(S.eqc&&S.eqc[consKey(u)])||[];
 function groupRefs(S,ref){const m=S.coll[ref];if(!m)return[ref];const p=m.mrg&&S.coll[m.mrg]?S.coll[m.mrg]:m;return Object.values(S.coll).filter(x=>x.ref===p.ref||x.mrg===p.ref).map(x=>x.ref)}
 function addCons(S,u,c){const k=consKey(u);(S.eqc[k]=S.eqc[k]||[]).push(Object.assign({id:cid()},c));return S.eqc[k]}
-function rejectCons(S,u,id){const k=consKey(u),a=S.eqc[k]||[],c=a.find(x=>x.id===id);if(!c)return;if(c.st==="pdf"&&!c.manual)S.eqx.push(k+"#"+sig(c));S.eqc[k]=a.filter(x=>x.id!==id)}
+function rejectCons(S,u,id){const k=consKey(u),a=S.eqc[k]||[],c=a.find(x=>x.id===id);if(!c)return;if(!c.manual)S.eqx.push(k+"#"+sig(c));S.eqc[k]=a.filter(x=>x.id!==id)}
 /* applique une répartition par figurine à une unité de liste (met à jour armes + équipement) */
 function applyModels(unit,models,pool){const names=new Set();models.forEach(m=>m.w.forEach(w=>names.add(nk(w))));
  const prof=[];(pool||[]).concat(unit.weapons||[]).forEach(w=>{if(names.has(nk(wbase(w.name)))&&!prof.some(x=>nk(x.name)===nk(w.name)))prof.push(JSON.parse(JSON.stringify(w)))});
  unit.weapons=prof;unit.equip=equipString(models);unit.eq={m:models.map(m=>({r:m.r||"",w:m.w.slice()})),cust:1}}
-root.EQ={S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
+root.EQ={dataCons,enrich,S1,nk,nn,wbase,cap,same,parseEquip,poolOf,sizeOf,derive,modelsOf,summary,summaryW,countsOf,equipString,describe,sig,validate,validateArmy,extract,regroup,consKey,consOf,groupRefs,addCons,rejectCons,applyModels,ST,stLabel,isConf,cid};
 if(typeof module!=="undefined")module.exports=root.EQ;
 })(typeof window!=="undefined"?window:globalThis);

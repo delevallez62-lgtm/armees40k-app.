@@ -62,4 +62,22 @@ let dm=EQ.derive(MU,[]);t("mdl : sergent porte le marteau",dm.m[0].r==="Sergent"
 t("mdl : 9 autres avec épée",dm.m.slice(1).every(m=>m.w.includes("Épée énergétique")&&!m.w.includes("Marteau tonnerre")&&m.w.includes("Pistolet")),dm.m);
 t("mdl : résumé",EQ.summaryW(dm.m).some(l=>l.t==="1 × Marteau tonnerre — Sergent")&&EQ.summaryW(dm.m).some(l=>l.t==="9 × Épée énergétique"),EQ.summaryW(dm.m).map(l=>l.t));
 t("mdl : pas de répartition supposée",EQ.validate(MU,[role]).issues.every(i=>!i.asm));
+// données officielles (Packs de Faction)
+const DATA=JSON.parse(require("fs").readFileSync(__dirname+"/data/eq-official.json","utf8"));
+const W2=n=>({name:n,range:"12",a:"1",hit:"3+",f:"4",pa:"0",d:"1",caps:""});
+const SD={coll:{m1:{ref:"m1",name:"macrocytes canopteks",weapons:[W2("Scalpel Gauss"),W2("Griffes"),W2("Faisceau atomiseur"),W2("Projecteur Tesla")],text:[]},e1:{ref:"e1",name:"écharde c'tan du dragon du néant",weapons:[W2("Lance du Dragon du Néant"),W2("Tempête voltaïque")],text:[]},x1:{ref:"x1",name:"Unité inconnue",weapons:[W2("Bolter")],text:[]}},lists:[]};
+EQ.EQ_DATA=undefined;global.EQ_DATA=DATA;const nEnr=EQ.enrich(SD,DATA);
+t("enrichissement : contraintes ajoutées",nEnr>0&&SD.eqc["macrocytes canopteks"].length>0,SD.eqc);
+t("enrichissement : source officielle",SD.eqc["macrocytes canopteks"].every(c=>c.st==="off"&&c.src.p>0&&!c.src.passage.includes("■")));
+t("enrichissement : unité inconnue ignorée",!SD.eqc["unité inconnue"]);
+t("sans option confirmé officiellement",(SD.eqc["écharde c'tan du dragon du néant"]||[]).some(c=>c.t==="fixed"),SD.eqc["écharde c'tan du dragon du néant"]);
+const MC={name:"macrocytes canopteks",size:5,equip:"Scalpel Gauss (3), Griffes (5), Faisceau atomiseur (2)",weapons:[W2("Scalpel Gauss"),W2("Griffes"),W2("Faisceau atomiseur")]};
+let vm=EQ.validate(MC,SD.eqc["macrocytes canopteks"]);t("2 faisceaux : rouge officiel",vm.st==="red"&&vm.issues.some(i=>/Faisceau atomiseur/.test(i.msg)&&/maximum autorisé : 1/.test(i.msg)),vm.issues.map(i=>i.msg));
+MC.equip="Scalpel Gauss (4), Griffes (5), Faisceau atomiseur (1)";vm=EQ.validate(MC,SD.eqc["macrocytes canopteks"]);t("1 faisceau : pas de rouge",vm.st!=="red",vm.issues.map(i=>i.msg));
+const EC={name:"écharde c'tan du dragon du néant",size:2,equip:"Lance du Dragon du Néant (1)",weapons:[W2("Lance du Dragon du Néant")]};const ve=EQ.validate(EC,SD.eqc["écharde c'tan du dragon du néant"]);t("effectif hors règle (officiel)",ve.issues.some(i=>/doit compter 1/.test(i.msg)&&i.lvl==="red"),ve.issues.map(i=>i.msg));
+// armes incompatibles => rien d'appliqué
+const SD2={coll:{m1:{ref:"m1",name:"macrocytes canopteks",weapons:[W2("Arme inventée")],text:[]}},lists:[]};EQ.enrich(SD2,DATA);t("version incompatible : rien d'appliqué",!SD2.eqc["macrocytes canopteks"]&&SD2.eqd["macrocytes canopteks"].nocompat===1,SD2.eqd);
+// idempotent + rejet
+const c0=SD.eqc["macrocytes canopteks"].length;EQ.enrich(SD,DATA);t("enrichissement idempotent",SD.eqc["macrocytes canopteks"].length===c0);
+EQ.rejectCons(SD,{name:"macrocytes canopteks"},SD.eqc["macrocytes canopteks"][0].id);EQ.enrich(SD,DATA);t("rejet respecté",SD.eqc["macrocytes canopteks"].length===c0-1);
 console.log(ok+" OK, "+ko+" échec(s)");process.exit(ko?1:0);

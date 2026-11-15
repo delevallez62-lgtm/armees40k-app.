@@ -9,3 +9,9 @@ Module hors ligne ajouté à `index.html` par `patch-eq.py` (moteur `eq-engine.j
 * **Restrictions** : `S.eqc[nom de l'unité] = [{id,t:max|min|role|excl|fixed,w,n,role,ws,st:off|sec|pdf|user,ok,src}]`.
   Extraites du texte des fiches (statut « pdf — à vérifier »), jamais inventées. Rouge seulement si la restriction est confirmée.
 * Tests moteur : `node eq-test.js`.
+
+## Données officielles V11 (hors ligne, sans IA)
+`build-restrictions.py` lit les **Packs de Faction officiels** (Warhammer Community, PDF français, convertis par `pdftotext -layout`) avec des règles de lecture déterministes
+et produit `data/eq-official.json` / `data/eq-data.js` (embarqué dans l'appli). 97 fiches (Chaos Daemons, Nécrons, Aeldari, etc.) ; seules les nouvelles fiches des packs sont publiées par GW.
+Aucun texte officiel n'est recopié : seulement des restrictions structurées + document + page. Les options trop complexes sont comptées (`x`) et signalées « à vérifier ».
+Une fiche officielle n'est appliquée que si ses armes correspondent à celles de la fiche de l'utilisateur (vérification de version).

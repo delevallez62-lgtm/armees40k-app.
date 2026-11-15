@@ -8,28 +8,31 @@ const BK="armees40k_bk_eq1";
 /* ---------- sauvegarde / migration ---------- */
 function backup(){try{const d=JSON.stringify({ts:Date.now(),coll:S.coll,lists:S.lists,eqc:S.eqc||null});try{localStorage.setItem(BK,d);return true}catch(_){S.eqbk=JSON.parse(d);return true}}catch(_){return false}}
 function getBackup(){try{const d=localStorage.getItem(BK);if(d)return JSON.parse(d)}catch(_){}return S.eqbk||null}
-function migrate(force){if(S.eqoff&&!force)return 0;if(S.eqv==null){backup()}const n=EQ.regroup(S);if(S.eqv==null||force){S.eqv=1;S.eqd=Date.now()}if(force)delete S.eqoff;return n}
+function migrate(force){if(S.eqoff&&!force)return 0;if(S.eqv==null){backup()}const n=EQ.regroup(S);if(S.eqv==null||force){S.eqv=1;S.eqdt=Date.now()}if(force)delete S.eqoff;return n}
 function restore(){const b=getBackup();if(!b)return false;S.coll=b.coll;S.lists=b.lists;S.eqc=b.eqc||{};S.eqx=[];S.eqoff=1;delete S.eqv;sv();return true}
 const primOf=u=>{const m=u&&S.coll[u.ref];return m&&m.mrg&&S.coll[m.mrg]?S.coll[m.mrg]:m||null};
 const consOf=u=>EQ.consOf(S,u);
 const poolOf=u=>{const p=primOf(u),a=((p&&p.eqw)||[]).concat(u.weapons||[]),seen=new Set(),o=[];a.forEach(w=>{const b=EQ.wbase(w.name),k=EQ.nk(b);if(k&&!seen.has(k)){seen.add(k);o.push(w)}});return o};
 const vOf=u=>EQ.validate(u,consOf(u));
 /* ---------- section « fiche » (collection / liste) ---------- */
-function consRows(u,edit){const cs=consOf(u);return cs.length?cs.map(c=>`<div class="eq-c ${EQ.isConf(c)?"ok":"pdf"}"><div><b>${E(EQ.describe(c))}</b><div class="eq-s">${E(EQ.stLabel(c))}${c.src&&c.src.passage?` · <i>« ${E(c.src.passage)} »</i>`:""}</div></div>${edit?`<span class="eq-a">${EQ.isConf(c)?"":`<button class="b" data-eq="cfm" data-id="${E(c.id)}">Confirmer</button>`}<button class="b x" data-eq="crm" data-id="${E(c.id)}" aria-label="Retirer">✕</button></span>`:""}</div>`).join(""):'<p class="mu">Aucune restriction connue : « À vérifier » tant qu\'elle n\'est pas renseignée. HAMMER n\'invente aucune règle.</p>'}
+function consRows(u,edit){const cs=consOf(u);return cs.length?cs.map(c=>`<div class="eq-c ${EQ.isConf(c)?"ok":"pdf"}"><div><b>${E(EQ.describe(c))}</b><div class="eq-s">${E(EQ.stLabel(c))}${c.st==="off"&&c.src?` · ${E(c.src.doc||"")}${c.src.p?", page "+c.src.p:""}`:c.src&&c.src.passage?` · <i>« ${E(c.src.passage)} »</i>`:""}</div></div>${edit?`<span class="eq-a">${EQ.isConf(c)?"":`<button class="b" data-eq="cfm" data-id="${E(c.id)}">Confirmer</button>`}<button class="b x" data-eq="crm" data-id="${E(c.id)}" aria-label="Retirer">✕</button></span>`:""}</div>`).join(""):'<p class="mu">Aucune restriction connue : « À vérifier » tant qu\'elle n\'est pas renseignée. HAMMER n\'invente aucune règle.</p>'}
 function addForm(u){const pool=poolOf(u).map(w=>EQ.wbase(w.name)),opts=pool.map(n=>`<option>${E(n)}</option>`).join("");return`<details class="eq-add"><summary>+ Ajouter une restriction</summary><div class="eq-f"><label>Type<select data-eqf="t"><option value="max">Maximum par unité</option><option value="role">Réservée à une figurine (ex. sergent)</option><option value="excl">Deux équipements incompatibles</option><option value="min">Minimum obligatoire</option></select></label><label>Équipement<select data-eqf="w">${opts}</select></label><label data-eqrow="w2" hidden>Incompatible avec<select data-eqf="w2">${opts}</select></label><label data-eqrow="n">Nombre<input data-eqf="n" type="number" min="1" value="1" inputmode="numeric"></label><label data-eqrow="role" hidden>Figurine concernée<input data-eqf="role" value="Sergent"></label><button class="b p" data-eq="cadd">Enregistrer (confirmée par moi)</button></div></details>`}
+function offInfo(u){const d=(S.eqd||{})[EQ.consKey(u)];if(!d)return"";
+ if(d.nocompat)return`<div class="eq-i orange"><span>⚠ Une fiche officielle V11 existe pour « ${E(d.n)} » (${E(d.doc)}, page ${d.p}) mais ses armes ne correspondent pas à celles de cette fiche : aucune restriction appliquée, version à vérifier.</span></div>`;
+ return`<div class="eq-ok">✔ Données officielles V11 : ${E(d.doc)}, page ${d.p}.${d.x?` ${d.x} option${d.x>1?"s":""} complexe${d.x>1?"s":""} non reprise${d.x>1?"s":""} automatiquement : à vérifier dans le document.`:""}</div>`}
 function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],pool=(p.eqw||[]);
  return`<div class="eq-sec" data-eqsec="coll"><div class="sech">🧰 Équipements connus</div>
  ${cf.length>1?`<p class="mu" style="margin:6px 0">${cf.length} configurations d'équipement regroupées dans cette fiche :</p>`:""}
  ${cf.map((c,i)=>`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${c.w.map(w=>`<span>${E(EQ.S1(w))}</span>`).join("")||'<span class="mu">aucune arme</span>'}</div></div>`).join("")}
  <p class="mu" style="margin:8px 0 2px">Toutes les armes connues pour cette unité : ${pool.length?pool.map(w=>E(EQ.S1(EQ.wbase(w.name)))).filter((x,i,a)=>a.indexOf(x)===i).join(", "):"—"}. Dans une armée, seules les armes réellement choisies apparaissent.</p>
- <div class="sech">📏 Restrictions d'équipement</div>${consRows(p,true)}
+ <div class="sech">📏 Restrictions d'équipement</div>${offInfo(p)}${consRows(p,true)}
  <div class="eq-row"><button class="b" data-eq="cfix">Cette unité n'a aucune option (confirmé)</button></div>${addForm(p)}</div>`}
 function listSection(u){const v=vOf(u),L=LV[v.st];
  return`<div class="eq-sec" data-eqsec="list"><div class="sech">⚙ Équipement de l'unité <span class="eq-b ${v.st}">${L[0]} ${L[1]}</span></div>
  <div class="eq-sum">${v.lines.length?v.lines.map(l=>`<div>${E(l.t)}</div>`).join(""):'<span class="mu">Aucun équipement.</span>'}</div>
  ${v.issues.length?`<div class="eq-is">${v.issues.map(i=>`<div class="eq-i ${i.lvl}"><span>${i.lvl==="red"?"⛔":"⚠"} ${E(i.msg)}</span>${i.m&&i.m.length?`<button class="b" data-eq="fix" data-m="${i.m[0]}">Corriger</button>`:""}</div>`).join("")}</div>`:'<p class="eq-ok">Toutes les contraintes connues sont respectées.</p>'}
  <div class="eq-row"><button class="b p" data-eq="cfg">Configurer les figurines (${EQ.sizeOf(u)})</button></div>
- <details class="eq-add"><summary>Restrictions connues (${consOf(u).length})</summary>${consRows(u,false)}</details></div>`}
+ ${offInfo(u)}<details class="eq-add"><summary>Restrictions connues (${consOf(u).length})</summary>${consRows(u,false)}</details></div>`}
 /* ---------- feuille de configuration individuelle ---------- */
 let SHT=null;
 const root=()=>{let o=document.getElementById("eqs");if(!o){o=document.createElement("div");o.id="eqs";o.setAttribute("role","dialog");o.setAttribute("aria-label","Équipement des figurines");document.body.appendChild(o);o.addEventListener("click",onSheet);o.addEventListener("change",onSheetCh)}return o};
