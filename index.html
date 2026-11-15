@@ -1755,7 +1755,7 @@ function modal(){const u=ed;if(!u){fedLast=null;$("#md").innerHTML="";return}u.s
  const head=edit?`<div class="top"><h2>Modifier la fiche</h2></div>${n>1?`<p class="mu">Ces changements s’appliquent aux ${n} exemplaires de cette unité dans toutes les listes.</p>`:""}<div class="row" style="margin:10px 0">${ph}<span><button class="b" data-act="photo">Photo</button> ${im(u)?`<button class="b" data-act="frm" data-k="p:${u.ref}">Recadrer la photo</button> `:""}<button class="b" data-act="uban">Bannière</button> ${S.ban[u.ref]?`<button class="b" data-act="frm" data-k="u:${u.ref}">Cadrer</button> <button class="b x" data-act="dban">Retirer la bannière</button>`:""} ${im(u)?'<button class="b x" data-act="dphoto">Retirer</button>':""}</span></div><label>Nom${ei("name",u.name)}</label><label>Faction<select data-fc="1" style="width:100%">${fopts(u.ref)}</select></label>${co?"":`<label>Optimisation (visible uniquement dans les listes d’armée)<textarea data-p="opti" rows="3">${esc(u.opti||"")}</textarea></label>`}`+pe(u,"")+u.subs.map((s,k)=>`<hr><div class="row"><label style="flex:1">Type (Meneur, Appui…)${ei(`subs.${k}.label`,s.label)}</label><label style="flex:2">Nom${ei(`subs.${k}.name`,s.name)}</label><button class="b x" data-act="dsub" data-k="${k}">Supprimer</button></div>`+pe(s,`subs.${k}.`)).join("")+`${co?"":`<label>Attacher un meneur depuis la collection<select data-att="1" style="width:100%">${aopts(u)}</select></label>`}<p><button class="b" data-act="asub">+ Ajouter un profil (Meneur / Appui)</button></p><p><button class="b x" data-act="dunit">${co?"Supprimer de la collection":"Supprimer de cette liste"}</button></p>`
  :`<div class="top"><span class="row">${ph}<span><h2 class="cap">${esc(u.name)}</h2><span class="mu">${co?"présente dans "+n+" exemplaire(s)":""}</span></span></span><span><button class="b p" data-act="edt">Modifier</button>${co?` <button class="b" data-act="dup">Dupliquer</button>`:""}</span></div>${ltabs(u,co)}${!co&&u.opti&&ftab===0?`<div class="opb"><b>Optimisation</b><br>${esc(u.opti)}</div>`:""}${ftab===0||co?prof(u):""}${u.subs.map((s,si)=>ftab!==si+1?"":`<div class="row" style="margin-top:14px">${pimg(s)}<h4 class="cap" style="margin:0">${esc(s.label)} : ${esc(s.name)}</h4></div>`+prof(s)).join("")}`;
  const was=$("#md .pn"),st=was?was.scrollTop:0,c=was?" na":"",bar=`<div class="mb">${edit?`<button class="b" data-act="edt">← Retour</button>`:`<span class="mu">Fiche d’unité</span>`}<button class="b cx" data-act="close" aria-label="Fermer">✕</button></div>`,sv=edit?`<div class="sv"><button class="b p" data-act="save">Enregistrer</button></div>`:"";
- $("#md").innerHTML=`<div class="ov${c}" data-act="close"><div class="pn${c}">${bar}${mban(u)}${head}${sv}</div></div>`;if(was)$("#md .pn").scrollTop=st}
+ $("#md").innerHTML=`<div class="ov${c}" data-act="close"><div class="pn${c}">${bar}${mban(u)}${WPK.btn(u)}${head}${sv}</div></div>`;if(was)$("#md .pn").scrollTop=st}
 document.addEventListener("click",e=>{const t=e.target.closest("[data-tab],[data-act]");if(!t)return;
  if(t.dataset.tab){tab=t.dataset.tab;window.po=null;draw();return}
  const a=t.dataset.act,d=t.dataset,L=cl(),u=ed;
@@ -6967,8 +6967,18 @@ window.WPK={
   W={ref:ref,lead:!!lead,sel:new Set(m.weapons.map(function(_,i){return i}))};
   draw();return true;
  },
+ btn:function(u){
+  try{if(ctx!=="list"||edit||!u||!S.coll[u.ref]||!(S.coll[u.ref].weapons||[]).length)return"";
+   return'<div style="margin:8px 0"><button class="b" data-act="wpe" style="width:100%;padding:10px">⚔ Choisir les armes de cette unité ('+(u.weapons||[]).length+')</button></div>'}catch(_){return""}
+ },
  act:function(a,d){
   if(a.indexOf("wp")!==0)return false;
+  if(a==="wpe"){
+   const u=ed,m=u&&S.coll[u.ref];if(!m)return true;
+   const have=new Set((u.weapons||[]).map(wk));
+   W={ref:m.ref,lead:false,edit:true,sel:new Set(m.weapons.map(function(w,i){return have.has(wk(w))?i:-1}).filter(function(i){return i>=0}))};
+   draw();return true;
+  }
   if(a==="wpx"){W=null;draw();return true}
   if(!W)return true;
   const m=S.coll[W.ref];
@@ -6976,8 +6986,15 @@ window.WPK={
   if(a==="wpa"){if(W.sel.size===m.weapons.length)W.sel.clear();else m.weapons.forEach(function(_,i){W.sel.add(i)});draw();return true}
   if(a==="wpok"){
    if(!W.sel.size)return true;
-   const ws=m.weapons.filter(function(_,i){return W.sel.has(i)}).map(clone),lead=W.lead;
+   const ws=m.weapons.filter(function(_,i){return W.sel.has(i)}).map(clone),lead=W.lead,isEdit=W.edit;
    W=null;draw();
+   if(isEdit){
+    const u=ed;if(!u)return true;
+    const mine={};(u.weapons||[]).forEach(function(w){mine[wk(w)]=w});
+    const inColl=new Set(m.weapons.map(wk));
+    u.weapons=ws.map(function(w){return clone(mine[wk(w)]||w)}).concat((u.weapons||[]).filter(function(w){return !inColl.has(wk(w))}));
+    save();draw_();toast("Armes mises à jour ✓");return true;
+   }
    if(lead){if(ed){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref};SH.forEach(function(f){s[f]=clone(m[f])});s.weapons=ws;ed.subs.push(s)}pk=null;pkDraw();save();draw_();toast("Meneur ajouté ✓");return true}
    const L=cl(),c=L.units.find(function(x){return x.ref===m.ref})||S.lists.flatMap(function(l){return l.units}).find(function(x){return x.ref===m.ref});
    const n={ref:m.ref,size:c?c.size:null,pts:m.pts||0};SH.forEach(function(f){n[f]=clone(m[f])});n.weapons=ws;n.subs=[];n.man=1;L.units.push(n);save();

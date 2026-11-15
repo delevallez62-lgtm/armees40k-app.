@@ -32,6 +32,7 @@ rep('if(c&&c!==s)SH.forEach(k=>{if(k!=="name")c[k]=clone(s[k])})','if(c&&c!==s)S
 rep(' if(a==="dgno"){dlg=null;dgDraw();return}',' if(a&&a.indexOf("wp")===0&&WPK.act(a,d))return;\n if(a==="dgno"){dlg=null;dgDraw();return}')
 rep(' else if(a==="pick"&&pk&&pk.lead){const m=S.coll[d.r];',' else if(a==="pick"&&pk&&pk.lead&&WPK.ask(d.r,true)){}\n else if(a==="pick"&&pk&&pk.lead){const m=S.coll[d.r];')
 rep(' else if(a==="pick"){const m=S.coll[d.r],c=',' else if(a==="pick"&&WPK.ask(d.r,false)){return}\n else if(a==="pick"){const m=S.coll[d.r],c=')
+rep('${bar}${mban(u)}${head}${sv}','${bar}${mban(u)}${WPK.btn(u)}${head}${sv}')
 J=open(d+'/coll.js',encoding='utf8').read();C=open(d+'/coll.css',encoding='utf8').read()
 k=s.rindex('</body>')
 s=s[:k]+'<style id="wpcss">\n'+C+'</style>\n<script>\n'+J+'\n</script>\n'+s[k:]

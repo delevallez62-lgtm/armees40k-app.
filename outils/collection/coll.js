@@ -65,8 +65,18 @@ window.WPK={
   W={ref:ref,lead:!!lead,sel:new Set(m.weapons.map(function(_,i){return i}))};
   draw();return true;
  },
+ btn:function(u){
+  try{if(ctx!=="list"||edit||!u||!S.coll[u.ref]||!(S.coll[u.ref].weapons||[]).length)return"";
+   return'<div style="margin:8px 0"><button class="b" data-act="wpe" style="width:100%;padding:10px">⚔ Choisir les armes de cette unité ('+(u.weapons||[]).length+')</button></div>'}catch(_){return""}
+ },
  act:function(a,d){
   if(a.indexOf("wp")!==0)return false;
+  if(a==="wpe"){
+   const u=ed,m=u&&S.coll[u.ref];if(!m)return true;
+   const have=new Set((u.weapons||[]).map(wk));
+   W={ref:m.ref,lead:false,edit:true,sel:new Set(m.weapons.map(function(w,i){return have.has(wk(w))?i:-1}).filter(function(i){return i>=0}))};
+   draw();return true;
+  }
   if(a==="wpx"){W=null;draw();return true}
   if(!W)return true;
   const m=S.coll[W.ref];
@@ -74,8 +84,15 @@ window.WPK={
   if(a==="wpa"){if(W.sel.size===m.weapons.length)W.sel.clear();else m.weapons.forEach(function(_,i){W.sel.add(i)});draw();return true}
   if(a==="wpok"){
    if(!W.sel.size)return true;
-   const ws=m.weapons.filter(function(_,i){return W.sel.has(i)}).map(clone),lead=W.lead;
+   const ws=m.weapons.filter(function(_,i){return W.sel.has(i)}).map(clone),lead=W.lead,isEdit=W.edit;
    W=null;draw();
+   if(isEdit){
+    const u=ed;if(!u)return true;
+    const mine={};(u.weapons||[]).forEach(function(w){mine[wk(w)]=w});
+    const inColl=new Set(m.weapons.map(wk));
+    u.weapons=ws.map(function(w){return clone(mine[wk(w)]||w)}).concat((u.weapons||[]).filter(function(w){return !inColl.has(wk(w))}));
+    save();draw_();toast("Armes mises à jour ✓");return true;
+   }
    if(lead){if(ed){ed.subs=ed.subs||[];const s={label:"Meneur",ref:m.ref};SH.forEach(function(f){s[f]=clone(m[f])});s.weapons=ws;ed.subs.push(s)}pk=null;pkDraw();save();draw_();toast("Meneur ajouté ✓");return true}
    const L=cl(),c=L.units.find(function(x){return x.ref===m.ref})||S.lists.flatMap(function(l){return l.units}).find(function(x){return x.ref===m.ref});
    const n={ref:m.ref,size:c?c.size:null,pts:m.pts||0};SH.forEach(function(f){n[f]=clone(m[f])});n.weapons=ws;n.subs=[];n.man=1;L.units.push(n);save();
