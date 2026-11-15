@@ -64,6 +64,14 @@ const pstx=p=>{''')
 rep('+pstx(p)+wtbl(p.weapons,p.name,p)+abWarn(p)+((p.mdl||[]).length?','+mblk(p)+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?')
 # 15. sauvegarde invulnérable écrite dans une aptitude (« Cette figurine a une SvIn de 5+. ») : repérée et affichée dans SV
 rep('const eqIt=s=>','''const invOf=p=>{const t=[...(p.text||[]),...(p.xab||[]).map(x=>x&&(x.t||x.d||x.b)||"")].join(" ").replace(/\\s+/g," "),re=/(?:Cette figurine|Cette unité|Les figurines de cette unité)\\s+(?:a|ont)\\s+(?:une?\\s+)?(?:SvIn|sauvegarde invulnérable)\\s*(?:de\\s*)?(\\d)\\s*\\+(?!\\+)([^.!]*)[.!]/gi;let m,best=null;while(m=re.exec(t)){if(/tant que|\\bsi\\b|quand|lorsque|contre|pendant|phase|jusqu|une fois/i.test(m[2]))continue;const v=+m[1];if(best==null||v<best)best=v}return best};
-const stxp=p=>{const s=Object.assign({},p.stats),i=invOf(p),sv=String(s.SV||"");if(i&&!/\\+\\+/.test(sv))s.SV=(sv&&sv!=="–"?sv:"–")+"/"+i+"++";return s};
+const fnpOf=p=>{const ns=[...String(p.apt||"").split(","),...(p.xab||[]).map(x=>x&&x.n||"")].join(" , "),re=/Insensible\\s+à\\s+la\\s+Douleur\\s*(\\d)\\s*\\+/gi;let m,best=null;while(m=re.exec(ns)){const v=+m[1];if(best==null||v<best)best=v}return best};
+const stxp=p=>{const s=Object.assign({},p.stats),i=invOf(p),f=fnpOf(p);if(i&&!/\\+\\+/.test(String(s.SV||"")))s._inv=i;if(f)s._fnp=f;return s};
 const eqIt=s=>''')
+# 16. bouclier « inv 5+ » sous la sauvegarde et « IàD 5+ » sous les PV (montants lus tels quels)
+a=s.index('const stx=s=>`<div class="sg">');b=s.index(';\n',a)+2
+NEWSTX="""const shd=(t,n,c)=>`<svg class="shd ${c}" viewBox="0 0 56 30" role="img" aria-label="${t} ${n}+"><path d="M4 2h48v13c0 8-11 12-24 14C15 27 4 23 4 15z" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="28" y="18" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">${t} ${n}+</text></svg>`;
+const stx=s=>{const m=/^\\s*(\\S+?)\\s*\\/\\s*(\\d)\\s*\\+\\+\\s*$/.exec(String(s.SV||"")),sv=m?m[1]:(s.SV||""),inv=m?+m[2]:(s._inv||0),fnp=s._fnp||0,dz=String(s.SV||"")+(!m&&s._inv?"/"+s._inv+"++":"");
+ return`<div class="sg">${K.map(k=>k==="SV"?`<div class="sx svb" data-dzsv="${esc(dz)}" role="button" tabindex="0" title="Lancer les sauvegardes"><i>SV 🎲</i><b>${esc(sv)||"–"}</b>${inv?shd("inv",inv,"inv"):""}</div>`:`<div class="sx"><i>${k}</i><b>${esc(s[k])||"–"}</b>${k==="PV"&&fnp?shd("IàD",fnp,"fnp"):""}</div>`).join("")}</div>`};
+"""
+s=s[:a]+NEWSTX+s[b:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))

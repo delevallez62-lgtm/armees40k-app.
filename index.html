@@ -1351,7 +1351,9 @@ function abil0(p){const t=(p.text||[]).join(" "),xs=(p.xab||[]).filter(x=>x&&Str
  xs.forEach(x=>{const n=String(x.n).trim(),h=hlOn(p,n);if(SEEN.has(abK(n)))return;SEEN.add(abK(n));ps.push({h,s:`<p class="${h?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${h?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":` <span class="pre">${hm(p,String(x.d||""))}</span>`}</p>`})});
  const used=new Set(mk.map(x=>x[1]));cores.filter(n=>!used.has(n)&&!(t&&t.indexOf(n)>=0)).forEach(n=>{if(SEEN.has(abK(n)))return;SEEN.add(abK(n));const d=window.abCoreDef?window.abCoreDef(n):"",h=hlOn(p,n);ps.push({h,s:`<p class="abcore ${h?"hlp":""}${fdOn(p,n)?" fold":""}"><b class="an${h?" hl":""}" data-act="hl" data-r="${p.ref||""}" data-n="${esc(n)}">${esc(n)}</b>${fdOn(p,n)?"":d?` <span class="pre">${hm(p,d)}</span>`:` <span class="mu">— pas encore de description (✎ Modifier)</span>`}</p>`})});
  return pre+[...ps.filter(x=>x.h),...ps.filter(x=>!x.h)].map(x=>x.s).join("")}
-const stx=s=>`<div class="sg">${K.map(k=>k==="SV"?`<div class="sx svb" data-dzsv="${esc(s[k]||"")}" role="button" tabindex="0" title="Lancer les sauvegardes"><i>SV 🎲</i><b>${esc(s[k])||"–"}</b></div>`:`<div class="sx"><i>${k}</i><b>${esc(s[k])||"–"}</b></div>`).join("")}</div>`;
+const shd=(t,n,c)=>`<svg class="shd ${c}" viewBox="0 0 56 30" role="img" aria-label="${t} ${n}+"><path d="M4 2h48v13c0 8-11 12-24 14C15 27 4 23 4 15z" fill="none" stroke="currentColor" stroke-width="2.4"/><text x="28" y="18" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">${t} ${n}+</text></svg>`;
+const stx=s=>{const m=/^\s*(\S+?)\s*\/\s*(\d)\s*\+\+\s*$/.exec(String(s.SV||"")),sv=m?m[1]:(s.SV||""),inv=m?+m[2]:(s._inv||0),fnp=s._fnp||0,dz=String(s.SV||"")+(!m&&s._inv?"/"+s._inv+"++":"");
+ return`<div class="sg">${K.map(k=>k==="SV"?`<div class="sx svb" data-dzsv="${esc(dz)}" role="button" tabindex="0" title="Lancer les sauvegardes"><i>SV 🎲</i><b>${esc(sv)||"–"}</b>${inv?shd("inv",inv,"inv"):""}</div>`:`<div class="sx"><i>${k}</i><b>${esc(s[k])||"–"}</b>${k==="PV"&&fnp?shd("IàD",fnp,"fnp"):""}</div>`).join("")}</div>`};
 const WF=["name","range","a","hit","f","pa","d","caps"],WP=["Arme","Portée","A","C/T","F","PA","D","Capacités"];
 const WI={r:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></svg>',m:'<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l9 9M19 3l-9 9M13 15l-8 6M11 15l8 6M3.5 19.5l2 2M20.5 19.5l-2 2"/></svg>'};
 const isMel=w=>/m[eê]l[eé]e|corps/i.test(String(w.range||""));
@@ -1367,7 +1369,8 @@ const wtbl=(ws,un,pp)=>{if(!ws.length)return"";const row=(w,t)=>{const c=String(
 const sec=(t,b)=>b?`<div class="sech">${t}</div>${b}`:"";
 const abWarn=p=>{if(S.pm&&!S.mg)return"";const d=abDoubt(p);return d.length?`<div class="abw"><b>⚠ Aptitudes à vérifier</b><ul>${d.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><button class="b" data-abed="${window.abKey?window.abKey(p):""}">✎ Corriger les aptitudes</button></div>`:""};
 const invOf=p=>{const t=[...(p.text||[]),...(p.xab||[]).map(x=>x&&(x.t||x.d||x.b)||"")].join(" ").replace(/\s+/g," "),re=/(?:Cette figurine|Cette unité|Les figurines de cette unité)\s+(?:a|ont)\s+(?:une?\s+)?(?:SvIn|sauvegarde invulnérable)\s*(?:de\s*)?(\d)\s*\+(?!\+)([^.!]*)[.!]/gi;let m,best=null;while(m=re.exec(t)){if(/tant que|\bsi\b|quand|lorsque|contre|pendant|phase|jusqu|une fois/i.test(m[2]))continue;const v=+m[1];if(best==null||v<best)best=v}return best};
-const stxp=p=>{const s=Object.assign({},p.stats),i=invOf(p),sv=String(s.SV||"");if(i&&!/\+\+/.test(sv))s.SV=(sv&&sv!=="–"?sv:"–")+"/"+i+"++";return s};
+const fnpOf=p=>{const ns=[...String(p.apt||"").split(","),...(p.xab||[]).map(x=>x&&x.n||"")].join(" , "),re=/Insensible\s+à\s+la\s+Douleur\s*(\d)\s*\+/gi;let m,best=null;while(m=re.exec(ns)){const v=+m[1];if(best==null||v<best)best=v}return best};
+const stxp=p=>{const s=Object.assign({},p.stats),i=invOf(p),f=fnpOf(p);if(i&&!/\+\+/.test(String(s.SV||"")))s._inv=i;if(f)s._fnp=f;return s};
 const eqIt=s=>String(s||"").split(",").map(x=>x.replace(/\s*\(\d+\)\s*$/,"").trim()).filter(Boolean),wnk=s=>String(s||"").toLowerCase().replace(/\s+/g," ").trim(),wIn=(its,w)=>{const n=wnk(w.name);return its.some(i=>{const k=wnk(i);return n===k||n.startsWith(k+" - ")||n.startsWith(k+" -")})};
 function msplit(p){const ex=(p.mdl||[]).filter(m=>m.eq&&wnk(m.eq)!==wnk(p.equip));if(!ex.length)return null;const A=p.weapons||[],B=A.filter(w=>wIn(eqIt(p.equip),w));if(!B.length)return null;
  const ws=ex.map(m=>({m,w:A.filter(w=>wIn(eqIt(m.eq),w))}));if(ws.some(x=>!x.w.length))return null;
@@ -6921,6 +6924,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 .wpr.on .wpc{border-color:var(--ac,#c9a227)}
 .mpf{margin:8px 0 2px}.mpn{font-size:13px;color:var(--ac,#c9a227);text-transform:capitalize}
 .msep{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--ac,#c9a227);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}.msep:before,.msep:after{content:'';flex:1;height:2px;background:var(--ac,#c9a227);opacity:.55}
+.shd{display:block;width:50px;height:auto;margin:3px auto 0;color:var(--ac,#c9a227)}.shd.fnp{color:#55c46e}.sx.svb .shd{pointer-events:none}
 </style>
 <script>
 /* Armes d'une unité : fiche unique en collection + choix des armes à l'ajout dans une liste (100 % local) */
