@@ -5,4 +5,4 @@
 .wpr.on .wpc{border-color:var(--ac,#c9a227)}
 .mpf{margin:8px 0 2px}.mpn{font-size:13px;color:var(--ac,#c9a227);text-transform:capitalize}
 .msep{display:flex;align-items:center;gap:10px;margin:18px 0 6px;color:var(--ac,#c9a227);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}.msep:before,.msep:after{content:'';flex:1;height:2px;background:var(--ac,#c9a227);opacity:.55}
-.shd{display:block;width:50px;height:auto;margin:3px auto 0;color:var(--ac,#c9a227)}.shd.fnp{color:#55c46e}.sx.svb .shd{pointer-events:none}
+.shr{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:-2px 0 10px}.shr .shd{grid-column:auto;justify-self:center}.shr .shd:first-child{grid-column:3}.shd{width:46px;height:auto;color:var(--ac,#c9a227);filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}.shd.fnp{color:#5fd08a}.ba .shr{display:flex;gap:8px;justify-content:flex-start}
