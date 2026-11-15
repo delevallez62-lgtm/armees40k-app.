@@ -20,7 +20,7 @@ rep('function findH(t,n,pos,strict){let j=pos,first=-1;','function findH(t,n,pos
 # 6. unités à plusieurs profils de caractéristiques (ex. Boyz / Boss Nob) : profils gardés
 rep(' let cur=null;const map={"Equipement":"equip"',' {const pf=[],SR=/^[\\d"+\\/\\-]+$/;for(let q=1;q<(wh<0?Math.min(seg.length,4):wh);q++){const t=(seg[q]||"").trim().split(/\\s+/);if(t.length>=6&&t.slice(0,6).every(x=>SR.test(x)))pf.push({n:t.slice(6).join(" "),st:Object.fromEntries(K.map((k,i)=>[k,t[i]]))})}o._pf=pf.length>1?pf:null}\n let cur=null;const map={"Equipement":"equip"')
 rep(' if(o.apt){const pa=o.apt.split',' if(o._pf){const mdl=o.mdl||[],ky=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"");o._pf.forEach((p,i)=>{const m=mdl.find(x=>ky(x.n)===ky(p.n));if(m)m.st=p.st;else if(p.n)mdl.splice(Math.min(i,mdl.length),0,{n:p.n,eq:i===0?o.equip:"",st:p.st})});o.mdl=mdl}delete o._pf\n if(o.apt){const pa=o.apt.split')
-rep('<p class="mdl"><b>${esc(m.n)}</b>${m.eq?','<p class="mdl"><b>${esc(m.n)}</b>${m.st?` <small>${K.map(k=>k+" "+esc(m.st[k])).join(" · ")}</small>`:""}${m.eq?')
+rep('const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+stx(p.stats)+','const pstx=p=>{const ms=(p.mdl||[]).filter(m=>m.st);if(ms.length<2)return stx(p.stats);return`<div class="mpf"><b class="mpn">${esc(ms[0].n)}</b></div>`+stx(p.stats)+ms.slice(1).map(m=>`<div class="mpf"><b class="mpn">${esc(m.n)}</b></div>`+stx(m.st)).join("")};\nconst prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`+pstx(p)+')
 # 7. un mot du libellé n'est « collé » au précédent que si l'écart est faible ; noms d'aptitudes avec virgule connus
 rep('while(q<r.it.length&&r.it[q].x-e<=12){','while(q<r.it.length&&r.it[q].x-e<=6){')
 rep('known=[...acc.split(","),...eqN,...optN]','known=[...acc.split(","),...(()=>{const pz=acc.split(",").map(x=>x.trim()),o=[];for(let i=0;i<pz.length;i++)for(let n=2;n<=3&&i+n<=pz.length;n++)o.push(pz.slice(i,i+n).join(", "));return o})(),...eqN,...optN]')
@@ -48,4 +48,6 @@ rep('  close();LX=lx;CBX=cbx;EQN=eqN;OPTN=optN}\n return out}','  if(blk&&!carry
 rep('stats=r.it.every(i=>i.s.trim().length<=4);','stats=r.it.every(i=>i.s.trim().length<=4)&&!(blk&&blk.body.length&&isPref(blk.lab.join(" ")+" "+lineOf(r.it.filter(i=>!cbx||i.x<cbx-4))));')
 # 12. nom de la liste : lu dans l'en-tête du PDF (« Zektail : [Orks] Test »), sinon le nom du fichier
 rep('if(nm&&!nm.value.trim())nm.value=f.name.replace(/\\.pdf$/i,"");','if(nm&&!nm.value.trim()){const h0=(txt.split("\\n")[0]||"").trim(),hd=h0.replace(/\\s*\\[[^\\]]*\\]\\s*/g," ").replace(/\\s+/g," ").trim();nm.value=/^[^:]{1,40}:\\s*\\[/.test(h0)&&hd.length<=60?hd:f.name.replace(/\\.pdf$/i,"")}')
+# 13. contrôle d'import : le nom d'aptitude à virgule est comparé tel qu'écrit dans le texte
+rep('.forEach(n=>{if(t.indexOf(n)>=0||xs.includes(n))return;','.forEach(n=>{n=n.replace(/\\u201a/g,",");if(t.indexOf(n)>=0||xs.includes(n))return;')
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
