@@ -50,4 +50,16 @@ rep('stats=r.it.every(i=>i.s.trim().length<=4);','stats=r.it.every(i=>i.s.trim()
 rep('if(nm&&!nm.value.trim())nm.value=f.name.replace(/\\.pdf$/i,"");','if(nm&&!nm.value.trim()){const h0=(txt.split("\\n")[0]||"").trim(),hd=h0.replace(/\\s*\\[[^\\]]*\\]\\s*/g," ").replace(/\\s+/g," ").trim();nm.value=/^[^:]{1,40}:\\s*\\[/.test(h0)&&hd.length<=60?hd:f.name.replace(/\\.pdf$/i,"")}')
 # 13. contrôle d'import : le nom d'aptitude à virgule est comparé tel qu'écrit dans le texte
 rep('.forEach(n=>{if(t.indexOf(n)>=0||xs.includes(n))return;','.forEach(n=>{n=n.replace(/\\u201a/g,",");if(t.indexOf(n)>=0||xs.includes(n))return;')
+# 14. figurine supplémentaire à l'équipement différent : bloc séparé (nom, caractéristiques, SES armes)
+rep('const pstx=p=>{','''const eqIt=s=>String(s||"").split(",").map(x=>x.replace(/\\s*\\(\\d+\\)\\s*$/,"").trim()).filter(Boolean),wnk=s=>String(s||"").toLowerCase().replace(/\\s+/g," ").trim(),wIn=(its,w)=>{const n=wnk(w.name);return its.some(i=>{const k=wnk(i);return n===k||n.startsWith(k+" - ")||n.startsWith(k+" -")})};
+function msplit(p){const ex=(p.mdl||[]).filter(m=>m.eq&&wnk(m.eq)!==wnk(p.equip));if(!ex.length)return null;const A=p.weapons||[],B=A.filter(w=>wIn(eqIt(p.equip),w));if(!B.length)return null;
+ const ws=ex.map(m=>({m,w:A.filter(w=>wIn(eqIt(m.eq),w))}));if(ws.some(x=>!x.w.length))return null;
+ const sg=a=>a.map(w=>wnk(w.name)).sort().join("|");if(ws.every(x=>sg(x.w)===sg(B)))return null;
+ const used=new Set([...B,...ws.flatMap(x=>x.w)]);return{B:B.concat(A.filter(w=>!used.has(w))),ws,ex}}
+function mblk(p){const sp=msplit(p);if(!sp)return pstx(p)+wtbl(p.weapons,p.name,p);
+ const ms=(p.mdl||[]).filter(m=>m.st),lb=n=>`<div class="mpf"><b class="mpn">${esc(n)}</b></div>`;
+ return(ms.length>1?lb(ms[0].n):"")+stx(p.stats)+ms.slice(1).filter(m=>!sp.ex.includes(m)).map(m=>lb(m.n)+stx(m.st)).join("")+wtbl(sp.B,p.name,Object.assign({},p,{mdl:[]}))
+  +sp.ws.map(x=>lb(x.m.n)+(x.m.st?stx(x.m.st):"")+wtbl(x.w,p.name+" ("+x.m.n+")",{name:x.m.n,size:1,equip:x.m.eq,mdl:[],weapons:x.w})).join("")}
+const pstx=p=>{''')
+rep('+pstx(p)+wtbl(p.weapons,p.name,p)+abWarn(p)+((p.mdl||[]).length?','+mblk(p)+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?')
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
