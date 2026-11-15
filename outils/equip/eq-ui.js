@@ -64,15 +64,54 @@ function equipMenu(p){const pool=(p.eqw||p.weapons||[]),MD=EQ.mergedData(S,windo
 function aliasBlock(p){const MD=EQ.mergedData(S,window.EQ_DATA),key=EQ.consKey(p),direct=MD.units[EQ.nk(key)],al=direct?null:EQ.aliasFor(S,MD,p.name);if(direct)return"";
  if(al){const e=MD.units[al.k];return`<div class="eq-al ${al.ok?"ok":"to"}"><div><b>🔗 ${al.ok?"Associée à":"Associée automatiquement à"} « ${E(e.n)} »</b><div class="eq-s">${E(e.fac||"")} · ${al.ok?"association confirmée par toi":"même profil et mêmes armes ("+al.s+" %) — à confirmer"}</div></div><div class="eq-a">${al.ok?"":`<button class="b" data-eq="alok" data-k="${E(key)}">✔ Confirmer</button>`}<button class="b" data-eq="alsel" data-k="${E(key)}">🔎 Changer</button><button class="b x" data-eq="alrm" data-k="${E(key)}">✕ Retirer</button></div></div>`}
  return`<div class="eq-al to"><div><b>🔗 Aucune fiche officielle associée</b><div class="eq-s">Les noms français ne correspondent pas toujours : cherche l'unité en anglais pour récupérer ses restrictions.</div></div><div class="eq-a"><button class="b p" data-eq="alsel" data-k="${E(key)}">🔎 Associer à une fiche</button></div></div>`}
-function collSection(u){const p=primOf(u)||u,cf=p.cfgs||[],lists=(S.lists||[]);
- const used=c=>lists.filter(l=>(l.units||[]).some(x=>x.ref===c.ref)).map(l=>l.name||"Liste");
- return`<div class="eq-sec" data-eqsec="coll">${aliasBlock(p)}${equipMenu(p)}
- ${cf.length>1?`<div class="eq-mt2">Variantes d'équipement connues (${cf.length})</div><div class="eq-cfgs">${cf.map(c=>{const us=used(c);return`<div class="eq-cfg"><b>${E(c.name)}</b><div class="eq-w">${chipsW(c.w)||'<span class="mu">aucune arme</span>'}</div><small>${us.length?"Dans : "+E(us.join(", ")):"Dans aucune de tes listes"}</small></div>`}).join("")}</div>`:""}
- ${consBlock(p,true)}</div>`}
+
+/* ---------- profils d'équipement : choisir, voir toutes les armes, composer ---------- */
+const PS={};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function offCtx(p){const MD=EQ.mergedData(S,window.EQ_DATA),pool=(p.eqw||p.weapons||[]),off=EQ.officialFor(MD,p.name,pool,S),al=off?EQ.aliasFor(S,MD,p.name):null,rv={};if(al)Object.entries(al.w||{}).forEach(([fr,en])=>{rv[EQ.nk(en)]=fr});return{off,al,lc:n=>{const f=rv[EQ.nk(n)];return f||n}}}
+function fromG(g,lc){const x=String(g).split("|"),base=EQ.wbase(x[0]),rest=x[0].slice(base.length);return{name:(lc(base)+rest).replace(/^./,c=>c.toUpperCase()),range:x[1]==="M"?"Mêlée":x[1],a:x[2],hit:x[3]==="0"?"N/A":x[3]+"+",f:x[4],pa:x[5],d:x[6],caps:"",off:1}}
+function officialWeapons(p){const c=offCtx(p);if(!c.off||!(c.off.g||[]).length)return[];return c.off.g.map(g=>fromG(g,c.lc))}
+const wkey=w=>EQ.wKey(w);
+function wTable(ws,opts){opts=opts||{};if(!ws.length)return'<p class="mu">Aucune arme dans ce profil.</p>';
+ return`<div class="eq-wt"><table><tr><th>Arme</th><th>Portée</th><th>A</th><th>CT/CC</th><th>F</th><th>PA</th><th>D</th></tr>${ws.map((w,i)=>`<tr${w.off?' class="off"':""}>${opts.edit?`<td class="eq-ck"><input type="checkbox" data-eqw="${i}"${opts.on&&opts.on[i]?" checked":""}></td>`:""}<td class="eq-wn"><b>${E(w.name)}</b>${w.caps?`<small>${E(w.caps)}</small>`:""}${w.off?'<small class="eq-offt">fiche officielle · non possédée</small>':""}</td><td>${E(/m[eê]l/i.test(w.range||"")?"Mêlée":(w.range||"—")+(/^\d+$/.test(String(w.range||""))?'"':""))}</td><td>${E(w.a)}</td><td>${E(w.hit)}</td><td>${E(w.f)}</td><td>${E(w.pa)}</td><td>${E(w.d)}</td></tr>`).join("")}</table></div>`}
+function profState(p){const key=EQ.consKey(p),cf=p.cfgs||[];let s=PS[key];if(!s||(s.sel!=="off"&&!S.coll[s.sel]))s=PS[key]={sel:(cf[0]&&cf[0].ref)||p.ref,edit:false};return s}
+function equipPanel(p){const key=EQ.consKey(p),s=profState(p),cf=p.cfgs&&p.cfgs.length?p.cfgs:[{ref:p.ref,name:"Équipement de la fiche",w:[]}],c=offCtx(p),offW=officialWeapons(p);
+ const chips=cf.map(x=>`<button class="eq-pc${s.sel===x.ref?" on":""}" data-eq="psel" data-ref="${E(x.ref)}">${E(x.name)}</button>`).join("")+(offW.length?`<button class="eq-pc${s.sel==="off"?" on":""}" data-eq="psel" data-ref="off">📚 Toutes les armes</button>`:"")+`<button class="eq-pc add" data-eq="pnew">➕ Nouveau profil</button>`;
+ let body="";
+ if(s.sel==="off"){body=`<p class="mu" style="margin:6px 0">Toutes les armes de la fiche officielle${c.off?" « "+E(c.off.n)+" »":""}. Choisis un profil et ajoute celles que tu veux.</p>${wTable(offW)}`}
+ else{const v=S.coll[s.sel]||p;
+  if(s.edit&&s.cand){body=`<label class="eq-pn">Nom du profil<input data-eqpn="1" value="${E(s.name||"")}" placeholder="ex. Faucheuses Gauss"></label><p class="mu" style="margin:6px 0">Coche les armes de ce profil :</p>${wTable(s.cand,{edit:true,on:s.on})}<div class="eq-row"><button class="b p" data-eq="psave">✔ Enregistrer ce profil</button><button class="b" data-eq="pcancel">Annuler</button></div>`}
+  else{const ws=(v.weapons||[]);const extra=offW.filter(o=>!ws.some(w=>wkey(w)===wkey(o)||EQ.nk(w.name)===EQ.nk(o.name)));
+   body=`${wTable(ws)}<div class="eq-row"><button class="b p" data-eq="pedit">✎ Modifier ce profil</button>${v.ref!==p.ref?`<button class="b x${DELP===v.ref?" cf":""}" data-eq="pdel">${DELP===v.ref?"Sûr ?":"✕ Supprimer"}</button>`:""}</div>
+   ${extra.length?`<details class="eq-dr"><summary><span>📚 Autres armes possibles (${extra.length})</span><em>Profils connus de la fiche officielle, pas encore dans ce profil</em></summary><div class="eq-cb">${extra.map((w,i)=>`<div class="eq-ex">${wTable([w])}<button class="b" data-eq="padd" data-i="${offW.indexOf(w)}">+ Ajouter à ce profil</button></div>`).join("")}</div></details>`:""}`}}
+ return`<div class="eq-prof"><div class="eq-mt">🧰 Équipement</div><p class="mu" style="margin:0 0 8px">Choisis un profil pour voir ses armes. Tu peux le modifier ou en créer un nouveau.</p><div class="eq-pcs">${chips}</div>${body}</div>`}
+let DELP=null;
+function profAction(k,b,p){const key=EQ.consKey(p),s=profState(p),prim=primOf(p)||p;
+ if(k==="psel"){s.sel=b.dataset.ref;s.edit=false;s.cand=null;rerender();return}
+ if(k==="pedit"){const v=S.coll[s.sel]||prim,offW=officialWeapons(prim),own=clone(v.weapons||[]);const extra=offW.filter(o=>!own.some(w=>wkey(w)===wkey(o)||EQ.nk(w.name)===EQ.nk(o.name)));
+  s.cand=own.concat(extra);s.on=own.map(()=>true).concat(extra.map(()=>false));s.name=v.pn||((prim.cfgs||[]).find(c=>c.ref===v.ref)||{}).name||"";s.edit=true;rerender();return}
+ if(k==="pcancel"){s.edit=false;s.cand=null;rerender();return}
+ if(k==="psave"){const v=S.coll[s.sel]||prim;const nm=(document.querySelector("[data-eqpn]")||{}).value;const ws=s.cand.filter((w,i)=>s.on[i]).map(w=>{const x=clone(w);delete x.off;return x});if(!ws.length){toast("Garde au moins une arme");return}
+  const old=EQ.parseEquip(v.equip),N=EQ.sizeOf(v),base=((offCtx(prim).off||{}).def||[]).map(EQ.nk);
+  v.weapons=ws;v.equip=EQ.poolOf({weapons:ws,equip:""}).map(x=>{const o=old.find(y=>EQ.same(y.name,x.b));const n=o&&o.n!=null?o.n:(base.some(z=>EQ.same(z,x.b))||!base.length?N:1);return`${x.b} (${n})`}).join(", ");
+  if(nm&&nm.trim())v.pn=nm.trim();else delete v.pn;s.edit=false;s.cand=null;try{EQ.regroup(S)}catch(_){}sv();rerender();toast("Profil enregistré");return}
+ if(k==="pnew"){const from=S.coll[s.sel]||prim,n=clone(prim);n.ref=rid();n.prim=0;n.mrg=prim.ref;delete n.cfgs;delete n.eqw;delete n.var;delete n.vd;n.nb=0;n.weapons=clone(from.weapons||[]);n.equip=from.equip||"";n.pn="";S.coll[n.ref]=n;try{EQ.regroup(S)}catch(_){}
+  s.sel=n.ref;profAction("pedit",{dataset:{}},p);return}
+ if(k==="pdel"){const v=S.coll[s.sel];if(!v||v.ref===prim.ref)return;if(DELP!==v.ref){DELP=v.ref;rerender();setTimeout(()=>{if(DELP===v.ref){DELP=null;rerender()}},3500);return}
+  DELP=null;(S.lists||[]).forEach(l=>(l.units||[]).forEach(x=>{if(x.ref===v.ref)x.ref=prim.ref}));delete S.coll[v.ref];s.sel=prim.ref;try{EQ.regroup(S)}catch(_){}sv();rerender();toast("Profil supprimé");return}
+ if(k==="padd"){const v=S.coll[s.sel]||prim,w=officialWeapons(prim)[+b.dataset.i];if(!w)return;const x=clone(w);delete x.off;v.weapons=(v.weapons||[]).concat([x]);const N=EQ.sizeOf(v),pl=EQ.poolOf({weapons:[x],equip:""})[0];v.equip=(v.equip?v.equip+", ":"")+(pl?pl.b:x.name)+" (1)";try{EQ.regroup(S)}catch(_){}sv();rerender();toast("Arme ajoutée au profil");return}}
+document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&t.dataset.eqw!=null){const u=curU(),p=u&&(primOf(u)||u);if(!p)return;const s=profState(p);if(s.on)s.on[+t.dataset.eqw]=t.checked}});
+function profileSwitch(u){const prim=primOf(u)||u,cf=prim.cfgs||[];if(cf.length<2)return"";const mine=new Set((u.weapons||[]).map(w=>wkey(w)));
+ const cur=cf.find(c=>{const v=S.coll[c.ref];if(!v)return false;const a=new Set((v.weapons||[]).map(wkey));return a.size===mine.size&&[...a].every(x=>mine.has(x))});
+ return`<div class="eq-prof"><div class="eq-mt2">Profil d'équipement de cette unité</div><div class="eq-pcs">${cf.map(c=>`<button class="eq-pc${cur&&cur.ref===c.ref?" on":""}" data-eq="papply" data-ref="${E(c.ref)}">${E(c.name)}</button>`).join("")}</div>${cur?"":'<p class="mu" style="margin:6px 0 0">Équipement personnalisé (différent des profils de la collection).</p>'}</div>`}
+function applyProfile(u,ref){const v=S.coll[ref];if(!v)return;u.weapons=clone(v.weapons||[]);u.equip=v.equip||"";delete u.eq;sv();rerender();announce(u,"Profil appliqué")}
+function collSection(u){const p=primOf(u)||u;
+ return`<div class="eq-sec" data-eqsec="coll">${equipPanel(p)}${aliasBlock(p)}<details class="eq-dr"><summary><span>👥 Règles : qui peut porter quoi</span><em>Options de la fiche officielle</em></summary><div class="eq-cb">${equipMenu(p)}</div></details>${consBlock(p,true)}</div>`}
 function listSection(u){const v=vOf(u),L=LV[v.st];
  return`<div class="eq-sec" data-eqsec="list"><div class="sech">⚙ Équipement de l'unité <span class="eq-b ${v.st}">${L[0]} ${L[1]}</span></div>
  <div class="eq-sum">${v.lines.length?v.lines.map(l=>`<div>${E(l.t)}</div>`).join(""):'<span class="mu">Aucun équipement.</span>'}</div>
  ${v.issues.length?`<div class="eq-is">${v.issues.map(i=>`<div class="eq-i ${i.lvl}"><span>${i.lvl==="red"?"⛔":"⚠"} ${E(i.msg)}</span>${i.m&&i.m.length?`<button class="b" data-eq="fix" data-m="${i.m[0]}">Corriger</button>`:""}</div>`).join("")}</div>`:'<p class="eq-ok">Toutes les contraintes connues sont respectées.</p>'}
+ ${profileSwitch(u)}
  <div class="eq-row"><button class="b p" data-eq="cfg">Configurer les figurines (${EQ.sizeOf(u)})</button></div>
  <details class="eq-dr"><summary><span>🧰 Ce que cette unité peut équiper</span><em>Qui peut porter quoi</em></summary><div class="eq-cb">${equipMenu(primOf(u)||u)}</div></details>
  ${consBlock(u,false)}</div>`}
@@ -158,7 +197,9 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(k==="cfg"&&u){e.stopPropagation();openSheet(u);return}
  if(k==="fix"&&u){e.stopPropagation();openSheet(u,+b.dataset.m);return}
  if(k==="army"){e.stopPropagation();const L=cl();if(L)armyPanel(L);return}
- if(k==="goto"){e.stopPropagation();const m=document.querySelector(".eq-menu");if(m)m.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(k==="goto"){e.stopPropagation();const m=document.querySelector(".eq-prof")||document.querySelector(".eq-menu");if(m)m.scrollIntoView({behavior:"smooth",block:"start"});return}
+ if(["psel","pedit","pcancel","psave","pnew","pdel","padd"].includes(k)){e.stopPropagation();const pp=u&&(primOf(u)||u);if(pp)profAction(k,b,pp);return}
+ if(k==="papply"){e.stopPropagation();if(u)applyProfile(u,b.dataset.ref);return}
  if(k==="alok"||k==="alrm"||k==="alsel"){e.stopPropagation();aliasAction(k,b.dataset.k);return}
  if(CACT.includes(k)){e.stopPropagation();consAction(k,b,u);return}},true);
 document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.eqf==="t"){const f=t.closest(".eq-f");if(!f)return;const fs=FIELDS[t.value]||[];f.querySelectorAll("[data-eqrow]").forEach(r=>{r.hidden=!fs.includes(r.dataset.eqrow)})}});
@@ -172,7 +213,7 @@ function decorate(){if(busy)return;busy=true;try{
  const md=document.getElementById("md");
  if(md){const pn=md.querySelector(".pn"),u=curU();
   if(pn&&u&&typeof edit!=="undefined"&&!edit&&!pn.querySelector(".eq-sec")){const co=typeof ctx!=="undefined"&&ctx==="coll",sub=typeof ftab!=="undefined"&&ftab>0&&!co;
-   if(!sub){const h=co?collSection(u):listSection(u),sv2=pn.querySelector(".sv");if(sv2)sv2.insertAdjacentHTML("beforebegin",h);else pn.insertAdjacentHTML("beforeend",h);if(co&&!pn.querySelector(".eq-go")){const tp=pn.querySelector(".top");if(tp)tp.insertAdjacentHTML("afterend",'<button class="b p eq-go" data-eq="goto" style="width:100%;margin:8px 0;min-height:46px">🧰 Ce que je peux équiper ↓</button>')}}}}
+   if(!sub){const h=co?collSection(u):listSection(u),sv2=pn.querySelector(".sv");if(sv2)sv2.insertAdjacentHTML("beforebegin",h);else pn.insertAdjacentHTML("beforeend",h);if(co&&!pn.querySelector(".eq-go")){const tp=pn.querySelector(".top");if(tp)tp.insertAdjacentHTML("afterend",'<button class="b p eq-go" data-eq="goto" style="width:100%;margin:8px 0;min-height:46px">🧰 Équipement et profils ↓</button>')}}}}
  const m=document.getElementById("m");
  if(m&&typeof tab!=="undefined"){
   if(tab==="units"){const L=typeof cl==="function"?cl():null;if(L&&L.units&&L.units.length){const g=m.querySelector(".grid");

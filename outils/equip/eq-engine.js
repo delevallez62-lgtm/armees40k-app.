@@ -93,14 +93,14 @@ function extract(lines,known,unitName){const text=(Array.isArray(lines)?lines.jo
  const seen=new Set();return out.filter(c=>{const k=sig(c);if(seen.has(k))return false;seen.add(k);return true})}
 
 /* ---------- groupes de variantes : fiche de référence ---------- */
-const cfgName=(w,others)=>{const d=w.filter(x=>!others.every(o=>o.some(y=>same(x,y))));const n=(d.length?d:w).map(cap);return n.length?n.join(", "):"Équipement standard"};
+const cfgName=(w,others)=>{const d=w.filter(x=>!others.every(o=>o.some(y=>same(x,y))));const n=(d.length?d:w).map(S1);return n.length?n.join(", "):"Équipement standard"};
 function regroup(S){S.eqc=S.eqc&&typeof S.eqc==="object"?S.eqc:{};S.eqx=Array.isArray(S.eqx)?S.eqx:[];const g=new Map();
  Object.values(S.coll||{}).forEach(m=>{const k=nn(m.name);if(!k)return;(g.get(k)||g.set(k,[]).get(k)).push(m)});
  let n=0;g.forEach((a,k)=>{
   let prim=a.find(m=>m.prim&&!(m.mrg&&S.coll[m.mrg]))||a.find(m=>!m.var)||a[0];
   a.forEach(m=>{if(m===prim){delete m.mrg;m.prim=1;delete m.var;delete m.vd}else{m.mrg=prim.ref;delete m.prim}});
   const bw=a.map(m=>poolOf(m).map(x=>x.b));
-  prim.cfgs=a.map((m,i)=>({ref:m.ref,name:cfgName(bw[i],bw.filter((_,j)=>j!==i)),w:bw[i]}));
+  prim.cfgs=a.map((m,i)=>({ref:m.ref,name:m.pn||cfgName(bw[i],bw.filter((_,j)=>j!==i)),w:bw[i]}));
   const pool=new Map();a.forEach(m=>(m.weapons||[]).forEach(w=>{const kk=nk(w.name);if(kk&&!pool.has(kk))pool.set(kk,JSON.parse(JSON.stringify(w)))}));
   prim.eqw=[...pool.values()];
   if(a.length>1)n++;
