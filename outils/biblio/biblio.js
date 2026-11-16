@@ -214,7 +214,7 @@ function css(){if(document.getElementById("bibcss"))return;const s=document.crea
 .bibb{position:absolute;left:4px;top:4px;z-index:3;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.55);color:#fff;font-size:15px;padding:0;cursor:pointer;line-height:1}.bibb.on{background:#2e9d6b;border-color:#fff}.bibb.old{background:#e0a030}
 .bib-box{position:relative}.bib-two{display:grid;grid-template-columns:1fr 1fr;gap:6px}.bib-two>div{border:1px solid var(--bd);border-radius:8px;padding:4px 6px;font-size:13px}.bib-two label{display:flex;gap:6px;align-items:center;font-size:13px}
 .bib-warn{border:1px solid #e0a030;background:rgba(224,160,48,.15);color:inherit;border-radius:99px;padding:0 8px;min-height:24px;font:inherit;font-size:12px;cursor:pointer}.bib-warn.ok{border-color:#2e9d6b;background:rgba(46,157,107,.18)}details.bib-dr>summary{cursor:pointer}.bib-drb{padding:6px 2px}
-.bib-lkc{border:1px solid var(--ac);border-radius:12px;padding:12px;margin:12px 0;background:var(--bg)}.bib-lkc>b{font-size:16px;color:var(--ac)}.bib-lkn{font-size:16px;font-weight:700;margin:6px 0 10px}.bib-lkc .b{min-height:44px;font-size:15px}.bib-lkc>.b{width:100%;margin-top:8px}.bib-lnk{background:none;border:0;padding:0 2px;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer}.bib-oc{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:8px 0;background:var(--bg)}.bib-oh{font-weight:700;color:var(--ac);margin-bottom:4px}.bib-ol{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}.bib-ot{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);min-width:64px}.bib-chip{display:inline-block;border:1px solid var(--bd);border-radius:99px;padding:2px 10px;background:var(--card);font-size:13.5px}.bib-oa{font-size:12px;color:var(--mu);margin-top:6px}.bib-oa .bib-warn{margin-left:4px}.bib-drb h4{margin:14px 0 4px;color:var(--ac)}
+.bib-lkc{border:1px solid var(--ac);border-radius:12px;padding:12px;margin:12px 0;background:var(--bg)}.bib-lkc>b{font-size:16px;color:var(--ac)}.bib-lkn{font-size:16px;font-weight:700;margin:6px 0 10px}.bib-lkc .b{min-height:44px;font-size:15px}.bib-lkc>.b{width:100%;margin-top:8px}.bib-lnk{background:none;border:0;padding:0 2px;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer}.bib-cs{margin:10px 0;padding:10px;border:1px solid var(--ac);border-radius:12px}.bib-cs>b{color:var(--ac)}.bib-oc{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:8px 0;background:var(--bg)}.bib-oh{font-weight:700;color:var(--ac);margin-bottom:4px}.bib-ol{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}.bib-ot{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);min-width:64px}.bib-chip{display:inline-block;border:1px solid var(--bd);border-radius:99px;padding:2px 10px;background:var(--card);font-size:13.5px}.bib-oa{font-size:12px;color:var(--mu);margin-top:6px}.bib-oa .bib-warn{margin-left:4px}.bib-drb h4{margin:14px 0 4px;color:var(--ac)}
 .bib-prop{border:1px dashed #e0a030;border-radius:10px;padding:6px 8px;margin:6px 0;background:rgba(224,160,48,.08);font-size:13.5px}.bib-opt{border-top:1px solid var(--bd);padding:4px 0}.bib-prop .b{min-height:34px;padding:2px 10px;margin-top:4px}
 .bib-ban{border:2px solid var(--ac);border-radius:14px;padding:10px 12px;margin:0 0 12px;background:color-mix(in srgb,var(--ac) 12%,transparent);cursor:pointer}
 `;document.head.appendChild(s)}
@@ -327,6 +327,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
   case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast(n?"Liée · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":"")+" ✓":"Liée à la version anglaise ✓ (aucune arme à ajouter)")}catch(_){}break}
+  case"mk":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);try{draw()}catch(_){}try{toast("Fiche « "+m.name+" » créée ✓")}catch(_){}break}
   case"cmpx":await init();openCmp(b.dataset.r,b.dataset.id);break;
   case"ckw":{const C=B.cmp;if(!C)break;const v=b.dataset.v==="1";C.rows.weapons.forEach(r=>{if(r.kind==="add")C.pick[r.id]=v});drawCmp();break}
   case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick,C.map);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
@@ -420,6 +421,51 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  else if(a==="wadd"){const m=S.coll[b.dataset.r],am=m&&autoMatch(m);if(!am)return;const u=am.u,libW=[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))],aw=libW[+b.dataset.i];if(!aw)return;m.weapons=Array.isArray(m.weapons)?m.weapons:[];if(!m.weapons.some(x=>wSig(x)===wSig(aw))){m.weapons.push(clone(aw));sv();try{draw()}catch(_){}try{toast("Arme ajoutée à ta fiche ✓")}catch(_){}}}
 },true);
 
+/* ---------- créer une fiche de collection depuis la bibliothèque + fusion à l'import ---------- */
+const nnm=t=>String(t||"").replace(/\s+[x×]\s?\d+(?=\s|$)/i,"").toLowerCase().trim();
+const frName=en=>{const r=tName(en);return r.st==="ok"?r.t:(r.prop||r.t)};
+const frAbN=en=>{const r=tAB(en);return r.st==="ok"?r.t:(r.prop||r.t)};
+const frBody=en=>{const r=trDesc(en);return r.st==="ok"?r.t:(r.prop||en)};
+function abLines(a){const name=frAbN(a.n),body=stripMd(frBody(a.d)).split("\n").map(x=>x.trim()).filter(Boolean);return{name,lines:[(name+" "+(body[0]||"")).trim()].concat(body.slice(1))}}
+function createFromLib(u){const pi=Math.max(0,u.pr.findIndex(p=>nk(p.n)===nk(u.n))),p=profOf(u,pi),ref="r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+ const stats={};["M","E","SV","PV","CD","CO"].forEach(k=>{stats[k]=statOf(p,k)||""});
+ const wl=[...(u.rw||[]).map(w=>({w,a:wToApp(w,false)})),...(u.mw||[]).map(w=>({w,a:wToApp(w,true)}))].map(x=>Object.assign(x.a,{name:frName(String(x.w.n).replace(/^➤\s*/,""))}));
+ const apt=[],text=[];(u.ab||[]).forEach(a=>{const x=abLines(a);if(!apt.some(n=>nk(n)===nk(x.name)))apt.push(x.name);x.lines.forEach(l=>text.push(l))});
+ const kw=(u.kw||[]).map(k=>tKW(k).t).filter(Boolean);
+ const fac=(S.fac||[]).find(f=>(u.f||[]).some(n=>nk(n)===nk(f.name||"")));
+ const m={ref,name:frName(u.n),stats,weapons:wl,equip:wl.map(w=>w.name).join(", "),apt:apt.join(", "),kw:kw.join(", "),fkw:(u.f||[]).join(", "),text,xab:[],mdl:[],pts:u.pts!=null?+u.pts:0,nb:0,subs:[],fromLib:1};
+ if(fac)m.fac=fac.id;
+ S.coll[ref]=m;LB().links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:["fiche créée depuis la bibliothèque"],stale:false};sv();return m}
+window.BIBCS=function(q){try{q=String(q||"").trim();if(q.length<2)return"";css();
+ if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
+ const L=search(q,"").slice(0,8);if(!L.length)return`<div class="bib-cs"><b>📚 Dans la bibliothèque</b><p class="bib-meta">Aucune unité trouvée.</p></div>`;
+ const have=new Set(Object.values(S.coll).map(m=>nnm(m.name)));
+ return`<div class="bib-cs"><b>📚 Dans la bibliothèque</b>`+L.map(u=>{const n=frName(u.n),dup=have.has(nnm(n))||have.has(nnm(u.n));
+  return`<div class="bib-row"><b class="cap">${E(n)}</b><div class="bib-meta">${E(u.f.join(", "))}${u.pts!=null?" · "+u.pts+" pts":""}</div>${dup?`<span class="bib-meta">✓ déjà dans ta collection</span>`:`<button class="b p" data-bib="mk" data-id="${E(u.id)}">➕ Créer la fiche</button>`}</div>`}).join("")+`</div>`}catch(e){return""}};
+function libUnitOf(m){const lk=LB().links[m.ref];return lk&&D.byId[lk.id]}
+window.BIBMERGE={
+ cands(units){const out=[];if(!D.ready)return out;const used=new Set();
+  const pool=Object.values(S.coll).filter(m=>m.fromLib&&libUnitOf(m));
+  (units||[]).forEach(p=>{const key=nnm(p.name);
+   if(Object.values(S.coll).some(m=>!m.fromLib&&nnm(m.name)===key))return;
+   const sg=new Set((p.weapons||[]).map(wSig));
+   const m=pool.find(m=>{if(used.has(m.ref))return false;const u=libUnitOf(m);
+    if(nnm(m.name)===key||nnm(u.n)===key||nnm(frName(u.n))===key)return true;
+    const ms=m.stats||{},ps=p.stats||{},same=["M","E","SV","PV","CD","CO"].every(k=>String(ms[k]||"")===String(ps[k]||""));
+    const ov=(m.weapons||[]).filter(w=>sg.has(wSig(w))).length;return same&&ov>=1&&ov>=Math.ceil(sg.size/2)});
+   if(m){used.add(m.ref);out.push({p,m})}});
+  return out},
+ ask(r,items,o,go){try{const pairs=this.cands(r.units);if(!pairs.length)return false;
+  ask({t:"Fusionner avec la bibliothèque ?",p:"Ces unités importées correspondent à des fiches créées depuis la bibliothèque. En fusionnant, tes textes français sont toujours gardés ; seuls les éléments qui manquent (armes, aptitudes, mots-clés) sont ajoutés à la fiche de collection.",items:pairs.map(x=>x.p.name+" ↔ "+x.m.name+" (bibliothèque)"),ok:"Fusionner",alt:"Garder séparées",altcb:()=>{pairs.forEach(x=>{if(nnm(x.m.name)===nnm(x.p.name))x.m.name=x.m.name+" (bibliothèque)"});go(r,items,Object.assign({},o,{bm:1}))}},
+   ()=>{pairs.forEach(x=>this.prep(x));go(r,items,Object.assign({},o,{bm:1,_pairs:pairs}))});return true}catch(e){return false}},
+ prep(x){const m=x.m,p=x.p;m.name=p.name;m.weapons=(m.weapons||[]).filter(w=>!(p.weapons||[]).some(y=>wSig(y)===wSig(w)||nk(y.name)===nk(w.name)))},
+ post(o){try{const pairs=o&&o._pairs;if(!pairs)return;pairs.forEach(x=>{const m=S.coll[x.m.ref];const u=m&&libUnitOf(m);if(!m||!u)return;
+   const pi=(LB().links[m.ref]||{}).prof||0,pf=profOf(u,pi);m.stats=m.stats||{};["M","E","SV","PV","CD","CO"].forEach(k=>{if(!String(m.stats[k]||"").trim()){const v=statOf(pf,k);if(v)m.stats[k]=v}});
+   const have=new Set(String(m.apt||"").split(",").map(t=>nk(t)).filter(Boolean)),apt=String(m.apt||"").split(",").map(t=>t.trim()).filter(Boolean);m.text=Array.isArray(m.text)?m.text:[];
+   const wd=t=>new Set(nk(t).split(" ").filter(w=>w.length>3)),jac=(a,b)=>{let i=0;a.forEach(w=>{if(b.has(w))i++});const n=a.size+b.size-i;return n?i/n:0};const tl=m.text.map(wd);
+   (u.ab||[]).forEach(a=>{const en=nk(a.n),fr=abLines(a);if(have.has(en)||have.has(nk(fr.name)))return;const bw=wd(fr.lines.join(" "));if(bw.size>=4&&tl.some(t=>jac(t,bw)>=.5))return;apt.push(fr.name);fr.lines.forEach(l=>m.text.push(l))});m.apt=apt.join(", ");
+   const kws=String(m.kw||"").split(",").map(t=>t.trim()).filter(Boolean),hk=new Set(kws.map(nk));(u.kw||[]).forEach(k=>{const t=tKW(k).t;if(t&&!hk.has(nk(t))&&!hk.has(nk(k))){kws.push(t);hk.add(nk(t))}});m.kw=kws.join(", ");
+   delete m.fromLib;m.merged=1;delete AM[m.ref]});sv()}catch(e){try{console.error(e)}catch(_){}}}};
 /* ---------- intégration ---------- */
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
