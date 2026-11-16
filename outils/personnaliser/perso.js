@@ -34,4 +34,20 @@ document.addEventListener("click",function(e){
  reopen();
  try{toast("Mascotte d'origine rétablie")}catch(_){}
 },true);
+document.addEventListener("click",function(e){
+ const b=e.target.closest&&e.target.closest('[data-gx="welsave"],[data-gx="welreset"]');
+ if(!b)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(b.dataset.gx==="welreset"){delete S.hwel;delete S.pseudo;delete S.hsub}
+ else{
+  const v=function(id){const i=document.getElementById(id);return i?i.value.trim():null};
+  const g=v("gxw1"),n=v("gxw2"),t=v("gxw3");
+  if(g!==null)S.hwel=g;
+  if(n!==null){if(n)S.pseudo=n;else delete S.pseudo}
+  if(t!==null)S.hsub=t;
+ }
+ try{GX.commit()}catch(_){try{save();draw()}catch(__){}}
+ reopen();
+ try{toast(b.dataset.gx==="welreset"?"Texte d'origine rétabli":"Texte enregistré ✓")}catch(_){}
+},true);
 })();

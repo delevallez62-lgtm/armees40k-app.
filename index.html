@@ -3966,7 +3966,7 @@ XV.home=()=>{const ps=pics(),pk=i=>ps.length?ps[i%ps.length]:"",L=S.lists||[],ru
  const armies=L.length?L.map(l=>{let n=0,pts=0;try{n=typeof lcount==="function"?lcount(l):(l.units||[]).length;pts=typeof lpts==="function"?lpts(l):0}catch(_){}return`<div class="ga"><span class="gth">${lthumb(l)}</span><span class="gn"><b>${e2(l.name)}</b><small>${n} unité${n>1?"s":""}${pts?" · "+pts+" pts":""}</small></span><button data-act="gstart" data-id="${l.id}" title="Jouer" aria-label="Jouer avec ${e2(l.name)}">▶</button><button data-act="open" data-id="${l.id}" title="Gérer" aria-label="Gérer ${e2(l.name)}">✎</button><button class="gcam" data-g="gimg" data-k="L:${l.id}" title="Photo de la liste" aria-label="Photo de ${e2(l.name)}">📷</button></div>`}).join(""):`<p class="mu">Aucune liste pour l'instant.</p>`;
  let hb="";try{const h=S.hobby||{},us=Object.values(S.coll||{}),done=us.filter(u=>((h.sch||{})[u.ref]||{}).st==="fini").length;hb=`<section class="gp" style="--tc:${col("paint")}"><h3>${icFor("paint")}Peinture &amp; Hobby</h3><button class="gu" data-tab="paint"><span class="gbadge" style="color:${col("paint")}">${us.length?Math.round(done*100/us.length):0}%</span><span><b>${done} / ${us.length} figurines terminées</b><small>${(h.paints||[]).length} peinture${(h.paints||[]).length>1?"s":""} dans ta collection</small></span><i>›</i></button></section>`}catch(_){}
  return `<div class="gh"><div class="ghl">
- ${(()=>{const hm=menuImg("home",S.sban||pk(4)||pk(0));return`<section class="ghero${hm&&!hm.cust?" gauto":""}">${hm?imgTag(hm,"ghimg"):""}<div>`})()}<img src="${S.logo||LOGO}" alt=""><h2>Bienvenue,<b>${e2(nm)}</b></h2><p>Ton assistant Warhammer 40,000 – V11</p></div></section>
+ ${(()=>{const hm=menuImg("home",S.sban||pk(4)||pk(0));return`<section class="ghero${hm&&!hm.cust?" gauto":""}">${hm?imgTag(hm,"ghimg"):""}<div>`})()}<img src="${S.logo||LOGO}" alt=""><h2 data-gx="iclist" style="cursor:pointer" title="Modifier ce texte">${e2(S.hwel==null?"Bienvenue,":S.hwel)}<b>${e2(nm)}</b></h2><p>${e2(S.hsub==null?"Ton assistant Warhammer 40,000 – V11":S.hsub)}</p></div></section>
  <div class="gtiles">${tiles.map(tile).join("")}</div></div>
  <div class="ghr">
  <section class="gp" style="--tc:#ff7a45"><h3>${ic("tools")}Outils rapides</h3><div class="gq">${quick.map(qb).join("")}</div></section>
@@ -4090,6 +4090,7 @@ function icList(){const keys=["home","lists","coll","paint","mis","gm","enc","im
  <div class="gxf" style="justify-content:flex-start;flex-wrap:wrap"><span class="mu" style="align-self:center">Hauteur</span>${[["in","Dans la barre"],["mid","Mi-hauteur"],["up","Surélevé"]].map(([v,n])=>`<button class="b${(S.gjv||"in")===v?" p":""}" data-gx="gjb" data-k="gjv" data-v="${v}">${n}</button>`).join("")}</div>
  <div class="gxf" style="justify-content:flex-start;flex-wrap:wrap"><span class="mu" style="align-self:center">Place</span>${[["l","Gauche"],["c","Centre"],["r","Droite"]].map(([v,n])=>`<button class="b${(S.gjh||"c")===v?" p":""}" data-gx="gjb" data-k="gjh" data-v="${v}">${n}</button>`).join("")}</div>
  <div class="gxl" style="--tc:#e8a43c">${ic("image")}<b>Mascotte de l'accueil<br><small class="mu">${S.logo?"Image personnelle":"Image d'origine"} · aussi dans l'en-tête</small></b><span class="gthb"><img src="${S.logo||LOGO}" alt="" style="object-fit:contain"></span><span class="bt"><label class="b p" style="cursor:pointer">Changer<input type="file" id="gxlogo" accept="image/*" hidden></label>${S.logo?`<button class="b" data-gx="logodef">Par défaut</button>`:""}</span></div>
+ <div class="gxl" style="--tc:#e8a43c;display:block"><b>Texte de bienvenue<br><small class="mu">Affiché en haut de l'Accueil (touche-le pour revenir ici)</small></b><label>Salutation<input id="gxw1" maxlength="30" value="${e2(S.hwel==null?"Bienvenue,":S.hwel)}"></label><label>Nom<input id="gxw2" maxlength="30" value="${e2(S.pseudo||"Teddy")}"></label><label>Sous-titre<input id="gxw3" maxlength="70" value="${e2(S.hsub==null?"Ton assistant Warhammer 40,000 – V11":S.hsub)}"></label><div class="gxf"><button class="b" data-gx="welreset">Par défaut</button><button class="b p" data-gx="welsave">Enregistrer</button></div></div>
  <h4>Icônes et images des menus</h4><p class="mu">« Icône » change le symbole ; « Image » change, recadre ou supprime la photo du menu (tuile de l'accueil et bandeau en haut du menu).</p>
  ${keys.map(k=>{const mi=IMKEYS.includes(k)?menuImg(k):null;return`<div class="gxl" style="--tc:${col(k)}">${icFor(k)}<b>${SEC[k][1]}</b>${IMKEYS.includes(k)?`<span class="gthb">${mi?imgTag(mi,""):""}</span>`:""}<span class="bt"><button class="b" data-gx="icpick" data-k="${k}">Icône</button>${IMKEYS.includes(k)?`<button class="b" data-g="gimg" data-k="${k}">Image</button>`:""}</span></div>`}).join("")}
  <div class="gxf"><button class="b" data-gx="icreset">Icônes par défaut</button><button class="b p" data-gx="close">Terminé</button></div>`)}
@@ -7280,6 +7281,22 @@ document.addEventListener("click",function(e){
  delete S.logo;try{GX.commit()}catch(_){try{save();draw()}catch(__){}}
  reopen();
  try{toast("Mascotte d'origine rétablie")}catch(_){}
+},true);
+document.addEventListener("click",function(e){
+ const b=e.target.closest&&e.target.closest('[data-gx="welsave"],[data-gx="welreset"]');
+ if(!b)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(b.dataset.gx==="welreset"){delete S.hwel;delete S.pseudo;delete S.hsub}
+ else{
+  const v=function(id){const i=document.getElementById(id);return i?i.value.trim():null};
+  const g=v("gxw1"),n=v("gxw2"),t=v("gxw3");
+  if(g!==null)S.hwel=g;
+  if(n!==null){if(n)S.pseudo=n;else delete S.pseudo}
+  if(t!==null)S.hsub=t;
+ }
+ try{GX.commit()}catch(_){try{save();draw()}catch(__){}}
+ reopen();
+ try{toast(b.dataset.gx==="welreset"?"Texte d'origine rétabli":"Texte enregistré ✓")}catch(_){}
 },true);
 })();
 
