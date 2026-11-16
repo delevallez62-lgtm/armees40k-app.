@@ -10,7 +10,7 @@ await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(25
 await p.evaluate(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();S.mg=true;await BIB.init();tab='coll';draw()});await p.waitForTimeout(400);
 const before=await p.evaluate(()=>JSON.stringify({apt:S.coll.rork1.apt,text:S.coll.rork1.text,w:S.coll.rork1.weapons}));
 await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(500);
-await p.evaluate(()=>document.querySelector('#bibsr [data-bib="cmp"]').click());await p.waitForTimeout(700);
+await p.evaluate(()=>{const b=document.querySelector('#bibsr [data-bib="cmp"]');b.dataset.bib='cmpx';b.click()});await p.waitForTimeout(700);
 const rows=await p.evaluate(()=>[...document.querySelectorAll('[data-bibmap]')].map(s=>({id:s.dataset.bibmap,opts:[...s.options].map(o=>o.text.slice(0,50))})));
 console.log('capacités à associer:',JSON.stringify(rows).slice(0,500));
 await p.screenshot({path:'bib-map1.png'});

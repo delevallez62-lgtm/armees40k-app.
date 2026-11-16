@@ -31,7 +31,7 @@ const before=await snap();
 await p.evaluate(()=>{tab='coll';draw()});await p.waitForTimeout(300);
 await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(600);
 console.log('suggestions Boyz:',await p.evaluate(()=>[...document.querySelectorAll('#bibsr .bib-row b')].map(x=>x.innerText).join(' | ')));await p.screenshot({path:'bib-link.png'});
-await p.evaluate(()=>document.querySelector('#bibsr [data-bib="cmp"]').click());await p.waitForTimeout(700);
+await p.evaluate(()=>{const b=document.querySelector('#bibsr [data-bib="cmp"]');b.dataset.bib='cmpx';b.click()});await p.waitForTimeout(700);
 console.log('cmp titre:',await p.evaluate(()=>document.querySelector('#bibm .bib-pn p').innerText));
 
 const cmp=await p.evaluate(()=>[...document.querySelectorAll('#bibm .bib-pn h4')].map(h=>h.innerText+' → '+(h.nextElementSibling?h.nextElementSibling.innerText.slice(0,90).replace(/\n/g,' / '):'')));

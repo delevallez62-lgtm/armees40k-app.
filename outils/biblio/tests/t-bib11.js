@@ -1,0 +1,17 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const pdf=fs.readFileSync('/root/.claude/uploads/23af94af-db82-542e-90e8-f7f093cb9b4f/9b52e551-liste_2108977.pdf').toString('base64');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>{const u=r.request().url();if(/pdf(?:\.min|\.worker\.min)\.js$/.test(u))return r.fulfill({path:'/tmp/pdfjs/node_modules/pdfjs-dist/build/'+u.split('/').pop(),contentType:'text/javascript'});r.abort()});
+const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+const imp=async()=>{await p.evaluate(()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();S.mg=true;tab='imp';draw()});await p.waitForTimeout(300);
+await p.evaluate(async b64=>{await readPdf(new File([Uint8Array.from(atob(b64),c=>c.charCodeAt(0))],'l.pdf'))},pdf);await p.waitForTimeout(2500);
+await p.evaluate(()=>{const d=document.querySelector('#dg [data-act="dgno"]');if(d)d.click()});await p.waitForTimeout(300)};
+await imp();await p.evaluate(async()=>{await BIB.init();tab='coll';draw()});
+const info=()=>p.evaluate(()=>{const c=Object.values(S.coll).find(m=>/^boyz$/i.test(m.name));const L=S.lists.map(l=>({n:l.name,u:l.units.filter(u=>/^boyz$/i.test(u.name)).map(u=>(u.weapons||[]).map(w=>w.name))}));return{coll:(c.weapons||[]).map(w=>w.name),L}});
+console.log('avant',JSON.stringify(await info()));
+const ref=await p.evaluate(()=>Object.values(S.coll).find(m=>/^boyz$/i.test(m.name)).ref);
+await p.evaluate(r=>{const u=BIBAUTO(S.coll[r]);const x=document.createElement('button');x.dataset.bib='cmp';x.dataset.r=r;x.dataset.id=u.u.id;document.body.appendChild(x);x.click()},ref);await p.waitForTimeout(800);
+console.log('après lien (auto)',JSON.stringify((await info()).coll),'toast:',await p.evaluate(()=>(document.querySelector('#toast,.toast')||{}).innerText));
+await imp();console.log('après 2e import',JSON.stringify(await info()));
+console.log(errs);await b.close()})();

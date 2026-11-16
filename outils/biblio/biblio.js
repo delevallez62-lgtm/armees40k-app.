@@ -124,6 +124,7 @@ function buildCmp(m,u,pi){const p=profOf(u,pi),rows={stats:[],weapons:[],abil:[]
  (u.kw||[]).forEach((k,i)=>{const t=tKW(k);if(!(mk.has(nk(k))||mk.has(nk(t.t))))rows.kw.push({id:"k:"+i,k,t,kind:"add"})});
  const pts=u.pts;if(pts!=null){const mp=+m.pts||0;rows.misc.push({id:"pts",lib:String(pts),mine:mp?String(mp):"",kind:!mp?"add":(mp===pts?"same":"diff")})}
  return rows}
+function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});delete AM[m.ref];return n}
 function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
  const done=[];const p=profOf(u,pi);m.stats=m.stats||{};
  rows.stats.forEach(r=>{if(pick[r.id]){m.stats[r.k]=r.lib;done.push(r.k)}});
@@ -249,13 +250,13 @@ function openPickColl(id){const u=D.byId[id];if(!u)return;const items=Object.val
 function openLink(ref){css();const m=S.coll[ref];if(!m)return;const lb=LB(),lk=lb.links[ref];const o=box("bibm");
  const run=()=>{const sg=suggest(m);o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>📚 Bibliothèque</h2><button class="b" data-bib="x">✕</button></div><p>Fiche de ta collection : <b class="cap">${E(m.name)}</b></p>
  ${lk&&lk.info?`<details class="bib-row"><summary><b>ℹ Informations de référence (${E(lk.info.src||"")})</b></summary>${lk.info.loadout?`<p>${E(stripMd(lk.info.loadout)).replace(/\n/g,"<br>")}</p>`:""}${(lk.info.comp||[]).map(c=>`<p>• ${E(c)}</p>`).join("")}${(lk.info.opt||[]).map(c=>`<p>• ${E(c)}</p>`).join("")}<p class="bib-meta">Texte original anglais ; aucune règle n'est appliquée automatiquement.</p></details>`:""}
- ${lk&&D.byId[lk.id]?`<div class="bib-row bib-a">✅ Déjà rapprochée avec <b>${E(D.byId[lk.id].n)}</b> (${fmtD(lk.at)})${lk.stale?" · ⚠ la fiche de la bibliothèque a changé depuis":""}.<br><button class="b" data-bib="cmp" data-r="${E(ref)}" data-id="${E(lk.id)}">Revoir / compléter</button> <button class="b x" data-bib="unlink" data-r="${E(ref)}">Défaire</button></div>`:""}
+ ${lk&&D.byId[lk.id]?`<div class="bib-row bib-a">✅ Déjà rapprochée avec <b>${E(D.byId[lk.id].n)}</b> (${fmtD(lk.at)})${lk.stale?" · ⚠ la fiche de la bibliothèque a changé depuis":""}.<br><button class="b" data-bib="cmp" data-r="${E(ref)}" data-id="${E(lk.id)}">Mettre à jour (armes manquantes)</button> <button class="b" data-bib="cmpx" data-r="${E(ref)}" data-id="${E(lk.id)}">Options avancées</button> <button class="b x" data-bib="unlink" data-r="${E(ref)}">Défaire</button></div>`:""}
  <label>Chercher dans la bibliothèque<input id="bibs" placeholder="ex. Intercessors, Boyz…" value="${E(B.sq==null?m.name:B.sq)}" autocomplete="off"></label>
  <p class="bib-meta">HAMMER propose, c'est toi qui décides. Rien n'est jamais rapproché automatiquement.</p><div id="bibsr">${sres(m)}</div></div></div>`};
  B.ref=ref;B.sq=undefined;if(D.ready)run();else init().then(run)}
 function sres(m){const q=B.sq==null?m.name:B.sq;let L;if(B.sq==null){L=suggest(m).map(x=>x.u);return(L.length?`<p class="bib-meta">Correspondances possibles (à vérifier) :</p>`:`<p class="tt-miss" style="color:#e0a030">Aucune correspondance proposée pour « ${E(m.name)} » : cette unité ne semble pas être dans la bibliothèque (Space Marines et Orks seulement). Tu peux quand même chercher à la main.</p>`)+L.map(u=>cand(m,u)).join("")}
  L=search(q,"");return L.map(u=>cand(m,u)).join("")||'<p class="mu">Aucun résultat.</p>'}
-const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pr.length} profil(s) · ${u.rw.length+u.mw.length} arme(s)</div><button class="b p" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}">Voir et comparer</button></div>`};
+const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pr.length} profil(s) · ${u.rw.length+u.mw.length} arme(s)</div><button class="b p" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}">Lier et ajouter les armes</button></div>`};
 function openCmp(ref,id,pi){const m=S.coll[ref],u=D.byId[id];if(!m||!u)return;css();pi=pi==null?(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0):pi;
  const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{},map:{}};
  // valeurs par défaut : on ajoute ce qui manque ; on garde tes données quand elles diffèrent
@@ -318,7 +319,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"fac":B.fac=b.dataset.v;try{draw()}catch(_){}break;
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
-  case"cmp":await init();openCmp(b.dataset.r,b.dataset.id);break;
+  case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast(n?"Liée · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":"")+" ✓":"Liée à la version anglaise ✓ (aucune arme à ajouter)")}catch(_){}break}
+  case"cmpx":await init();openCmp(b.dataset.r,b.dataset.id);break;
   case"ckw":{const C=B.cmp;if(!C)break;const v=b.dataset.v==="1";C.rows.weapons.forEach(r=>{if(r.kind==="add")C.pick[r.id]=v});drawCmp();break}
   case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick,C.map);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
   case"unlink":ask({t:"Défaire le rapprochement ?",p:"Le lien est supprimé. Tu peux aussi retirer ce qui a été ajouté en revenant à l'état d'avant.",ok:"Garder les ajouts",alt:"Annuler les ajouts",altcb:()=>{undoLink(b.dataset.r,true);closeM("bibm");try{draw()}catch(_){}toast("Fiche remise comme avant")}},()=>{undoLink(b.dataset.r,false);closeM("bibm");try{draw()}catch(_){}});break;
@@ -407,7 +409,7 @@ document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.cla
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bibdr]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.bibdr;
  if(a==="en"){BD.en[b.dataset.k]=!BD.en[b.dataset.k];try{draw()}catch(_){}}
  else if(a==="enall"){BD.enAll=!BD.enAll;try{draw()}catch(_){}}
- else if(a==="okm"){const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(m&&u){LB().links[m.ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:0,applied:[],stale:false,confirmedOnly:true};sv();delete AM[m.ref];try{draw()}catch(_){}try{toast("Correspondance confirmée ✓")}catch(_){}}}
+ else if(a==="okm"){const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(m&&u){const n=autoLink(m,u);try{draw()}catch(_){}try{toast("Liée"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" ✓")}catch(_){}}}
  else if(a==="wadd"){const m=S.coll[b.dataset.r],am=m&&autoMatch(m);if(!am)return;const u=am.u,libW=[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))],aw=libW[+b.dataset.i];if(!aw)return;m.weapons=Array.isArray(m.weapons)?m.weapons:[];if(!m.weapons.some(x=>wSig(x)===wSig(aw))){m.weapons.push(clone(aw));sv();try{draw()}catch(_){}try{toast("Arme ajoutée à ta fiche ✓")}catch(_){}}}
 },true);
 
