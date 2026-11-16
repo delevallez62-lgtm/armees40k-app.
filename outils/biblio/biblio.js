@@ -381,7 +381,7 @@ function loadCard(en){const x=frItem(en,"équipement de base"),o=ruleLoad(en,twR
  return`<div class="bib-oc">${o.map(b=>`<div class="bib-ol"><span class="bib-ot">${E(b.who)}</span> ${b.items.map(chip).join("")}</div>`).join("")}${actions(x.k,false)}</div>`}
 function compCard(list){const rows=list.map(t=>{const x=frItem(t,"composition");return`<span class="bib-chip">${x.html}</span>`}).join("");return`<div class="bib-oc"><div class="bib-ol">${rows}</div></div>`}
 window.BIBDRW=function(p){try{
- if(!p||!p.ref||S.coll[p.ref]!==p)return"";
+ if(!p||!p.ref||!S.coll[p.ref])return"";p=S.coll[p.ref];
  const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return stub(D.err?"Bibliothèque indisponible : "+E(D.err):"Chargement de la bibliothèque…",false)}
  const am=autoMatch(p);if(!am)return stub("Aucune correspondance automatique dans la bibliothèque V11 (Space Marines et Orks pour l'instant). Tu peux choisir toi-même l'équivalent anglais pour afficher ses armes et options traduites.");css();const u=am.u,w=u.wp||{},lb=LB(),ref=p.ref,isOpen=!!BD.open[ref];
