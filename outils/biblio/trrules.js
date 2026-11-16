@@ -53,3 +53,36 @@ function ruleTr(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!s)re
   else res=andList(tail.replace(/\.$/,""))+".";
   return fs+" "+o+" par "+res}
  return null}
+
+/* Versions structurées pour un affichage clair (cartes) : renvoient une structure ou null */
+function ruleOpt(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!s)return null;
+ const tn=x=>{const k=x.trim().toLowerCase().replace(/^\d+\s+/,""),f=WN[k];return f||T(x.trim())};
+ const item=x=>{const m=/^(\d+(?:-\d+)?)\s+(.+?)\.?$/.exec(x.trim());return m?{n:m[1],name:tn(m[2].trim())}:{n:"",name:tn(x.trim().replace(/\.$/,""))}};
+ const list=x=>x.split(/\s*;\s*|\s*,\s*(?=\d)/).map(i=>item(i.replace(/\.$/,""))).filter(i=>i.name);
+ const andItems=x=>x.split(/\s+and\s+/).map(i=>item(/^\d/.test(i.trim())||/^up to/i.test(i.trim())?i.replace(/^up to (\d+)\s+/i,"$1 "):"1 "+i));
+ let mode,subj,old=null,tail;
+ let m=/^(.*?)\s+can\s+(?:each\s+)?have\s+(?:their|its|his|her)\s+(.+?)\s+replaced\s+with\s+(.+)$/s.exec(s);
+ if(m){mode="replace";subj=m[1];old=m[2];tail=m[3]}
+ else if(m=/^(.*?)[’']s\s+(.+?)\s+can\s+be\s+replaced\s+with\s+(.+)$/s.exec(s)){mode="replace";subj=m[1];old=m[2];tail=m[3]}
+ else if(m=/^(this model|this unit|1 model|all models in this unit|any number of models(?: in this unit)?|the .+?)\s+can\s+be\s+equipped\s+with\s+(.+)$/is.exec(s)){mode="add";subj=m[1];tail=m[2]}
+ else return null;
+ let who;const sj=subj.trim();let mm;
+ if(/^this model$/i.test(sj))who="Cette figurine";else if(/^this unit$/i.test(sj))who="Cette unité";
+ else if(/^all models in this unit$/i.test(sj))who="Toutes les figurines de cette unité";
+ else if(mm=/^all (.+?) models in this unit$/i.exec(sj))who="Toutes les figurines "+(WM[mm[1].toLowerCase()]||mm[1])+" de cette unité";
+ else if(mm=/^any number of (?:(.+?)\s+)?models(?: in this unit)?$/i.exec(sj))who="N'importe quel nombre de figurines"+(mm[1]?" "+(WM[mm[1].toLowerCase()]||mm[1]):"")+" (chacune)";
+ else if(mm=/^for every (\d+) models in this unit,\s*(up to )?(\d+) (?:(.+?)\s+)?models?$/i.exec(sj))who="Pour chaque tranche de "+mm[1]+" figurines de cette unité : "+(mm[2]?"jusqu'à ":"")+mm[3]+" figurine"+(mm[3]==="1"?"":"s")+(mm[4]?" "+(WM[mm[4].toLowerCase()]||mm[4]):"");
+ else if(mm=/^(\d+) models?$/i.exec(sj))who=mm[1]+" figurine"+(mm[1]==="1"?"":"s");
+ else if(mm=/^up to (\d+) (?:(.+?)\s+)?models$/i.exec(sj))who="Jusqu'à "+mm[1]+" figurines"+(mm[2]?" "+(WM[mm[2].toLowerCase()]||mm[2]):"")+" (chacune)";
+ else if(mm=/^the (.+)$/i.exec(sj))who="La figurine « "+mm[1]+" »";
+ else return null;
+ let choices,oneOf=false;tail=tail.trim();
+ if(/^one of the following:?\s*/i.test(tail)){oneOf=true;const rest=tail.replace(/^one of the following:?\s*/i,"");choices=/•/.test(rest)?rest.split(/\n?•\s*/).map(x=>x.trim()).filter(Boolean).map(x=>item(x.replace(/\.$/,""))):list(rest)}
+ else choices=andItems(tail.replace(/\.$/,""));
+ return{mode,who,old:old?old.split(/\s+and\s+/).map(x=>tn(x)):[],choices,oneOf}}
+function ruleLoad(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!/equipped with/.test(s))return null;
+ const tn=x=>{const k=x.trim().toLowerCase().replace(/^\d+\s+/,""),f=WN[k];return f||T(x.trim())};
+ const out=[];for(const b of s.split(/\n\s*\n/)){const m=/^\*\*(.+?)\s+(?:is|are)\s+equipped with:\*\*\s*(.*)$/s.exec(b.trim());if(!m)return null;const sub=m[1].trim();let who;
+  if(/^this model$/i.test(sub))who="Cette figurine";else if(/^(?:every|each) model$/i.test(sub))who="Chaque figurine";else if(/^(?:every|each)\s+(.+)$/i.test(sub))who="Chaque "+(WM[/^(?:every|each)\s+(.+)$/i.exec(sub)[1].toLowerCase()]||/^(?:every|each)\s+(.+)$/i.exec(sub)[1]);else if(/^the\s+(.+)$/i.test(sub))who=(WM[/^the\s+(.+)$/i.exec(sub)[1].toLowerCase()]||"La figurine « "+/^the\s+(.+)$/i.exec(sub)[1]+" »");else who=sub;
+  const items=m[2].split(/\s*;\s*/).map(i=>i.replace(/\.$/,"").trim()).filter(Boolean).map(i=>{const mm=/^(\d+(?:-\d+)?)\s+(.+)$/.exec(i);return mm?{n:mm[1],name:tn(mm[2])}:{n:"",name:tn(i)}});out.push({who,items})}
+ return out}
