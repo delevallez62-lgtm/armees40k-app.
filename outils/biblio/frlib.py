@@ -23,11 +23,11 @@ def strings(ch):
         for u in c.get('units',[]):
             add(u['n'],'nom d\'unité',1)
             for a in u['ab']:add(a['n'],'nom de capacité',3);add(a['d'],'texte de capacité',6)
-            for w in u['rw']+u['mw']:add(w['n'],'nom d\'arme',4)
+            for w in u['rw']+u['mw']:add(w['n'],'nom d\'arme',2)
         for e in c.get('ext',{}).values():
-            add(e.get('loadout'),'équipement de base',5)
-            for t in e.get('opt',[]):add(t,'option d\'équipement',5)
-            for t in e.get('comp',[]):add(t,'composition',5)
+            add(e.get('loadout'),'équipement de base',7)
+            for t in e.get('opt',[]):add(t,'option d\'équipement',7)
+            for t in e.get('comp',[]):add(t,'composition',7)
         for d in c.get('detachments',[]):
             add(d['n'],'nom de détachement',1)
             if d.get('ab'):add(d['ab']['name'],'nom de capacité',3);add(d['ab']['description'],'règle de détachement',5)

@@ -10,12 +10,13 @@ rep('learn:["book","Apprendre à jouer","#f0b429"],','learn:["book","Apprendre �
 # symbole 📚 sur les tuiles de la COLLECTION uniquement
 rep('${e.u.var?\'<span class="vb">Variante d’arme</span>\':""}','${csm?"":`<button class="bibb${window.BIBCLS?window.BIBCLS(e.u.ref):""}" data-bib="open" data-r="${e.u.ref}" aria-label="Bibliothèque" title="Bibliothèque V11">📚</button>`}${e.u.var?\'<span class="vb">Variante d’arme</span>\':""}')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')
+rep('+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?','+abWarn(p)+(window.BIBDRW?window.BIBDRW(p):"")+((p.mdl||[]).length&&!msplit(p)?')
 man=json.load(open(os.path.join(datadir,'manifest.json'),encoding='utf8'))
 emb={'manifest':man,'chunks':{}}
 for c in man['chunks']:
     raw=open(os.path.join(datadir,c['file']),'rb').read()
     emb['chunks'][c['id']]=base64.b64encode(gzip.compress(raw,9,mtime=0)).decode()
-J=open(d+'/biblio.js',encoding='utf8').read()
+J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read())
 assert '</script>' not in J
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
