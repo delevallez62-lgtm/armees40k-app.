@@ -1,0 +1,23 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());
+const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+await p.evaluate(()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click()});
+await p.evaluate(async()=>{await BIB.init()});
+const cnt=()=>p.evaluate(async()=>{const u=BIB.units?BIB.units():null;return 0});
+// ouvrir un nom d'unité traduit en chk
+const r=await p.evaluate(async()=>{const m={ref:'zz',name:'Boyz'};return typeof BIB});
+console.log('BIB',r);
+await p.evaluate(()=>{tab='coll';draw()});await p.click('text=Bibliothèque').catch(()=>{});await p.waitForTimeout(500);
+await p.evaluate(()=>document.querySelector('[data-bib="menu"]')&&document.querySelector('[data-bib="menu"]').click());await p.waitForTimeout(300);
+console.log('bouton:',await p.evaluate(()=>!!document.querySelector('[data-bib="vall"]')));
+await p.evaluate(()=>document.querySelector('[data-bib="vall"]').click());await p.waitForTimeout(300);
+const nm=await p.evaluate(()=>{const o=BIB.sample&&BIB.sample();return 0});
+const before=await p.evaluate(()=>{const k=Object.keys(window.BIBTEST?{}:{});return 0});
+console.log('dialog:',await p.evaluate(()=>{const d=document.querySelector('#dg');return d?d.innerText.slice(0,90).replace(/\n/g,' '):'aucun'}));
+await p.evaluate(()=>{const bt=[...document.querySelectorAll('#dg button')].find(x=>/Tout valider/.test(x.innerText));bt&&bt.click()});await p.waitForTimeout(400);
+console.log('vall:',await p.evaluate(()=>!!S.lib.vall),'bouton annuler:',await p.evaluate(()=>!!document.querySelector('[data-bib="vallno"]')));
+await p.evaluate(()=>document.querySelector('[data-bib="vallno"]').click());await p.waitForTimeout(200);
+console.log('annulé:',await p.evaluate(()=>!S.lib.vall));
+console.log(errs);await b.close()})();

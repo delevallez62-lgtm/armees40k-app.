@@ -68,14 +68,14 @@ function tWK(en){const s=String(en||"").trim();if(!s)return{t:s,st:"no"};
 function tKW(en){const s=String(en||"").trim(),f=KW[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 function tAB(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};
  {const pm=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)$/.exec(s);if(pm){const bu=LB().tr["b:"+nk(pm[1])];if(bu&&bu.fr)return{t:bu.fr+" "+pm[2],st:"ok",src:"user"}}}
- const m=/^([A-Za-z' -]+?)\s*((?:D?\d+(?:")?\+?|D\d)?)\s*(\(.*\))?$/.exec(s);if(m){const f=AB[m[1].trim().toLowerCase()];if(f)return{t:f+(m[2]?" "+m[2]:"")+(m[3]?" "+m[3]:""),st:"ok"}}const ov=D.fr[hh(s)];return ov&&nk(ov.fr)!==nk(s)?{t:s,st:"chk",prop:ov.fr,src:"claude"}:{t:s,st:"no"}}
+ const m=/^([A-Za-z' -]+?)\s*((?:D?\d+(?:")?\+?|D\d)?)\s*(\(.*\))?$/.exec(s);if(m){const f=AB[m[1].trim().toLowerCase()];if(f)return{t:f+(m[2]?" "+m[2]:"")+(m[3]?" "+m[3]:""),st:"ok"}}const ov=D.fr[hh(s)];return ov&&nk(ov.fr)!==nk(s)?(LB().vall?{t:ov.fr,st:"ok",src:"validé"}:{t:s,st:"chk",prop:ov.fr,src:"claude"}):{t:s,st:"no"}}
 /*__RULES__*/
 const twRule=x=>{const t=tName(x);return t.st==="ok"?t.t:(t.prop||x)};
 const hh=t=>sha1(nk(stripMd(t))).slice(0,12);
 function sents(t){return stripMd(t).split(/\n+/).flatMap(l=>l.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý0-9■•(\[])/)).map(x=>x.trim()).filter(Boolean)}
 function trDesc(en){const tm=LB().tm,k=hh(en),all=tm["t:"+k];if(all)return{t:all.fr,st:"ok",src:"user",k};
- const ov=D.fr[k];if(ov&&nk(ov.fr)!==nk(en))return{t:en,st:"chk",prop:ov.fr,src:"claude",k};
- const rr=ruleTr(en,twRule);if(rr)return{t:en,st:"chk",prop:rr,src:"regles",k};
+ const ov=D.fr[k];if(ov&&nk(ov.fr)!==nk(en))return LB().vall?{t:ov.fr,st:"ok",src:"validé",k}:{t:en,st:"chk",prop:ov.fr,src:"claude",k};
+ const rr=ruleTr(en,twRule);if(rr)return LB().vall?{t:rr,st:"ok",src:"validé",k}:{t:en,st:"chk",prop:rr,src:"regles",k};
  const ss=sents(en);if(ss.length<2)return{t:en,st:"no",k};const out=[];for(const x of ss){const e=tm["s:"+hh(x)];if(!e)return{t:en,st:"no",k};out.push(e.fr)}return{t:en,st:"chk",prop:out.join(" "),src:"user",k}}
 function frBodyOf(m,name){const names=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),k=nk(name),L=m.text||[];let cur=null;const seg=[];
  for(const l of L){const lk=nk(l);const hit=names.find(n=>{const nn=nk(n);return nn&&(lk===nn||lk.startsWith(nn+" "))});if(hit){cur={n:hit,lines:[String(l).trim().slice(hit.length).trim()].filter(Boolean)};seg.push(cur)}else if(cur)cur.lines.push(String(l).trim())}
@@ -84,7 +84,7 @@ function learnAb(m,ab,frName){const lb=LB(),en=String(ab.n).trim();lb.tr["n:"+nk
  const P=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)?$/,a=P.exec(en),b=P.exec(String(frName).trim());if(a&&b&&a[2]&&a[2]===b[2]&&nk(a[1])&&nk(b[1]))lb.tr["b:"+nk(a[1])]={fr:b[1].trim(),st:"ok",src:"user",at:Date.now()};
  const body=frBodyOf(m,frName);if(!body)return"nom";const enT=stripMd(ab.d||"");lb.tm["t:"+hh(enT)]={en:enT,fr:body,name:{en,fr:frName},st:"ok",at:Date.now()};
  const se=sents(enT),sf=sents(body);if(se.length>1&&se.length===sf.length)se.forEach((x,i)=>{const k="s:"+hh(x);if(!lb.tm[k])lb.tm[k]={en:x,fr:sf[i],st:"chk",at:Date.now()}});return"texte"}
-function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};const ov=D.fr[hh(s)];if(ov&&nk(ov.fr)!==nk(s))return{t:s,st:"chk",prop:ov.fr,src:"claude"};const wn=WN[s.toLowerCase().replace(/^➤\s*/,"")];return wn?{t:s,st:"chk",prop:wn,src:"glossaire"}:{t:s,st:"no"}}
+function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};const ov=D.fr[hh(s)];if(ov&&nk(ov.fr)!==nk(s))return LB().vall?{t:ov.fr,st:"ok",src:"validé"}:{t:s,st:"chk",prop:ov.fr,src:"claude"};const wn=WN[s.toLowerCase().replace(/^➤\s*/,"")];return wn?(LB().vall?{t:wn,st:"ok",src:"validé"}:{t:s,st:"chk",prop:wn,src:"glossaire"}):{t:s,st:"no"}}
 function tPhase(en){const s=String(en||"").trim(),f=PH[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 const SB={ok:["🟢","Traduction confirmée"],chk:["🟠","À vérifier"],no:["⚪","Non traduit"]};
 const badge=st=>`<span class="bib-st ${st}" title="${SB[st][1]}">${SB[st][0]}</span>`;
@@ -287,6 +287,7 @@ function menu(){css();const lb=LB(),o=box("bibm");o.innerHTML=`<div class="bib-o
  <div class="bib-row"><b>Mise à jour (facultative)</b><p class="bib-meta">Compare les versions, ne télécharge que ce qui a changé, vérifie l'intégrité, conserve tes fiches et tes rapprochements.</p><label class="bib-ck"><input type="checkbox" data-bibopt="auto" ${lb.auto?"checked":""}><span>Vérifier automatiquement (1 fois par jour, si Internet)</span></label><button class="b p" data-bib="upd" style="width:100%">🔄 Vérifier les nouveautés maintenant</button><div id="bibmsg" class="bib-meta"></div></div>
  <div class="bib-row"><b>Sauvegarde</b><button class="b" data-bib="exp">💾 Sauvegarder la bibliothèque</button> <label class="b" style="cursor:pointer">📂 Restaurer<input type="file" accept=".json,application/json" id="bibimp" hidden></label> <button class="b" data-bib="prev">↩ Version précédente</button></div>
  <div class="bib-row"><b>Traductions apprises de tes fiches</b><p class="bib-meta">${Object.keys(lb.tr).length} nom(s) · ${Object.keys(lb.tm).length} texte(s)/phrase(s). Elles servent uniquement à afficher la bibliothèque ; tes fiches ne sont jamais modifiées.</p><button class="b x" data-bib="tmclr">Effacer ces traductions apprises</button></div>
+ <div class="bib-row"><b>Valider les traductions</b><p class="bib-meta">${lb.vall?"✅ Toutes les traductions proposées sont validées (affichées comme confirmées).":"Marque d'un coup comme confirmées toutes les traductions « à vérifier »."} Tes fiches ne sont jamais modifiées ; tu peux annuler.</p>${lb.vall?`<button class="b x" data-bib="vallno">↩ Annuler la validation globale</button>`:`<button class="b" data-bib="vall">✔ Tout valider</button>`}</div>
  <div class="bib-row"><b>Intégrité</b><button class="b" data-bib="ver">🔍 Vérifier les données</button></div>
  <div class="bib-row"><b>Source de mise à jour</b><input id="bibsrc" value="${E(lb.src)}" style="width:100%"><button class="b" data-bib="srcset">Enregistrer</button> <button class="b" data-bib="srcdef">Par défaut</button></div>
  <p class="bib-meta">La bibliothèque est stockée à part de tes données personnelles : une erreur d'import ne peut pas abîmer ta collection.</p></div></div>`}
@@ -318,6 +319,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unlink":ask({t:"Défaire le rapprochement ?",p:"Le lien est supprimé. Tu peux aussi retirer ce qui a été ajouté en revenant à l'état d'avant.",ok:"Garder les ajouts",alt:"Annuler les ajouts",altcb:()=>{undoLink(b.dataset.r,true);closeM("bibm");try{draw()}catch(_){}toast("Fiche remise comme avant")}},()=>{undoLink(b.dataset.r,false);closeM("bibm");try{draw()}catch(_){}});break;
   case"menu":menu();break;
   case"__tr":break;
+  case"vall":ask({t:"Valider toutes les traductions ?",p:"Toutes les traductions « à vérifier » seront affichées comme confirmées. Tes fiches ne changent pas, et tu peux annuler à tout moment.",ok:"Tout valider"},()=>{const lb=LB();lb.vall=Date.now();sv();try{draw()}catch(_){}try{menu()}catch(_){}try{toast("Traductions validées ✓")}catch(_){}});break;
+  case"vallno":{const lb=LB();delete lb.vall;sv();try{draw()}catch(_){}try{menu()}catch(_){}try{toast("Validation globale annulée")}catch(_){}break}
   case"tmclr":ask({t:"Effacer les traductions apprises ?",p:"Les associations et textes retenus depuis tes fiches sont supprimés. Tes fiches ne changent pas.",ok:"Effacer",dg:1},()=>{const lb=LB();lb.tm={};Object.keys(lb.tr).forEach(k=>{if(lb.tr[k].src==="user")delete lb.tr[k]});sv();menu()});break;
   case"lic":licModal();break;
   case"seen":LB().news.forEach(n=>n.seen=true);sv();try{draw()}catch(_){}break;
