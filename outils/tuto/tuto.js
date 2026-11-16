@@ -80,6 +80,15 @@ const psyRe=/psychi/i;
 const sh=(i)=>{const x=LD().STEPS[i];return x?`<p>${E(x[1])}</p>`:""};
 const hasPsy=()=>ALL().some(u=>psyRe.test((u.text||[]).join(" ")+" "+(u.apt||"")));
 const strt=(ph)=>stratsFor(ph)?`<p class="mu">Tu as ${stratsFor(ph)} stratagème${stratsFor(ph)>1?"s":""} utilisable${stratsFor(ph)>1?"s":""} pendant cette phase.</p>${phBtn(ph)}`:"";
+const TIP={prep:"Installe la table, puis déploie tes unités. Quand tout est prêt, appuie sur ▶.",
+ army:"Touche une unité de la liste pour voir sa fiche. Les chiffres : M = vitesse, E = résistance, SV = armure, PV = vie.",
+ turn:"Phase 1 : chaque joueur gagne 1 PC (point de commandement). Note-le dans Score.",
+ move:"Phase 2 : déplace chaque unité jusqu'à son M en pouces (son M + 1 dé si elle avance).",
+ psy:"Certaines de tes unités ont des pouvoirs psychiques : lis leur texte sur la fiche.",
+ shoot:"Phase 3 : choisis une unité, une cible visible et à portée. Lance : toucher → blesser → sauvegarde.",
+ charge:"Phase 4 : une unité à 12\" ou moins d'un ennemi peut charger. Lance 2D6 : c'est la distance.",
+ fight:"Phase 5 : les unités au contact combattent avec une arme de mêlée. Mêmes jets que le tir.",
+ end:"Compte les objectifs, note les points dans Score, puis passe le tour à ton adversaire."};
 const BASE=[
  {id:"prep",t:"Avant de commencer",ph:"La partie",
   why:"Comprendre en 1 minute comment se déroule une partie.",
@@ -163,6 +172,13 @@ const css=`
 .tt-pn{background:var(--card,#16211b);color:var(--tx,#e6efe9);border-radius:18px 18px 0 0;width:min(560px,100%);max-height:92vh;overflow:auto;padding:16px;box-sizing:border-box}
 .tt-pn h2{margin:0 0 6px;font-size:21px}.tt-pn select{width:100%;margin:6px 0;min-height:44px}
 .tt-pn .b,.tt-card .b{min-height:42px}.tt-sheet .b{min-height:38px}
+.tt-strip{position:relative;background:var(--card);border:2px solid var(--ac,#f0b429);border-radius:14px;padding:8px 10px;margin:0 0 10px;box-shadow:var(--sh);box-sizing:border-box;color:var(--tx)}
+.tt-sr{display:flex;align-items:center;gap:8px}.tt-ti{flex:1;min-width:0}.tt-ti b{display:block;font-size:16px}.tt-ti small{color:var(--mu);font-size:12px}
+.tt-ic{width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:18px;cursor:pointer;flex:none;padding:0}.tt-ic.p{background:var(--ac,#f0b429);color:#141008;border-color:var(--ac,#f0b429);font-weight:800}.tt-ic:disabled{opacity:.35}
+.tt-tip{margin:6px 0;font-size:15px;line-height:1.35}
+.tt-sr2{display:flex;gap:6px}.tt-sr2 button{flex:1;min-height:36px;border:1px solid var(--bd);border-radius:10px;background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer;min-width:0}.tt-sr2 button:last-child{flex:0 0 44px}
+.tt-more{max-height:52vh;overflow:auto;margin-top:8px;border-top:1px solid var(--bd);padding-top:6px}.tt-more h4{margin:12px 0 4px;color:var(--ac,#f0b429)}.tt-more p{margin:6px 0}
+.tt-uhint{margin:6px 0;padding:8px 10px;border:2px dashed var(--ac,#f0b429);border-radius:12px;background:color-mix(in srgb,var(--ac,#f0b429) 10%,transparent);font-size:14px;line-height:1.35}
 .tt-pill{position:fixed;left:8px;right:8px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:17;max-width:560px;margin:0 auto;display:flex;align-items:center;gap:8px;background:var(--ac,#f0b429);color:#141008;border-radius:16px;padding:9px 12px;box-shadow:0 6px 22px rgba(0,0,0,.45);font-weight:700;cursor:pointer;box-sizing:border-box}
 .tt-pill span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tt-pill i{font-style:normal}
 .tt-sheet{position:fixed;left:0;right:0;bottom:calc(60px + env(safe-area-inset-bottom,0px));top:4vh;z-index:18;max-width:600px;margin:0 auto;background:var(--card,#16211b);color:var(--tx,#e6efe9);border:2px solid var(--ac,#f0b429);border-radius:18px 18px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.55);box-sizing:border-box}
@@ -203,23 +219,37 @@ function card(){const t=T(),L=LST(),live=!!(L&&S.pm&&S.pm===t.list&&t.phase==="r
 function closeM(id){const o=document.getElementById(id);if(o)o.innerHTML=""}
 /* coach */
 let SIG="";
-function render(){ensureCss();upd();const el=box("ttc"),t=T();
- if(!running()){if(el.innerHTML){el.innerHTML="";SIG=""}return}
- const sig=[t.step,t.lvl,t.min,t.u,t.rv,t.list,JSON.stringify(t.done),S.cur,S.pm,(S.games||[]).length,tab].join("|");if(sig===SIG)return;SIG=sig;
- const st=STEPS[t.step],dn=t.done[t.step];
- if(t.min){el.innerHTML=`<div class="tt-pill" data-tt="max" role="button" aria-label="Ouvrir le tutoriel"><i>🎓</i><span>Étape ${t.step+1}/${N} · ${E(st.t)}</span><i>▲</i></div>`;return}
- const lv=t.lvl,body=()=>{let h=`<div class="tt-why">💡 ${E(st.why)}</div>`;
-  h+=st.e();
-  h+=`<h4>✅ À faire sur la table</h4>${doL(st.doI())}`;
-  if(lv==="i"||lv==="a"){const x=st.i();if(x)h+=`<h4>Pour aller plus loin</h4>${x}`}
-  if(lv==="a"){const x=st.a();if(x)h+=`<h4>Pour les experts</h4>${x}`}
-  return h};
- el.innerHTML=`<div class="tt-sheet" role="dialog" aria-label="Partie tutorielle"><div class="tt-h"><div class="tt-top"><b>${E(st.t)}${dn?'<span class="tt-done">fait ✓</span>':""}</b><button class="b" data-tt="pause" title="Réduire (pause)">▼ Pause</button><button class="b" data-tt="quit" aria-label="Quitter">✕</button></div>
-  <div class="tt-ph">Étape ${t.step+1} sur ${N} · ${E(st.ph)}</div><div class="tt-prog">${STEPS.map((s,i)=>`<button class="${i===t.step?"on":t.done[i]?"dn":""}" data-tt="go" data-i="${i}" aria-label="Étape ${i+1} : ${E(s.t)}"></button>`).join("")}</div>
-  <div class="tt-lv">${[["e","Essentiel"],["i","+ Détails"],["a","+ Expert"]].map(x=>`<button class="${lv===x[0]?"on":""}" data-tt="lvl" data-v="${x[0]}">${x[1]}</button>`).join("")}</div></div>
-  <div class="tt-body" id="ttb">${body()}</div>
-  <div class="tt-sub"><button class="b" data-tt="q">❓ Question</button><button class="b" data-tt="units">📇 Fiches</button><button class="b" data-tt="gloss">📖 Règles</button></div>
-  <div class="tt-foot"><button class="b" data-tt="prev"${t.step?"":" disabled"}>◀ Précédent</button><button class="b" data-tt="rev">🔁 Revoir</button><button class="b p" data-tt="next" style="flex-basis:100%">${t.step===N-1?"✔ Terminer le tutoriel":"✔ J'ai compris · Suivant"}</button></div></div>`}
+const GAME_TABS=["play","pst","bat"];
+const PHK=id=>{const st=STEPS.find(x=>x.id===id);return st&&st.pk||""};
+function syncPh(){const t=T(),st=STEPS[t.step];if(typeof pph!=="undefined"){const k=(st&&st.pk)||"";if(pph!==k){pph=k;if(tab==="pst"){try{window.draw()}catch(_){}}}}}
+function stripHtml(){const t=T(),st=STEPS[t.step],dn=t.done[t.step],lv=t.lvl;
+ let more="";if(t.open){more=`<div class="tt-more"><div class="tt-lv">${[["e","Essentiel"],["i","+ Détails"],["a","+ Expert"]].map(x=>`<button class="${lv===x[0]?"on":""}" data-tt="lvl" data-v="${x[0]}">${x[1]}</button>`).join("")}</div><div class="tt-why">💡 ${E(st.why)}</div>${st.e()}<h4>✅ À faire sur la table</h4>${doL(st.doI())}${(lv==="i"||lv==="a")&&st.i()?`<h4>Pour aller plus loin</h4>${st.i()}`:""}${lv==="a"&&st.a()?`<h4>Pour les experts</h4>${st.a()}`:""}<div class="tt-sub"><button class="b" data-tt="units">📇 Fiches</button><button class="b" data-tt="gloss">📖 Règles</button></div></div>`}
+ return`<div class="tt-strip" id="tts"><div class="tt-sr"><button class="tt-ic" data-tt="prev" aria-label="Étape précédente"${t.step?"":" disabled"}>◀</button><div class="tt-ti"><b>🎓 ${E(st.t)}${dn?'<span class="tt-done">✓</span>':""}</b><small>Étape ${t.step+1} sur ${N} · ${E(st.ph)}</small></div><button class="tt-ic p" data-tt="next" aria-label="Étape suivante">${t.step===N-1?"✔":"▶"}</button></div>
+ <div class="tt-tip">${st.tip||E(TIP[st.id]||"")}</div>
+ <div class="tt-sr2"><button data-tt="more">${t.open?"▲ Moins":"▼ Plus d'explications"}</button><button data-tt="q">❓ Question</button><button data-tt="quit" aria-label="Quitter le tutoriel">✕</button></div>${more}</div>`}
+function unitTip(u,id){const ws=u.weapons||[],tx=(u.text||[]).join(" ");
+ const rng=ws.filter(w=>!isMelee(w)),mel=ws.filter(w=>isMelee(w));
+ const wl=a=>a.map(w=>`<b>${E(w.name)}</b> (${isMelee(w)?"mêlée":"portée "+E(w.range)}${/"/.test(String(w.range))?"":'"'}, A ${E(w.a)}, ${isMelee(w)?"CC":"CT"} ${E(w.hit||"-")}, F ${E(w.f)}, PA ${E(w.pa)}, D ${E(w.d)})`).join("<br>");
+ if(id==="turn"){const m=/phase\s+de\s+Commandement/i.exec(tx);return m?`Cette unité a une capacité qui parle de la phase de Commandement : ouvre sa fiche pour la lire.`:`Rien à faire pour cette unité à cette phase.`}
+ if(id==="move"){const M=u.stats&&num(u.stats.M);return M!=null?`Elle peut se déplacer de <b>${M}"</b>. Si elle avance : <b>${M}" + 1 dé</b>.`:""}
+ if(id==="shoot")return rng.length?`Elle peut tirer (si elle n'est pas au contact et n'a pas avancé) avec :<br>${wl(rng)}`:`Cette unité n'a pas d'arme de tir.`;
+ if(id==="charge")return`Si elle est à <b>12" ou moins</b> d'un ennemi, elle peut charger : lance <b>2D6</b>.`;
+ if(id==="fight")return mel.length?`Au contact, chaque figurine utilise <b>une</b> arme de mêlée :<br>${wl(mel)}`:`Cette unité n'a pas d'arme de mêlée.`;
+ if(id==="psy"){const m=psyRe.test(tx+" "+(u.apt||""));return m?`Cette unité a des aptitudes psychiques : lis sa fiche.`:""}
+ return""}
+function unitOf(k){const m=/^u:([^:]+):(\d+)$/.exec(k)||null,m2=/^l:([^:]+):(\d+):(\d+)$/.exec(k)||null;const L=S.lists.find(l=>l.id===T().list);if(!L)return null;if(m)return L.units[+m[2]]||null;if(m2){const u=L.units[+m2[2]];return u&&(u.subs||[])[+m2[3]]||null}return null}
+function hints(){const t=T(),st=STEPS[t.step];document.querySelectorAll(".tt-uhint").forEach(x=>{if(!st||!["turn","move","shoot","charge","fight","psy"].includes(st.id)||tab!=="play")x.remove()});
+ if(!st||!["turn","move","shoot","charge","fight","psy"].includes(st.id)||tab!=="play")return;
+ document.querySelectorAll(".pu.open").forEach(c=>{const h=c.querySelector(".puh"),k=h&&h.dataset.k,u=k&&unitOf(k);if(!u)return;const txt=unitTip(u,st.id),old=c.querySelector(".tt-uhint");if(!txt){if(old)old.remove();return}
+  const html=`<div class="tt-uhint" data-s="${st.id}">🎓 <b>Pour débuter · ${E(st.t)}</b><br>${txt}</div>`;if(old&&old.dataset.s===st.id&&old.dataset.u===u.name)return;if(old)old.remove();const pb=c.querySelector(".pb");if(pb){pb.insertAdjacentHTML("afterbegin",html);const n=pb.querySelector(".tt-uhint");if(n)n.dataset.u=u.name}})}
+function render(){ensureCss();upd();const t=T();const old=document.getElementById("tts"),pill=document.getElementById("ttc");if(pill)pill.innerHTML="";
+ const on=running()&&GAME_TABS.includes(tab);
+ if(!on){if(old)old.remove();SIG="";hints();return}
+ const main=document.querySelector("main");if(!main)return;
+ const hd=document.querySelector("header");if(hd)document.documentElement.style.setProperty("--tt-top",hd.offsetHeight+"px");
+ const sig=[t.step,t.lvl,t.open,t.list,JSON.stringify(t.done),t.u,tab].join("|");
+ if(!old||old.parentElement!==main||SIG!==sig){const fresh=document.createElement("div");fresh.innerHTML=stripHtml();const el=fresh.firstChild;if(old)old.remove();main.insertBefore(el,main.firstChild);SIG=sig}
+ hints()}
 let wizOpen=false;
 function launchHint(){const t=T(),w=document.getElementById("gpo"),h=box("ttl2");
  if(w){wizOpen=true;
@@ -238,26 +268,24 @@ function act(a,b,e){const t=T();
  case"start":{const ls=S.lists||[];if(!ls.length){try{info("Crée ou importe d'abord une armée (Gestion → Importer).")}catch(_){}break}
   t.on=true;t.phase="launch";t.step=0;t.done={};t.u=0;t.min=false;t.rv=false;t.list=(ls.some(l=>l.id===S.cur)?S.cur:ls[0].id);sv();SIG="";
   if(window.gPrep){tab="lists";try{draw()}catch(_){}window.gPrep(t.list)}break}
- case"go":if(b.dataset.i!=null){t.step=+b.dataset.i;t.rv=false;sv();SIG="";render()}break;
+ case"go":break;
  case"resume":t.on=true;t.min=false;sv();SIG="";if(S.pm&&S.pm===t.list){t.phase="run";try{draw()}catch(_){}render()}break;
  case"reset":ask({t:"Recommencer le tutoriel ?",p:"Tu repars de l'étape 1. Ta partie en cours n'est pas modifiée.",ok:"Recommencer",dg:1},()=>{t.step=0;t.done={};t.u=0;t.lvl="e";t.min=false;t.on=!!(S.pm&&S.pm===t.list);sv();SIG="";try{draw()}catch(_){}render()});break;
- case"max":t.min=false;sv();SIG="";render();break;
- case"pause":t.min=true;sv();SIG="";render();try{toast("Tutoriel en pause : touche la pastille jaune pour reprendre")}catch(_){}break;
+ case"more":t.open=!t.open;sv();SIG="";render();break;
  case"quit":ask({t:"Quitter le tutoriel ?",p:"Ta partie continue normalement. Tu pourras reprendre le tutoriel à cette étape depuis « Apprendre à jouer ».",ok:"Quitter"},()=>{t.on=false;sv();SIG="";render();try{draw()}catch(_){}});break;
- case"next":t.done[t.step]=1;t.rv=false;if(t.step<N-1)t.step++;else{t.on=false;try{toast("Bravo, tu as terminé le tutoriel 🎓")}catch(_){}}sv();SIG="";render();{const bd=document.getElementById("ttb");if(bd)bd.scrollTop=0}break;
- case"prev":if(t.step>0){t.step--;t.rv=false;sv();SIG="";render()}break;
- case"rev":t.rv=true;sv();SIG="";render();{const bd=document.getElementById("ttb");if(bd)bd.scrollTop=0}break;
+ case"next":t.done[t.step]=1;if(t.step<N-1)t.step++;else{t.on=false;try{toast("Bravo, tu as terminé le tutoriel 🎓")}catch(_){}}sv();SIG="";syncPh();render();window.scrollTo(0,0);break;
+ case"prev":if(t.step>0){t.step--;sv();SIG="";syncPh();render()}break;
  case"lvl":t.lvl=b.dataset.v;sv();SIG="";render();break;
  case"unext":{const n=UN().length;if(t.u<n-1)t.u++;sv();SIG="";render()}break;
  case"uprev":if(t.u>0)t.u--;sv();SIG="";render();break;
  case"fiche":{const u=UN()[+b.dataset.i];if(u){S.cur=t.list;ed=u;ctx="list";edit=false;try{draw()}catch(_){}}}break;
  case"units":{const us=UN();if(us.length){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn"><div class="tt-top"><h2 style="flex:1">📇 Fiches</h2><button class="b" data-tt="qx">✕</button></div><div class="tt-qp">${us.map((u,i)=>`<button class="b" data-tt="fiche2" data-i="${i}">${E(u.name)}</button>`).join("")}</div></div></div>`}}break;
  case"fiche2":{closeM("ttq");const u=UN()[+b.dataset.i];if(u){S.cur=t.list;ed=u;ctx="list";edit=false;try{draw()}catch(_){}}}break;
- case"gloss":t.min=true;sv();SIG="";tab="enc";try{draw()}catch(_){}render();break;
- case"strat":t.min=true;sv();SIG="";S.cur=t.list;if(typeof pph!=="undefined")pph=b.dataset.ph||"";tab="pst";try{draw()}catch(_){}render();break;
- case"mis":t.min=true;sv();SIG="";tab="mis";try{draw()}catch(_){}render();break;
- case"score":t.min=true;sv();SIG="";tab="bat";try{draw()}catch(_){}render();break;
- case"wpn":{const p=pickW(b.dataset.m==="1");if(p){t.min=true;sv();SIG="";render();const x=document.createElement("button");x.className="wza";x.style.display="none";x.dataset.dzw=JSON.stringify({u:p.u.name,n:p.w.name,t:b.dataset.m==="1"?"m":"r",a:p.w.a,ct:p.w.hit,f:p.w.f,pa:p.w.pa,d:p.w.d,c:p.w.caps||"",m:1});document.body.appendChild(x);x.click();x.remove()}}break;
+ case"gloss":sv();SIG="";tab="enc";try{draw()}catch(_){}render();break;
+ case"strat":sv();SIG="";S.cur=t.list;if(typeof pph!=="undefined")pph=b.dataset.ph||"";tab="pst";try{draw()}catch(_){}render();break;
+ case"mis":sv();SIG="";tab="mis";try{draw()}catch(_){}render();break;
+ case"score":sv();SIG="";tab="bat";try{draw()}catch(_){}render();break;
+ case"wpn":{const p=pickW(b.dataset.m==="1");if(p){sv();SIG="";render();const x=document.createElement("button");x.className="wza";x.style.display="none";x.dataset.dzw=JSON.stringify({u:p.u.name,n:p.w.name,t:b.dataset.m==="1"?"m":"r",a:p.w.a,ct:p.w.hit,f:p.w.f,pa:p.w.pa,d:p.w.d,c:p.w.caps||"",m:1});document.body.appendChild(x);x.click();x.remove()}}break;
  case"q":openQ();break;
  case"qx":if(e.target!==b)return false;closeM("ttq");break;
  case"qp":showQ((QP[+b.dataset.i]||[0,()=>""])[1]());break;
