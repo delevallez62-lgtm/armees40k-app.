@@ -20,11 +20,16 @@ def clean(t):
     t=re.sub(r'<li[^>]*>','\n• ',t or '');t=re.sub(r'</li>|</ul>|</ol>','',t)
     t=html.unescape(re.sub(r'<br\s*/?>','\n',t));t=re.sub(r'</?(b|strong)>','**',t);t=re.sub(r'</?(i|em)>','*',t);t=re.sub(r'<[^>]+>','',t);return re.sub(r'\n{3,}','\n\n',t).strip()
 norm=lambda s:re.sub(r'[^a-z0-9]','',re.sub(r'\[.*?\]','',(s or '').lower().replace('’',"'")))
-GRP={'ORK':'orks','SM':'space-marines'}
-FNAME={'ORK':'Orks','SM':'Space Marines'}
+FACS=[(r['id'],r['name']) for r in rd('Factions')]
+def slug(n):return re.sub(r'[^a-z0-9]+','-',n.lower().replace('’',"'")).strip('-')
+GRP={i:('orks' if i=='ORK' else 'space-marines' if i=='SM' else slug(n)) for i,n in FACS}
+FNAME={i:n for i,n in FACS}
+BASE=('ORK','SM')   # factions déjà dans BSData : détachements, stratagèmes et améliorations complétés aussi
+GROUPS=sorted(set(GRP.values()))
 last=(rd('Last_update') or [{'last_update':''}])[0].get('last_update','').strip()
 lib={g:json.load(open(os.path.join(OUT,g+'.json'),encoding='utf8')) for g in ('space-marines','orks')}
 libnames={g:{norm(u['n']):u for u in lib[g]['units']} for g in lib}
+libnames=type('D',(dict,),{'__missing__':lambda self,k:{}})(libnames)
 DS={d['id']:d for d in rd('Datasheets') if d['faction_id'] in GRP and not re.match(r'(?i)example',d['name'])}
 MODELS={};WG={};AB={};KW={};OPT={};COMP={};LEAD={};LEDBY={}
 for m in rd('Datasheets_models'):MODELS.setdefault(m['datasheet_id'],[]).append(m)
@@ -70,7 +75,7 @@ def unit_of(d):
     ext={'id':'w-'+d['id'],'role':d['role'],'loadout':clean(d['loadout']),'comp':[clean(c['description']) for c in srt(COMP.get(d['id'],[]))],'opt':[clean(o['description']) for o in srt(OPT.get(d['id'],[]))],
          'transport':clean(d['transport']),'link':d['link']}
     return {'n':d['name'],'kw':kw+fk,'pr':pr,'rw':rw,'mw':mw,'ab':ab,'pts':None,'sz':None},ext
-units_new={'orks':[],'space-marines':[]};exts={'orks':{},'space-marines':{}}
+units_new={g:[] for g in GROUPS};exts={g:{} for g in GROUPS}
 byid={}
 for d in DS.values():
     g=GRP[d['faction_id']];u,ext=unit_of(d);k=norm(d['name']);byid[d['id']]=(g,d['name'])
@@ -100,22 +105,22 @@ def splitdesc(t):
     else:o['fx']=t
     return o
 def similar(a,b):return a==b or difflib.SequenceMatcher(None,a,b).ratio()>=0.86
-dets_new={'orks':[],'space-marines':[]};str_new={'orks':[],'space-marines':[]};enh_new={'orks':[],'space-marines':[]}
+dets_new={g:[] for g in GROUPS};str_new=dict((g,[]) for g in GROUPS);enh_new=dict((g,[]) for g in GROUPS)
 DET=rd('Detachments');DABI=rd('Detachment_abilities')
 for d in DET:
-    if d['faction_id'] not in GRP:continue
+    if d['faction_id'] not in BASE:continue
     g=GRP[d['faction_id']]
     if any(similar(norm(d['name']),norm(x['n'])) for x in lib[g]['detachments']):continue
     abil=[{'name':a['name'],'description':clean(a['description'])} for a in DABI if a['detachment_id']==d['id']]
     dets_new[g].append({'id':'w-'+d['id'],'n':d['name'],'f':FNAME[d['faction_id']],'ab':abil[0] if abil else None,'abx':abil[1:],'pts':int(d['dp']) if (d.get('dp') or '').isdigit() else None,'dp':[x.strip() for x in (d.get('force_disposition') or '').split(',') if x.strip()],'rt':[],'src':'wahapedia'})
 for s in rd('Stratagems'):
-    if s['faction_id'] not in GRP:continue
+    if s['faction_id'] not in BASE:continue
     g=GRP[s['faction_id']];dk=norm(s['detachment'])
     if any(norm(x.get('det') or '')==dk and similar(norm(s['name']),norm(x['n'])) for x in lib[g]['stratagems']):continue
     p=splitdesc(s['description'])
     str_new[g].append({'id':'w-'+s['id'],'n':s['name'].title() if s['name'].isupper() else s['name'],'f':FNAME[s['faction_id']],'det':s['detachment'] or None,'t':s['type'],'cp':int(s['cp_cost']) if (s.get('cp_cost') or '').isdigit() else s.get('cp_cost'),'ph':s['phase'],'when':p['when'],'tg':p['tg'],'fx':p['fx'],'rs':p['rs'] or None,'src':'wahapedia'})
 for e in rd('Enhancements'):
-    if e['faction_id'] not in GRP:continue
+    if e['faction_id'] not in BASE:continue
     g=GRP[e['faction_id']];dk=norm(e['detachment'])
     if any(norm(x.get('det') or '')==dk and similar(norm(e['name']),norm(x['n'])) for x in lib[g]['enhancements']):continue
     enh_new[g].append({'id':'w-'+e['id'],'n':e['name'],'f':FNAME[e['faction_id']],'det':e['detachment'] or None,'d':clean(e['description']),'pts':int(e['cost']) if (e.get('cost') or '').isdigit() else None,'src':'wahapedia'})
@@ -123,8 +128,9 @@ for e in rd('Enhancements'):
 man=json.load(open(os.path.join(OUT,'manifest.json'),encoding='utf8'))
 old={c['id']:c['sha1'] for c in man['chunks']}
 newchunks=[]
-for g in ('space-marines','orks'):
+for g in GROUPS:
     body={'schema':1,'id':'wp-'+g,'source':'Wahapedia (export de données 11e)','updated':last,'units':sorted(units_new[g],key=lambda x:x['n'].lower()),'ext':exts[g],'detachments':dets_new[g],'enhancements':enh_new[g],'stratagems':str_new[g]}
+    if not any(body[k] for k in ('units','ext','detachments','enhancements','stratagems')):continue
     raw=json.dumps(body,ensure_ascii=False,separators=(',',':'))
     newchunks.append((body['id'],raw,{k:(len(v) if isinstance(v,(list,dict)) else 0) for k,v in body.items() if k in('units','ext','detachments','enhancements','stratagems')}))
 if all(old.get(i)==hashlib.sha1(r.encode()).hexdigest() for i,r,_ in newchunks):
@@ -133,7 +139,7 @@ man['chunks']=[c for c in man['chunks'] if not c['id'].startswith('wp-')]
 for i,raw,cnt in newchunks:
     fn=i+'.json';open(os.path.join(OUT,fn),'w',encoding='utf8').write(raw)
     man['chunks'].append({'id':i,'file':fn,'sha1':hashlib.sha1(raw.encode()).hexdigest(),'bytes':len(raw.encode()),'counts':cnt})
-base=re.sub(r'\+wp.*$','',man['version']);man['version']=base+'+wp'+(last[:10] or datetime.date.today().isoformat())
+frs=re.search(r'\+fr\d+$',man['version']);base=re.sub(r'\+(wp|fr)[^+]*','',man['version']);man['version']=base+'+wp'+(last[:10] or datetime.date.today().isoformat())+(frs.group(0) if frs else '')
 man['source']['wahapedia']={'site':'wahapedia.ru (export de données, 11e édition)','last_update':last}
 man['generated']=datetime.date.today().isoformat()
 open(os.path.join(OUT,'manifest.json'),'w',encoding='utf8').write(json.dumps(man,ensure_ascii=False,indent=1))

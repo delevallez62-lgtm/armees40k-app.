@@ -10,3 +10,6 @@
 - Source : export de données public de Wahapedia (wahapedia.ru, 11e édition) : équipement de base, composition, **options d'équipement**, qui peut mener quelle unité, détachements, stratagèmes et améliorations absents des autres sources. Données non officielles, propriété de Games Workshop ; usage personnel. Retirables : fichiers `data/biblio/wp-*.json`.
 ## Traductions
 - `fr.json` contient des **propositions de traduction** produites automatiquement (statut « à vérifier »). Elles ne remplacent jamais le texte d'origine : l'utilisateur peut les valider ou les corriger dans l'appli, ce qui les rend « confirmées ».
+
+## Autres factions (Wahapedia)
+Les fiches d'unités des autres factions (Necrons, Tyranides, Astra Militarum, etc.) viennent uniquement de l'export de données public de Wahapedia (11e édition) : un bloc `wp-<faction>.json` par faction. Pas de détachements, stratagèmes ni améliorations pour ces factions pour l'instant. Les traductions françaises sont des propositions automatiques à vérifier.

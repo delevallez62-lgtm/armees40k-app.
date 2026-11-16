@@ -12,7 +12,7 @@ console.log('empreinte:',await p.evaluate(()=>{const hh=t=>BIB.sha1(String(t).no
 console.log('proposition :',JSON.stringify(await p.evaluate(()=>['That unit.','Your Shooting phase.'].map(x=>{const r=BIB.trDesc(x);return r.st+':'+(r.prop||r.t)}))));
 // fiche Boyz : options Wahapedia, source, propositions
 await p.evaluate(()=>{tab='bib';draw()});await p.waitForTimeout(500);
-await p.evaluate(()=>{const u=BIB.D.units.find(x=>x.n==='Boyz');document.querySelector('#bibl [data-bib="unit"][data-id="'+u.id+'"]').click()});await p.waitForTimeout(600);
+await p.fill('#bibq','boyz');await p.waitForTimeout(300);await p.evaluate(()=>{const u=BIB.D.units.find(x=>x.n==='Boyz'&&x._c==='orks');document.querySelector('#bibl [data-bib="unit"][data-id="'+u.id+'"]').click()});await p.waitForTimeout(600);
 console.log('fiche Boyz contient:',await p.evaluate(()=>{const t=document.querySelector('#bibm').innerText;return{wahapedia:/Wahapedia/.test(t),options:/Options d'équipement/.test(t),loadout:/Équipement de base/.test(t),ledby:/Peut être mené par/.test(t),nonBloquant:/ne bloquent jamais/.test(t)}}));await p.screenshot({path:'bib-wp1.png'});
 // stratagèmes : proposition + valider
 await p.evaluate(()=>{document.querySelector('[data-bib="x"]').click();document.querySelector('[data-bib="tab"][data-v="str"]').click()});await p.waitForTimeout(400);

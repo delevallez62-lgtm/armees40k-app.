@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+await p.evaluate(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init()});
+console.log(await p.evaluate(()=>{const D=BIB.D;const c={};D.units.forEach(u=>c[u._c]=(c[u._c]||0)+1);return JSON.stringify({n:D.units.length,c,ready:D.ready,err:D.err})}));
+console.log(await p.evaluate(()=>{const u=BIB.D.units.find(x=>/immortals/i.test(x.n)&&x._c==='necrons');return u&&JSON.stringify({n:u.n,f:u.f,pr:u.pr.length,rw:u.rw.length,mw:u.mw.length,ab:u.ab.length,opt:(u.wp||{}).opt&&u.wp.opt.length,pts:u.pts})}));
+await p.evaluate(()=>{tab='coll';draw()});await p.fill('#q','immortels');await p.waitForTimeout(500);
+console.log('recherche:',await p.evaluate(()=>{const e=document.querySelector('.bib-cs');return e?e.innerText.replace(/\n/g,' | ').slice(0,200):null}));
+await p.evaluate(()=>{const r=document.querySelector('.bib-cs [data-bib="mk"]');r&&r.click()});await p.waitForTimeout(500);
+console.log('fiche:',JSON.stringify(await p.evaluate(()=>{const m=Object.values(S.coll).find(x=>x.fromLib);return m&&{name:m.name,w:m.weapons.map(w=>w.name),apt:m.apt,kw:m.kw,fkw:m.fkw}})));
+await p.evaluate(()=>{tab='bib';draw()});await p.waitForTimeout(500);
+console.log('select faction:',await p.evaluate(()=>[...document.querySelectorAll('#bibfac option')].slice(0,5).map(o=>o.innerText)));
+console.log(errs);await b.close()})();
