@@ -7622,7 +7622,7 @@ const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">
 const sv=()=>{try{save()}catch(_){}};
 const nk=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9+]+/g," ").trim();
 const DEF_SRC="https://raw.githubusercontent.com/delevallez62-lgtm/armees40k-app./main/data/biblio/";
-const LB=()=>{const l=S.lib=S.lib&&typeof S.lib==="object"?S.lib:{};l.links=l.links||{};l.bk=l.bk||{};l.news=l.news||[];l.tr=l.tr||{};if(l.auto==null)l.auto=true;if(!l.src)l.src=DEF_SRC;return l};
+const LB=()=>{const l=S.lib=S.lib&&typeof S.lib==="object"?S.lib:{};l.links=l.links||{};l.bk=l.bk||{};l.news=l.news||[];l.tr=l.tr||{};l.tm=l.tm||{};if(l.auto==null)l.auto=true;if(!l.src)l.src=DEF_SRC;return l};
 const clone=o=>o===undefined?o:JSON.parse(JSON.stringify(o));
 /* ---------- SHA-1 (sans dépendance, fonctionne aussi hors contexte sécurisé) ---------- */
 function sha1(str){const u=new TextEncoder().encode(str),l=u.length,n=((l+8)>>6)+1,w=new Uint32Array(n*16);
@@ -7672,7 +7672,19 @@ function tWK(en){const s=String(en||"").trim();if(!s)return{t:s,st:"no"};
  return{t:s,st:"no"}}
 function tKW(en){const s=String(en||"").trim(),f=KW[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 function tAB(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};
+ {const pm=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)$/.exec(s);if(pm){const bu=LB().tr["b:"+nk(pm[1])];if(bu&&bu.fr)return{t:bu.fr+" "+pm[2],st:"ok",src:"user"}}}
  const m=/^([A-Za-z' -]+?)\s*((?:D?\d+(?:")?\+?|D\d)?)\s*(\(.*\))?$/.exec(s);if(m){const f=AB[m[1].trim().toLowerCase()];if(f)return{t:f+(m[2]?" "+m[2]:"")+(m[3]?" "+m[3]:""),st:"ok"}}return{t:s,st:"no"}}
+const hh=t=>sha1(nk(stripMd(t))).slice(0,12);
+function sents(t){return stripMd(t).split(/\n+/).flatMap(l=>l.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý0-9■•(\[])/)).map(x=>x.trim()).filter(Boolean)}
+function trDesc(en){const tm=LB().tm,all=tm["t:"+hh(en)];if(all)return{t:all.fr,st:"ok",src:"user"};
+ const ss=sents(en);if(ss.length<2)return{t:en,st:"no"};const out=[];for(const x of ss){const e=tm["s:"+hh(x)];if(!e)return{t:en,st:"no"};out.push(e.fr)}return{t:out.join(" "),st:"chk",src:"user"}}
+function frBodyOf(m,name){const names=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),k=nk(name),L=m.text||[];let cur=null;const seg=[];
+ for(const l of L){const lk=nk(l);const hit=names.find(n=>{const nn=nk(n);return nn&&(lk===nn||lk.startsWith(nn+" "))});if(hit){cur={n:hit,lines:[String(l).trim().slice(hit.length).trim()].filter(Boolean)};seg.push(cur)}else if(cur)cur.lines.push(String(l).trim())}
+ const f=seg.find(x=>nk(x.n)===k);return f?f.lines.join("\n").trim():""}
+function learnAb(m,ab,frName){const lb=LB(),en=String(ab.n).trim();lb.tr["n:"+nk(en)]={fr:frName,st:"ok",src:"user",at:Date.now()};
+ const P=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)?$/,a=P.exec(en),b=P.exec(String(frName).trim());if(a&&b&&a[2]&&a[2]===b[2]&&nk(a[1])&&nk(b[1]))lb.tr["b:"+nk(a[1])]={fr:b[1].trim(),st:"ok",src:"user",at:Date.now()};
+ const body=frBodyOf(m,frName);if(!body)return"nom";const enT=stripMd(ab.d||"");lb.tm["t:"+hh(enT)]={en:enT,fr:body,name:{en,fr:frName},st:"ok",at:Date.now()};
+ const se=sents(enT),sf=sents(body);if(se.length>1&&se.length===sf.length)se.forEach((x,i)=>{const k="s:"+hh(x);if(!lb.tm[k])lb.tm[k]={en:x,fr:sf[i],st:"chk",at:Date.now()}});return"texte"}
 function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];return u&&u.fr?{t:u.fr,st:u.st||"ok",src:"user"}:{t:s,st:"no"}}
 function tPhase(en){const s=String(en||"").trim(),f=PH[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 const SB={ok:["🟢","Traduction confirmée"],chk:["🟠","À vérifier"],no:["⚪","Non traduit"]};
@@ -7713,7 +7725,7 @@ function buildCmp(m,u,pi){const p=profOf(u,pi),rows={stats:[],weapons:[],abil:[]
  (u.kw||[]).forEach((k,i)=>{const t=tKW(k);if(!(mk.has(nk(k))||mk.has(nk(t.t))))rows.kw.push({id:"k:"+i,k,t,kind:"add"})});
  const pts=u.pts;if(pts!=null){const mp=+m.pts||0;rows.misc.push({id:"pts",lib:String(pts),mine:mp?String(mp):"",kind:!mp?"add":(mp===pts?"same":"diff")})}
  return rows}
-function applyCmp(m,u,pi,rows,pick){const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
+function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
  const done=[];const p=profOf(u,pi);m.stats=m.stats||{};
  rows.stats.forEach(r=>{if(pick[r.id]){m.stats[r.k]=r.lib;done.push(r.k)}});
  m.weapons=Array.isArray(m.weapons)?m.weapons:[];
@@ -7722,7 +7734,8 @@ function applyCmp(m,u,pi,rows,pick){const ref=m.ref,lb=LB();const bk={stats:clon
   else if(r.kind==="diff"){const i=m.weapons.indexOf(r.mine);if(i>=0){const keepName=m.weapons[i].name;m.weapons[i]=Object.assign(clone(r.x.aw),{name:keepName});done.push("arme:"+keepName)}}
   if(r.kind==="same"&&r.learn&&pick["ln:"+r.id]){const en=String(r.x.lw.n).replace(/^➤\s*/,"");lb.tr["n:"+nk(en)]={fr:r.mine.name,st:"ok",src:"user",at:Date.now()};done.push("nom:"+en)}});
  const apt=String(m.apt||"").split(",").map(s=>s.trim()).filter(Boolean);m.text=Array.isArray(m.text)?m.text:[];
- rows.abil.forEach(r=>{if(r.kind==="add"&&pick[r.id]){const name=r.t.t;if(!apt.some(x=>nk(x)===nk(name)))apt.push(name);const body=stripMd(r.a.d).split("\n").map(s=>s.trim()).filter(Boolean);m.text.push((name+" "+(body[0]||"")).trim());body.slice(1).forEach(l=>m.text.push(l));done.push("capacité:"+name)}});
+ rows.abil.forEach(r=>{if(r.kind==="add"&&map[r.id]){const w=learnAb(m,r.a,map[r.id]);done.push("association:"+r.a.n+" ↔ "+map[r.id]+" ("+w+")");return}
+  if(r.kind==="add"&&pick[r.id]){const name=r.t.t;if(!apt.some(x=>nk(x)===nk(name)))apt.push(name);const body=stripMd(r.a.d).split("\n").map(s=>s.trim()).filter(Boolean);m.text.push((name+" "+(body[0]||"")).trim());body.slice(1).forEach(l=>m.text.push(l));done.push("capacité:"+name)}});
  m.apt=apt.join(", ");
  const kws=String(m.kw||"").split(",").map(s=>s.trim()).filter(Boolean);rows.kw.forEach(r=>{if(pick[r.id]){kws.push(r.t.t);done.push("mot-clé:"+r.t.t)}});m.kw=kws.join(", ");
  rows.misc.forEach(r=>{if(r.id==="pts"&&pick[r.id]){m.pts=+r.lib;done.push("points")}});
@@ -7793,7 +7806,7 @@ function unitHtml(u){const tn=tName(u.n);
  h+=u.pr.map(p=>`<div class="bib-row"><b>${E(p.n)}</b><div>${STATS.map(([k,l])=>`${l} <b>${E(nm(p[k])||"–")}</b>`).join(" · ")}</div></div>`).join("");
  const W=(a,melee)=>a.map(w=>{const aw=wToApp(w,melee),ks=(w.kw||[]).map(k=>{const r=tWK(k);return`${E(r.t)}${badge(r.st)}`}).join(", ");return`<div class="bib-row"><b>${E(aw.name)}</b> <span class="bib-meta">${E(w.n!==aw.name?w.n:"")}</span><div>${melee?"Mêlée":"Portée "+E(aw.range)+'"'} · A ${E(aw.a)} · ${melee?"CC":"CT"} ${E(aw.hit)} · F ${E(aw.f)} · PA ${E(aw.pa)} · D ${E(aw.d)}</div>${ks?`<div class="bib-wl">${ks}</div>`:""}</div>`}).join("");
  h+=`<h4>Armes de tir (${u.rw.length})</h4>${W(u.rw,false)||'<p class="bib-meta">Aucune</p>'}<h4>Armes de mêlée (${u.mw.length})</h4>${W(u.mw,true)||'<p class="bib-meta">Aucune</p>'}`;
- h+=`<h4>Capacités (${u.ab.length})</h4>${u.ab.map(a=>{const t=tAB(a.n);return`<details class="bib-row"><summary><b>${E(t.t)}</b> ${badge(t.st)}${t.st!=="ok"?"":` <span class="bib-meta">${E(a.n)}</span>`}</summary><p>${E(stripMd(a.d)).replace(/\n/g,"<br>")}</p><p class="bib-meta">Texte original anglais (non traduit)</p></details>`}).join("")||'<p class="bib-meta">Aucune</p>'}`;
+ h+=`<h4>Capacités (${u.ab.length})</h4>${u.ab.map(a=>{const t=tAB(a.n),d=trDesc(a.d),en=E(stripMd(a.d)).replace(/\n/g,"<br>");return`<details class="bib-row"><summary><b>${E(t.t)}</b> ${badge(d.st==="ok"?"ok":t.st)}${t.st!=="ok"?"":` <span class="bib-meta">${E(a.n)}</span>`}</summary>${d.st==="ok"?`<p>${E(d.t).replace(/\n/g,"<br>")}</p><details><summary class="bib-meta">Texte original anglais</summary><p>${en}</p></details><p class="bib-meta">Traduction confirmée (reprise de ta fiche)</p>`:`<p>${en}</p>${d.st==="chk"?`<p class="bib-meta">🟠 Proposition à vérifier (phrases apprises de ta fiche) : ${E(d.t)}</p>`:`<p class="bib-meta">Texte original anglais (non traduit)</p>`}`}</details>`}).join("")||'<p class="bib-meta">Aucune</p>'}`;
  h+=`<h4>Mots-clés</h4><p>${u.kw.map(k=>{const r=tKW(k);return`${E(r.t)}${badge(r.st)}`}).join(", ")}</p>`;
  h+=`<p class="bib-meta">Options d'équipement et restrictions : non présentes dans les données sources.</p>`;return h}
 function libView(){css();const lb=LB(),man=D.man;
@@ -7824,7 +7837,7 @@ function sres(m){const q=B.sq==null?m.name:B.sq;let L;if(B.sq==null){L=suggest(m
  L=search(q,"");return L.map(u=>cand(m,u)).join("")||'<p class="mu">Aucun résultat.</p>'}
 const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pr.length} profil(s) · ${u.rw.length+u.mw.length} arme(s)</div><button class="b p" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}">Voir et comparer</button></div>`};
 function openCmp(ref,id,pi){const m=S.coll[ref],u=D.byId[id];if(!m||!u)return;css();pi=pi==null?(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0):pi;
- const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{}};
+ const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{},map:{}};
  // valeurs par défaut : on ajoute ce qui manque ; on garde tes données quand elles diffèrent
  const P=B.cmp.pick;[...rows.stats,...rows.weapons,...rows.abil,...rows.kw,...rows.misc].forEach(r=>{if(r.kind==="add")P[r.id]=true});
  drawCmp()}
@@ -7840,7 +7853,9 @@ function drawCmp(){const C=B.cmp;if(!C)return;const m=S.coll[C.ref],u=D.byId[C.i
   if(r.kind==="same")return`<div class="bib-row bib-s">✓ <b>${E(aw.name)}</b> existe déjà chez toi (<b>${E(r.mine.name)}</b>, même profil).${r.learn?`<br>${ck("ln:"+r.id,`Retenir « ${E(r.mine.name)} » comme nom français de « ${E(String(r.x.lw.n).replace(/^➤\s*/,""))} »`)}`:""}</div>`;
   if(r.kind==="diff")return`<div class="bib-row bib-d"><b>${E(r.mine.name)}</b> : valeurs différentes<div class="bib-two"><div>Toi : ${E(r.mine.range)} · A ${E(r.mine.a)} · ${E(r.mine.hit)} · F ${E(r.mine.f)} · PA ${E(r.mine.pa)} · D ${E(r.mine.d)}</div><div>Biblio : ${E(pr)}</div></div>${ck(r.id,"Remplacer le profil par celui de la bibliothèque (je garde le nom)")}</div>`;
   return`<div class="bib-row bib-a">${ck(r.id,`Ajouter <b>${E(aw.name)}</b> — ${E(pr)}${aw.caps?` — ${E(aw.caps)}`:""}`)}</div>`}).join(""),"Aucune arme dans la bibliothèque.");
- h+=sec("Capacités",R.abil.filter(r=>r.kind==="add").map(r=>ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)} <span class="bib-meta">(texte en anglais)</span>`)).join(""),"Toutes les capacités sont déjà présentes.");
+ const mine=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),used=new Set(Object.values(C.map||{}));
+ const sugg=r=>{const t=tAB(r.a.n);const kt=nk(t.t),ke=nk(r.a.n);let best=mine.find(n=>nk(n)===kt);if(best)return best;const tk=new Set(toks(t.t).concat(toks(r.a.n)));let sc=0;mine.forEach(n=>{const x=toks(n).filter(w=>tk.has(w)).length;if(x>sc&&x>=1&&x>=Math.ceil(toks(n).length/2)){sc=x;best=n}});return sc?best:null};
+ h+=sec("Capacités",R.abil.filter(r=>r.kind==="add").map(r=>{const mp=(C.map||{})[r.id],sg=sugg(r);return`<div class="bib-row ${mp?"bib-s":"bib-a"}">${mp?`<div class="bib-ck"><span>↔ <b>${E(r.t.t)}</b> (anglais) = <b>${E(mp)}</b> (ta fiche).<br><span class="bib-meta">Ton texte français est conservé tel quel ; on retient seulement l'association pour mieux traduire l'anglais à l'avenir.</span></span></div>`:ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)} <span class="bib-meta">(texte en anglais)</span>`)}<select data-bibmap="${r.id}" style="width:100%;margin-top:4px"><option value="">${mp?"Ne plus associer":"C'est une nouvelle capacité"}</option>${mine.map(n=>`<option value="${E(n)}"${mp===n?" selected":""}>${sg===n&&!mp?"★ Suggestion : ":""}↔ C'est déjà « ${E(n)} »</option>`).join("")}</select></div>`}).join(""),"Toutes les capacités sont déjà présentes.");
  h+=sec("Mots-clés",R.kw.map(r=>ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)}`)).join(""),"Aucun mot-clé à ajouter.");
  h+=sec("Points",R.misc.filter(r=>r.kind!=="same").map(r=>r.kind==="add"?ck(r.id,`Points absents : ajouter <b>${E(r.lib)}</b>`):`<div class="bib-row bib-d">Points : toi <b>${E(r.mine)}</b> · biblio <b>${E(r.lib)}</b><br>${ck(r.id,"Remplacer")}</div>`).join(""),"Points identiques ou non renseignés.");
  h+=`<p class="bib-meta">Options d'équipement et restrictions : non fournies par les sources. Les listes d'armée existantes ne sont pas modifiées ; les nouvelles armes sont ajoutées à ta fiche de collection, à toi de les choisir à l'ajout dans une liste.</p>
@@ -7850,6 +7865,7 @@ function menu(){css();const lb=LB(),o=box("bibm");o.innerHTML=`<div class="bib-o
  <p class="bib-meta">Version ${E(D.man?D.man.version:"—")} · origine ${E(D.origin||"—")} · dernière vérification ${lb.last?fmtD(lb.last.at)+(lb.last.err?" (échec : "+E(lb.last.err)+")":""):"jamais"}</p>
  <div class="bib-row"><b>Mise à jour (facultative)</b><p class="bib-meta">Compare les versions, ne télécharge que ce qui a changé, vérifie l'intégrité, conserve tes fiches et tes rapprochements.</p><label class="bib-ck"><input type="checkbox" data-bibopt="auto" ${lb.auto?"checked":""}><span>Vérifier automatiquement (1 fois par jour, si Internet)</span></label><button class="b p" data-bib="upd" style="width:100%">🔄 Vérifier les nouveautés maintenant</button><div id="bibmsg" class="bib-meta"></div></div>
  <div class="bib-row"><b>Sauvegarde</b><button class="b" data-bib="exp">💾 Sauvegarder la bibliothèque</button> <label class="b" style="cursor:pointer">📂 Restaurer<input type="file" accept=".json,application/json" id="bibimp" hidden></label> <button class="b" data-bib="prev">↩ Version précédente</button></div>
+ <div class="bib-row"><b>Traductions apprises de tes fiches</b><p class="bib-meta">${Object.keys(lb.tr).length} nom(s) · ${Object.keys(lb.tm).length} texte(s)/phrase(s). Elles servent uniquement à afficher la bibliothèque ; tes fiches ne sont jamais modifiées.</p><button class="b x" data-bib="tmclr">Effacer ces traductions apprises</button></div>
  <div class="bib-row"><b>Intégrité</b><button class="b" data-bib="ver">🔍 Vérifier les données</button></div>
  <div class="bib-row"><b>Source de mise à jour</b><input id="bibsrc" value="${E(lb.src)}" style="width:100%"><button class="b" data-bib="srcset">Enregistrer</button> <button class="b" data-bib="srcdef">Par défaut</button></div>
  <p class="bib-meta">La bibliothèque est stockée à part de tes données personnelles : une erreur d'import ne peut pas abîmer ta collection.</p></div></div>`}
@@ -7874,9 +7890,10 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
   case"cmp":await init();openCmp(b.dataset.r,b.dataset.id);break;
-  case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
+  case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick,C.map);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
   case"unlink":ask({t:"Défaire le rapprochement ?",p:"Le lien est supprimé. Tu peux aussi retirer ce qui a été ajouté en revenant à l'état d'avant.",ok:"Garder les ajouts",alt:"Annuler les ajouts",altcb:()=>{undoLink(b.dataset.r,true);closeM("bibm");try{draw()}catch(_){}toast("Fiche remise comme avant")}},()=>{undoLink(b.dataset.r,false);closeM("bibm");try{draw()}catch(_){}});break;
   case"menu":menu();break;
+  case"tmclr":ask({t:"Effacer les traductions apprises ?",p:"Les associations et textes retenus depuis tes fiches sont supprimés. Tes fiches ne changent pas.",ok:"Effacer",dg:1},()=>{const lb=LB();lb.tm={};Object.keys(lb.tr).forEach(k=>{if(lb.tr[k].src==="user")delete lb.tr[k]});sv();menu()});break;
   case"lic":licModal();break;
   case"seen":LB().news.forEach(n=>n.seen=true);sv();try{draw()}catch(_){}break;
   case"upd":await doUpd(true);break;
@@ -7889,6 +7906,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  }}catch(x){try{toast("Erreur : "+x.message)}catch(_){}}},true);
 document.addEventListener("change",e=>{const t=e.target;if(!t)return;
  if(t.dataset&&t.dataset.bibck!=null&&B.cmp){B.cmp.pick[t.dataset.bibck]=t.checked;return}
+ if(t.dataset&&t.dataset.bibmap&&B.cmp){const C=B.cmp;if(t.value){C.map[t.dataset.bibmap]=t.value;C.pick[t.dataset.bibmap]=false}else{delete C.map[t.dataset.bibmap];C.pick[t.dataset.bibmap]=true}drawCmp();return}
  if(t.dataset&&t.dataset.bibpi&&B.cmp){const C=B.cmp;openCmp(C.ref,C.id,+t.value);return}
  if(t.dataset&&t.dataset.bibopt==="auto"){LB().auto=t.checked;sv();return}
  if(t.id==="bibimp"){const f=t.files&&t.files[0];if(!f)return;f.text().then(async x=>{try{await importLib(x);msg("✅ Bibliothèque restaurée.");try{draw()}catch(_){}}catch(er){msg("⚠ "+er.message)}})}});
@@ -7899,7 +7917,7 @@ document.addEventListener("input",e=>{const t=e.target;if(!t)return;
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
 window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
-window.BIB={init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
+window.BIB={trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
 // vérification automatique, au plus 1 fois par jour, silencieuse
 setTimeout(async()=>{try{const lb=LB();if(!lb.auto||!navigator.onLine)return;if(lb.last&&Date.now()-lb.last.at<20*3600*1000)return;await init();const r=await checkUpdate(false);if(r.state==="updated"){try{toast("🆕 Bibliothèque V11 mise à jour")}catch(_){}try{draw()}catch(_){}}}catch(_){}},6000);
 })();
