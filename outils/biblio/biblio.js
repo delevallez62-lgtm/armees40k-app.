@@ -40,6 +40,7 @@ function index(){D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.f
   if(c.ext)Object.entries(c.ext).forEach(([k,e])=>{(ext[g]=ext[g]||{})[k]=e});
   (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
  D.units.forEach(u=>{if(!u.wp){const e=(ext[u._c]||{})[normN(u.n)];if(e)u.wp=e}});
+ D.units.forEach(u=>{if(u.ab)u.ab=u.ab.filter(a=>!/^\s*templar vows\b/i.test(a.n))});
  D.units.sort((a,b)=>a.n.localeCompare(b.n))}
 async function loadFromIdb(){const m=await idbGet("meta","manifest");if(!m)return false;const rows=await idbAll("chunks"),ch={};rows.forEach(r=>{ch[r.id]=JSON.parse(r.raw)});D.man=m.man;D.origin=m.origin||"";D.chunks=ch;index();return true}
 async function importEmbedded(){const em=window.__BIBLIO;if(!em)throw new Error("Aucune donnée intégrée");
@@ -421,6 +422,22 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  else if(a==="wadd"){const m=S.coll[b.dataset.r],am=m&&autoMatch(m);if(!am)return;const u=am.u,libW=[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))],aw=libW[+b.dataset.i];if(!aw)return;m.weapons=Array.isArray(m.weapons)?m.weapons:[];if(!m.weapons.some(x=>wSig(x)===wSig(aw))){m.weapons.push(clone(aw));sv();try{draw()}catch(_){}try{toast("Arme ajoutée à ta fiche ✓")}catch(_){}}}
 },true);
 
+/* ---------- aptitudes retirées partout (demande de l'utilisateur) ---------- */
+const BAN=/^\s*templar vows\b/i;
+window.BIBCLEAN=function(){let n=0;try{
+ const fix=p=>{if(!p||typeof p!=="object")return;
+  const hit=x=>BAN.test(String(x||""));
+  if((p.apt||"").split(",").some(hit)||(p.xab||[]).some(x=>hit(x&&x.n))||(p.text||[]).some(l=>hit(String(l).trim()))){
+   let parts=[];try{parts=window.abSplit?abSplit(p):[]}catch(_){}
+   if(parts.length&&parts.some(x=>hit(x.n)))p.text=parts.filter(x=>!hit(x.n)).map(x=>((x.n?x.n+" ":"")+x.b).trim()).filter(Boolean);
+   else p.text=(p.text||[]).filter(l=>!hit(String(l).trim()));
+   p.apt=(p.apt||"").split(",").map(t=>t.trim()).filter(t=>t&&!hit(t)).join(", ");
+   if(Array.isArray(p.xab))p.xab=p.xab.filter(x=>!hit(x&&x.n));
+   n++}
+  (p.subs||[]).forEach(fix)};
+ Object.values(S.coll||{}).forEach(fix);(S.lists||[]).forEach(l=>(l.units||[]).forEach(fix));
+ if(n)sv()}catch(e){try{console.error(e)}catch(_){}}return n};
+setTimeout(()=>{try{BIBCLEAN()}catch(_){}},800);
 /* ---------- créer une fiche de collection depuis la bibliothèque + fusion à l'import ---------- */
 const nnm=t=>String(t||"").replace(/\s+[x×]\s?\d+(?=\s|$)/i,"").toLowerCase().trim();
 const frName=en=>{const r=tName(en);return r.st==="ok"?r.t:(r.prop||r.t)};

@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2000);
+await p.evaluate(async()=>{await BIB.init();
+ const mk=(n)=>({ref:'t'+n,name:'Templier '+n,stats:{M:'6',E:'4',SV:'3+',PV:'2',CD:'6+',CO:'1'},weapons:[],equip:'',apt:'Templar Vows, Frappe Éclair',kw:'',fkw:'',text:['Templar Vows À chaque tour, choisissez un voeu. Les vœux durent jusqu\'au prochain tour.','Frappe Éclair Cette figurine peut tirer.'],xab:[{n:'Templar Vows',d:'x'}],pts:100,nb:0,subs:[]});
+ S.coll.t1=mk(1);S.lists=[{id:'L1',name:'T',units:[Object.assign(mk(2),{ref:'t1',subs:[Object.assign(mk(3),{ref:'t3'})]})]}];
+ S.coll.t1.text=S.coll.t1.text.slice();});
+const n=await p.evaluate(()=>BIBCLEAN());
+console.log('fiches nettoyées',n,JSON.stringify(await p.evaluate(()=>({c:S.coll.t1,l:S.lists[0].units[0].apt,s:S.lists[0].units[0].subs[0].apt,lib:BIB&&0})),null,0).slice(0,500));
+console.log('dans la biblio:',await p.evaluate(()=>{let n=0;(window.BIBALL?BIBALL():[]).forEach(()=>n++);return 'n/a'}));
+console.log(errs);await b.close()})();
