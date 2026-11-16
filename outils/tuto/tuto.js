@@ -77,89 +77,72 @@ function weaponsBlock(u){const ws=u.weapons||[];if(!ws.length)return`<p class="t
  <details class="tt-st2"><summary>Que veulent dire ces chiffres ?</summary>${WSTAT.map(s=>`<p><b>${s[0]}</b> — ${s[1]}</p>`).join("")}</details>`}
 function capsIn(){const seen=new Set(),out=[];ALL().forEach(u=>(u.weapons||[]).forEach(w=>String(w.caps||"").split(/,(?![^\[]*\])/).forEach(c=>{c=c.trim();if(!c)return;const k=nk(c.replace(/\s*\d+\+?$/,""));if(seen.has(k))return;seen.add(k);let r=null;try{r=window.encApi.find(c.replace(/\s*[\d]+\+?$/,"").replace(/\s+(non|Non).*$/,"").trim())}catch(_){}out.push(r?`<li><b>${E(c)}</b> — ${E(r.def)}</li>`:`<li><b>${E(c)}</b> — <span class="tt-miss">règle absente des données importées (lis la fiche de l'unité)</span></li>`)})));return out.slice(0,8)}
 const psyRe=/psychi/i;
-const STEPS=[
- {t:"Préparer la partie",ph:"Avant la bataille",
-  why:"Savoir comment une partie est organisée évite de se perdre ensuite.",
-  e:()=>{const L=LST(),ld=LD().STEPS;return`<p>Une partie se joue à <b>deux joueurs</b>, chacun avec son armée.</p>${rb("gen-phases")}<p>${ld[5]?"<b>"+E(ld[5][0])+"</b> — "+E(ld[5][1]):""}</p><p>${ld[7]?"<b>"+E(ld[7][0])+"</b> — "+E(ld[7][1]):""}</p>${rb("gen-objectifs")}<p>${ld[2]?"<b>"+E(ld[2][0])+"</b> — "+E(ld[2][1]):""}</p>${rb("gen-mesure")}
-   <div class="tt-ex"><b>Ton armée : ${E(L?L.name:"—")}</b><ul class="tt-ul">${UN().map(u=>`<li>${cn(u)} ${u.size?"× "+u.size:""} <span class="mu">— ${E(kwOf(u).slice(0,3).join(", ")||"")}</span></li>`).join("")}</ul></div>`},
-  doI:()=>["Installer la table et le décor comme l'indique la mission","Placer les objectifs","Avoir un mètre ruban gradué en pouces","Avoir des dés à six faces (D6)","Préparer tes figurines à côté de ta liste"],
-  i:()=>rb("gen-des")+rb("gen-effectif"),a:()=>rb("gen-attachees")+rb("gen-reserves")},
- {t:"Découvrir son armée",ph:"Tes unités",
-  why:"Tes exemples viendront de tes propres unités : mieux vaut les connaître avant de jouer.",
+const sh=(i)=>{const x=LD().STEPS[i];return x?`<p>${E(x[1])}</p>`:""};
+const hasPsy=()=>ALL().some(u=>psyRe.test((u.text||[]).join(" ")+" "+(u.apt||"")));
+const strt=(ph)=>stratsFor(ph)?`<p class="mu">Tu as ${stratsFor(ph)} stratagème${stratsFor(ph)>1?"s":""} utilisable${stratsFor(ph)>1?"s":""} pendant cette phase.</p>${phBtn(ph)}`:"";
+const BASE=[
+ {id:"prep",t:"Avant de commencer",ph:"La partie",
+  why:"Comprendre en 1 minute comment se déroule une partie.",
+  e:()=>{const m=missionOf(),L=LST();let h=`<p>Une partie, c'est <b>deux joueurs</b> qui jouent chacun leur tour avec leurs figurines sur une table.</p><p>Elle dure en général <b>5 rounds</b>. À la fin, <b>celui qui a le plus de points gagne</b>.</p>`;
+   if(m&&m.data){h+=`<div class="tt-ex"><b>Votre mission : ${E(m.data.nm)}</b><p>${E(m.data.d)}</p>${condHtml(m.data)?`<p><b>Comment marquer des points :</b></p>${condHtml(m.data)}`:""}</div>`}
+   else h+=`<p class="tt-miss">Aucune mission n'est enregistrée pour cette partie. Tu peux en choisir une dans « Missions & Layout ».</p><button class="b" data-tt="mis">🗺 Choisir une mission</button>`;
+   h+=`<p><b>Il te faut :</b> une table avec du décor, un mètre ruban en <b>pouces</b> (le signe "), des dés à 6 faces et tes figurines.</p><div class="tt-ex"><b>Ton armée : ${E(L?L.name:"—")}</b><ul class="tt-ul">${UN().map(u=>`<li>${cn(u)}${u.size?" × "+u.size:""}</li>`).join("")}</ul></div>`;return h},
+  doI:()=>["Installe la table, le décor et les objectifs comme la mission le demande","Pose tes figurines dans ta zone de déploiement","Pose ton mètre ruban et tes dés à portée de main"],
+  i:()=>rb("gen-phases")+rb("gen-objectifs")+rb("gen-mesure")+sh(2)+sh(3),a:()=>rb("gen-attachees")+rb("gen-reserves")},
+ {id:"army",t:"Découvre ton armée",ph:"Tes unités",
+  why:"Tes exemples viendront de tes propres figurines.",
   e:()=>{const us=UN(),t=T();if(!us.length)return`<p class="tt-miss">Cette armée ne contient aucune unité.</p>`;if(t.u>=us.length)t.u=0;const u=us[t.u];
-   return`<p>Unité ${t.u+1} sur ${us.length}. Je te les montre une par une, sans tout t'expliquer d'un coup.</p>${unitCard(u)}<h4>Ses armes</h4>${weaponsBlock(u)}<h4>Ses capacités</h4>${u.apt?`<p>${E(u.apt)}</p><p class="mu">Ouvre la fiche pour lire chaque capacité en détail.</p>`:`<p class="mu">Aucune capacité enregistrée.</p>`}
-   <div class="tt-nav"><button class="b" data-tt="uprev"${t.u?"":" disabled"}>◀ Unité précédente</button><button class="b" data-tt="fiche" data-i="${t.u}">📇 Ouvrir la fiche</button><button class="b p" data-tt="unext"${t.u<us.length-1?"":" disabled"}>Unité suivante ▶</button></div>`},
-  doI:()=>["Regarder le profil de chaque unité","Repérer leurs armes","Lire les capacités qui te semblent importantes"],
-  i:()=>{const c=capsIn();return c.length?`<h4>Capacités d'armes présentes dans ta liste</h4><ul class="tt-ul">${c.join("")}</ul>`:""},
-  a:()=>rb("gen-alloc")+rb("gen-invu")},
- {t:"Mission et déploiement",ph:"Avant la bataille",
-  why:"La mission dit comment marquer des points et où poser tes unités.",
-  e:()=>{const m=missionOf(),ld=LD().STEPS;let h="";
-   if(m&&m.data){h+=`<div class="tt-ex"><b>${E(m.cat.ic||"")} ${E(m.data.nm)}</b> <span class="mu">${E(m.cat.fr||"")}</span><p>${E(m.data.d)}</p></div><h4>Comment on marque des points</h4>${condHtml(m.data)||'<p class="mu">Cette mission ne liste pas de condition de score dans les données.</p>'}`;
-    const su=jp(m.data.setup);if(su.length)h+=`<h4>Règles de mise en place</h4><ul class="tt-ul">${su.map(x=>`<li>${E(typeof x==="string"?x:x.tx||x.t||JSON.stringify(x))}</li>`).join("")}</ul>`;else h+=`<p class="mu">Cette mission n'indique pas de règle de mise en place particulière dans les données.</p>`}
-   else h+=`<p class="tt-miss">Aucune mission n'est enregistrée pour cette partie : information non disponible. Ouvre « Missions & Layout » pour en choisir une.</p><button class="b" data-tt="mis">🗺 Ouvrir Missions & Layout</button>`;
-   h+=`<p>${ld[1]?"<b>"+E(ld[1][0])+"</b> — "+E(ld[1][1]):""}</p><p>${ld[2]?"<b>"+E(ld[2][0])+"</b> — "+E(ld[2][1]):""}</p><p>${ld[3]?"<b>"+E(ld[3][0])+"</b> — "+E(ld[3][1]):""}</p>${rb("gen-objectifs")}`;
-   if(window.__sxd&&window.__sxd.length)h+=`<p class="mu">Les objectifs secondaires se suivent dans l'onglet Score (Bataille).</p>`;return h},
-  doI:()=>["Choisir ou confirmer la mission","Installer le terrain et les objectifs","Déployer tes unités dans ta zone de déploiement","Ton adversaire déploie les siennes"],
-  i:()=>rb("gen-obj-sec")+rb("gen-controle"),a:()=>rb("gen-reserves")+rb("gen-arrivee")},
- {t:"Début du tour",ph:"Déroulement d'un tour",
-  why:"Chaque tour suit toujours le même ordre : le connaître t'évite d'oublier quelque chose.",
-  e:()=>`${rb("gen-phases")}<ol class="tt-ol">${LD().PH.map(p=>`<li><b>${E(String(p[0]).replace(/^\d\s*·\s*/,""))}</b></li>`).join("")}</ol><p>Je te présente chaque phase au moment où tu y arrives. Quand tu as fini une phase, touche « Étape terminée ».</p>`,
-  doI:()=>["Savoir quel joueur est actif","Suivre le round dans l'onglet Score"],
-  i:()=>rb("gen-strat"),a:()=>""},
- {t:"Phase de Commandement",ph:"Commandement",pk:"Commandement",
-  why:"C'est le moment des ressources : tu gagnes des PC et tu vérifies le moral de tes unités.",
-  e:()=>`${learnPh(0)}${rb("gen-ph-cmd")}${rb("gen-pc")}${abilIn(/phase\s+de\s+Commandement/i,"Capacités de ta liste qui parlent de cette phase")}${phBtn("Commandement")}`,
-  doI:()=>["Gagner 1 PC (chaque joueur)","Faire les jets d'ébranlement si nécessaire","Utiliser les aptitudes de Commandement de tes unités"],
-  i:()=>rb("gen-ebranle")+rb("gen-cd"),a:()=>rb("gen-doublons")+rb("gen-aura")},
- {t:"Phase de Mouvement",ph:"Mouvement",pk:"Mouvement",
-  why:"Tu places tes unités pour pouvoir tirer, charger et prendre les objectifs.",
+   return`<p>Unité ${t.u+1} sur ${us.length}. Touche un chiffre pour savoir ce qu'il veut dire.</p>${unitCard(u)}<h4>Ses armes</h4>${weaponsBlock(u)}${u.apt?`<h4>Ses capacités</h4><p>${E(u.apt)}</p><p class="mu">La fiche de l'unité explique chacune d'elles.</p>`:""}
+   <div class="tt-nav"><button class="b" data-tt="uprev"${t.u?"":" disabled"}>◀ Précédente</button><button class="b" data-tt="fiche" data-i="${t.u}">📇 Fiche</button><button class="b p" data-tt="unext"${t.u<us.length-1?"":" disabled"}>Suivante ▶</button></div>`},
+  doI:()=>["Regarde le profil de chaque unité","Repère leurs armes : on s'en servira pour tirer et combattre"],
+  i:()=>{const c=capsIn();return(c.length?`<h4>Capacités d'armes de ta liste</h4><ul class="tt-ul">${c.join("")}</ul>`:"")+rb("gen-blessure")+rb("gen-svg")},a:()=>rb("gen-alloc")+rb("gen-invu")},
+ {id:"turn",t:"Un tour, c'est 5 phases",ph:"Phase 1 · Commandement",pk:"Commandement",
+  why:"Chaque tour suit toujours le même ordre : tu n'as qu'à le suivre.",
+  e:()=>`<p>À ton tour, tu joues <b>5 phases, toujours dans cet ordre</b> :</p><ol class="tt-ol"><li><b>Commandement</b> — tu gagnes des points</li><li><b>Mouvement</b> — tu déplaces tes unités</li><li><b>Tir</b> — tes unités tirent</li><li><b>Charge</b> — tes unités foncent au contact</li><li><b>Combat</b> — corps à corps</li></ol><p>Je t'explique chaque phase quand tu y arrives.</p><div class="tt-ex"><b>Phase de Commandement (maintenant)</b><p>Chaque joueur gagne <b>1 point de commandement (PC)</b>. Les PC servent à utiliser des <b>stratagèmes</b> : des astuces qui donnent un petit avantage.</p></div>${abilIn(/phase\s+de\s+Commandement/i,"Dans ta liste, ces capacités se jouent à cette phase")}${strt("Commandement")}`,
+  doI:()=>["Prends 1 PC (ton adversaire aussi)","Note-le dans l'onglet Score","Rien d'autre à faire pour l'instant : passe à la suite"],
+  i:()=>learnPh(0)+rb("gen-ph-cmd")+rb("gen-pc")+rb("gen-ebranle")+rb("gen-cd"),a:()=>rb("gen-doublons")+rb("gen-aura")+rb("gen-strat")},
+ {id:"move",t:"Mouvement",ph:"Phase 2 · Mouvement",pk:"Mouvement",
+  why:"Tu rapproches tes unités des objectifs et des ennemis.",
   e:()=>{const us=ALL().filter(u=>u.stats&&num(u.stats.M)!=null).sort((a,b)=>num(b.stats.M)-num(a.stats.M));let ex="";
-   if(us.length){const f=us[0],s=us[us.length-1];ex=`<div class="tt-ex"><b>Exemple avec ta liste</b><p>${cn(f)} a M ${E(f.stats.M)} : mouvement normal jusqu'à <b>${num(f.stats.M)}"</b> ; en avançant, <b>${num(f.stats.M)}" + 1D6"</b>.${us.length>1?` À l'inverse, ${cn(s)} (M ${E(s.stats.M)}) se déplace moins vite : jusqu'à ${num(s.stats.M)}".`:""}</p></div>`}
-   return`${learnPh(1)}${rb("gen-ph-mvt")}${rb("gen-avance")}${rb("gen-coherence")}${rb("gen-mesure")}${ex}${abilIn(/phase\s+de\s+Mouvement/i,"Capacités de ta liste qui parlent de cette phase")}${phBtn("Mouvement")}`},
-  doI:()=>["Choisir une option pour chaque unité (rester immobile, mouvement normal, avance…)","Mesurer en pouces depuis le socle","Vérifier la cohésion de chaque unité après son mouvement"],
-  i:()=>rb("gen-retraite")+rb("gen-engage"),a:()=>rb("gen-transport")+rb("gen-debarq")+rb("gen-reserves")},
- {t:"Phase psychique (si elle existe)",ph:"Psychique ?",skip:true,
-  why:"Je vérifie ce que dit ta version des règles avant de t'expliquer quoi que ce soit.",
-  e:()=>{const ph=LD().PH.map(p=>String(p[0]).replace(/^\d\s*·\s*/,"")),has=ph.some(x=>psyRe.test(x));
-   let h=has?`<p>Une phase psychique est listée dans les règles importées.</p>`:`<p>Dans les règles importées dans HAMMER (V11), un tour compte ces phases : <b>${E(ph.join(", "))}</b>. <b>Il n'y a pas de phase psychique séparée</b> : je n'en invente pas.</p>${rb("gen-phases")}`;
-   const a=abilIn(psyRe,"Aptitudes psychiques trouvées dans ta liste");h+=a||`<p class="mu">Aucune unité de ton armée n'a d'aptitude psychique : cette étape ne te concerne pas, tu peux continuer.</p>`;
-   if(a)h+=`<p class="mu">Ces aptitudes se jouent selon le texte écrit sur leur fiche : ouvre la fiche de l'unité pour lire exactement quand et comment les utiliser.</p>`;return h},
-  doI:()=>["Lire le texte des aptitudes psychiques de tes unités s'il y en a","Sinon, passer à l'étape suivante"],
-  i:()=>rb("arm-psy"),a:()=>""},
- {t:"Phase de Tir",ph:"Tir",pk:"Tir",
-  why:"C'est la première phase où l'on lance beaucoup de dés : on la découpe en 9 petits gestes.",
-  e:()=>{const p=pickW(false),seq=[
-   ["Choisir une unité qui va tirer",rb("gen-ph-tir")],
-   ["Vérifier quelles armes peuvent tirer",`<p>Sur la fiche, les armes ont une <b>portée</b> en pouces. Celles marquées « Mêlée » ne tirent pas.</p>${p?`<p>Ex. : ${cn(p.u)} a <b>${E(p.w.name)}</b> (portée ${E(p.w.range)}).</p>`:""}`],
-   ["Choisir une cible valide",learnPh(2)],
-   ["Vérifier la portée et la ligne de vue",`${rb("gen-vis")}<p>Mesure depuis le socle de ta figurine jusqu'à celui de la cible.</p>`],
-   ["Déterminer le nombre d'attaques",`<p>La valeur <b>A</b> de l'arme dit combien d'attaques elle fait, par figurine qui tire.</p>`],
-   ["Jets pour toucher",rb("gen-touche")],
-   ["Jets pour blesser",`${rb("gen-blessure")}<table class="tt-t">${LD().WT.map(r=>`<tr><td>${E(r[0])}</td><td><b>${E(r[1])}</b></td></tr>`).join("")}</table>`],
-   ["Sauvegardes",rb("gen-svg")],
-   ["Appliquer les dégâts",rb("gen-degats")]];
-   return`<ol class="tt-seq">${seq.map((s,i)=>`<li><details${i===0?" open":""}><summary><span class="tt-n">${i+1}</span>${s[0]}</summary><div>${s[1]}</div></details></li>`).join("")}</ol>${exAttack(false)}${phBtn("Tir")}`},
-  doI:()=>["Choisir une unité éligible","Choisir sa cible (visible, à portée, non engagée)","Lancer les dés : toucher, blesser","Faire faire les sauvegardes par l'adversaire","Retirer les figurines détruites"],
-  i:()=>rb("gen-crit")+rb("gen-invu")+rb("gen-bm")+rb("gen-alloc"),a:()=>rb("gen-tir-juge")+rb("arm-assaut")+rb("arm-lourd")},
- {t:"Phase de Charge",ph:"Charge",pk:"Charge",
-  why:"La charge amène tes unités au contact pour pouvoir combattre au corps à corps.",
+   if(us.length){const f=us[0];ex=`<div class="tt-ex"><b>Avec ta liste</b><p>${cn(f)} a <b>M ${E(f.stats.M)}</b> : elle peut se déplacer de <b>${num(f.stats.M)}"</b>. Si elle <b>avance</b> : ${num(f.stats.M)}" + 1 dé (D6) en plus.</p></div>`}
+   return`<p>Pour <b>chaque unité</b>, choisis une seule option :</p><ul class="tt-ul"><li>🧍 <b>Rester sur place</b></li><li>🚶 <b>Mouvement normal</b> : jusqu'à son M, en pouces</li><li>🏃 <b>Avancer</b> : son M + 1 dé (D6). Attention : une unité qui avance ne tire qu'avec ses armes « Assaut ».</li></ul><p>Mesure depuis le <b>socle</b> des figurines. Après son mouvement, chaque figurine doit rester <b>à 2" au moins d'une autre figurine de son unité</b> (l'unité reste groupée).</p>${ex}${abilIn(/phase\s+de\s+Mouvement/i,"Dans ta liste, ces capacités se jouent à cette phase")}${strt("Mouvement")}`},
+  doI:()=>["Choisis une option pour chaque unité","Déplace tes figurines en mesurant en pouces","Vérifie que chaque unité est bien groupée"],
+  i:()=>learnPh(1)+rb("gen-ph-mvt")+rb("gen-avance")+rb("gen-coherence")+rb("gen-retraite"),a:()=>rb("gen-transport")+rb("gen-debarq")+rb("gen-reserves")},
+ {id:"shoot",t:"Tir",ph:"Phase 3 · Tir",pk:"Tir",
+  why:"C'est ta première attaque : on la fait en 6 gestes simples.",
+  e:()=>`<ol class="tt-seq">${[
+   ["Choisis une unité qui tire","Une unité qui n'est pas au corps à corps et qui n'a pas avancé."],
+   ["Choisis une cible","Une unité ennemie que tu <b>vois</b>, qui est <b>à portée</b> de l'arme (la portée est en pouces)."],
+   ["Lance un dé par attaque","Le nombre d'attaques, c'est la valeur <b>A</b>. Une attaque touche si le dé est <b>égal ou supérieur</b> à la CT de l'arme."],
+   ["Pour chaque touche, lance pour blesser","On compare la <b>Force</b> de l'arme à l'<b>Endurance</b> de la cible : "+LD().WT.map(r=>`${E(r[0])} → <b>${E(r[1])}</b>`).join(" ; ")+"."],
+   ["L'adversaire fait ses sauvegardes","Il lance un dé par blessure. La <b>PA</b> de l'arme fait baisser son dé. S'il atteint sa Sauvegarde, l'attaque est arrêtée."],
+   ["Retire les dégâts","Chaque attaque non arrêtée retire des points de vie (la valeur <b>D</b> de l'arme)."]
+  ].map((s,i)=>`<li><span class="tt-n">${i+1}</span><div><b>${s[0]}</b><br>${s[1]}</div></li>`).join("")}</ol>${exAttack(false)}${strt("Tir")}`,
+  doI:()=>["Choisis une unité et une cible","Lance les dés : toucher, puis blesser","Fais faire les sauvegardes, puis retire les figurines détruites"],
+  i:()=>learnPh(2)+rb("gen-ph-tir")+rb("gen-vis")+rb("gen-touche")+rb("gen-blessure")+rb("gen-svg")+rb("gen-degats")+rb("gen-crit"),a:()=>rb("gen-invu")+rb("gen-bm")+rb("gen-alloc")+rb("gen-tir-juge")+rb("arm-assaut")+rb("arm-lourd")},
+ {id:"charge",t:"Charge",ph:"Phase 4 · Charge",pk:"Charge",
+  why:"Pour pouvoir combattre au corps à corps, il faut d'abord atteindre l'ennemi.",
   e:()=>{const p=pickW(true),m=p?p.u:ALL()[0];
-   return`${learnPh(3)}${rb("gen-ph-charge")}${rb("gen-engage")}${m?`<div class="tt-ex"><b>Exemple avec ta liste</b><p>Si ${cn(m)} est à 12" ou moins d'un ennemi, elle peut déclarer une charge : tu lances <b>2D6</b>, et c'est la distance maximale qu'elle peut parcourir pour atteindre l'ennemi.</p></div>`:""}${phBtn("Charge")}`},
-  doI:()=>["Choisir une unité qui peut charger","Annoncer la ou les cibles (ennemis à 12\" ou moins)","Lancer 2D6 pour la distance de charge","Déplacer l'unité si la distance suffit"],
-  i:()=>rb("gen-engag"),a:()=>rb("gen-danger")},
- {t:"Phase de Combat",ph:"Combat",pk:"Combat",
-  why:"Les unités au contact se battent : tu retrouves les mêmes jets que pour le tir.",
-  e:()=>`${learnPh(4)}${rb("gen-ph-combat")}${exAttack(true)}${phBtn("Combat")}`,
-  doI:()=>["Faire combattre chaque unité engagée (celles qui ont chargé d'abord)","Choisir une arme de mêlée par figurine","Jets pour toucher, blesser, sauvegardes, dégâts","Consolider si les règles le permettent"],
-  i:()=>rb("gen-insertion")+rb("gen-consol"),a:()=>rb("gen-debord")},
- {t:"Fin du tour et score",ph:"Fin du tour",
-  why:"On compte les points, puis le tour passe à l'autre joueur.",
-  e:()=>{const m=missionOf(),ld=LD().STEPS;return`${m&&m.data?`<h4>Points de la mission « ${E(m.data.nm)} »</h4>${condHtml(m.data)}`:`<p class="tt-miss">Aucune mission enregistrée : je ne peux pas te donner ses conditions de score.</p>`}${rb("gen-controle")}<p>${ld[6]?"<b>"+E(ld[6][0])+"</b> — "+E(ld[6][1]):""}</p><p>${ld[7]?"<b>"+E(ld[7][0])+"</b> — "+E(ld[7][1]):""}</p><p>Le suivi des points, des PC et des rounds se fait dans l'onglet <b>Score</b> de HAMMER.</p><button class="b" data-tt="score">🏆 Ouvrir le Score</button>`},
-  doI:()=>["Compter les objectifs contrôlés","Noter les points dans l'onglet Score","Passer au tour de l'autre joueur, puis au round suivant","À la fin du dernier round, comparer les scores"],
-  i:()=>rb("gen-obj-sec"),a:()=>""}
+   return`<p>Une unité qui est <b>à 12" ou moins</b> d'un ennemi peut <b>déclarer une charge</b>.</p><ol class="tt-ol"><li>Annonce l'unité ennemie visée.</li><li>Lance <b>2 dés (2D6)</b> : le total est la distance maximale que tu peux parcourir.</li><li>Si tu peux atteindre l'ennemi, déplace ton unité à son contact.</li></ol>${m?`<div class="tt-ex"><b>Avec ta liste</b><p>Si ${cn(m)} est à 12" ou moins d'un ennemi, tu peux tenter la charge.</p></div>`:""}${strt("Charge")}`},
+  doI:()=>["Choisis une unité à 12\" ou moins d'un ennemi","Lance 2D6 et compare à la distance","Déplace-la au contact si le jet suffit"],
+  i:()=>learnPh(3)+rb("gen-ph-charge")+rb("gen-engage")+rb("gen-engag"),a:()=>rb("gen-danger")},
+ {id:"fight",t:"Combat",ph:"Phase 5 · Combat",pk:"Combat",
+  why:"Les unités au contact se battent : c'est comme le tir, mais avec les armes de mêlée.",
+  e:()=>`<p>Toutes les unités <b>au contact</b> d'un ennemi combattent, <b>les deux joueurs</b>. Celles qui ont chargé ce tour combattent <b>en premier</b>, puis on alterne.</p><p>Chaque figurine utilise <b>une seule arme de mêlée</b>. Ensuite, tu retrouves les mêmes jets que pour le tir : toucher, blesser, sauvegardes, dégâts.</p>${exAttack(true)}${strt("Combat")}`,
+  doI:()=>["Fais combattre chaque unité au contact (celles qui ont chargé d'abord)","Pour chaque arme de mêlée : toucher, blesser, sauvegardes, dégâts"],
+  i:()=>learnPh(4)+rb("gen-ph-combat")+rb("gen-insertion")+rb("gen-consol"),a:()=>rb("gen-debord")},
+ {id:"end",t:"Fin du tour et score",ph:"Fin du tour",
+  why:"On compte les points, puis c'est à l'autre joueur.",
+  e:()=>{const m=missionOf();return`<p>Ton tour est fini. On regarde <b>les objectifs</b> : le joueur dont les figurines ont le plus de <b>CO</b> (Contrôle d'objectif) à portée d'un objectif le contrôle.</p>${m&&m.data?`<div class="tt-ex"><b>Points de « ${E(m.data.nm)} »</b>${condHtml(m.data)||'<p class="mu">Pas de condition de score listée.</p>'}</div>`:`<p class="tt-miss">Aucune mission enregistrée : je ne peux pas te donner ses conditions de score.</p>`}<p>Ensuite, <b>l'autre joueur joue son tour</b>, puis un nouveau round commence. Après le dernier round, <b>on compare les scores</b>.</p><p>Note tes points dans l'onglet <b>Score</b> de HAMMER.</p><button class="b" data-tt="score">🏆 Ouvrir le Score</button>`},
+  doI:()=>["Compte les objectifs que tu contrôles","Note les points dans Score","Passe le tour à ton adversaire"],
+  i:()=>sh(5)+sh(6)+sh(7)+rb("gen-controle"),a:()=>rb("gen-obj-sec")}
 ];
-const N=STEPS.length;
+const PSY={id:"psy",t:"Aptitudes psychiques",ph:"Dans ta liste",why:"Certaines de tes unités ont des pouvoirs psychiques.",
+ e:()=>`<p>Dans les règles de HAMMER (V11), il n'y a <b>pas de phase psychique</b> à part. Les pouvoirs psychiques s'utilisent <b>pendant les phases habituelles</b>, comme l'indique le texte de l'unité.</p>${abilIn(psyRe,"Pouvoirs trouvés dans ta liste")}<p class="mu">Ouvre la fiche de l'unité pour lire quand et comment s'en servir.</p>`,
+ doI:()=>["Lis le texte des pouvoirs de l'unité concernée"],i:()=>rb("arm-psy"),a:()=>""};
+const STEPS=[];function buildSteps(){const a=BASE.slice();if(hasPsy())a.splice(4,0,PSY);STEPS.length=0;a.forEach(x=>STEPS.push(x));return STEPS}
+buildSteps();
+let N=STEPS.length;const upd=()=>{buildSteps();N=STEPS.length;const t=T();if(t.step>=N)t.step=N-1};
 /* ---------- questions ---------- */
 const QP=[
  ["Pourquoi dois-je faire un jet pour blesser ?",()=>rb("gen-blessure")+`<table class="tt-t">${LD().WT.map(r=>`<tr><td>${E(r[0])}</td><td><b>${E(r[1])}</b></td></tr>`).join("")}</table>`+exAttack(false)],
@@ -173,23 +156,23 @@ const QP=[
 function search(q){const k=nk(q);if(k.length<2)return[];const ws=k.split(" ").filter(w=>w.length>1);return Object.values(RU()).map(r=>{const n=nk(r.n+" "+(r.al||[]).join(" ")),d=nk(r.def||"");let s=0;ws.forEach(w=>{if(n.includes(w))s+=3;if(d.includes(w))s+=1});return{r,s}}).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,6).map(x=>x.r)}
 /* ---------- interface ---------- */
 const css=`
-.tt-card{border:2px solid #f0b429;border-radius:14px;padding:12px;margin:0 0 14px;background:linear-gradient(145deg,rgba(240,180,41,.12),transparent)}
-.tt-card h3{margin:0 0 2px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#f0b429}.tt-card h4{margin:2px 0 6px;font-size:18px}
+.tt-card{border:2px solid var(--ac,#f0b429);border-radius:14px;padding:12px;margin:0 0 14px;background:linear-gradient(145deg,color-mix(in srgb,var(--ac,#f0b429) 14%,transparent),transparent)}
+.tt-card h3{margin:0 0 2px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ac,#f0b429)}.tt-card h4{margin:2px 0 6px;font-size:18px}
 .tt-card p{margin:6px 0}.tt-card .b{width:100%;min-height:44px;margin-top:6px}
 .tt-ov{position:fixed;inset:0;z-index:44;background:rgba(5,12,9,.7);display:flex;align-items:flex-end;justify-content:center}
 .tt-pn{background:var(--card,#16211b);color:var(--tx,#e6efe9);border-radius:18px 18px 0 0;width:min(560px,100%);max-height:92vh;overflow:auto;padding:16px;box-sizing:border-box}
 .tt-pn h2{margin:0 0 6px;font-size:21px}.tt-pn select{width:100%;margin:6px 0;min-height:44px}
 .tt-pn .b,.tt-card .b{min-height:42px}.tt-sheet .b{min-height:38px}
-.tt-pill{position:fixed;left:8px;right:8px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:17;max-width:560px;margin:0 auto;display:flex;align-items:center;gap:8px;background:#f0b429;color:#1b1500;border-radius:16px;padding:9px 12px;box-shadow:0 6px 22px rgba(0,0,0,.45);font-weight:700;cursor:pointer;box-sizing:border-box}
+.tt-pill{position:fixed;left:8px;right:8px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:17;max-width:560px;margin:0 auto;display:flex;align-items:center;gap:8px;background:var(--ac,#f0b429);color:#141008;border-radius:16px;padding:9px 12px;box-shadow:0 6px 22px rgba(0,0,0,.45);font-weight:700;cursor:pointer;box-sizing:border-box}
 .tt-pill span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tt-pill i{font-style:normal}
-.tt-sheet{position:fixed;left:0;right:0;bottom:calc(60px + env(safe-area-inset-bottom,0px));top:4vh;z-index:18;max-width:600px;margin:0 auto;background:var(--card,#16211b);color:var(--tx,#e6efe9);border:2px solid #f0b429;border-radius:18px 18px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.55);box-sizing:border-box}
+.tt-sheet{position:fixed;left:0;right:0;bottom:calc(60px + env(safe-area-inset-bottom,0px));top:4vh;z-index:18;max-width:600px;margin:0 auto;background:var(--card,#16211b);color:var(--tx,#e6efe9);border:2px solid var(--ac,#f0b429);border-radius:18px 18px 0 0;display:flex;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.55);box-sizing:border-box}
 .tt-h{padding:8px 12px 4px;border-bottom:1px solid var(--bd,#27382f)}.tt-top{display:flex;align-items:center;gap:8px}.tt-top b{flex:1;min-width:0;font-size:16px}
 .tt-top .b{min-height:36px;padding:4px 10px}
-.tt-prog{display:flex;gap:3px;margin:8px 0 2px}.tt-prog button{flex:1;height:10px;min-width:0;border:0;border-radius:5px;background:var(--bd,#27382f);padding:0;cursor:pointer}.tt-prog button.dn{background:#2e9d6b}.tt-prog button.on{background:#f0b429;height:14px;margin-top:-2px}
+.tt-prog{display:flex;gap:3px;margin:8px 0 2px}.tt-prog button{flex:1;height:10px;min-width:0;border:0;border-radius:5px;background:var(--bd,#27382f);padding:0;cursor:pointer}.tt-prog button.dn{background:#2e9d6b}.tt-prog button.on{background:var(--ac,#f0b429);height:14px;margin-top:-2px}
 .tt-ph{font-size:12px;color:var(--mu,#8fa398)}
-.tt-lv{display:flex;gap:6px;margin:6px 0 0}.tt-lv button{flex:1;min-height:30px;border:1px solid var(--bd,#27382f);border-radius:10px;background:transparent;color:inherit;font:inherit;font-size:12.5px;cursor:pointer;padding:0 4px}.tt-lv button.on{background:#f0b429;color:#1b1500;border-color:#f0b429;font-weight:700}
-.tt-body{flex:1;overflow:auto;padding:8px 12px;min-height:0;padding-right:36px}.tt-body h4{margin:14px 0 4px;color:#f0b429}.tt-why{background:rgba(240,180,41,.12);border-left:4px solid #f0b429;border-radius:8px;padding:7px 10px;margin:0 0 8px}
-.tt-rule{border:1px solid var(--bd,#27382f);border-radius:10px;padding:6px 10px;margin:8px 0;background:rgba(127,127,127,.06)}.tt-rule b{color:#f0b429}.tt-rule p{margin:3px 0 0}.tt-lr{border-style:dashed}
+.tt-lv{display:flex;gap:6px;margin:6px 0 0}.tt-lv button{flex:1;min-height:30px;border:1px solid var(--bd,#27382f);border-radius:10px;background:transparent;color:inherit;font:inherit;font-size:12.5px;cursor:pointer;padding:0 4px}.tt-lv button.on{background:var(--ac,#f0b429);color:#141008;border-color:var(--ac,#f0b429);font-weight:700}
+.tt-body{flex:1;overflow:auto;padding:8px 12px;min-height:0;padding-right:36px}.tt-body h4{margin:14px 0 4px;color:var(--ac,#f0b429)}.tt-why{background:color-mix(in srgb,var(--ac,#f0b429) 14%,transparent);border-left:4px solid var(--ac,#f0b429);border-radius:8px;padding:7px 10px;margin:0 0 8px}
+.tt-rule{border:1px solid var(--bd,#27382f);border-radius:10px;padding:6px 10px;margin:8px 0;background:rgba(127,127,127,.06)}.tt-rule b{color:var(--ac,#f0b429)}.tt-rule p{margin:3px 0 0}.tt-lr{border-style:dashed}
 .tt-miss{color:#e0a030;font-size:13.5px}.tt-ex{border:1px solid #2e9d6b;background:rgba(46,157,107,.1);border-radius:10px;padding:8px 10px;margin:10px 0}
 .tt-do{margin:6px 0;padding-left:20px}.tt-ul{margin:6px 0;padding-left:20px}.tt-ol{margin:6px 0;padding-left:22px}.tt-body p{margin:6px 0}
 .tt-foot{display:flex;gap:8px;flex-wrap:wrap;padding:8px 12px 10px;border-top:1px solid var(--bd,#27382f);background:var(--card,#16211b)}.tt-foot .b{flex:1 1 40%;min-width:0}
@@ -198,68 +181,65 @@ const css=`
 .tt-uc{border:1px solid var(--bd,#27382f);border-radius:12px;padding:8px 10px;margin:8px 0}.tt-uh{font-size:16px}
 .tt-sg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0}
 .tt-st{border:1px solid var(--bd,#27382f);border-radius:10px;text-align:center;background:var(--bg,#0d1511)}.tt-st>summary{list-style:none;cursor:pointer;padding:6px 2px;min-height:40px}.tt-st>summary::-webkit-details-marker{display:none}
-.tt-st i{display:block;font-style:normal;font-size:11px;color:var(--mu,#8fa398)}.tt-st b{font-size:20px;color:#f0b429}.tt-st[open]{grid-column:1/-1;text-align:left}.tt-st[open]>summary{text-align:center}.tt-sx{padding:0 10px 8px}
-.tt-hint{font-size:12px}.tt-w{margin:6px 0}.tt-wr{border-top:1px solid var(--bd,#27382f);padding:5px 0}.tt-wr span{display:block;font-size:13px;color:var(--mu,#8fa398)}.tt-wr small{display:block;font-size:12px;color:#f0b429}
-.tt-st2{margin:6px 0}.tt-st2 summary{cursor:pointer;color:#f0b429}
+.tt-st i{display:block;font-style:normal;font-size:11px;color:var(--mu,#8fa398)}.tt-st b{font-size:20px;color:var(--ac,#f0b429)}.tt-st[open]{grid-column:1/-1;text-align:left}.tt-st[open]>summary{text-align:center}.tt-sx{padding:0 10px 8px}
+.tt-hint{font-size:12px}.tt-w{margin:6px 0}.tt-wr{border-top:1px solid var(--bd,#27382f);padding:5px 0}.tt-wr span{display:block;font-size:13px;color:var(--mu,#8fa398)}.tt-wr small{display:block;font-size:12px;color:var(--ac,#f0b429)}
+.tt-st2{margin:6px 0}.tt-st2 summary{cursor:pointer;color:var(--ac,#f0b429)}
 .tt-seq{list-style:none;margin:6px 0;padding:0}.tt-seq li{margin:5px 0}.tt-seq details{border:1px solid var(--bd,#27382f);border-radius:10px;padding:2px 8px}.tt-seq summary{cursor:pointer;min-height:38px;display:flex;align-items:center;gap:8px;font-weight:600}
-.tt-n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#f0b429;color:#1b1500;font-size:13px;flex:none}
+.tt-n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ac,#f0b429);color:#141008;font-size:13px;flex:none}
 .tt-t{border-collapse:collapse;width:100%;margin:6px 0}.tt-t td{border-bottom:1px solid var(--bd,#27382f);padding:4px 6px}
 .tt-q input{width:100%;min-height:44px;box-sizing:border-box}.tt-qp{display:flex;flex-direction:column;gap:6px;margin:8px 0}.tt-qp .b{text-align:left;min-height:44px;white-space:normal}
-.tt-lh{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:45;max-width:560px;margin:0 auto;background:#f0b429;color:#1b1500;border-radius:12px;padding:8px 12px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.5);box-sizing:border-box}
+.tt-opt{display:flex;align-items:center;gap:8px;margin:8px 0;padding:8px 10px;border:2px solid var(--ac,#f0b429);border-radius:12px;background:color-mix(in srgb,var(--ac,#f0b429) 12%,transparent);font-size:14px;cursor:pointer}.tt-opt input{width:22px;height:22px;flex:none}
+.tt-lh{position:fixed;left:8px;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:45;max-width:560px;margin:0 auto;background:var(--ac,#f0b429);color:#141008;border-radius:12px;padding:8px 12px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.5);box-sizing:border-box}
 .tt-done{display:inline-block;background:#2e9d6b;color:#fff;border-radius:99px;padding:0 8px;font-size:11.5px;margin-left:6px}
 `;
 function ensureCss(){if(document.getElementById("ttcss"))return;const s=document.createElement("style");s.id="ttcss";s.textContent=css;document.head.appendChild(s)}
 function box(id){let b=document.getElementById(id);if(!b){b=document.createElement("div");b.id=id;document.body.appendChild(b)}return b}
 const running=()=>{const t=T();return t.on&&t.phase==="run"&&S.pm&&S.pm===t.list&&LST()};
 /* carte dans « Apprendre à jouer » */
-function card(){const t=T(),L=LST(),run=t.phase==="run"&&L,fin=run&&!(S.pm&&S.pm===t.list);
- let b;if(t.on&&run&&!fin)b=`<p class="mu">Partie en cours avec <b>${E(L.name)}</b> · étape ${t.step+1} / ${N}.</p><button class="b p" data-tt="resume">▶ Reprendre le tutoriel</button><button class="b" data-tt="reset">↺ Recommencer</button>`;
- else if(run&&t.step>0&&!fin)b=`<p class="mu">Tutoriel en pause à l'étape ${t.step+1} / ${N} (${E(STEPS[t.step].t)}).</p><button class="b p" data-tt="resume">▶ Reprendre</button><button class="b" data-tt="reset">↺ Recommencer</button>`;
- else b=`<button class="b p" data-tt="open">🎓 Commencer une partie tutorielle</button>${t.step>0&&L?`<p class="mu">Dernier tutoriel : étape ${t.step+1} / ${N}. <button class="b" data-tt="open" style="width:auto;margin:0">Relancer</button></p>`:""}`;
+function card(){const t=T(),L=LST(),live=!!(L&&S.pm&&S.pm===t.list&&t.phase==="run");let b;
+ if(live)b=`<p class="mu">Partie en cours avec <b>${E(L.name)}</b> · étape ${t.step+1} / ${N}.</p><button class="b p" data-tt="resume">▶ ${t.on?"Ouvrir le guide":"Reprendre le tutoriel"}</button><button class="b" data-tt="reset">↺ Recommencer le guide</button>`;
+ else b=`<button class="b p" data-tt="start">🎓 Commencer une partie tutorielle</button><p class="mu">Tu lances une partie comme d'habitude (mêmes écrans que le Mode jeu), avec le guide en plus.</p>`;
  return`<section class="tt-card"><h3>Premières parties</h3><h4>Mode partie tutorielle</h4><p>Découvrez Warhammer 40 000 en réalisant votre première partie. HAMMER vous accompagne à chaque étape, vous explique les règles, vous montre quoi faire et vous aide à comprendre le déroulement d'une bataille.</p>${b}</section>`}
-function setupModal(){ensureCss();const o=box("ttm"),t=T(),ls=S.lists||[],e=easiest();
- const sel=t.list&&ls.some(l=>l.id===t.list)?t.list:(ls.some(l=>l.id===S.cur)?S.cur:(ls[0]||{}).id);
- const L=ls.find(l=>l.id===sel);
- o.innerHTML=`<div class="tt-ov" data-tt="bg"><div class="tt-pn"><h2>🎓 Partie tutorielle</h2><p>Tu joues une vraie partie avec <b>ta propre armée</b>, et HAMMER t'accompagne étape par étape : ${N} étapes, du déploiement à la fin du tour.</p>
- ${ls.length?`<label>Mon armée<select id="ttl">${ls.map(l=>`<option value="${l.id}"${l.id===sel?" selected":""}>${E(l.name)} (${(l.units||[]).length} unités)</option>`).join("")}</select></label>${L?`<p class="mu">${(L.units||[]).map(u=>E(u.name)).join(", ")}</p>`:""}`:`<p class="tt-miss">Tu n'as encore aucune armée enregistrée : importe-en une pour commencer.</p>`}
- <button class="b" data-tt="imp">📥 Importer une armée (PDF ou texte)</button>
- ${e?`<h4>Scénario conseillé pour débuter</h4><p><b>${E(e.m.nm)}</b> — ${E(e.m.d)}</p><p class="mu">Choisie parce qu'elle a peu de conditions de score (${jp(e.m.cond).length}) et aucune règle spéciale dans les données de HAMMER. ${CATFR[e.m.cat]?`Pour l'obtenir, choisis la catégorie « <b>${E(CATFR[e.m.cat])}</b> » pour les deux joueurs.`:""} Tu restes libre de ton choix : le tutoriel utilisera la mission que tu auras choisie.</p>`:""}
- <p class="mu">Tu peux mettre le tutoriel en pause, quitter et reprendre à la même étape. Tout fonctionne hors ligne.</p>
- <button class="b p" data-tt="go" style="width:100%;margin-top:8px"${ls.length?"":" disabled"}>⚔ Préparer la bataille et commencer</button><button class="b" data-tt="x" style="width:100%;margin-top:6px">Annuler</button></div></div>`}
 function closeM(id){const o=document.getElementById(id);if(o)o.innerHTML=""}
 /* coach */
 let SIG="";
-function render(){ensureCss();const el=box("ttc"),t=T();
+function render(){ensureCss();upd();const el=box("ttc"),t=T();
  if(!running()){if(el.innerHTML){el.innerHTML="";SIG=""}return}
  const sig=[t.step,t.lvl,t.min,t.u,t.rv,t.list,JSON.stringify(t.done),S.cur,S.pm,(S.games||[]).length,tab].join("|");if(sig===SIG)return;SIG=sig;
  const st=STEPS[t.step],dn=t.done[t.step];
  if(t.min){el.innerHTML=`<div class="tt-pill" data-tt="max" role="button" aria-label="Ouvrir le tutoriel"><i>🎓</i><span>Étape ${t.step+1}/${N} · ${E(st.t)}</span><i>▲</i></div>`;return}
- const lv=t.lvl,body=()=>{let h=`<div class="tt-why"><b>Pourquoi ?</b> ${E(st.why)}</div>`;
-  h+=`<details class="tt-st2" ${(!dn||t.rv)?"open":""}><summary>Explication de l'étape</summary>${st.e()}</details>`;
-  h+=`<h4>À faire sur la table</h4>${doL(st.doI())}`;
-  if(lv==="i"||lv==="a"){const x=st.i();if(x)h+=`<h4>Intermédiaire</h4>${x}`}
-  if(lv==="a"){const x=st.a();if(x)h+=`<h4>Avancé</h4>${x}`}
+ const lv=t.lvl,body=()=>{let h=`<div class="tt-why">💡 ${E(st.why)}</div>`;
+  h+=st.e();
+  h+=`<h4>✅ À faire sur la table</h4>${doL(st.doI())}`;
+  if(lv==="i"||lv==="a"){const x=st.i();if(x)h+=`<h4>Pour aller plus loin</h4>${x}`}
+  if(lv==="a"){const x=st.a();if(x)h+=`<h4>Pour les experts</h4>${x}`}
   return h};
  el.innerHTML=`<div class="tt-sheet" role="dialog" aria-label="Partie tutorielle"><div class="tt-h"><div class="tt-top"><b>${E(st.t)}${dn?'<span class="tt-done">fait ✓</span>':""}</b><button class="b" data-tt="pause" title="Réduire (pause)">▼ Pause</button><button class="b" data-tt="quit" aria-label="Quitter">✕</button></div>
   <div class="tt-ph">Étape ${t.step+1} sur ${N} · ${E(st.ph)}</div><div class="tt-prog">${STEPS.map((s,i)=>`<button class="${i===t.step?"on":t.done[i]?"dn":""}" data-tt="go" data-i="${i}" aria-label="Étape ${i+1} : ${E(s.t)}"></button>`).join("")}</div>
-  <div class="tt-lv">${[["e","Essentiel"],["i","+ Intermédiaire"],["a","+ Avancé"]].map(x=>`<button class="${lv===x[0]?"on":""}" data-tt="lvl" data-v="${x[0]}">${x[1]}</button>`).join("")}</div></div>
+  <div class="tt-lv">${[["e","Essentiel"],["i","+ Détails"],["a","+ Expert"]].map(x=>`<button class="${lv===x[0]?"on":""}" data-tt="lvl" data-v="${x[0]}">${x[1]}</button>`).join("")}</div></div>
   <div class="tt-body" id="ttb">${body()}</div>
-  <div class="tt-sub"><button class="b" data-tt="q">❓ J'ai une question</button><button class="b" data-tt="units">📇 Mes fiches</button><button class="b" data-tt="gloss">📖 Glossaire</button></div>
-  <div class="tt-foot"><button class="b" data-tt="prev"${t.step?"":" disabled"}>◀ Précédent</button><button class="b" data-tt="rev">🔁 Revoir l'explication</button><button class="b p" data-tt="next" style="flex-basis:100%">${t.step===N-1?"✔ Terminer le tutoriel":(st.skip?"Continuer ▶":"✔ J'ai compris · Étape terminée")}</button></div></div>`}
-function launchHint(){const o=document.getElementById("ttl2");const t=T();const w=document.getElementById("gpo");if(!(t.on&&t.phase==="launch"&&w)){if(o&&o.innerHTML)o.innerHTML="";return}const e=easiest(),c=e&&CATFR[e.m.cat];const h=box("ttl2");if(!h.innerHTML)h.innerHTML=`<div class="tt-lh">🎓 <b>Tutoriel</b> — choisis ta mission pour chaque joueur${c?` (conseillé : « ${E(c)} » pour les deux)`:""}, valide chaque joueur, puis lance la partie. Je prends le relais dès que la bataille commence.</div>`}
-function tick(){try{launchHint();const t=T();if(t.on&&t.phase==="launch"&&S.pm&&S.pm===t.list){t.phase="run";t.min=false;sv();SIG=""}render()}catch(e){}}
-function openQ(){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn tt-q"><div class="tt-top"><h2 style="flex:1">❓ J'ai une question</h2><button class="b" data-tt="qx">✕</button></div><input id="ttqi" type="search" placeholder="Cherche un mot : touche, sauvegarde, engagée…" autocomplete="off"><div class="tt-qp" id="ttqp">${QP.map((q,i)=>`<button class="b" data-tt="qp" data-i="${i}">${E(q[0])}</button>`).join("")}</div><div id="ttqr"></div><p class="mu">Les réponses viennent uniquement des règles importées dans HAMMER. Si une information manque, je te le dis.</p></div></div>`}
+  <div class="tt-sub"><button class="b" data-tt="q">❓ Question</button><button class="b" data-tt="units">📇 Fiches</button><button class="b" data-tt="gloss">📖 Règles</button></div>
+  <div class="tt-foot"><button class="b" data-tt="prev"${t.step?"":" disabled"}>◀ Précédent</button><button class="b" data-tt="rev">🔁 Revoir</button><button class="b p" data-tt="next" style="flex-basis:100%">${t.step===N-1?"✔ Terminer le tutoriel":"✔ J'ai compris · Suivant"}</button></div></div>`}
+let wizOpen=false;
+function launchHint(){const t=T(),w=document.getElementById("gpo"),h=box("ttl2");
+ if(w){wizOpen=true;
+  if(!w.querySelector("#ttopt")){const top=w.querySelector(".top");if(top){const lb=document.createElement("label");lb.className="tt-opt";lb.innerHTML='<input type="checkbox" id="ttopt"> <span>🎓 <b>Partie tutorielle</b> : HAMMER te guide pas à pas pendant la partie</span>';top.insertAdjacentElement("afterend",lb)}}
+  const c=w.querySelector("#ttopt");if(c)c.checked=!!(t.on&&t.phase==="launch");
+  const sp=w.querySelector("#ttopt")&&w.querySelector("#ttopt").nextElementSibling;
+  if(sp){const e=easiest(),cf=e&&CATFR[e.m.cat],on=t.on&&t.phase==="launch",tx=on&&cf?`<br><small>Conseil : choisis « ${E(cf)} » pour les deux joueurs, valide, puis lance la partie.</small>`:"";const html='🎓 <b>Partie tutorielle</b> : HAMMER te guide pas à pas pendant la partie'+tx;if(sp.dataset.h!==html){sp.dataset.h=html;sp.innerHTML=html}}
+ }else{
+  if(wizOpen&&!S.pm&&t.phase==="launch"&&t.on){t.on=false;sv()}
+  wizOpen=false;if(h.innerHTML){h.innerHTML="";h.dataset.m=""}}}
+function tick(){try{launchHint();const t=T();if(t.on&&t.phase==="launch"&&S.pm){t.list=S.pm;t.phase="run";t.min=false;t.step=0;t.done={};sv();SIG=""}render()}catch(e){}}
+function openQ(){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn tt-q"><div class="tt-top"><h2 style="flex:1">❓ Question</h2><button class="b" data-tt="qx">✕</button></div><input id="ttqi" type="search" placeholder="Cherche un mot : touche, sauvegarde, engagée…" autocomplete="off"><div class="tt-qp" id="ttqp">${QP.map((q,i)=>`<button class="b" data-tt="qp" data-i="${i}">${E(q[0])}</button>`).join("")}</div><div id="ttqr"></div><p class="mu">Les réponses viennent uniquement des règles importées dans HAMMER. Si une information manque, je te le dis.</p></div></div>`}
 function showQ(html){const r=document.getElementById("ttqr");if(r){r.innerHTML=html;r.scrollIntoView({block:"nearest"})}}
 function act(a,b,e){const t=T();
  switch(a){
- case"open":case"relaunch":setupModal();break;
- case"x":case"bg":if(a==="bg"&&e.target!==b)return false;closeM("ttm");break;
- case"imp":closeM("ttm");tab="imp";try{draw()}catch(_){}try{toast("Importe ton armée, puis reviens dans Apprendre à jouer → Partie tutorielle")}catch(_){}break;
- case"go":{if(b.dataset.i!=null){t.step=+b.dataset.i;t.rv=false;sv();SIG="";render();break}
-  const s=document.getElementById("ttl");const id=s?s.value:(S.lists[0]||{}).id;if(!id)break;
-  t.list=id;t.on=true;t.step=0;t.done={};t.u=0;t.min=false;t.rv=false;t.phase=(S.pm&&S.pm===id)?"run":"launch";sv();closeM("ttm");
-  if(t.phase==="launch"){if(window.gPrep){tab="lists";try{draw()}catch(_){}window.gPrep(id)}else{S.cur=id;S.pm=id;S.mg=false;tab="play";try{draw()}catch(_){}}}else{SIG="";render()}break}
- case"resume":t.on=true;t.min=false;sv();SIG="";if(S.pm&&S.pm===t.list){t.phase="run";if(tab==="learn"||tab==="home"){try{draw()}catch(_){}}render()}else if(t.list&&S.lists.some(l=>l.id===t.list)){t.phase="launch";window.gPrep&&window.gPrep(t.list)}break;
+ case"start":{const ls=S.lists||[];if(!ls.length){try{info("Crée ou importe d'abord une armée (Gestion → Importer).")}catch(_){}break}
+  t.on=true;t.phase="launch";t.step=0;t.done={};t.u=0;t.min=false;t.rv=false;t.list=(ls.some(l=>l.id===S.cur)?S.cur:ls[0].id);sv();SIG="";
+  if(window.gPrep){tab="lists";try{draw()}catch(_){}window.gPrep(t.list)}break}
+ case"go":if(b.dataset.i!=null){t.step=+b.dataset.i;t.rv=false;sv();SIG="";render()}break;
+ case"resume":t.on=true;t.min=false;sv();SIG="";if(S.pm&&S.pm===t.list){t.phase="run";try{draw()}catch(_){}render()}break;
  case"reset":ask({t:"Recommencer le tutoriel ?",p:"Tu repars de l'étape 1. Ta partie en cours n'est pas modifiée.",ok:"Recommencer",dg:1},()=>{t.step=0;t.done={};t.u=0;t.lvl="e";t.min=false;t.on=!!(S.pm&&S.pm===t.list);sv();SIG="";try{draw()}catch(_){}render()});break;
  case"max":t.min=false;sv();SIG="";render();break;
  case"pause":t.min=true;sv();SIG="";render();try{toast("Tutoriel en pause : touche la pastille jaune pour reprendre")}catch(_){}break;
@@ -271,7 +251,7 @@ function act(a,b,e){const t=T();
  case"unext":{const n=UN().length;if(t.u<n-1)t.u++;sv();SIG="";render()}break;
  case"uprev":if(t.u>0)t.u--;sv();SIG="";render();break;
  case"fiche":{const u=UN()[+b.dataset.i];if(u){S.cur=t.list;ed=u;ctx="list";edit=false;try{draw()}catch(_){}}}break;
- case"units":{const us=UN();if(us.length){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn"><div class="tt-top"><h2 style="flex:1">📇 Mes fiches</h2><button class="b" data-tt="qx">✕</button></div><div class="tt-qp">${us.map((u,i)=>`<button class="b" data-tt="fiche2" data-i="${i}">${E(u.name)}</button>`).join("")}</div></div></div>`}}break;
+ case"units":{const us=UN();if(us.length){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn"><div class="tt-top"><h2 style="flex:1">📇 Fiches</h2><button class="b" data-tt="qx">✕</button></div><div class="tt-qp">${us.map((u,i)=>`<button class="b" data-tt="fiche2" data-i="${i}">${E(u.name)}</button>`).join("")}</div></div></div>`}}break;
  case"fiche2":{closeM("ttq");const u=UN()[+b.dataset.i];if(u){S.cur=t.list;ed=u;ctx="list";edit=false;try{draw()}catch(_){}}}break;
  case"gloss":t.min=true;sv();SIG="";tab="enc";try{draw()}catch(_){}render();break;
  case"strat":t.min=true;sv();SIG="";S.cur=t.list;if(typeof pph!=="undefined")pph=b.dataset.ph||"";tab="pst";try{draw()}catch(_){}render();break;
@@ -284,10 +264,11 @@ function act(a,b,e){const t=T();
  default:return false}
  return true}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tt]");if(!b)return;if(b.dataset.tt==="qx"&&e.target!==b&&b.classList.contains("tt-ov"))return;if(b.dataset.tt==="bg"&&e.target!==b)return;const r=act(b.dataset.tt,b,e);if(r!==false){e.preventDefault();e.stopPropagation()}},true);
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="ttopt"){const t=T();if(e.target.checked){t.on=true;t.phase="launch";t.step=0;t.done={};t.u=0;t.min=false}else{t.on=false}sv();try{launchHint()}catch(_){}}});
 document.addEventListener("input",e=>{if(e.target&&e.target.id==="ttqi"){const q=e.target.value,r=search(q);document.getElementById("ttqp").style.display=q.trim()?"none":"";showQ(q.trim().length<2?"":(r.length?r.map(x=>`<div class="tt-rule"><b>${E(x.n)}</b><p>${E(x.def)}</p></div>`).join(""):`<p class="tt-miss">Je n'ai rien trouvé à ce sujet dans les règles importées : information non disponible.</p>`))}});
 /* intégration : carte dans « Apprendre à jouer », rendu après chaque draw(), suivi du lancement de la partie */
 window.XV=window.XV||{};const base=window.XV.learn;window.XV.learn=function(){let c="";try{ensureCss();c=card()}catch(e){}return c+(base?base():"")};
 const d0=window.draw;if(typeof d0==="function")window.draw=function(){const r=d0.apply(this,arguments);try{render()}catch(e){}return r};
-setInterval(tick,900);try{tick()}catch(_){}
-window.TUTO={STEPS,T,render,act,N};
+setInterval(tick,250);try{tick()}catch(_){}
+window.TUTO={STEPS,T,render,act,get N(){return N}};
 })();
