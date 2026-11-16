@@ -11,6 +11,18 @@ window.mergeW=function(dst,src){
   if(i<0)dst.weapons.push(clone(w));else dst.weapons[i]=clone(w);
  });
 };
+// armes citées dans la ligne « Équipement » mais absentes du tableau de l'unité : on les reprend de la fiche de collection
+window.fixEq=function(p,m){try{
+ if(!p||!m||!Array.isArray(m.weapons)||!m.weapons.length)return 0;
+ const nz=function(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’`]/g,"'").replace(/\s+/g," ").trim()};
+ const names=[];const add=function(t){String(t||"").split(/,(?![^()]*\))/).forEach(function(x){x=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").replace(/^\d+\s*[x×]\s*/i,"").trim();if(x)names.push(x)})};
+ add(p.equip);(p.mdl||[]).forEach(function(d){add(d.eq)});
+ p.weapons=Array.isArray(p.weapons)?p.weapons:[];
+ const cov=function(w,e){const a=nz(w.name),b=nz(e);return a===b||a.indexOf(b+" - ")===0||a.indexOf(b+" (")===0};
+ let n=0;names.forEach(function(e){
+  if(p.weapons.some(function(w){return cov(w,e)}))return;
+  m.weapons.filter(function(c){return cov(c,e)}).forEach(function(c){if(!p.weapons.some(function(w){return wk(w)===wk(c)})){p.weapons.push(clone(c));n++}});
+ });return n}catch(e){return 0}};
 // ajoute seulement les armes absentes (ne modifie pas les existantes)
 window.addMissingW=function(dst,src){
  dst.weapons=Array.isArray(dst.weapons)?dst.weapons:[];
