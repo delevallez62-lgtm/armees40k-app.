@@ -1,0 +1,5 @@
+/* téléphone : rien ne doit dépasser de l'écran */
+@media(max-width:899px){.gh{grid-template-columns:minmax(0,1fr)}.ghl,.ghr{min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)}}
+.gh>*,.ghl>*,.ghr>*,.gtiles>*{min-width:0;max-width:100%}
+.ghero img,.ghero .gfr{max-width:100%}
+@media(max-width:700px){.ft,.pph,.gchips,.tk-tabs{flex-wrap:wrap;overflow-x:visible}.ft .fc{max-width:100%}.tk-tabs{margin:12px 0 0;padding:0}}
