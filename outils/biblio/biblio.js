@@ -26,11 +26,20 @@ const tx=(st,mode,fn)=>idb().then(d=>new Promise((ok,ko)=>{const t=d.transaction
 const idbGet=(st,id)=>tx(st,"readonly",s=>s.get(id));
 const idbAll=st=>tx(st,"readonly",s=>s.getAll());
 const idbPut=(st,o)=>tx(st,"readwrite",s=>s.put(o));
+const idbDel=(st,id)=>tx(st,"readwrite",s=>s.delete(id));
+async function prune(man){const keep=new Set((man.chunks||[]).map(c=>c.id));for(const r of await idbAll("chunks"))if(!keep.has(r.id))await idbDel("chunks",r.id)}
 async function gunzip(b64){const bin=atob(b64),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
  const rs=new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip")));return rs.text()}
-const D={ready:false,man:null,chunks:{},units:[],byId:{},dets:[],enh:[],str:[],rules:[],err:null,origin:""};
-function index(){D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};
- Object.entries(D.chunks).forEach(([id,c])=>{(c.units||[]).forEach(u=>{u._c=id;D.units.push(u);D.byId[u.id]=u});(c.detachments||[]).forEach(x=>{x._c=id;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=id;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=id;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
+const D={fr:{},frN:0,ready:false,man:null,chunks:{},units:[],byId:{},dets:[],enh:[],str:[],rules:[],err:null,origin:""};
+const normN=s=>String(s||"").toLowerCase().replace(/’/g,"'").replace(/\[.*?\]/g,"").replace(/[^a-z0-9]/g,"");
+function index(){D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.fr={};D.frN=0;const ext={};
+ Object.entries(D.chunks).forEach(([id,c])=>{
+  if(id==="fr"){D.fr=c.tr||{};D.frN=Object.keys(D.fr).length;return}
+  const g=id.replace(/^wp-/,"");
+  (c.units||[]).forEach(u=>{u._c=g;u.src=u.src||"bsdata";D.units.push(u);D.byId[u.id]=u});
+  if(c.ext)Object.entries(c.ext).forEach(([k,e])=>{(ext[g]=ext[g]||{})[k]=e});
+  (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
+ D.units.forEach(u=>{if(!u.wp){const e=(ext[u._c]||{})[normN(u.n)];if(e)u.wp=e}});
  D.units.sort((a,b)=>a.n.localeCompare(b.n))}
 async function loadFromIdb(){const m=await idbGet("meta","manifest");if(!m)return false;const rows=await idbAll("chunks"),ch={};rows.forEach(r=>{ch[r.id]=JSON.parse(r.raw)});D.man=m.man;D.origin=m.origin||"";D.chunks=ch;index();return true}
 async function importEmbedded(){const em=window.__BIBLIO;if(!em)throw new Error("Aucune donnée intégrée");
@@ -59,11 +68,12 @@ function tWK(en){const s=String(en||"").trim();if(!s)return{t:s,st:"no"};
 function tKW(en){const s=String(en||"").trim(),f=KW[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 function tAB(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};
  {const pm=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)$/.exec(s);if(pm){const bu=LB().tr["b:"+nk(pm[1])];if(bu&&bu.fr)return{t:bu.fr+" "+pm[2],st:"ok",src:"user"}}}
- const m=/^([A-Za-z' -]+?)\s*((?:D?\d+(?:")?\+?|D\d)?)\s*(\(.*\))?$/.exec(s);if(m){const f=AB[m[1].trim().toLowerCase()];if(f)return{t:f+(m[2]?" "+m[2]:"")+(m[3]?" "+m[3]:""),st:"ok"}}return{t:s,st:"no"}}
+ const m=/^([A-Za-z' -]+?)\s*((?:D?\d+(?:")?\+?|D\d)?)\s*(\(.*\))?$/.exec(s);if(m){const f=AB[m[1].trim().toLowerCase()];if(f)return{t:f+(m[2]?" "+m[2]:"")+(m[3]?" "+m[3]:""),st:"ok"}}const ov=D.fr[hh(s)];return ov&&nk(ov.fr)!==nk(s)?{t:s,st:"chk",prop:ov.fr,src:"claude"}:{t:s,st:"no"}}
 const hh=t=>sha1(nk(stripMd(t))).slice(0,12);
 function sents(t){return stripMd(t).split(/\n+/).flatMap(l=>l.split(/(?<=[.!?])\s+(?=[A-ZÀ-Ý0-9■•(\[])/)).map(x=>x.trim()).filter(Boolean)}
-function trDesc(en){const tm=LB().tm,all=tm["t:"+hh(en)];if(all)return{t:all.fr,st:"ok",src:"user"};
- const ss=sents(en);if(ss.length<2)return{t:en,st:"no"};const out=[];for(const x of ss){const e=tm["s:"+hh(x)];if(!e)return{t:en,st:"no"};out.push(e.fr)}return{t:out.join(" "),st:"chk",src:"user"}}
+function trDesc(en){const tm=LB().tm,k=hh(en),all=tm["t:"+k];if(all)return{t:all.fr,st:"ok",src:"user",k};
+ const ov=D.fr[k];if(ov&&nk(ov.fr)!==nk(en))return{t:en,st:"chk",prop:ov.fr,src:"claude",k};
+ const ss=sents(en);if(ss.length<2)return{t:en,st:"no",k};const out=[];for(const x of ss){const e=tm["s:"+hh(x)];if(!e)return{t:en,st:"no",k};out.push(e.fr)}return{t:en,st:"chk",prop:out.join(" "),src:"user",k}}
 function frBodyOf(m,name){const names=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),k=nk(name),L=m.text||[];let cur=null;const seg=[];
  for(const l of L){const lk=nk(l);const hit=names.find(n=>{const nn=nk(n);return nn&&(lk===nn||lk.startsWith(nn+" "))});if(hit){cur={n:hit,lines:[String(l).trim().slice(hit.length).trim()].filter(Boolean)};seg.push(cur)}else if(cur)cur.lines.push(String(l).trim())}
  const f=seg.find(x=>nk(x.n)===k);return f?f.lines.join("\n").trim():""}
@@ -71,7 +81,7 @@ function learnAb(m,ab,frName){const lb=LB(),en=String(ab.n).trim();lb.tr["n:"+nk
  const P=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)?$/,a=P.exec(en),b=P.exec(String(frName).trim());if(a&&b&&a[2]&&a[2]===b[2]&&nk(a[1])&&nk(b[1]))lb.tr["b:"+nk(a[1])]={fr:b[1].trim(),st:"ok",src:"user",at:Date.now()};
  const body=frBodyOf(m,frName);if(!body)return"nom";const enT=stripMd(ab.d||"");lb.tm["t:"+hh(enT)]={en:enT,fr:body,name:{en,fr:frName},st:"ok",at:Date.now()};
  const se=sents(enT),sf=sents(body);if(se.length>1&&se.length===sf.length)se.forEach((x,i)=>{const k="s:"+hh(x);if(!lb.tm[k])lb.tm[k]={en:x,fr:sf[i],st:"chk",at:Date.now()}});return"texte"}
-function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];return u&&u.fr?{t:u.fr,st:u.st||"ok",src:"user"}:{t:s,st:"no"}}
+function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};const ov=D.fr[hh(s)];return ov&&nk(ov.fr)!==nk(s)?{t:s,st:"chk",prop:ov.fr,src:"claude"}:{t:s,st:"no"}}
 function tPhase(en){const s=String(en||"").trim(),f=PH[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 const SB={ok:["🟢","Traduction confirmée"],chk:["🟠","À vérifier"],no:["⚪","Non traduit"]};
 const badge=st=>`<span class="bib-st ${st}" title="${SB[st][1]}">${SB[st][0]}</span>`;
@@ -126,6 +136,7 @@ function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();cons
  const kws=String(m.kw||"").split(",").map(s=>s.trim()).filter(Boolean);rows.kw.forEach(r=>{if(pick[r.id]){kws.push(r.t.t);done.push("mot-clé:"+r.t.t)}});m.kw=kws.join(", ");
  rows.misc.forEach(r=>{if(r.id==="pts"&&pick[r.id]){m.pts=+r.lib;done.push("points")}});
  lb.links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:done,stale:false};
+ if(pick.info&&u.wp){lb.links[ref].info={loadout:u.wp.loadout,comp:u.wp.comp,opt:u.wp.opt,src:"Wahapedia",at:Date.now()};done.push("informations de référence")}
  sv();return done}
 function undoLink(ref,restore){const lb=LB(),m=S.coll[ref];if(!m)return;const bk=lb.bk[ref];if(restore&&bk){m.stats=clone(bk.stats);m.weapons=clone(bk.weapons);m.apt=bk.apt;m.text=clone(bk.text);m.kw=bk.kw;m.pts=bk.pts;delete lb.bk[ref]}delete lb.links[ref];sv()}
 /* ---------- synchronisation facultative et différentielle ---------- */
@@ -149,7 +160,7 @@ async function checkUpdate(manual){const lb=LB();await init();
  for(const c of todo){const prevC=D.chunks[c.id],nw=JSON.parse(got[c.id]);const df=diffNews(prevC,nw);["add","chg","del"].forEach(k=>news.items[k].push(...df[k]));
   if(prevC){const pr=await idbGet("chunks",c.id);if(pr)await idbPut("prev",{id:c.id,raw:pr.raw,sha1:pr.sha1,man:D.man&&D.man.version})}
   await idbPut("chunks",{id:c.id,raw:got[c.id],sha1:c.sha1})}
- await idbPut("meta",{id:"manifest",man,origin:"sync",at:Date.now()});await loadFromIdb();
+ await idbPut("meta",{id:"manifest",man,origin:"sync",at:Date.now()});await prune(man);await loadFromIdb();
  // associations conservées ; on signale seulement celles dont la fiche a changé
  let stale=0;Object.entries(lb.links).forEach(([ref,l])=>{const u=D.byId[l.id];if(u&&u.h!==l.h){l.stale=true;stale++}});news.stale=stale;
  if(news.items.add.length||news.items.chg.length||news.items.del.length||stale){lb.news.unshift(news);lb.news=lb.news.slice(0,20)}
@@ -159,7 +170,7 @@ async function importLib(txt){let o;try{o=JSON.parse(txt)}catch(_){throw new Err
  if(!o||o.kind!=="hammer-biblio"||!o.manifest||!o.chunks)throw new Error("Ce n'est pas une sauvegarde de bibliothèque");
  for(const c of o.manifest.chunks){const t=o.chunks[c.id];if(typeof t!=="string"||sha1(t)!==c.sha1)throw new Error("Intégrité refusée : "+c.id)}
  for(const c of o.manifest.chunks)await idbPut("chunks",{id:c.id,raw:o.chunks[c.id],sha1:c.sha1});
- await idbPut("meta",{id:"manifest",man:o.manifest,origin:"restore",at:Date.now()});await loadFromIdb()}
+ await idbPut("meta",{id:"manifest",man:o.manifest,origin:"restore",at:Date.now()});await prune(o.manifest);await loadFromIdb()}
 async function verify(){await init();const rows=await idbAll("chunks"),bad=[];const man={};(D.man.chunks||[]).forEach(c=>man[c.id]=c);
  for(const r of rows){if(!man[r.id]||sha1(r.raw)!==man[r.id].sha1)bad.push(r.id)}
  (D.man.chunks||[]).forEach(c=>{if(!rows.find(r=>r.id===c.id))bad.push(c.id+" (absent)")});return bad}
@@ -168,6 +179,15 @@ async function restorePrev(){const rows=await idbAll("prev");if(!rows.length)thr
  // manifeste reconstruit à partir des chunks restaurés
  const man=clone(D.man);man.chunks.forEach(c=>{const r=rows.find(x=>x.id===c.id);if(r){c.sha1=r.sha1;c.bytes=r.raw.length}});man.version=(rows[0].man||man.version);
  await idbPut("meta",{id:"manifest",man,origin:"restore",at:Date.now()});await loadFromIdb()}
+/* ---------- affichage des textes : l'original reste ; une proposition ne le remplace jamais ---------- */
+const TXM={};
+function trx(en,kind){en=String(en||"");if(!en.trim())return"";const isName=/^nom/.test(kind||""),r=isName?tName(en):trDesc(en),k=hh(en);TXM[k]={en,name:isName};
+ const body=E(stripMd(en)).replace(/\n/g,"<br>");
+ if(r.st==="ok")return`<div>${E(r.t).replace(/\n/g,"<br>")}</div><details><summary class="bib-meta">Texte original anglais</summary><div>${body}</div></details><div class="bib-meta">🟢 Traduction confirmée</div>`;
+ if(r.st==="chk"&&r.prop)return`<div>${body}</div><div class="bib-prop">🟠 <b>Traduction proposée (à vérifier)</b><br>${E(r.prop).replace(/\n/g,"<br>")}<br><button class="b" data-bibtr="ok" data-k="${k}">✔ Valider</button> <button class="b" data-bibtr="fix" data-k="${k}">✎ Corriger</button></div>`;
+ return`<div>${body}</div><div class="bib-meta">⚪ Non traduit (texte original)</div>`}
+const nameHtml=en=>{const t=tName(en);return`<b>${E(t.t)}</b>${t.st==="chk"&&t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:""}`};
+function storeTr(k,fr){const m=TXM[k];if(!m||!fr)return;const lb=LB();if(m.name)lb.tr["n:"+nk(m.en)]={fr,st:"ok",src:"user",at:Date.now()};else lb.tm["t:"+k]={en:stripMd(m.en),fr,st:"ok",src:"validated",at:Date.now()};sv()}
 /* ---------- interface ---------- */
 const B={tab:"units",q:"",fac:"",open:null,cmp:null,msg:""};
 function css(){if(document.getElementById("bibcss"))return;const s=document.createElement("style");s.id="bibcss";s.textContent=`
@@ -181,6 +201,7 @@ function css(){if(document.getElementById("bibcss"))return;const s=document.crea
 .bib-meta{font-size:12px;color:var(--mu)}.bib-wl{font-size:13px;color:var(--mu)}.bib-new{border:2px solid var(--ac);border-radius:12px;padding:8px 10px;margin:8px 0}
 .bibb{position:absolute;left:4px;top:4px;z-index:3;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.55);color:#fff;font-size:15px;padding:0;cursor:pointer;line-height:1}.bibb.on{background:#2e9d6b;border-color:#fff}.bibb.old{background:#e0a030}
 .bib-box{position:relative}.bib-two{display:grid;grid-template-columns:1fr 1fr;gap:6px}.bib-two>div{border:1px solid var(--bd);border-radius:8px;padding:4px 6px;font-size:13px}.bib-two label{display:flex;gap:6px;align-items:center;font-size:13px}
+.bib-prop{border:1px dashed #e0a030;border-radius:10px;padding:6px 8px;margin:6px 0;background:rgba(224,160,48,.08);font-size:13.5px}.bib-opt{border-top:1px solid var(--bd);padding:4px 0}.bib-prop .b{min-height:34px;padding:2px 10px;margin-top:4px}
 .bib-ban{border:2px solid var(--ac);border-radius:14px;padding:10px 12px;margin:0 0 12px;background:color-mix(in srgb,var(--ac) 12%,transparent);cursor:pointer}
 `;document.head.appendChild(s)}
 const box=id=>{let b=document.getElementById(id);if(!b){b=document.createElement("div");b.id=id;document.body.appendChild(b)}return b};
@@ -188,33 +209,40 @@ const closeM=id=>{const b=document.getElementById(id);if(b)b.innerHTML=""};
 const fmtD=t=>{try{return new Date(t).toLocaleDateString("fr-FR")}catch(_){return""}};
 const STATS=[["M","M"],["E","E"],["SV","Sv"],["PV","PV"],["CD","Cd"],["CO","CO"]];
 function unitHtml(u){const tn=tName(u.n);
- let h=`<h4>${E(u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p>Nom français : <b>${E(tn.t)}</b></p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>`}<p class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source ${E(u._c)} · ${E(u.id)}</p>`;
+ let h=`<h4>${E(u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p>Nom français : <b>${E(tn.t)}</b></p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>${tn.st==="chk"?trx(u.n,"nom d'unité").replace(/^<div>.*?<\/div>/,""):""}`}<p class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source : ${u.src==="wahapedia"?"Wahapedia":"BSData"}${u.wp&&u.src!=="wahapedia"?" + Wahapedia":""} · ${E(u.id)}</p>`;
  h+=u.pr.map(p=>`<div class="bib-row"><b>${E(p.n)}</b><div>${STATS.map(([k,l])=>`${l} <b>${E(nm(p[k])||"–")}</b>`).join(" · ")}</div></div>`).join("");
  const W=(a,melee)=>a.map(w=>{const aw=wToApp(w,melee),ks=(w.kw||[]).map(k=>{const r=tWK(k);return`${E(r.t)}${badge(r.st)}`}).join(", ");return`<div class="bib-row"><b>${E(aw.name)}</b> <span class="bib-meta">${E(w.n!==aw.name?w.n:"")}</span><div>${melee?"Mêlée":"Portée "+E(aw.range)+'"'} · A ${E(aw.a)} · ${melee?"CC":"CT"} ${E(aw.hit)} · F ${E(aw.f)} · PA ${E(aw.pa)} · D ${E(aw.d)}</div>${ks?`<div class="bib-wl">${ks}</div>`:""}</div>`}).join("");
  h+=`<h4>Armes de tir (${u.rw.length})</h4>${W(u.rw,false)||'<p class="bib-meta">Aucune</p>'}<h4>Armes de mêlée (${u.mw.length})</h4>${W(u.mw,true)||'<p class="bib-meta">Aucune</p>'}`;
- h+=`<h4>Capacités (${u.ab.length})</h4>${u.ab.map(a=>{const t=tAB(a.n),d=trDesc(a.d),en=E(stripMd(a.d)).replace(/\n/g,"<br>");return`<details class="bib-row"><summary><b>${E(t.t)}</b> ${badge(d.st==="ok"?"ok":t.st)}${t.st!=="ok"?"":` <span class="bib-meta">${E(a.n)}</span>`}</summary>${d.st==="ok"?`<p>${E(d.t).replace(/\n/g,"<br>")}</p><details><summary class="bib-meta">Texte original anglais</summary><p>${en}</p></details><p class="bib-meta">Traduction confirmée (reprise de ta fiche)</p>`:`<p>${en}</p>${d.st==="chk"?`<p class="bib-meta">🟠 Proposition à vérifier (phrases apprises de ta fiche) : ${E(d.t)}</p>`:`<p class="bib-meta">Texte original anglais (non traduit)</p>`}`}</details>`}).join("")||'<p class="bib-meta">Aucune</p>'}`;
+ h+=`<h4>Capacités (${u.ab.length})</h4>${u.ab.map(a=>{const t=tAB(a.n);return`<details class="bib-row"><summary><b>${E(t.t)}</b> ${badge(t.st)}${t.st==="ok"?` <span class="bib-meta">${E(a.n)}</span>`:(t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:"")}</summary>${trx(a.d,"texte de capacité")}</details>`}).join("")||'<p class="bib-meta">Aucune</p>'}`;
  h+=`<h4>Mots-clés</h4><p>${u.kw.map(k=>{const r=tKW(k);return`${E(r.t)}${badge(r.st)}`}).join(", ")}</p>`;
- h+=`<p class="bib-meta">Options d'équipement et restrictions : non présentes dans les données sources.</p>`;return h}
+ if(u.wp){const w=u.wp;h+=`<h4>Équipement, composition et options <span class="bib-meta">(Wahapedia)</span></h4><p class="bib-meta">Informations de référence : elles ne bloquent jamais tes listes.</p>`
+  +(w.loadout?`<div class="bib-row"><b>Équipement de base</b>${trx(w.loadout,"équipement de base")}</div>`:"")
+  +(w.comp&&w.comp.length?`<div class="bib-row"><b>Composition</b>${w.comp.map(t=>`<div class="bib-opt">${trx(t,"composition")}</div>`).join("")}</div>`:"")
+  +(w.opt&&w.opt.length?`<div class="bib-row"><b>Options d'équipement</b>${w.opt.map(t=>`<div class="bib-opt">${trx(t,"option d'équipement")}</div>`).join("")}</div>`:"")
+  +(w.ledby&&w.ledby.length?`<div class="bib-row"><b>Peut être mené par</b><br>${E(w.ledby.join(", "))}</div>`:"")+(w.leads&&w.leads.length?`<div class="bib-row"><b>Peut mener</b><br>${E(w.leads.join(", "))}</div>`:"")+(w.transport?`<div class="bib-row"><b>Transport</b>${trx(w.transport,"composition")}</div>`:"")}
+ else h+=`<p class="bib-meta">Options d'équipement et restrictions : absentes de cette source.</p>`;return h}
 function libView(){css();const lb=LB(),man=D.man;
  let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>📚 Bibliothèque V11</b><button class="b" data-bib="menu">⚙ Gérer</button></div>`;
  if(!D.ready){h+=`<p class="mu">${D.err?"Erreur : "+E(D.err):"Chargement de la bibliothèque…"}</p></div>`;if(!D.err)init().then(()=>{try{draw()}catch(_){}});return h}
- h+=`<p class="bib-meta">Version ${E(man.version)} · récupérée le ${E(man.generated||"")} · ${D.units.length} fiches · ${D.dets.length} détachements · ${D.str.length} stratagèmes · ${D.enh.length} améliorations</p><p class="bib-meta">Données communautaires non officielles (BSData / Warhammer Oracle). Warhammer 40,000 est la propriété de Games Workshop. <a href="#" data-bib="lic">Licences et sources</a></p></div>`;
+ h+=`<p class="bib-meta">Version ${E(man.version)} · récupérée le ${E(man.generated||"")} · ${D.units.length} fiches · ${D.dets.length} détachements · ${D.str.length} stratagèmes · ${D.enh.length} améliorations · ${D.frN} traductions proposées (à vérifier)</p><p class="bib-meta">Données communautaires non officielles (BSData / Warhammer Oracle / Wahapedia). Warhammer 40,000 est la propriété de Games Workshop. <a href="#" data-bib="lic">Licences et sources</a></p></div>`;
  const un=lb.news.filter(n=>!n.seen);
  if(lb.news.length)h+=`<details class="card" ${un.length?"open":""}><summary><b>🆕 Nouveautés</b> ${un.length?`<span class="bib-st">${un.length} non lue(s)</span>`:""}</summary>${lb.news.slice(0,5).map((n,i)=>`<div class="bib-new"><b>${fmtD(n.at)}</b> · version ${E(n.to||"")}<br>${n.items.add.length?`➕ ${n.items.add.length} nouveauté(s) : ${E(n.items.add.slice(0,6).map(x=>x.t+" "+x.n).join(" ; "))}${n.items.add.length>6?"…":""}<br>`:""}${n.items.chg.length?`✎ ${n.items.chg.length} modifiée(s) : ${E(n.items.chg.slice(0,6).map(x=>x.t+" "+x.n).join(" ; "))}${n.items.chg.length>6?"…":""}<br>`:""}${n.items.del.length?`➖ ${n.items.del.length} retirée(s)<br>`:""}${n.stale?`⚠ ${n.stale} fiche(s) de ta collection liées à une fiche modifiée : ouvre-les pour revoir.<br>`:""}</div>`).join("")}<button class="b" data-bib="seen">Tout marquer comme lu</button></details>`;
  h+=`<div class="card"><label>Rechercher<input id="bibq" value="${E(B.q)}" placeholder="Nom, mot-clé…" autocomplete="off"></label><div class="bib-chips">${[["","Tout"],["space-marines","Space Marines"],["orks","Orks"]].map(([k,n])=>`<button class="${B.fac===k?"on":""}" data-bib="fac" data-v="${k}">${n}</button>`).join("")}</div><div class="bib-chips">${[["units","Unités"],["det","Détachements"],["str","Stratagèmes"],["enh","Améliorations"],["rules","Règles"]].map(([k,n])=>`<button class="${B.tab===k?"on":""}" data-bib="tab" data-v="${k}">${n}</button>`).join("")}</div></div><div id="bibl">${list()}</div>`;return h}
 function list(){const q=nk(B.q),f=B.fac,inF=x=>!f||x._c===f||x._c==="common",hit=s=>!q||q.split(" ").every(w=>nk(s).includes(w));let h="";
- if(B.tab==="units"){const L=search(B.q,f);h=L.map(u=>{const t=tName(u.n);return`<div class="card hv" data-bib="unit" data-id="${E(u.id)}"><b class="cap">${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts":""}</div></div>`}).join("")||'<p class="mu">Aucune fiche.</p>';if(D.units.length&&L.length===60)h+='<p class="mu">Affine la recherche pour voir la suite.</p>'}
- else if(B.tab==="det"){h=D.dets.filter(x=>inF(x)&&hit(x.n+" "+(x.f||""))).map(d=>`<details class="card"><summary><b>${E(d.n)}</b> <span class="bib-meta">${E(d.f||"")} · ${d.pts!=null?d.pts+" pt(s)":""}</span> ${badge("no")}</summary>${d.ab?`<p><b>${E(d.ab.name)}</b><br>${E(stripMd(d.ab.description)).replace(/\n/g,"<br>")}</p>`:""}<p class="bib-meta">Dispositions : ${E((d.dp||[]).join(", ")||"—")}</p><p class="bib-meta">Texte original anglais (non traduit)</p><p><b>Stratagèmes liés :</b> ${D.str.filter(s=>s.det===d.n).length} · <b>Améliorations :</b> ${D.enh.filter(e=>e.det===d.n).length}</p></details>`).join("")||'<p class="mu">Aucun.</p>'}
- else if(B.tab==="str"){h=D.str.filter(x=>inF(x)&&hit(x.n+" "+(x.det||"")+" "+(x.f||""))).slice(0,120).map(s=>{const p=tPhase(s.ph||"");return`<details class="card"><summary><b>${E(s.n)}</b> <span class="bib-st">${s.cp!=null?s.cp+" PC":""}</span> <span class="bib-meta">${E(s.det||s.f||"")}</span></summary><p class="bib-meta">Phase : ${E(p.t)} ${badge(p.st)} · Type : ${E(s.t||"—")}</p><p><b>Quand :</b> ${E(s.when||"—")}</p><p><b>Cible :</b> ${E(s.tg||"—")}</p><p><b>Effet :</b> ${E(s.fx||"—")}</p>${s.rs?`<p><b>Restrictions :</b> ${E(s.rs)}</p>`:""}<p class="bib-meta">Texte original anglais (non traduit)</p></details>`}).join("")||'<p class="mu">Aucun.</p>'}
- else if(B.tab==="enh"){h=D.enh.filter(x=>inF(x)&&hit(x.n+" "+(x.det||""))).map(e=>`<details class="card"><summary><b>${E(e.n)}</b> <span class="bib-meta">${E(e.det||"")} · ${e.pts!=null?e.pts+" pts":""}</span></summary><p>${E(stripMd(e.d))}</p><p class="bib-meta">Texte original anglais (non traduit)</p></details>`).join("")||'<p class="mu">Aucune.</p>'}
- else if(B.tab==="rules"){h=D.rules.filter(r=>hit(r.n)).map(r=>`<details class="card"><summary><b>${E(r.n)}</b></summary><p>${E(stripMd(r.d)).replace(/\n/g,"<br>")}</p><p class="bib-meta">Texte original anglais (non traduit)</p></details>`).join("")}
+ if(B.tab==="units"){const L=search(B.q,f);h=L.map(u=>{const t=tName(u.n);return`<div class="card hv" data-bib="unit" data-id="${E(u.id)}"><b class="cap">${E(t.t)}</b> ${badge(t.st)}${t.st==="chk"&&t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:""}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts":""} ${u.src==="wahapedia"?"· 🌐 Wahapedia":(u.wp?"· + Wahapedia":"")}</div></div>`}).join("")||'<p class="mu">Aucune fiche.</p>';if(D.units.length&&L.length===60)h+='<p class="mu">Affine la recherche pour voir la suite.</p>'}
+ else if(B.tab==="det"){h=D.dets.filter(x=>inF(x)&&hit(x.n+" "+(x.f||""))).map(d=>`<details class="card"><summary><b>${E(d.n)}</b> <span class="bib-meta">${E(d.f||"")} · ${d.pts!=null?d.pts+" pt(s)":""}</span> ${badge("no")}</summary>${d.ab?`<p>${nameHtml(d.ab.name)}</p>${trx(d.ab.description,"règle de détachement")}`:""}${(d.abx||[]).map(x=>`<p>${nameHtml(x.name)}</p>${trx(x.description,"règle de détachement")}`).join("")}<p class="bib-meta">Dispositions : ${E((d.dp||[]).join(", ")||"—")} · source : ${d.src==="wahapedia"?"Wahapedia":"BSData"}</p><p><b>Stratagèmes liés :</b> ${D.str.filter(s=>s.det===d.n).length} · <b>Améliorations :</b> ${D.enh.filter(e=>e.det===d.n).length}</p></details>`).join("")||'<p class="mu">Aucun.</p>'}
+ else if(B.tab==="str"){h=D.str.filter(x=>inF(x)&&hit(x.n+" "+(x.det||"")+" "+(x.f||""))).slice(0,120).map(s=>{const p=tPhase(s.ph||"");return`<details class="card"><summary><b>${E(s.n)}</b> <span class="bib-st">${s.cp!=null?s.cp+" PC":""}</span> <span class="bib-meta">${E(s.det||s.f||"")}</span></summary><p class="bib-meta">Phase : ${E(p.t)} ${badge(p.st)} · Type : ${E(s.t||"—")}</p><p><b>Quand :</b></p>${trx(s.when||"—","stratagème : quand")}<p><b>Cible :</b></p>${trx(s.tg||"—","stratagème : cible")}<p><b>Effet :</b></p>${trx(s.fx||"—","stratagème : effet")}${s.rs?`<p><b>Restrictions :</b></p>${trx(s.rs,"stratagème : restrictions")}`:""}<p class="bib-meta">Source : ${s.src==="wahapedia"?"Wahapedia":"Warhammer Oracle (Faction Packs)"}</p></details>`}).join("")||'<p class="mu">Aucun.</p>'}
+ else if(B.tab==="enh"){h=D.enh.filter(x=>inF(x)&&hit(x.n+" "+(x.det||""))).map(e=>`<details class="card"><summary><b>${E(e.n)}</b> <span class="bib-meta">${E(e.det||"")} · ${e.pts!=null?e.pts+" pts":""}</span></summary>${trx(e.d,"texte d'amélioration")}<p class="bib-meta">Source : ${e.src==="wahapedia"?"Wahapedia":"BSData"}</p></details>`).join("")||'<p class="mu">Aucune.</p>'}
+ else if(B.tab==="rules"){h=D.rules.filter(r=>hit(r.n)).map(r=>`<details class="card"><summary><b>${E(r.n)}</b></summary>${trx(r.d,"règle")}</details>`).join("")}
  return h}
-function openUnit(id){const u=D.byId[id];if(!u)return;css();const o=box("bibm");
+function refreshOpen(){if(B.openId&&document.querySelector("#bibm .bib-ov")){const pn=document.querySelector("#bibm .bib-pn"),st=pn?pn.scrollTop:0;openUnit(B.openId);const p2=document.querySelector("#bibm .bib-pn");if(p2)p2.scrollTop=st}else{try{draw()}catch(_){}}}
+function openUnit(id){const u=D.byId[id];if(!u)return;B.openId=id;css();const o=box("bibm");
  o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>Fiche de la bibliothèque</h2><button class="b" data-bib="x">✕</button></div>${unitHtml(u)}<div class="bib-meta">Légende : 🟢 traduction confirmée · 🟠 à vérifier · ⚪ non traduit (texte d'origine conservé)</div><button class="b p" data-bib="pickcoll" data-id="${E(u.id)}" style="width:100%;margin-top:8px">🔗 Rapprocher avec une fiche de ma collection</button></div></div>`}
 function openPickColl(id){const u=D.byId[id];if(!u)return;const items=Object.values(S.coll||{}).filter(m=>!(m.mrg&&S.coll[m.mrg])).sort((a,b)=>String(a.name).localeCompare(String(b.name)));const o=box("bibm");
  o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>Choisir ma fiche</h2><button class="b" data-bib="x">✕</button></div><p class="bib-meta">Bibliothèque : <b>${E(u.n)}</b>. Sélectionne la fiche de ta collection à enrichir.</p>${items.map(m=>`<button class="b" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}" style="width:100%;text-align:left;margin:4px 0">${E(m.name)}${LB().links[m.ref]?" 📚":""}</button>`).join("")||'<p class="mu">Ta collection est vide.</p>'}</div></div>`}
 function openLink(ref){css();const m=S.coll[ref];if(!m)return;const lb=LB(),lk=lb.links[ref];const o=box("bibm");
  const run=()=>{const sg=suggest(m);o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>📚 Bibliothèque</h2><button class="b" data-bib="x">✕</button></div><p>Fiche de ta collection : <b class="cap">${E(m.name)}</b></p>
+ ${lk&&lk.info?`<details class="bib-row"><summary><b>ℹ Informations de référence (${E(lk.info.src||"")})</b></summary>${lk.info.loadout?`<p>${E(stripMd(lk.info.loadout)).replace(/\n/g,"<br>")}</p>`:""}${(lk.info.comp||[]).map(c=>`<p>• ${E(c)}</p>`).join("")}${(lk.info.opt||[]).map(c=>`<p>• ${E(c)}</p>`).join("")}<p class="bib-meta">Texte original anglais ; aucune règle n'est appliquée automatiquement.</p></details>`:""}
  ${lk&&D.byId[lk.id]?`<div class="bib-row bib-a">✅ Déjà rapprochée avec <b>${E(D.byId[lk.id].n)}</b> (${fmtD(lk.at)})${lk.stale?" · ⚠ la fiche de la bibliothèque a changé depuis":""}.<br><button class="b" data-bib="cmp" data-r="${E(ref)}" data-id="${E(lk.id)}">Revoir / compléter</button> <button class="b x" data-bib="unlink" data-r="${E(ref)}">Défaire</button></div>`:""}
  <label>Chercher dans la bibliothèque<input id="bibs" placeholder="ex. Intercessors, Boyz…" value="${E(B.sq==null?m.name:B.sq)}" autocomplete="off"></label>
  <p class="bib-meta">HAMMER propose, c'est toi qui décides. Rien n'est jamais rapproché automatiquement.</p><div id="bibsr">${sres(m)}</div></div></div>`};
@@ -225,7 +253,7 @@ const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</
 function openCmp(ref,id,pi){const m=S.coll[ref],u=D.byId[id];if(!m||!u)return;css();pi=pi==null?(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0):pi;
  const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{},map:{}};
  // valeurs par défaut : on ajoute ce qui manque ; on garde tes données quand elles diffèrent
- const P=B.cmp.pick;[...rows.stats,...rows.weapons,...rows.abil,...rows.kw,...rows.misc].forEach(r=>{if(r.kind==="add")P[r.id]=true});
+ const P=B.cmp.pick;[...rows.stats,...rows.weapons,...rows.abil,...rows.kw,...rows.misc].forEach(r=>{if(r.kind==="add")P[r.id]=true});if(u.wp&&(u.wp.loadout||(u.wp.opt||[]).length||(u.wp.comp||[]).length))P.info=true;
  drawCmp()}
 function drawCmp(){const C=B.cmp;if(!C)return;const m=S.coll[C.ref],u=D.byId[C.id],R=C.rows,P=C.pick,o=box("bibm");
  const ck=(id,txt,cls)=>`<label class="bib-ck"><input type="checkbox" data-bibck="${id}" ${P[id]?"checked":""}><span>${txt}</span></label>`;
@@ -244,11 +272,12 @@ function drawCmp(){const C=B.cmp;if(!C)return;const m=S.coll[C.ref],u=D.byId[C.i
  h+=sec("Capacités",R.abil.filter(r=>r.kind==="add").map(r=>{const mp=(C.map||{})[r.id],sg=sugg(r);return`<div class="bib-row ${mp?"bib-s":"bib-a"}">${mp?`<div class="bib-ck"><span>↔ <b>${E(r.t.t)}</b> (anglais) = <b>${E(mp)}</b> (ta fiche).<br><span class="bib-meta">Ton texte français est conservé tel quel ; on retient seulement l'association pour mieux traduire l'anglais à l'avenir.</span></span></div>`:ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)} <span class="bib-meta">(texte en anglais)</span>`)}<select data-bibmap="${r.id}" style="width:100%;margin-top:4px"><option value="">${mp?"Ne plus associer":"C'est une nouvelle capacité"}</option>${mine.map(n=>`<option value="${E(n)}"${mp===n?" selected":""}>${sg===n&&!mp?"★ Suggestion : ":""}↔ C'est déjà « ${E(n)} »</option>`).join("")}</select></div>`}).join(""),"Toutes les capacités sont déjà présentes.");
  h+=sec("Mots-clés",R.kw.map(r=>ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)}`)).join(""),"Aucun mot-clé à ajouter.");
  h+=sec("Points",R.misc.filter(r=>r.kind!=="same").map(r=>r.kind==="add"?ck(r.id,`Points absents : ajouter <b>${E(r.lib)}</b>`):`<div class="bib-row bib-d">Points : toi <b>${E(r.mine)}</b> · biblio <b>${E(r.lib)}</b><br>${ck(r.id,"Remplacer")}</div>`).join(""),"Points identiques ou non renseignés.");
+ if(u.wp&&(u.wp.loadout||(u.wp.opt||[]).length||(u.wp.comp||[]).length))h+=sec("Informations de référence",ck("info","Garder l'équipement de base, la composition et les options (Wahapedia) comme <b>information de référence</b> liée à ma fiche. Elles ne bloquent jamais mes listes."));
  h+=`<p class="bib-meta">Options d'équipement et restrictions : non fournies par les sources. Les listes d'armée existantes ne sont pas modifiées ; les nouvelles armes sont ajoutées à ta fiche de collection, à toi de les choisir à l'ajout dans une liste.</p>
  <div class="row" style="gap:8px;margin-top:8px"><button class="b" data-bib="x" style="flex:1">Annuler</button><button class="b p" data-bib="apply" style="flex:2">✔ Valider le rapprochement</button></div></div></div>`;
  const sc=(o.querySelector&&o.querySelector(".bib-pn"))?o.querySelector(".bib-pn").scrollTop:0;o.innerHTML=h;const pn=o.querySelector(".bib-pn");if(pn)pn.scrollTop=sc}
 function menu(){css();const lb=LB(),o=box("bibm");o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>⚙ Gérer la bibliothèque</h2><button class="b" data-bib="x">✕</button></div>
- <p class="bib-meta">Version ${E(D.man?D.man.version:"—")} · origine ${E(D.origin||"—")} · dernière vérification ${lb.last?fmtD(lb.last.at)+(lb.last.err?" (échec : "+E(lb.last.err)+")":""):"jamais"}</p>
+ <p class="bib-meta">Wahapedia (export 11e) : ${E(D.man&&D.man.source&&D.man.source.wahapedia?D.man.source.wahapedia.last_update:"non chargé")} · ${D.frN} traduction(s) proposée(s).</p><p class="bib-meta">Version ${E(D.man?D.man.version:"—")} · origine ${E(D.origin||"—")} · dernière vérification ${lb.last?fmtD(lb.last.at)+(lb.last.err?" (échec : "+E(lb.last.err)+")":""):"jamais"}</p>
  <div class="bib-row"><b>Mise à jour (facultative)</b><p class="bib-meta">Compare les versions, ne télécharge que ce qui a changé, vérifie l'intégrité, conserve tes fiches et tes rapprochements.</p><label class="bib-ck"><input type="checkbox" data-bibopt="auto" ${lb.auto?"checked":""}><span>Vérifier automatiquement (1 fois par jour, si Internet)</span></label><button class="b p" data-bib="upd" style="width:100%">🔄 Vérifier les nouveautés maintenant</button><div id="bibmsg" class="bib-meta"></div></div>
  <div class="bib-row"><b>Sauvegarde</b><button class="b" data-bib="exp">💾 Sauvegarder la bibliothèque</button> <label class="b" style="cursor:pointer">📂 Restaurer<input type="file" accept=".json,application/json" id="bibimp" hidden></label> <button class="b" data-bib="prev">↩ Version précédente</button></div>
  <div class="bib-row"><b>Traductions apprises de tes fiches</b><p class="bib-meta">${Object.keys(lb.tr).length} nom(s) · ${Object.keys(lb.tm).length} texte(s)/phrase(s). Elles servent uniquement à afficher la bibliothèque ; tes fiches ne sont jamais modifiées.</p><button class="b x" data-bib="tmclr">Effacer ces traductions apprises</button></div>
@@ -265,6 +294,9 @@ function dl(name,text){const a=document.createElement("a");a.href=URL.createObje
 async function doUpd(manual){msg("Vérification…");const r=await checkUpdate(manual);
  const t={same:"✅ Déjà à jour.",off:"Pas de connexion.",err:"⚠ "+(r.err||""),updated:"✅ Mise à jour installée : "+(r.news?r.news.items.add.length+" nouveauté(s), "+r.news.items.chg.length+" modifiée(s).":"")}[r.state];msg(t||"");
  if(r.state==="updated"){try{toast("🆕 Bibliothèque V11 mise à jour")}catch(_){}try{draw()}catch(_){}}return r}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bibtr]");if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.k,m=TXM[k],pr=(D.fr[k]||{}).fr||"";if(!m)return;
+ if(b.dataset.bibtr==="ok"){storeTr(k,pr);try{refreshOpen()}catch(_){}try{toast("Traduction validée ✓")}catch(_){}}
+ else ask({t:"Corriger la traduction",p:"Le texte français que tu enregistres devient « confirmé ». L'original anglais n'est pas modifié.",input:pr,ok:"Enregistrer"},v=>{if(v&&v.trim()){storeTr(k,v.trim());try{refreshOpen()}catch(_){}}})},true);
 document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-bib]");if(!b)return;const a=b.dataset.bib;
  if(a==="bg"&&e.target!==b)return;e.preventDefault();e.stopPropagation();
  try{switch(a){
@@ -279,6 +311,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick,C.map);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
   case"unlink":ask({t:"Défaire le rapprochement ?",p:"Le lien est supprimé. Tu peux aussi retirer ce qui a été ajouté en revenant à l'état d'avant.",ok:"Garder les ajouts",alt:"Annuler les ajouts",altcb:()=>{undoLink(b.dataset.r,true);closeM("bibm");try{draw()}catch(_){}toast("Fiche remise comme avant")}},()=>{undoLink(b.dataset.r,false);closeM("bibm");try{draw()}catch(_){}});break;
   case"menu":menu();break;
+  case"__tr":break;
   case"tmclr":ask({t:"Effacer les traductions apprises ?",p:"Les associations et textes retenus depuis tes fiches sont supprimés. Tes fiches ne changent pas.",ok:"Effacer",dg:1},()=>{const lb=LB();lb.tm={};Object.keys(lb.tr).forEach(k=>{if(lb.tr[k].src==="user")delete lb.tr[k]});sv();menu()});break;
   case"lic":licModal();break;
   case"seen":LB().news.forEach(n=>n.seen=true);sv();try{draw()}catch(_){}break;

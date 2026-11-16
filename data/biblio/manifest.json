@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104",
+ "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr28",
  "generated": "2026-11-16",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -12,6 +12,10 @@
    "repo": "gregario/warhammer-oracle",
    "commit": "7cb6104",
    "date": "2026-11-12"
+  },
+  "wahapedia": {
+   "site": "wahapedia.ru (export de données, 11e édition)",
+   "last_update": "2026-11-12 23:45:38"
   }
  },
  "notice": "Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.",
@@ -51,6 +55,41 @@
     "enhancements": 0,
     "stratagems": 10,
     "rules": 49
+   }
+  },
+  {
+   "id": "wp-space-marines",
+   "file": "wp-space-marines.json",
+   "sha1": "4100f3c5915972c9c31da5c71819b0576bd0e615",
+   "bytes": 176507,
+   "counts": {
+    "units": 1,
+    "ext": 184,
+    "detachments": 4,
+    "enhancements": 27,
+    "stratagems": 97
+   }
+  },
+  {
+   "id": "wp-orks",
+   "file": "wp-orks.json",
+   "sha1": "55303822546fa18780768e7abca96e71a9abc454",
+   "bytes": 49170,
+   "counts": {
+    "units": 0,
+    "ext": 67,
+    "detachments": 0,
+    "enhancements": 3,
+    "stratagems": 40
+   }
+  },
+  {
+   "id": "fr",
+   "file": "fr.json",
+   "sha1": "bae805fe009e476e845617e1a670040352f01374",
+   "bytes": 1867,
+   "counts": {
+    "translations": 28
    }
   }
  ]
