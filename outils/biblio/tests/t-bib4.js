@@ -1,0 +1,20 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const st=JSON.parse(fs.readFileSync(__dirname+'/etat.json','utf8'));
+const W=+process.argv[3]||320;
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:760},isMobile:true,hasTouch:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());
+await ctx.addInitScript(s=>{if(!sessionStorage.getItem('x')){localStorage.setItem('armees40k',s);sessionStorage.setItem('x',1)}},JSON.stringify(st));
+const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+await p.evaluate(()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();S.mg=true});await p.evaluate(()=>BIB.init());
+const chk=async(t)=>{await p.waitForTimeout(350);const r=await p.evaluate(()=>{const vw=document.documentElement.clientWidth;let w=document.documentElement.scrollWidth,ov=[];document.querySelectorAll('#bibm *, main *').forEach(e=>{const r=e.getBoundingClientRect();if(r.width&&r.right>vw+1&&r.left<vw)ov.push(e.tagName+'.'+(typeof e.className==='string'?e.className:''))});return{sw:w,vw,ov:ov.slice(0,4)}});console.log(t,JSON.stringify(r))};
+await p.evaluate(()=>{tab='bib';draw()});await chk('bib unités');
+for(const t of ['det','str','enh','rules']){await p.evaluate(t=>document.querySelector('[data-bib="tab"][data-v="'+t+'"]').click(),t);await chk('bib '+t)}
+await p.evaluate(()=>document.querySelector('[data-bib="tab"][data-v="units"]').click());await p.waitForTimeout(300);
+await p.evaluate(()=>document.querySelector('#bibl [data-bib="unit"]').click());await chk('fiche biblio');
+await p.evaluate(()=>document.querySelector('[data-bib="pickcoll"]').click());await chk('choix fiche');
+await p.evaluate(()=>document.querySelector('[data-bib="x"]').click());
+await p.evaluate(()=>document.querySelector('[data-bib="menu"]').click());await chk('gérer');
+await p.evaluate(()=>document.querySelector('[data-bib="x"]').click());
+await p.evaluate(()=>document.querySelector('[data-bib="lic"]').click());await chk('licences');
+console.log(errs);await b.close()})();

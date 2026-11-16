@@ -1,0 +1,57 @@
+{
+ "schema": 1,
+ "game": "wh40k-11e",
+ "rules": "V11",
+ "version": "11e-2026-11-12-7cb6104",
+ "generated": "2026-11-16",
+ "source": {
+  "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
+  "detachments": "BSData/wh40k-11e via warhammer-oracle",
+  "stratagems": "warhammer-oracle (saisie manuelle d'après les Faction Packs)",
+  "oracle": {
+   "repo": "gregario/warhammer-oracle",
+   "commit": "7cb6104",
+   "date": "2026-11-12"
+  }
+ },
+ "notice": "Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.",
+ "chunks": [
+  {
+   "id": "space-marines",
+   "file": "space-marines.json",
+   "sha1": "2fea13b707b862c2874e4f42712207f2f7ff01fa",
+   "bytes": 1380638,
+   "counts": {
+    "units": 301,
+    "detachments": 35,
+    "enhancements": 87,
+    "stratagems": 218
+   }
+  },
+  {
+   "id": "orks",
+   "file": "orks.json",
+   "sha1": "629cadce305ace426a939531ae6e466c1da7d62a",
+   "bytes": 305735,
+   "counts": {
+    "units": 96,
+    "detachments": 17,
+    "enhancements": 39,
+    "stratagems": 63
+   }
+  },
+  {
+   "id": "common",
+   "file": "common.json",
+   "sha1": "150cda5eae2f86f63a7f7e0aaaaf4e771c5995de",
+   "bytes": 24528,
+   "counts": {
+    "units": 0,
+    "detachments": 0,
+    "enhancements": 0,
+    "stratagems": 10,
+    "rules": 49
+   }
+  }
+ ]
+}

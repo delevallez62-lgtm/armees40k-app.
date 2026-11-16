@@ -44,6 +44,7 @@ coll:["Collection","Toutes tes figurines, une fiche par unité.",[
  ["☑","Sélectionner","Sélection multiple","Coche plusieurs fiches puis supprime-les d'un coup."],
  ["🏳","+ Faction","Factions","Crée une faction avec sa bannière. Les figurines sont rangées par faction."],
  ["🃏","","Fiche d'unité","Touche une carte : profil, armes, aptitudes. Si tu importes une fiche du même nom avec d'autres armes, elles sont ajoutées à cette même fiche."]]],
+ ["📚","","Bibliothèque V11","Le symbole 📚 d'une fiche (Collection seulement) la rapproche, à ta main, d'une fiche Space Marines ou Orks de la bibliothèque : tu choisis ce qu'on ajoute, rien n'est écrasé. « 📚 Bibliothèque » ouvre la bibliothèque et ses mises à jour."],
 paint:["Peinture & Hobby","Suis l'avancement de tes figurines.",[
  ["🖌","🖌 Schémas par figurine","Schémas","Note les couleurs et recettes utilisées pour chaque figurine."],
  ["🎨","🎨 Mes peintures","Peintures","Ta collection de pots de peinture."],
