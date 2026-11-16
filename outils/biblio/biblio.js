@@ -382,8 +382,9 @@ function loadCard(en){const x=frItem(en,"équipement de base"),o=ruleLoad(en,twR
 function compCard(list){const rows=list.map(t=>{const x=frItem(t,"composition");return`<span class="bib-chip">${x.html}</span>`}).join("");return`<div class="bib-oc"><div class="bib-ol">${rows}</div></div>`}
 window.BIBDRW=function(p){try{
  if(!p||!p.ref||S.coll[p.ref]!==p)return"";
- if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
- const am=autoMatch(p);if(!am)return"";css();const u=am.u,w=u.wp||{},lb=LB(),ref=p.ref,isOpen=!!BD.open[ref];
+ const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
+ if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return stub(D.err?"Bibliothèque indisponible : "+E(D.err):"Chargement de la bibliothèque…",false)}
+ const am=autoMatch(p);if(!am)return stub("Aucune correspondance automatique dans la bibliothèque V11 (Space Marines et Orks pour l'instant). Tu peux choisir toi-même l'équivalent anglais pour afficher ses armes et options traduites.");css();const u=am.u,w=u.wp||{},lb=LB(),ref=p.ref,isOpen=!!BD.open[ref];
  const warn=am.level!=="ok";
  const libW=[...(u.rw||[]).map(x=>({lw:x,aw:wToApp(x,false)})),...(u.mw||[]).map(x=>({lw:x,aw:wToApp(x,true)}))];
  const mine=(p.weapons||[]).map(wSig);
@@ -395,7 +396,7 @@ window.BIBDRW=function(p){try{
  const opts=(w.opt&&w.opt.length)?`<h4>🔧 Options d'équipement (${w.opt.length})</h4><p class="bib-meta">Ce que tu peux changer ou ajouter. Informations de référence : elles ne bloquent jamais tes listes.</p>${w.opt.map(optCard).join("")}`:`<h4>Options d'équipement</h4><p class="bib-meta">${u.src==="wahapedia"||u.wp?"Aucune option listée pour cette unité.":"Cette source ne contient pas les options d'équipement de cette unité."}</p>`;
  const comp=(w.comp&&w.comp.length)?`<h4>👥 Composition</h4>${compCard(w.comp)}`:"";
  const wps=`<h4>⚔ Armes de la bibliothèque (${libW.length})</h4><p class="bib-meta">Noms traduits quand la traduction est connue ; ⚠ = proposition à vérifier (bouton EN pour voir l'anglais).</p>${libW.map(wrow).join("")||'<p class="bib-meta">Aucune arme.</p>'}`;
- return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠ à vérifier</span>':""}</summary><div class="bib-drb">${head}<label class="bib-ck" style="margin:6px 0"><input type="checkbox" data-bibdr="enall" ${BD.enAll?"checked":""}><span>Afficher le texte anglais d'origine</span></label>${loadout}${opts}${comp}${wps}</div></details>`}catch(e){return""}};
+ return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠ à vérifier</span>':""}</summary><div class="bib-drb">${head}<label class="bib-ck" style="margin:6px 0"><input type="checkbox" data-bibdr="enall" ${BD.enAll?"checked":""}><span>Afficher le texte anglais d'origine</span></label>${loadout}${opts}${comp}${wps}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq"><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ Affichage impossible pour cette fiche (${E(e&&e.message)}).</div></div></details>`}};
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.classList.contains("bib-dr")){BD.open[d.dataset.bibref]=d.open}},true);
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bibdr]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.bibdr;
  if(a==="en"){BD.en[b.dataset.k]=!BD.en[b.dataset.k];try{draw()}catch(_){}}
