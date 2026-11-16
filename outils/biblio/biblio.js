@@ -259,28 +259,32 @@ const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</
 function openCmp(ref,id,pi){const m=S.coll[ref],u=D.byId[id];if(!m||!u)return;css();pi=pi==null?(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0):pi;
  const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{},map:{}};
  // valeurs par défaut : on ajoute ce qui manque ; on garde tes données quand elles diffèrent
- const P=B.cmp.pick;[...rows.stats,...rows.weapons,...rows.abil,...rows.kw,...rows.misc].forEach(r=>{if(r.kind==="add")P[r.id]=true});if(u.wp&&(u.wp.loadout||(u.wp.opt||[]).length||(u.wp.comp||[]).length))P.info=true;
+ const P=B.cmp.pick;rows.weapons.forEach(r=>{if(r.kind==="add")P[r.id]=true});
  drawCmp()}
 function drawCmp(){const C=B.cmp;if(!C)return;const m=S.coll[C.ref],u=D.byId[C.id],R=C.rows,P=C.pick,o=box("bibm");
  const ck=(id,txt,cls)=>`<label class="bib-ck"><input type="checkbox" data-bibck="${id}" ${P[id]?"checked":""}><span>${txt}</span></label>`;
  const sec=(t,body,empty)=>`<h4>${t}</h4>${body||`<p class="bib-meta">${empty||"Rien à compléter."}</p>`}`;
- let h=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>Rapprochement</h2><button class="b" data-bib="x">✕</button></div>
- <p><b class="cap">${E(m.name)}</b> (ma collection) ↔ <b>${E(u.n)}</b> (bibliothèque)</p>
- <p class="bib-meta">Rien n'est modifié tant que tu n'as pas validé. Les cases cochées seront ajoutées ou changées ; les valeurs différentes sont <b>conservées chez toi</b> sauf si tu coches l'autre.</p>
- ${u.pr.length>1?`<label>Profil de la bibliothèque utilisé pour les caractéristiques<select data-bibpi="1">${u.pr.map((p,i)=>`<option value="${i}"${i===C.pi?" selected":""}>${E(p.n)}</option>`).join("")}</select></label>`:""}`;
+ const wadd=R.weapons.filter(r=>r.kind==="add"),wsame=R.weapons.filter(r=>r.kind==="same").length;
+ let h=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>Ajouter des armes</h2><button class="b" data-bib="x">✕</button></div>
+ <p><b class="cap">${E(m.name)}</b> <span class="bib-meta">← ${E(u.n)}</span></p>
+ ${u.pr.length>1?`<label>Profil<select data-bibpi="1">${u.pr.map((p,i)=>`<option value="${i}"${i===C.pi?" selected":""}>${E(p.n)}</option>`).join("")}</select></label>`:""}
+ <h4>Armes à ajouter à ta fiche</h4>
+ ${wadd.length?`<div class="row" style="gap:6px;margin:4px 0"><button class="b" data-bib="ckw" data-v="1">Tout cocher</button><button class="b" data-bib="ckw" data-v="0">Tout décocher</button></div>`+wadd.map(r=>{const aw=r.x.aw;return`<div class="bib-row bib-a">${ck(r.id,`<b>${E(aw.name)}</b><br><span class="bib-meta">${E(aw.range)}${/^\d/.test(aw.range)?'"':""} · A ${E(aw.a)} · ${E(aw.hit)} · F ${E(aw.f)} · PA ${E(aw.pa)} · D ${E(aw.d)}${aw.caps?" · "+E(aw.caps):""}</span>`)}</div>`}).join(""):`<p class="bib-meta">Aucune nouvelle arme : ta fiche a déjà tout.</p>`}
+ ${wsame?`<p class="bib-meta">✓ ${wsame} arme${wsame>1?"s":""} déjà dans ta fiche (non touchée${wsame>1?"s":""}).</p>`:""}
+ <div class="row" style="gap:8px;margin:10px 0;position:sticky;bottom:0;padding:8px 0;background:var(--bg,#14161a)"><button class="b" data-bib="x" style="flex:1">Annuler</button><button class="b p" data-bib="apply" style="flex:2">✔ Ajouter les armes cochées</button></div>
+ <details class="bib-row"><summary><b>Autres informations (facultatif)</b></summary><p class="bib-meta">Caractéristiques, capacités, mots-clés, points… Rien n'est coché par défaut ; tes valeurs ne sont jamais remplacées sans que tu le demandes.</p>`;
  h+=sec("Caractéristiques",R.stats.filter(r=>r.kind!=="same").map(r=>r.kind==="add"?ck(r.id,`<b>${r.k}</b> absente : ajouter <b>${E(r.lib)}</b>`):`<div class="bib-row bib-d"><b>${r.k}</b> : toi <b>${E(r.mine)}</b> · bibliothèque <b>${E(r.lib)}</b><br>${ck(r.id,"Remplacer par la valeur de la bibliothèque")}</div>`).join(""),"Toutes les caractéristiques concordent déjà ou sont complètes.");
- h+=sec("Armes et équipements",R.weapons.map(r=>{const aw=r.x.aw,pr=`${aw.range}${/^\d/.test(aw.range)?'"':""} · A ${aw.a} · ${aw.hit} · F ${aw.f} · PA ${aw.pa} · D ${aw.d}`;
+ h+=sec("Armes dont le profil diffère",R.weapons.filter(r=>r.kind==="diff").map(r=>{const aw=r.x.aw,pr=`${aw.range}${/^\d/.test(aw.range)?'"':""} · A ${aw.a} · ${aw.hit} · F ${aw.f} · PA ${aw.pa} · D ${aw.d}`;
   if(r.kind==="same")return`<div class="bib-row bib-s">✓ <b>${E(aw.name)}</b> existe déjà chez toi (<b>${E(r.mine.name)}</b>, même profil).${r.learn?`<br>${ck("ln:"+r.id,`Retenir « ${E(r.mine.name)} » comme nom français de « ${E(String(r.x.lw.n).replace(/^➤\s*/,""))} »`)}`:""}</div>`;
   if(r.kind==="diff")return`<div class="bib-row bib-d"><b>${E(r.mine.name)}</b> : valeurs différentes<div class="bib-two"><div>Toi : ${E(r.mine.range)} · A ${E(r.mine.a)} · ${E(r.mine.hit)} · F ${E(r.mine.f)} · PA ${E(r.mine.pa)} · D ${E(r.mine.d)}</div><div>Biblio : ${E(pr)}</div></div>${ck(r.id,"Remplacer le profil par celui de la bibliothèque (je garde le nom)")}</div>`;
-  return`<div class="bib-row bib-a">${ck(r.id,`Ajouter <b>${E(aw.name)}</b> — ${E(pr)}${aw.caps?` — ${E(aw.caps)}`:""}`)}</div>`}).join(""),"Aucune arme dans la bibliothèque.");
+  return`<div class="bib-row bib-a">${ck(r.id,`Ajouter <b>${E(aw.name)}</b> — ${E(pr)}${aw.caps?` — ${E(aw.caps)}`:""}`)}</div>`}).join(""),"Aucune.");
  const mine=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),used=new Set(Object.values(C.map||{}));
  const sugg=r=>{const t=tAB(r.a.n);const kt=nk(t.t),ke=nk(r.a.n);let best=mine.find(n=>nk(n)===kt);if(best)return best;const tk=new Set(toks(t.t).concat(toks(r.a.n)));let sc=0;mine.forEach(n=>{const x=toks(n).filter(w=>tk.has(w)).length;if(x>sc&&x>=1&&x>=Math.ceil(toks(n).length/2)){sc=x;best=n}});return sc?best:null};
  h+=sec("Capacités",R.abil.filter(r=>r.kind==="add").map(r=>{const mp=(C.map||{})[r.id],sg=sugg(r);return`<div class="bib-row ${mp?"bib-s":"bib-a"}">${mp?`<div class="bib-ck"><span>↔ <b>${E(r.t.t)}</b> (anglais) = <b>${E(mp)}</b> (ta fiche).<br><span class="bib-meta">Ton texte français est conservé tel quel ; on retient seulement l'association pour mieux traduire l'anglais à l'avenir.</span></span></div>`:ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)} <span class="bib-meta">(texte en anglais)</span>`)}<select data-bibmap="${r.id}" style="width:100%;margin-top:4px"><option value="">${mp?"Ne plus associer":"C'est une nouvelle capacité"}</option>${mine.map(n=>`<option value="${E(n)}"${mp===n?" selected":""}>${sg===n&&!mp?"★ Suggestion : ":""}↔ C'est déjà « ${E(n)} »</option>`).join("")}</select></div>`}).join(""),"Toutes les capacités sont déjà présentes.");
  h+=sec("Mots-clés",R.kw.map(r=>ck(r.id,`Ajouter <b>${E(r.t.t)}</b> ${badge(r.t.st)}`)).join(""),"Aucun mot-clé à ajouter.");
  h+=sec("Points",R.misc.filter(r=>r.kind!=="same").map(r=>r.kind==="add"?ck(r.id,`Points absents : ajouter <b>${E(r.lib)}</b>`):`<div class="bib-row bib-d">Points : toi <b>${E(r.mine)}</b> · biblio <b>${E(r.lib)}</b><br>${ck(r.id,"Remplacer")}</div>`).join(""),"Points identiques ou non renseignés.");
  if(u.wp&&(u.wp.loadout||(u.wp.opt||[]).length||(u.wp.comp||[]).length))h+=sec("Informations de référence",ck("info","Garder l'équipement de base, la composition et les options (Wahapedia) comme <b>information de référence</b> liée à ma fiche. Elles ne bloquent jamais mes listes."));
- h+=`<p class="bib-meta">Options d'équipement et restrictions : non fournies par les sources. Les listes d'armée existantes ne sont pas modifiées ; les nouvelles armes sont ajoutées à ta fiche de collection, à toi de les choisir à l'ajout dans une liste.</p>
- <div class="row" style="gap:8px;margin-top:8px"><button class="b" data-bib="x" style="flex:1">Annuler</button><button class="b p" data-bib="apply" style="flex:2">✔ Valider le rapprochement</button></div></div></div>`;
+ h+=`</details></div></div>`;
  const sc=(o.querySelector&&o.querySelector(".bib-pn"))?o.querySelector(".bib-pn").scrollTop:0;o.innerHTML=h;const pn=o.querySelector(".bib-pn");if(pn)pn.scrollTop=sc}
 function menu(){css();const lb=LB(),o=box("bibm");o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>⚙ Gérer la bibliothèque</h2><button class="b" data-bib="x">✕</button></div>
  <p class="bib-meta">Wahapedia (export 11e) : ${E(D.man&&D.man.source&&D.man.source.wahapedia?D.man.source.wahapedia.last_update:"non chargé")} · ${D.frN} traduction(s) proposée(s).</p><p class="bib-meta">Version ${E(D.man?D.man.version:"—")} · origine ${E(D.origin||"—")} · dernière vérification ${lb.last?fmtD(lb.last.at)+(lb.last.err?" (échec : "+E(lb.last.err)+")":""):"jamais"}</p>
@@ -315,6 +319,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
   case"cmp":await init();openCmp(b.dataset.r,b.dataset.id);break;
+  case"ckw":{const C=B.cmp;if(!C)break;const v=b.dataset.v==="1";C.rows.weapons.forEach(r=>{if(r.kind==="add")C.pick[r.id]=v});drawCmp();break}
   case"apply":{const C=B.cmp;if(!C)break;const m=S.coll[C.ref],u=D.byId[C.id];const done=applyCmp(m,u,C.pi,C.rows,C.pick,C.map);closeM("bibm");B.cmp=null;try{draw()}catch(_){}try{toast(done.length?"Fiche complétée ("+done.length+" élément"+(done.length>1?"s":"")+") ✓":"Rapprochement enregistré, aucun changement")}catch(_){}break}
   case"unlink":ask({t:"Défaire le rapprochement ?",p:"Le lien est supprimé. Tu peux aussi retirer ce qui a été ajouté en revenant à l'état d'avant.",ok:"Garder les ajouts",alt:"Annuler les ajouts",altcb:()=>{undoLink(b.dataset.r,true);closeM("bibm");try{draw()}catch(_){}toast("Fiche remise comme avant")}},()=>{undoLink(b.dataset.r,false);closeM("bibm");try{draw()}catch(_){}});break;
   case"menu":menu();break;
