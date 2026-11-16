@@ -77,6 +77,7 @@ enc:["Règles V11","Une encyclopédie hors ligne.",[
  ["🕓","🕓 Historique","Historique","Retrouve les modifications."],
  ["⚠","59 Règles à compléter","À compléter","Liste ce qui manque ou est ambigu, à valider."]]],
 learn:["Apprendre à jouer","Les bases d'une première partie.",[
+ ["🎓","","Partie tutorielle","« Premières parties » : une vraie partie avec ton armée, en 11 étapes. L'aide se réduit en pastille jaune (Pause) et se reprend à la même étape."],
  ["✅","","Pas à pas","Coche les 8 étapes de ta première partie."],
  ["📖","","Tiroirs","Dés, fiches, phases, attaque, objectifs, vocabulaire : touche un titre pour l'ouvrir."]]],
 play:["Mode jeu : Unités","Ta liste, pendant la partie.",[
