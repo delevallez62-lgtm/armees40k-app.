@@ -19,8 +19,8 @@
   {
    "id": "space-marines",
    "file": "space-marines.json",
-   "sha1": "2fea13b707b862c2874e4f42712207f2f7ff01fa",
-   "bytes": 1380638,
+   "sha1": "d3bceef87e25ba49a5689a28e43930e656e903d2",
+   "bytes": 1380603,
    "counts": {
     "units": 301,
     "detachments": 35,
@@ -31,8 +31,8 @@
   {
    "id": "orks",
    "file": "orks.json",
-   "sha1": "629cadce305ace426a939531ae6e466c1da7d62a",
-   "bytes": 305735,
+   "sha1": "1db8ec069b358a7c4d82603b4aa9350995cbca1d",
+   "bytes": 305700,
    "counts": {
     "units": 96,
     "detachments": 17,
@@ -43,8 +43,8 @@
   {
    "id": "common",
    "file": "common.json",
-   "sha1": "150cda5eae2f86f63a7f7e0aaaaf4e771c5995de",
-   "bytes": 24528,
+   "sha1": "ce817a23c72d911751eaa892f795f9f5065e16e7",
+   "bytes": 24493,
    "counts": {
     "units": 0,
     "detachments": 0,

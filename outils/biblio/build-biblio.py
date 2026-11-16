@@ -107,14 +107,22 @@ for g in chunks:
 os.makedirs(OUT,exist_ok=True)
 today=datetime.date.today().isoformat()
 version='11e-%s-%s'%(ODATE or today,COMMIT)
+files={}
+for g,c in chunks.items():
+    raw=json.dumps({'schema':1,'id':g,**c},ensure_ascii=False,separators=(',',':'))
+    files[g]=raw
+old=None
+try:old=json.load(open(os.path.join(OUT,'manifest.json'),encoding='utf8'))
+except Exception:pass
+newsha={g:hashlib.sha1(r.encode()).hexdigest() for g,r in files.items()}
+if old and {c['id']:c['sha1'] for c in old['chunks']}==newsha:
+    print('inchangée');sys.exit(0)
 manifest={'schema':1,'game':'wh40k-11e','rules':'V11','version':version,'generated':today,
  'source':{'units':'BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)','detachments':'BSData/wh40k-11e via warhammer-oracle','stratagems':'warhammer-oracle (saisie manuelle d\'après les Faction Packs)','oracle':{'repo':'gregario/warhammer-oracle','commit':COMMIT,'date':ODATE}},
  'notice':'Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.','chunks':[]}
-for g,c in chunks.items():
-    body={'schema':1,'id':g,'version':version,**c}
-    raw=json.dumps(body,ensure_ascii=False,separators=(',',':'))
+for g,raw in files.items():
     fn='%s.json'%g
     open(os.path.join(OUT,fn),'w',encoding='utf8').write(raw)
-    manifest['chunks'].append({'id':g,'file':fn,'sha1':hashlib.sha1(raw.encode()).hexdigest(),'bytes':len(raw.encode()),'counts':{k:len(v) for k,v in c.items()}})
+    manifest['chunks'].append({'id':g,'file':fn,'sha1':newsha[g],'bytes':len(raw.encode()),'counts':{k:len(v) for k,v in chunks[g].items()}})
 open(os.path.join(OUT,'manifest.json'),'w',encoding='utf8').write(json.dumps(manifest,ensure_ascii=False,indent=1))
-print(json.dumps(manifest['chunks'],ensure_ascii=False,indent=1))
+print('mise à jour',version,json.dumps({c['id']:c['counts'] for c in manifest['chunks']},ensure_ascii=False))
