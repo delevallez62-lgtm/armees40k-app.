@@ -7,8 +7,8 @@ def rep(a,b,n=1):
     global s
     c=s.count(a);assert c==n,(c,a[:90]);s=s.replace(a,b)
 rep('learn:["book","Apprendre à jouer","#f0b429"],','learn:["book","Apprendre à jouer","#f0b429"],bib:["book","Bibliothèque V11","#7f9cff"],')
-# symbole 📚 sur les tuiles de la COLLECTION uniquement
-rep('${e.u.var?\'<span class="vb">Variante d’arme</span>\':""}','${csm?"":`<button class="bibb${window.BIBCLS?window.BIBCLS(e.u.ref):""}" data-bib="open" data-r="${e.u.ref}" aria-label="Bibliothèque" title="Bibliothèque V11">📚</button>`}${e.u.var?\'<span class="vb">Variante d’arme</span>\':""}')
+# lien discret dans « Modifier » (fiche de collection uniquement)
+rep('${co?"":`<label>Optimisation (visible uniquement','${co&&window.BIBLNK?window.BIBLNK(u):""}${co?"":`<label>Optimisation (visible uniquement')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')
 rep('+abWarn(p)+((p.mdl||[]).length&&!msplit(p)?','+abWarn(p)+(window.BIBDRW?window.BIBDRW(p):"")+((p.mdl||[]).length&&!msplit(p)?')
 man=json.load(open(os.path.join(datadir,'manifest.json'),encoding='utf8'))

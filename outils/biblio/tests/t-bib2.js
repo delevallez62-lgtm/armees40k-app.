@@ -29,7 +29,7 @@ const snap=()=>p.evaluate(()=>JSON.stringify({coll:Object.keys(S.coll).length,li
 const before=await snap();
 // rapprochement Boyz via le symbole
 await p.evaluate(()=>{tab='coll';draw()});await p.waitForTimeout(300);
-await p.evaluate(()=>document.querySelector('.tile .bibb[data-r="rork1"]').click());await p.waitForTimeout(600);
+await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(600);
 console.log('suggestions Boyz:',await p.evaluate(()=>[...document.querySelectorAll('#bibsr .bib-row b')].map(x=>x.innerText).join(' | ')));await p.screenshot({path:'bib-link.png'});
 await p.evaluate(()=>document.querySelector('#bibsr [data-bib="cmp"]').click());await p.waitForTimeout(700);
 console.log('cmp titre:',await p.evaluate(()=>document.querySelector('#bibm .bib-pn p').innerText));
@@ -45,6 +45,6 @@ console.log('Boyz après:',JSON.stringify({stats:after.boyz.stats,nweap:after.bo
 console.log('Fling conservé tel quel:',JSON.stringify(after.boyz.weapons[0])===JSON.stringify(b0.boyz.weapons[0]),'| nb fiches coll:',b0.coll===after.coll,'| listes inchangées:',JSON.stringify(b0.lists)===JSON.stringify(after.lists));
 console.log('lien:',await p.evaluate(()=>JSON.stringify(S.lib.links.rork1)));
 // annuler les ajouts
-await p.evaluate(()=>document.querySelector('.tile .bibb[data-r="rork1"]').click());await p.waitForTimeout(500);
+await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(500);
 console.log('déjà rapprochée:',await p.evaluate(()=>/Déjà rapprochée/.test(document.querySelector('#bibm').innerText)));
 console.log(errs);await b.close()})();

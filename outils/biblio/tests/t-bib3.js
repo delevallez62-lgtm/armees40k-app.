@@ -29,7 +29,7 @@ const snap=()=>p.evaluate(()=>JSON.stringify({coll:Object.keys(S.coll).length,li
 const before=await snap();
 // rapprochement Boyz via le symbole
 await p.evaluate(()=>{tab='coll';draw()});await p.waitForTimeout(300);
-await p.evaluate(()=>document.querySelector('.tile .bibb[data-r="rork1"]').click());await p.waitForTimeout(600);
+await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(600);
 console.log('suggestions Boyz:',await p.evaluate(()=>[...document.querySelectorAll('#bibsr .bib-row b')].map(x=>x.innerText).join(' | ')));await p.screenshot({path:'bib-link.png'});
 await p.evaluate(()=>document.querySelector('#bibsr [data-bib="cmp"]').click());await p.waitForTimeout(700);
 console.log('cmp titre:',await p.evaluate(()=>document.querySelector('#bibm .bib-pn p').innerText));
@@ -71,7 +71,7 @@ console.log('import d\'une sauvegarde altérée refusé :',await p.evaluate(asyn
 console.log('version précédente :',await p.evaluate(async()=>{const v0=BIB.D.man.version;await BIB.verify();const o=await new Promise(ok=>{const r=indexedDB.open('hammer-biblio',1);r.onsuccess=()=>{const t=r.result.transaction('prev','readonly').objectStore('prev').getAll();t.onsuccess=()=>ok(t.result.map(x=>x.id))}});return{v0,prevChunks:o}}));
 await p.evaluate(()=>{tab='coll';draw()});await p.waitForTimeout(300);
 const w0=await p.evaluate(()=>S.coll.rork1.weapons.length);
-await p.evaluate(()=>document.querySelector('.tile .bibb[data-r="rork1"]').click());await p.waitForTimeout(500);
+await p.evaluate(()=>(()=>{const b=document.createElement('button');b.dataset.bib='open';b.dataset.r='rork1';document.body.appendChild(b);b.click();b.remove()})());await p.waitForTimeout(500);
 console.log('lien actuel signalé « a changé » :',await p.evaluate(()=>/a changé/.test(document.querySelector('#bibm').innerText)));
 await p.evaluate(()=>document.querySelector('[data-bib="unlink"]').click());await p.waitForTimeout(400);
 console.log('dialogue défaire:',await p.evaluate(()=>(document.querySelector('#dg')||{}).innerText.slice(0,120).replace(/\n/g,' ')));

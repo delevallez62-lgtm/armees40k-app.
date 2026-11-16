@@ -17,7 +17,7 @@ console.log('Boyz — tiroir présent, fermé:',await p.evaluate(()=>{const d=do
 await p.evaluate(()=>{const d=document.querySelector('#md details.bib-dr');d.open=true;d.dispatchEvent(new Event('toggle'))});await p.waitForTimeout(300);
 await p.evaluate(()=>{document.querySelector('#md details.bib-dr').scrollIntoView()});
 console.log('contenu:',await p.evaluate(()=>{const t=document.querySelector('#md details.bib-dr').innerText;return{base:/Chaque figurine est équipée|Chaque Nob/.test(t),options:/peut remplacer son|peuvent chacune remplacer/.test(t),composition:/figurines/.test(t),warnEN:document.querySelectorAll('#md details.bib-dr .bib-warn').length,armes:document.querySelectorAll('#md details.bib-dr .bib-row').length,extrait:t.slice(0,420).replace(/\n/g,' | ')}}));
-await p.screenshot({path:'bib-dr1.png'});
+await p.evaluate(()=>{const d=document.querySelector('#md details.bib-dr');const h=[...d.querySelectorAll('h4')].find(x=>/Options/.test(x.innerText));h.scrollIntoView({block:'start'})});await p.screenshot({path:'bib-dr1.png'});console.log('cartes options:',await p.evaluate(()=>document.querySelectorAll('#md .bib-oc .bib-oh').length));
 // il reste ouvert après un redessin
 await p.evaluate(()=>draw());await p.waitForTimeout(300);console.log('reste ouvert après redessin:',await p.evaluate(()=>document.querySelector('#md details.bib-dr').open));
 // bouton EN
@@ -25,7 +25,7 @@ await p.evaluate(()=>{const b=document.querySelector('#md [data-bibdr="en"]');if
 console.log('bascule EN:',await p.evaluate(()=>/Any number|Every|equipped with/.test(document.querySelector('#md details.bib-dr').innerText)));
 // intercessor : correspondance par profil (à vérifier ?)
 await open('rsm1');
-console.log('Intercessor tiroir:',await p.evaluate(()=>{const d=document.querySelector('#md details.bib-dr');return d?d.querySelector('summary').innerText+' || '+d.querySelector('.bib-row').innerText.slice(0,200).replace(/\n/g,' '):null}));
+console.log('Intercessor tiroir:',await p.evaluate(()=>{const d=document.querySelector('#md details.bib-dr');return d?d.querySelector('summary').innerText+' || '+d.querySelector('.bib-drb').innerText.slice(0,200).replace(/\n/g,' '):null}));
 // non concerné : Immortels
 await open(await p.evaluate(()=>Object.values(S.coll).find(m=>/immortels/i.test(m.name)).ref));
 console.log('Immortels (Nécrons) :', await p.evaluate(()=>!!document.querySelector('#md details.bib-dr')));
