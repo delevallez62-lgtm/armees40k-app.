@@ -7,6 +7,7 @@ def rep(a,b,n=1):
     global s
     c=s.count(a);assert c==n,(c,a[:90]);s=s.replace(a,b)
 rep('learn:["book","Apprendre à jouer","#f0b429"],','learn:["book","Apprendre à jouer","#f0b429"],bib:["book","Bibliothèque V11","#7f9cff"],')
+rep('const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`','const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">${window.BIBSYNC?window.BIBSYNC(p):""}`')
 # lien discret dans « Modifier » (fiche de collection uniquement)
 rep('${co?"":`<label>Optimisation (visible uniquement','${co&&window.BIBLNK?window.BIBLNK(u):""}${co?"":`<label>Optimisation (visible uniquement')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')

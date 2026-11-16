@@ -50,7 +50,7 @@ let INIT=null;
 function init(){if(INIT)return INIT;INIT=(async()=>{try{
   const em=window.__BIBLIO;let m=null;try{m=await idbGet("meta","manifest")}catch(_){}
   if(!m||(m.origin==="embedded"&&em&&m.man.version!==em.manifest.version))await importEmbedded();
-  await loadFromIdb();D.ready=true;D.err=null}catch(e){D.err=e&&e.message||String(e)}
+  await loadFromIdb();D.ready=true;D.err=null;setTimeout(()=>{try{syncAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
   return D})();return INIT}
 /* ---------- traduction : vocabulaire officiel français connu, jamais inventé ---------- */
 // Chaque paire a été retrouvée dans les règles de base françaises officielles, les fiches françaises ou l'encyclopédie V11 de l'appli.
@@ -124,6 +124,13 @@ function buildCmp(m,u,pi){const p=profOf(u,pi),rows={stats:[],weapons:[],abil:[]
  (u.kw||[]).forEach((k,i)=>{const t=tKW(k);if(!(mk.has(nk(k))||mk.has(nk(t.t))))rows.kw.push({id:"k:"+i,k,t,kind:"add"})});
  const pts=u.pts;if(pts!=null){const mp=+m.pts||0;rows.misc.push({id:"pts",lib:String(pts),mine:mp?String(mp):"",kind:!mp?"add":(mp===pts?"same":"diff")})}
  return rows}
+/* fiche liée = toutes les armes de la version anglaise toujours présentes sur la fiche de collection (sans validation) */
+function syncOne(ref){const lb=LB(),lk=lb.links[ref],m=S.coll[ref];if(!lk||!m||!D.ready)return 0;const u=D.byId[lk.id];if(!u)return 0;
+ const rows=buildCmp(m,u,lk.prof||0);m.weapons=Array.isArray(m.weapons)?m.weapons:[];let n=0;
+ rows.weapons.forEach(r=>{if(r.kind==="add"){m.weapons.push(clone(r.x.aw));n++}});return n}
+function syncAll(){if(!D.ready)return 0;let t=0;try{Object.keys(LB().links||{}).forEach(r=>{try{t+=syncOne(r)}catch(_){}})}catch(_){}if(t){sv();Object.keys(AM).forEach(k=>delete AM[k])}return t}
+window.BIBSYNC=function(p){try{if(p&&p.ref&&S.coll[p.ref]===p&&syncOne(p.ref))sv()}catch(_){}return""};
+setInterval(()=>{try{if(LB()&&Object.keys(LB().links||{}).length)syncAll()}catch(_){}},4000);
 function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});delete AM[m.ref];return n}
 function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
  const done=[];const p=profOf(u,pi);m.stats=m.stats||{};
@@ -164,7 +171,7 @@ async function checkUpdate(manual){const lb=LB();await init();
  for(const c of todo){const prevC=D.chunks[c.id],nw=JSON.parse(got[c.id]);const df=diffNews(prevC,nw);["add","chg","del"].forEach(k=>news.items[k].push(...df[k]));
   if(prevC){const pr=await idbGet("chunks",c.id);if(pr)await idbPut("prev",{id:c.id,raw:pr.raw,sha1:pr.sha1,man:D.man&&D.man.version})}
   await idbPut("chunks",{id:c.id,raw:got[c.id],sha1:c.sha1})}
- await idbPut("meta",{id:"manifest",man,origin:"sync",at:Date.now()});await prune(man);await loadFromIdb();
+ await idbPut("meta",{id:"manifest",man,origin:"sync",at:Date.now()});await prune(man);await loadFromIdb();try{syncAll()}catch(_){}
  // associations conservées ; on signale seulement celles dont la fiche a changé
  let stale=0;Object.entries(lb.links).forEach(([ref,l])=>{const u=D.byId[l.id];if(u&&u.h!==l.h){l.stale=true;stale++}});news.stale=stale;
  if(news.items.add.length||news.items.chg.length||news.items.del.length||stale){lb.news.unshift(news);lb.news=lb.news.slice(0,20)}
