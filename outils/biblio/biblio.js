@@ -160,7 +160,7 @@ function profOf(u,i){return u.pr[Math.max(0,Math.min(u.pr.length-1,i||0))]}
 const STOP=new Set(["squad","unit","units","escouade","space","marine","marines","the","de","du","des","la","le","les","d","l","of","and","et","with","avec","sur","pour","in"]);
 const toks=s=>nk(s).split(" ").filter(w=>w&&!STOP.has(w)).map(w=>w.replace(/(s|x)$/,""));
 function suggest(m){const T=toks(m.name),alias=LB().tr["n:"+nk(m.name)];const out=[];if(!T.length)return out;
- D.units.forEach(u=>{const U=toks(u.n),fr=LB().tr["n:"+nk(u.n)],F=fr?toks(fr.fr):[];let sc=0;
+ D.units.forEach(u=>{const U=toks(u.n),fr=LB().tr["n:"+nk(u.n)]||D.fr[hh(u.n)],F=fr?toks(fr.fr):[];let sc=0;
   const hit=a=>a.filter(w=>T.includes(w)).length;const h=Math.max(hit(U),hit(F));if(!h)return;
   sc=h/Math.max(T.length,U.length||1);if(nk(u.n)===nk(m.name))sc=1;if(sc>=.5)out.push({u,sc})});
  return out.sort((a,b)=>b.sc-a.sc||a.u.n.localeCompare(b.u.n)).slice(0,8)}
@@ -292,7 +292,7 @@ const closeM=id=>{const b=document.getElementById(id);if(b)b.innerHTML=""};
 const fmtD=t=>{try{return new Date(t).toLocaleDateString("fr-FR")}catch(_){return""}};
 const STATS=[["M","M"],["E","E"],["SV","Sv"],["PV","PV"],["CD","Cd"],["CO","CO"]];
 function unitHtml(u){const tn=tName(u.n);
- let h=`<h4>${E(u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p>Nom français : <b>${E(tn.t)}</b></p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>${tn.st==="chk"?trx(u.n,"nom d'unité").replace(/^<div>.*?<\/div>/,""):""}`}<p class="bib-meta">${E(facLbl(u))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source : ${u.src==="wahapedia"?"Wahapedia":"BSData"}${u.wp&&u.src!=="wahapedia"?" + Wahapedia":""} · ${E(u.id)}</p>`;
+ let h=`<h4>${E(tn.st==="ok"?tn.t:u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p class="bib-meta">Nom anglais : ${E(u.n)}</p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>${tn.st==="chk"?trx(u.n,"nom d'unité").replace(/^<div>.*?<\/div>/,""):""}`}<p class="bib-meta">${E(facLbl(u))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source : ${u.src==="wahapedia"?"Wahapedia":"BSData"}${u.wp&&u.src!=="wahapedia"?" + Wahapedia":""} · ${E(u.id)}</p>`;
  h+=u.pr.map(p=>`<div class="bib-row"><b>${E(p.n)}</b><div>${STATS.map(([k,l])=>`${l} <b>${E(nm(p[k])||"–")}</b>`).join(" · ")}</div></div>`).join("");
  const W=(a,melee)=>a.map(w=>{const aw=wToApp(w,melee),ks=(w.kw||[]).map(k=>{const r=tWK(k);return`${E(r.t)}${badge(r.st)}`}).join(", ");return`<div class="bib-row"><b>${E(aw.name)}</b> <span class="bib-meta">${E(w.n!==aw.name?w.n:"")}</span><div>${melee?"Mêlée":"Portée "+E(aw.range)+'"'} · A ${E(aw.a)} · ${melee?"CC":"CT"} ${E(aw.hit)} · F ${E(aw.f)} · PA ${E(aw.pa)} · D ${E(aw.d)}</div>${ks?`<div class="bib-wl">${ks}</div>`:""}</div>`}).join("");
  h+=`<h4>Armes de tir (${u.rw.length})</h4>${W(u.rw,false)||'<p class="bib-meta">Aucune</p>'}<h4>Armes de mêlée (${u.mw.length})</h4>${W(u.mw,true)||'<p class="bib-meta">Aucune</p>'}`;
@@ -450,7 +450,7 @@ function autoMatch(m){if(!D.ready)return null;const lb=LB(),lk=lb.links[m.ref];
  let r=null;
  if(lk&&D.byId[lk.id])r={u:D.byId[lk.id],level:"ok",why:"rapprochement confirmé par toi",manual:true};
  else{
-  const byName=D.units.filter(u=>nk(u.n)===nk(m.name)||(lb.tr["n:"+nk(u.n)]&&nk(lb.tr["n:"+nk(u.n)].fr)===nk(m.name)));
+  const byName=D.units.filter(u=>nk(u.n)===nk(m.name)||(lb.tr["n:"+nk(u.n)]&&nk(lb.tr["n:"+nk(u.n)].fr)===nk(m.name))||(D.fr[hh(u.n)]&&nk(D.fr[hh(u.n)].fr)===nk(m.name)));
   if(byName.length){const pref=byName.find(u=>u.f.includes("Space Marines"))||byName[0];r={u:pref,level:"ok",why:"même nom"}}
   else{
    const cand=D.units.map(u=>({u,pm:profMatch(m,u),st:statSame(m,u)})).filter(x=>x.st&&x.pm.n&&x.pm.hit>0).map(x=>{const T=toks(m.name),U=toks(x.u.n),ov=T.length&&U.length?T.filter(w=>U.includes(w)).length/Math.max(T.length,1):0;return{...x,ov,ps:x.pm.hit/Math.max(x.pm.n,1),sc:x.pm.hit/Math.max(x.pm.n,1)+0.6*ov}}).sort((a,b)=>b.sc-a.sc||b.pm.hit-a.pm.hit);
