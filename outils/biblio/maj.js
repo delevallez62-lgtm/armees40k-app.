@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:32,d:"2026-11-17",t:"Noms français Adepta Sororitas",s:"Les noms français de ta liste Sororitas sont enregistrés (34 confirmés tels quels, 4 provisoires marqués « à vérifier »). Les noms anglais restent pour la recherche."},
  {id:31,d:"2026-11-17",t:"Mission de la liste reprise en mode jeu ; points de détachement bien visibles",s:"En mode jeu, la mission principale choisie dans la liste est reprise automatiquement quand tu sélectionnes cette liste. Dans la liste des détachements, le coût de chacun s'affiche en gros et un bandeau indique les points utilisés et restants."},
  {id:30,d:"2026-11-17",t:"Ajouter des unités à la collection depuis la bibliothèque",s:"Chaque unité de la bibliothèque a un bouton « Ajouter à ma collection » (liste et fiche), avec sélection multiple. La fiche est générée avec le nom français, les profils, armes et capacités, et liée à la bibliothèque ; si elle y est déjà, c'est indiqué."},
  {id:29,d:"2026-11-17",t:"Onglet « À vérifier » dans la bibliothèque",s:"Un nouvel onglet de la bibliothèque rassemble les noms français à confirmer (tu peux les corriger, les valider ou les garder en anglais) et les fiches de ta collection pas encore liées (tu les lies à la main, avec des propositions)."},
