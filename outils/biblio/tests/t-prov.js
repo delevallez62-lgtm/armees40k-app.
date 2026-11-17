@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);
+await ev(async()=>{await BIB.init();window.__majPop=1;tab='bib';draw()});await p.waitForTimeout(500);
+await ev(()=>{const i=document.getElementById('bibq');i.value='Sanctuaire de Bataille';i.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(600);
+const t=await ev(()=>document.body.innerText);ok('liste : nom français provisoire visible + « provisoire »',/Sanctuaire de Bataille/i.test(t)&&/provisoire/.test(t),t.split('Faction')[1].slice(0,300));
+await ev(()=>{i=document.getElementById('bibq');i.value='Battle Sanctum';i.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(500);
+ok('recherche par le nom anglais',/Sanctuaire de Bataille/i.test(await ev(()=>document.body.innerText)),1);
+await ev(()=>document.querySelector('[data-bib="tab"][data-v="chk"]').click());await p.waitForTimeout(400);
+ok('onglet À vérifier : le nom provisoire y figure',/Battle Sanctum/.test(await ev(()=>document.body.innerText)),1);
+await b.close()})();

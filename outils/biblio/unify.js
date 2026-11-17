@@ -40,7 +40,7 @@ function unify(opts){if(!D.ready||UNI.busy)return null;UNI.busy=true;UNI.need=fa
  return res}finally{UNI.busy=false}}
 /* ----- statuts ----- */
 function nameStatus(u){const lb=LB(),t=lb.tr["n:"+nk(u.n)];if(t&&t.fr){if(t.st==="ok")return{k:"ok",t:"Français confirmé",fr:t.fr,src:t.src==="collection"?"ta collection":"toi"};return{k:"chk",t:"Traduction à vérifier",fr:t.fr}}
- const o=D.fr[hh(u.n)];if(o&&o.ok)return{k:"ok",t:"Français confirmé",fr:o.fr,src:"source officielle Games Workshop France"};if(o&&o.fr&&!sameNm(o.fr,u.n))return{k:"chk",t:"Traduction à vérifier",fr:o.fr};return{k:"todo",t:"Anglais conservé : traduction à effectuer",fr:""}}
+ const o=D.fr[hh(u.n)];if(o&&o.ok===false&&/^liste fournie/.test(o.src||"")&&o.fr&&!sameNm(o.fr,u.n))return{k:"chk",t:"Traduction provisoire à vérifier",fr:o.fr};if(o&&o.ok)return{k:"ok",t:"Français confirmé",fr:o.fr,src:"source officielle Games Workshop France"};if(o&&o.fr&&!sameNm(o.fr,u.n))return{k:"chk",t:"Traduction à vérifier",fr:o.fr};return{k:"todo",t:"Anglais conservé : traduction à effectuer",fr:""}}
 function linkStatus(ref){const lb=LB(),lk=lb.links[ref];if(lk&&D.byId[lk.id])return lk.st==="manual"?{k:"man",t:"Correspondance manuelle validée"}:{k:"auto",t:"Correspondance confirmée automatiquement"};if(lb.unc&&lb.unc[ref])return{k:"unc",t:"Correspondance incertaine"};return{k:"none",t:"Aucune correspondance trouvée"}}
 /* ----- recherche dans les deux langues ----- */
 window.BIBAL=ref=>{try{if(!D.ready)return"";const lb=LB(),lk=lb.links[ref],u=lk&&D.byId[lk.id];if(!u)return"";return u.n+" "+(lb.al&&lb.al[u.id]||[]).join(" ")+" "+(((lb.tr["n:"+nk(u.n)]||{}).fr)||"")+" "+((D.fr[hh(u.n)]||{}).fr||"")}catch(_){return""}};
@@ -63,7 +63,7 @@ function uniBlock(m){try{const lb=LB(),lk=lb.links[m.ref],u=lk&&D.byId[lk.id],ls
 
 /* ----- onglet « À vérifier » de la bibliothèque : noms à confirmer + fiches à rapprocher ----- */
 const CHK={more:25};
-function chkNames(){const out=[];D.units.forEach(u=>{const t=tName(u.n);if(t.st==="chk"&&t.prop)out.push({u,prop:t.prop})});return out}
+function chkNames(){const out=[];D.units.forEach(u=>{const t=tName(u.n);if(t.st==="chk"&&t.prop)out.push({u,prop:t.prop});else if(t.prov)out.push({u,prop:t.t})});return out}
 function chkLinks(){const lb=LB(),out=[];Object.values(S.coll||{}).forEach(m=>{if(!m||(m.mrg&&S.coll[m.mrg])||(lb.links[m.ref]&&D.byId[lb.links[m.ref].id]))return;let c=((lb.unc||{})[m.ref]||{}).c;c=c?c.map(id=>D.byId[id]).filter(Boolean):suggest(m).map(x=>x.u).slice(0,4);out.push({m,c,unc:!!((lb.unc||{})[m.ref])})});return out.sort((a,b)=>(b.c.length>0)-(a.c.length>0))}
 window.BIBCHKN=()=>{try{return chkNames().length+chkLinks().length}catch(_){return 0}};
 window.BIBCHK=q=>{try{const k=nk(q||""),hit=s=>!k||k.split(" ").every(w=>nk(s).includes(w));let h="";
