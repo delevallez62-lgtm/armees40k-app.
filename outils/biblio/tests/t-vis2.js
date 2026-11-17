@@ -1,0 +1,23 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const pdf=fs.readFileSync('/root/.claude/uploads/23af94af-db82-542e-90e8-f7f093cb9b4f/9b52e551-liste_2108977.pdf').toString('base64');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>{const u=r.request().url();if(/pdf(?:\.min|\.worker\.min)\.js$/.test(u))return r.fulfill({path:'/tmp/pdfjs/node_modules/pdfjs-dist/build/'+u.split('/').pop(),contentType:'text/javascript'});r.abort()});
+const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+await p.evaluate(()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();S.mg=true;tab='imp';draw()});await p.waitForTimeout(300);
+await p.evaluate(async b64=>{await readPdf(new File([Uint8Array.from(atob(b64),c=>c.charCodeAt(0))],'l.pdf'))},pdf);await p.waitForTimeout(2500);
+await p.evaluate(async()=>{const d=document.querySelector('#dg [data-act="dgno"]');if(d)d.click();await BIB.init()});
+const ref=await p.evaluate(()=>Object.values(S.coll).find(m=>/^boyz$/i.test(m.name)).ref);
+await p.evaluate(r=>{ed=S.coll[r];ctx='coll';edit=false;draw()},ref);await p.waitForTimeout(500);
+console.log('ouvert au départ:',await p.evaluate(()=>document.querySelector('#md details.bib-dr').open));
+await p.evaluate(()=>document.querySelector('#md details.bib-dr summary').click());await p.waitForTimeout(250);
+console.log('après 1 clic (fermé):',await p.evaluate(()=>!document.querySelector('#md details.bib-dr').open));
+await p.evaluate(()=>{ed=S.coll[ed.ref];draw()});await p.waitForTimeout(250);
+console.log('reste fermé après redessin:',await p.evaluate(()=>!document.querySelector('#md details.bib-dr').open));
+await p.evaluate(()=>document.querySelector('#md details.bib-dr summary').click());await p.waitForTimeout(250);
+console.log('après 2e clic (ouvert):',await p.evaluate(()=>document.querySelector('#md details.bib-dr').open));
+// dernières lignes visibles ?
+const r=await p.evaluate(async()=>{const pn=document.querySelector('#md .pn'),ov=document.querySelector('#md .ov');const sc=[pn,ov,document.scrollingElement].find(e=>e&&e.scrollHeight>e.clientHeight+5);if(sc)sc.scrollTop=sc.scrollHeight;window.scrollTo(0,document.body.scrollHeight);await new Promise(r=>setTimeout(r,300));
+ const li=[...document.querySelectorAll('#md details.bib-dr li')].pop(),bar=document.getElementById('bar'),lr=li.getBoundingClientRect(),br=bar.getBoundingClientRect();return{lastLiBottom:Math.round(lr.bottom),barTop:Math.round(br.top),visible:lr.bottom<=br.top+1,scroller:sc&&sc.className||sc&&sc.tagName}});
+console.log('dernière ligne:',JSON.stringify(r));await p.screenshot({path:'vis.png'});
+console.log(errs);await b.close()})();
