@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr10455",
+ "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr10870",
  "generated": "2026-11-17",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -410,10 +410,10 @@
   {
    "id": "fr",
    "file": "fr.json",
-   "sha1": "593d2addcb43dcacb02cd76a4d8318fc08d95aef",
-   "bytes": 1412935,
+   "sha1": "1119c9fc9f206fa755cac0a559f28bdaf1a0fd30",
+   "bytes": 1479250,
    "counts": {
-    "translations": 10455
+    "translations": 10870
    }
   }
  ]
