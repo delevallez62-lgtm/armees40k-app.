@@ -39,6 +39,8 @@ jobs:
           cp data/biblio/manifest.json /tmp/ancien-manifest.json
           python3 outils/biblio/build-biblio.py /tmp/oracle/src/data data/biblio "$OCOMMIT" "$ODATE"
           if [ "$WP_OK" = 1 ]; then python3 outils/biblio/build-wahapedia.py /tmp/wp11 data/biblio; fi
+      - name: Lexique appris (traduction apprenante)
+        run: python3 outils/biblio/build-lexicon.py data/biblio
       - name: Contrôler avant publication
         run: python3 outils/biblio/check-maj.py data/biblio /tmp/ancien-manifest.json
       - name: Publier s'il y a du nouveau

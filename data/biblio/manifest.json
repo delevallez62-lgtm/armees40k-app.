@@ -377,6 +377,15 @@
    "counts": {
     "translations": 9637
    }
+  },
+  {
+   "id": "lex",
+   "file": "lex.json",
+   "sha1": "a05117427f8c4f0507c600b20a8aeec0cc45539e",
+   "bytes": 80440,
+   "counts": {
+    "words": 2773
+   }
   }
  ]
 }

@@ -32,16 +32,17 @@ async function gunzip(b64){const bin=atob(b64),u=new Uint8Array(bin.length);for(
  const rs=new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip")));return rs.text()}
 const D={fr:{},frN:0,ready:false,man:null,chunks:{},units:[],byId:{},dets:[],enh:[],str:[],rules:[],err:null,origin:""};
 const normN=s=>String(s||"").toLowerCase().replace(/’/g,"'").replace(/\[.*?\]/g,"").replace(/[^a-z0-9]/g,"");
-function index(){D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.fr={};D.frN=0;const ext={};
+function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.fr={};D.frN=0;const ext={};
  Object.entries(D.chunks).forEach(([id,c])=>{
   if(id==="fr"){D.fr=c.tr||{};D.frN=Object.keys(D.fr).length;return}
+  if(id==="lex"){D.lexB=c.words||{};return}
   const g=id.replace(/^wp-/,"");
   (c.units||[]).forEach(u=>{u._c=g;u.src=u.src||"bsdata";D.units.push(u);D.byId[u.id]=u});
   if(c.ext)Object.entries(c.ext).forEach(([k,e])=>{(ext[g]=ext[g]||{})[k]=e});
   (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
  D.units.forEach(u=>{if(!u.wp){const e=(ext[u._c]||{})[normN(u.n)];if(e)u.wp=e}});
  D.units.forEach(u=>{if(u.ab)u.ab=u.ab.filter(a=>!/^\s*templar vows\b/i.test(a.n))});
- D.units.sort((a,b)=>a.n.localeCompare(b.n))}
+ D.units.sort((a,b)=>a.n.localeCompare(b.n));applyOvr()}
 async function loadFromIdb(){const m=await idbGet("meta","manifest");if(!m)return false;const rows=await idbAll("chunks"),ch={};rows.forEach(r=>{ch[r.id]=JSON.parse(r.raw)});D.man=m.man;D.origin=m.origin||"";D.chunks=ch;index();return true}
 async function importEmbedded(){const em=window.__BIBLIO;if(!em)throw new Error("Aucune donnée intégrée");
  const raws={};for(const c of em.manifest.chunks){const t=await gunzip(em.chunks[c.id]);if(sha1(t)!==c.sha1)throw new Error("Intégrité : "+c.id);raws[c.id]=t}
@@ -77,13 +78,62 @@ function sents(t){return stripMd(t).split(/\n+/).flatMap(l=>l.split(/(?<=[.!?])\
 function trDesc(en){const tm=LB().tm,k=hh(en),all=tm["t:"+k];if(all)return{t:all.fr,st:"ok",src:"user",k};
  const ov=D.fr[k];if(ov&&nk(ov.fr)!==nk(en))return LB().vall?{t:ov.fr,st:"ok",src:"validé",k}:{t:en,st:"chk",prop:ov.fr,src:"claude",k};
  const rr=ruleTr(en,twRule);if(rr)return LB().vall?{t:rr,st:"ok",src:"validé",k}:{t:en,st:"chk",prop:rr,src:"regles",k};
- const ss=sents(en);if(ss.length<2)return{t:en,st:"no",k};const out=[];for(const x of ss){const e=tm["s:"+hh(x)];if(!e)return{t:en,st:"no",k};out.push(e.fr)}return{t:en,st:"chk",prop:out.join(" "),src:"user",k}}
+ const ss=sents(en);if(ss.length>=2){const out=[];let all=true;for(const x of ss){const e=tm["s:"+hh(x)];if(!e){all=false;break}out.push(e.fr)}if(all)return{t:en,st:"chk",prop:out.join(" "),src:"user",k}}
+ const au=autoTr(en);if(au&&nk(au)!==nk(en))return LB().vall?{t:au,st:"ok",src:"apprentissage",k}:{t:en,st:"chk",prop:au,src:"apprentissage",k};
+ return{t:en,st:"no",k}}
+/* ---------- traduction automatique apprenante : hors ligne, sans IA ----------
+   1) un lexique mot à mot appris des traductions déjà présentes (bloc `lex` + mots appris chez toi) ;
+   2) une mémoire de phrases (traductions existantes) : une phrase proche d'une phrase connue est adaptée mot à mot ;
+   3) chaque traduction que tu valides enrichit la mémoire et le lexique. Rien n'est inventé : sans phrase proche, pas de proposition. */
+const ETK=/[a-z0-9]+(?:['’][a-z0-9]+)*/g,FTK=/[a-zàâäçéèêëîïôöùûüÿœ0-9]+(?:['’-][a-zàâäçéèêëîïôöùûüÿœ0-9]+)*/g;
+const tk=(t,rx)=>(stripMd(t||"").toLowerCase().replace(/’/g,"'").match(rx)||[]);
+const lexOf=w=>{const lb=LB();return(lb.lex&&lb.lex[w])||(D.lexB&&D.lexB[w])||null};
+let KP=null,KPB=false,KPREADY=false;const ATC=new Map();
+function kpAdd(en,fr){const a=sents(en),b=sents(fr);if(!a.length||a.length!==b.length)return;
+ a.forEach((x,i)=>{const t=tk(x,ETK);if(t.length<4)return;const key=nk(x);if(KP.map.has(key))return;const e={en:x,fr:b[i],tk:t,set:new Set(t)};const id=KP.arr.push(e)-1;KP.map.set(key,id);e.set.forEach(w=>{(KP.inv[w]=KP.inv[w]||[]).push(id)})})}
+function buildKP(){if(KP||KPB)return;KPB=true;const P={map:new Map(),arr:[],inv:{}};KP=P;const todo=[],lb=LB();
+ const push=t=>{t=String(t||"").trim();if(t.length>20)todo.push(t)};
+ D.units.forEach(u=>(u.ab||[]).forEach(a=>push(a.d)));D.dets.forEach(d=>{if(d.ab)push(d.ab.description);(d.abx||[]).forEach(x=>push(x.description))});D.enh.forEach(e=>push(e.d));D.str.forEach(x=>["when","tg","fx","rs"].forEach(k=>push(x[k])));(D.rules||[]).forEach(r=>push(r.d));
+ const uniq=[...new Set(todo)];let i=0;
+ const step=()=>{if(KP!==P)return;const end=Math.min(uniq.length,i+120);for(;i<end;i++){const t=uniq[i],k=hh(t),m=lb.tm["t:"+k],o=D.fr[k],f=m?m.fr:(o&&nk(o.fr)!==nk(t)?o.fr:null);if(f)kpAdd(t,f)}
+  if(i<uniq.length)setTimeout(step,0);else{Object.values(lb.tm).forEach(e=>{if(e&&e.en&&e.fr)kpAdd(e.en,e.fr)});KPREADY=true;ATC.clear();const ae=document.activeElement;if(!ae||!/INPUT|TEXTAREA|SELECT/.test(ae.tagName)){try{draw()}catch(_){}}}};
+ step()}
+function frSub(fr,r,x){const esc=t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+ if(/\d/.test(r)||/\d/.test(x)){const re=new RegExp("(?<![\\p{L}\\d])"+esc(r)+"(?![\\p{L}\\d])","iu");if(!re.test(fr))return null;const nv=/^\d*d\d+$/i.test(x)?x.toUpperCase():x;return fr.replace(re,nv)}
+ const a=lexOf(r),b=lexOf(x);if(!a||!b||a[1]<.5||b[1]<.5)return null;const re=new RegExp("(?<![\\p{L}\\d'])"+esc(a[0])+"(?![\\p{L}\\d])","iu"),m=re.exec(fr);if(!m)return null;
+ const cap=m[0][0]!==m[0][0].toLowerCase()&&m[0][0]===m[0][0].toUpperCase();const nv=cap?b[0][0].toUpperCase()+b[0].slice(1):b[0];return fr.slice(0,m.index)+nv+fr.slice(m.index+m[0].length)}
+function adaptSent(c,B){const A=c.tk,n=A.length,m=B.length,L=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+ for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+ let i=0,j=0,da=[],ib=[];const H=[];
+ while(i<n||j<m){if(i<n&&j<m&&A[i]===B[j]){if(da.length||ib.length){H.push([da,ib]);da=[];ib=[]}i++;j++}else if(j<m&&(i>=n||L[i][j+1]>=L[i+1][j])){ib.push(B[j]);j++}else{da.push(A[i]);i++}}
+ if(da.length||ib.length)H.push([da,ib]);
+ let fr=c.fr;for(const[d,a]of H){if(!d.length||d.length!==a.length)return null;for(let k=0;k<d.length;k++){fr=frSub(fr,d[k],a[k]);if(fr==null)return null}}return fr}
+function trSent(s){const ex=KP.map.get(nk(s));if(ex!=null)return KP.arr[ex].fr;const T=tk(s,ETK);if(T.length<4)return null;
+ const set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});
+ let best=null;[...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12).forEach(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});const j=i/(c.set.size+set.size-i);if(!best||j>best.j)best={id,j}});
+ if(!best||best.j<.55)return null;return adaptSent(KP.arr[best.id],T)}
+function autoTr(en){en=String(en||"").trim();if(!en)return null;if(!KPREADY){buildKP();return null}
+ const k=hh(en);if(ATC.has(k))return ATC.get(k);let res=null;
+ try{const out=[];let ok=true;for(const line of stripMd(en).split("\n")){if(!line.trim()){out.push("");continue}
+   const m=/^(\s*[•\-*]+\s*)?(.*)$/.exec(line),pre=m[1]||"",ss=sents(m[2]);if(!ss.length){out.push(line);continue}
+   const fs=[];for(const x of ss){const f=trSent(x);if(f==null){ok=false;break}fs.push(f)}if(!ok)break;out.push(pre+fs.join(" "))}
+  if(ok){const fr=out.join("\n");if(JSON.stringify((en.match(/\d+/g)||[]).sort())===JSON.stringify((fr.match(/\d+/g)||[]).sort()))res=fr}}catch(_){res=null}
+ ATC.set(k,res);return res}
+/* apprentissage : chaque traduction validée enrichit la mémoire et le lexique */
+function learnPair(en,fr){try{const lb=LB();lb.lex=lb.lex||{};en=String(en||"");fr=String(fr||"");if(!en||!fr)return;
+ if(KPREADY)kpAdd(en,fr);ATC.clear();
+ const E=tk(en,ETK).filter(w=>!/\d/.test(w)),F=tk(fr,FTK).filter(w=>!/\d/.test(w));
+ if(E.length===1&&F.length===1){if(!lexOf(E[0]))lb.lex[E[0]]=[F[0],.9,1];return}
+ const vals=new Set(Object.values(D.lexB||{}).map(x=>x[0]).concat(Object.values(lb.lex).map(x=>x[0]))),expl=new Set();
+ const ue=[];E.forEach(w=>{const l=lexOf(w);if(l&&F.includes(l[0]))expl.add(l[0]);else if(!l&&w.length>3)ue.push(w)});
+ const uf=F.filter(w=>!expl.has(w)&&!vals.has(w)&&w.length>3);
+ if(ue.length===1&&uf.length===1)lb.lex[ue[0]]=[uf[0],.7,1]}catch(_){}}
 function frBodyOf(m,name){const names=String(m.apt||"").split(",").map(x=>x.trim()).filter(Boolean),k=nk(name),L=m.text||[];let cur=null;const seg=[];
  for(const l of L){const lk=nk(l);const hit=names.find(n=>{const nn=nk(n);return nn&&(lk===nn||lk.startsWith(nn+" "))});if(hit){cur={n:hit,lines:[String(l).trim().slice(hit.length).trim()].filter(Boolean)};seg.push(cur)}else if(cur)cur.lines.push(String(l).trim())}
  const f=seg.find(x=>nk(x.n)===k);return f?f.lines.join("\n").trim():""}
 function learnAb(m,ab,frName){const lb=LB(),en=String(ab.n).trim();lb.tr["n:"+nk(en)]={fr:frName,st:"ok",src:"user",at:Date.now()};
  const P=/^(.*?)\s*((?:D?\d+(?:\")?\+?|D\d)(?:\+\d)?)?$/,a=P.exec(en),b=P.exec(String(frName).trim());if(a&&b&&a[2]&&a[2]===b[2]&&nk(a[1])&&nk(b[1]))lb.tr["b:"+nk(a[1])]={fr:b[1].trim(),st:"ok",src:"user",at:Date.now()};
- const body=frBodyOf(m,frName);if(!body)return"nom";const enT=stripMd(ab.d||"");lb.tm["t:"+hh(enT)]={en:enT,fr:body,name:{en,fr:frName},st:"ok",at:Date.now()};
+ learnPair(en,frName);const body=frBodyOf(m,frName);if(!body)return"nom";const enT=stripMd(ab.d||"");lb.tm["t:"+hh(enT)]={en:enT,fr:body,name:{en,fr:frName},st:"ok",at:Date.now()};learnPair(enT,body);
  const se=sents(enT),sf=sents(body);if(se.length>1&&se.length===sf.length)se.forEach((x,i)=>{const k="s:"+hh(x);if(!lb.tm[k])lb.tm[k]={en:x,fr:sf[i],st:"chk",at:Date.now()}});return"texte"}
 function tName(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};const ov=D.fr[hh(s)];if(ov&&nk(ov.fr)!==nk(s))return LB().vall?{t:ov.fr,st:"ok",src:"validé"}:{t:s,st:"chk",prop:ov.fr,src:"claude"};const wn=WN[s.toLowerCase().replace(/^➤\s*/,"")];return wn?(LB().vall?{t:wn,st:"ok",src:"validé"}:{t:s,st:"chk",prop:wn,src:"glossaire"}):{t:s,st:"no"}}
 function tPhase(en){const s=String(en||"").trim(),f=PH[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
@@ -161,10 +211,10 @@ function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();cons
  sv();return done}
 function undoLink(ref,restore){const lb=LB(),m=S.coll[ref];if(!m)return;const bk=lb.bk[ref];if(restore&&bk){m.stats=clone(bk.stats);m.weapons=clone(bk.weapons);m.apt=bk.apt;m.text=clone(bk.text);m.kw=bk.kw;m.pts=bk.pts;delete lb.bk[ref]}delete lb.links[ref];sv()}
 /* ---------- synchronisation facultative et différentielle ---------- */
-function chunkIndex(c){const o={};["units","detachments","enhancements","stratagems"].forEach(k=>(c[k]||[]).forEach(x=>{o[k+":"+x.id]={n:x.n,h:x.h||sha1(JSON.stringify(x,(k,v)=>k[0]==="_"?undefined:v)).slice(0,10)}}));return o}
+function chunkIndex(c){const o={};(c.rules||[]).forEach(x=>{o["rules:"+x.n]={n:x.n,h:sha1(JSON.stringify(x)).slice(0,10)}});["units","detachments","enhancements","stratagems"].forEach(k=>(c[k]||[]).forEach(x=>{o[k+":"+x.id]={n:x.n,h:x.h||sha1(JSON.stringify(x,(k,v)=>k[0]==="_"?undefined:v)).slice(0,10)}}));return o}
 function diffNews(oldC,newC){const a=chunkIndex(oldC||{}),b=chunkIndex(newC),add=[],chg=[],del=[];
  Object.keys(b).forEach(k=>{if(!a[k])add.push(k);else if(a[k].h!==b[k].h)chg.push(k)});Object.keys(a).forEach(k=>{if(!b[k])del.push(k)});
- const lbl=k=>({units:"fiche",detachments:"détachement",enhancements:"amélioration",stratagems:"stratagème"}[k.split(":")[0]]);
+ const lbl=k=>({units:"fiche",detachments:"détachement",enhancements:"amélioration",stratagems:"stratagème",rules:"règle"}[k.split(":")[0]]);
  return{add:add.map(k=>({k,t:lbl(k),n:b[k].n})),chg:chg.map(k=>({k,t:lbl(k),n:b[k].n})),del:del.map(k=>({k,t:lbl(k),n:a[k].n}))}}
 async function checkUpdate(manual){const lb=LB();await init();
  if(!navigator.onLine&&!manual)return{state:"off"};
@@ -178,12 +228,13 @@ async function checkUpdate(manual){const lb=LB();await init();
   if(sha1(t)!==c.sha1)return{state:"err",err:"Intégrité refusée pour "+c.id+" (somme de contrôle différente) : rien n'a été modifié"};got[c.id]=t}
  // tout est vérifié : on peut écrire
  const news={at:Date.now(),from:D.man&&D.man.version,to:man.version,items:{add:[],chg:[],del:[]},seen:false};
- for(const c of todo){const prevC=D.chunks[c.id],nw=JSON.parse(got[c.id]);const df=diffNews(prevC,nw);["add","chg","del"].forEach(k=>news.items[k].push(...df[k]));
+ PREVU={};for(const c of todo){const prevC=D.chunks[c.id],nw=JSON.parse(got[c.id]);const df=diffNews(prevC,nw);(prevC&&prevC.units||[]).forEach(u=>{PREVU[u.id]=JSON.parse(JSON.stringify(u))});{const nu={};(nw.units||[]).forEach(u=>nu[u.id]=u);df.chg.forEach(i=>{if(i.k.indexOf("units:")===0){const id=i.k.slice(6);try{i.d=unitDiff(PREVU[id],nu[id])}catch(_){}}else i.d=["Texte modifié"]})}["add","chg","del"].forEach(k=>news.items[k].push(...df[k]));
   if(prevC){const pr=await idbGet("chunks",c.id);if(pr)await idbPut("prev",{id:c.id,raw:pr.raw,sha1:pr.sha1,man:D.man&&D.man.version})}
   await idbPut("chunks",{id:c.id,raw:got[c.id],sha1:c.sha1})}
  await idbPut("meta",{id:"manifest",man,origin:"sync",at:Date.now()});await prune(man);await loadFromIdb();try{syncAll()}catch(_){}
  // associations conservées ; on signale seulement celles dont la fiche a changé
  let stale=0;Object.entries(lb.links).forEach(([ref,l])=>{const u=D.byId[l.id];if(u&&u.h!==l.h){l.stale=true;stale++}});news.stale=stale;
+ try{await majAfter(news)}catch(_){}
  if(news.items.add.length||news.items.chg.length||news.items.del.length||stale){lb.news.unshift(news);lb.news=lb.news.slice(0,20)}
  lb.last.ok=man.version;sv();return{state:"updated",news}}
 async function exportLib(){await init();const o={kind:"hammer-biblio",schema:1,at:Date.now(),manifest:D.man,chunks:{}};const rows=await idbAll("chunks");rows.forEach(r=>o.chunks[r.id]=r.raw);return JSON.stringify(o)}
@@ -209,7 +260,7 @@ function trx(en,kind){en=String(en||"");if(!en.trim())return"";const isName=/^no
  return`<div>${body}</div><div class="bib-meta">⚪ Non traduit (texte original)</div>`}
 const md2=t=>E(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\*(.+?)\*/g,"<i>$1</i>").replace(/\n/g,"<br>");
 const nameHtml=en=>{const t=tName(en);return`<b>${E(t.t)}</b>${t.st==="chk"&&t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:""}`};
-function storeTr(k,fr){const m=TXM[k];if(!m||!fr)return;const lb=LB();if(m.name)lb.tr["n:"+nk(m.en)]={fr,st:"ok",src:"user",at:Date.now()};else lb.tm["t:"+k]={en:stripMd(m.en),fr,st:"ok",src:"validated",at:Date.now()};sv()}
+function storeTr(k,fr){const m=TXM[k];if(!m||!fr)return;const lb=LB();if(m.name)lb.tr["n:"+nk(m.en)]={fr,st:"ok",src:"user",at:Date.now()};else lb.tm["t:"+k]={en:stripMd(m.en),fr,st:"ok",src:"validated",at:Date.now()};learnPair(m.en,fr);sv()}
 /* ---------- interface ---------- */
 const B={tab:"units",q:"",fac:"",open:null,cmp:null,msg:""};
 function css(){if(document.getElementById("bibcss"))return;const s=document.createElement("style");s.id="bibcss";s.textContent=`
@@ -224,7 +275,7 @@ function css(){if(document.getElementById("bibcss"))return;const s=document.crea
 .bibb{position:absolute;left:4px;top:4px;z-index:3;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.55);color:#fff;font-size:15px;padding:0;cursor:pointer;line-height:1}.bibb.on{background:#2e9d6b;border-color:#fff}.bibb.old{background:#e0a030}
 .bib-box{position:relative}.bib-two{display:grid;grid-template-columns:1fr 1fr;gap:6px}.bib-two>div{border:1px solid var(--bd);border-radius:8px;padding:4px 6px;font-size:13px}.bib-two label{display:flex;gap:6px;align-items:center;font-size:13px}
 .bib-warn{border:1px solid #e0a030;background:rgba(224,160,48,.15);color:inherit;border-radius:99px;padding:0 8px;min-height:24px;font:inherit;font-size:12px;cursor:pointer}.bib-warn.ok{border-color:#2e9d6b;background:rgba(46,157,107,.18)}details.bib-dr>summary{cursor:pointer}.bib-drb{padding:6px 2px}
-.bib-lkc{border:1px solid var(--ac);border-radius:12px;padding:12px;margin:12px 0;background:var(--bg)}.bib-lkc>b{font-size:16px;color:var(--ac)}.bib-lkn{font-size:16px;font-weight:700;margin:6px 0 10px}.bib-lkc .b{min-height:44px;font-size:15px}.bib-lkc>.b{width:100%;margin-top:8px}.bib-lnk{background:none;border:0;padding:0 2px;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer}details.bib-dr>summary{cursor:pointer}#md .pn,#wpk .pn,#bibm .bib-pn{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}.bib-cs{margin:10px 0;padding:10px;border:1px solid var(--ac);border-radius:12px}.bib-cs>b{color:var(--ac)}.bib-oc{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:8px 0;background:var(--bg)}.bib-oh{font-weight:700;color:var(--ac);margin-bottom:4px}.bib-ol{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}.bib-ot{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);min-width:64px}.bib-chip{display:inline-block;border:1px solid var(--bd);border-radius:99px;padding:2px 10px;background:var(--card);font-size:13.5px}.bib-oa{font-size:12px;color:var(--mu);margin-top:6px}.bib-oa .bib-warn{margin-left:4px}.bib-drb h4{margin:14px 0 4px;color:var(--ac)}
+.bib-lkc{border:1px solid var(--ac);border-radius:12px;padding:12px;margin:12px 0;background:var(--bg)}.bib-lkc>b{font-size:16px;color:var(--ac)}.bib-lkn{font-size:16px;font-weight:700;margin:6px 0 10px}.bib-lkc .b{min-height:44px;font-size:15px}.bib-lkc>.b{width:100%;margin-top:8px}.bib-lnk{background:none;border:0;padding:0 2px;color:var(--ac);text-decoration:underline;font:inherit;cursor:pointer}details.bib-dr>summary{cursor:pointer}#md .pn,#wpk .pn,#bibm .bib-pn{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}.bib-nw{border:1px solid var(--bd);border-radius:10px;margin:6px 0;padding:6px 10px}.bib-nw>summary{cursor:pointer}.bib-nwb{padding:6px 0}#bibp .bib-ov{z-index:70}.bib-cs{margin:10px 0;padding:10px;border:1px solid var(--ac);border-radius:12px}.bib-cs>b{color:var(--ac)}.bib-oc{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:8px 0;background:var(--bg)}.bib-oh{font-weight:700;color:var(--ac);margin-bottom:4px}.bib-ol{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}.bib-ot{font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);min-width:64px}.bib-chip{display:inline-block;border:1px solid var(--bd);border-radius:99px;padding:2px 10px;background:var(--card);font-size:13.5px}.bib-oa{font-size:12px;color:var(--mu);margin-top:6px}.bib-oa .bib-warn{margin-left:4px}.bib-drb h4{margin:14px 0 4px;color:var(--ac)}
 .bib-prop{border:1px dashed #e0a030;border-radius:10px;padding:6px 8px;margin:6px 0;background:rgba(224,160,48,.08);font-size:13.5px}.bib-opt{border-top:1px solid var(--bd);padding:4px 0}.bib-prop .b{min-height:34px;padding:2px 10px;margin-top:4px}
 .bib-ban{border:2px solid var(--ac);border-radius:14px;padding:10px 12px;margin:0 0 12px;background:color-mix(in srgb,var(--ac) 12%,transparent);cursor:pointer}
 `;document.head.appendChild(s)}
@@ -366,7 +417,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"prev":try{await restorePrev();msg("✅ Version précédente restaurée.");draw()}catch(x){msg("⚠ "+x.message)}break;
   case"srcset":{const v=(document.getElementById("bibsrc").value||"").trim();if(/^https:\/\//.test(v)){LB().src=v.endsWith("/")?v:v+"/";sv();msg("Source enregistrée.")}else msg("L'adresse doit commencer par https://")}break;
   case"srcdef":LB().src=DEF_SRC;sv();msg("Source par défaut rétablie.");break;
-  case"news":tab="bib";S.mg=true;try{draw()}catch(_){}break;
+  case"news":tab="news";S.mg=true;try{draw()}catch(_){}break;
  }}catch(x){try{toast("Erreur : "+x.message)}catch(_){}}},true);
 document.addEventListener("change",e=>{const t=e.target;if(!t)return;
  if(t.dataset&&t.dataset.bibck!=null&&B.cmp){B.cmp.pick[t.dataset.bibck]=t.checked;return}
@@ -558,7 +609,7 @@ window.BIBPK=function(pk){try{
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
 window.BIBAUTO=autoMatch;window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
-window.BIB={wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
+window.BIB={kpNear:s=>{const T=tk(s,ETK),set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});return [...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,4).map(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});return [Math.round(100*i/(c.set.size+set.size-i)),c.en,c.fr]})},kpInfo:()=>({ready:KPREADY,n:KP&&KP.arr.length,sample:KP&&KP.arr.slice(0,2).map(x=>[x.en,x.fr])}),autoTr,learnPair,wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
 // vérification automatique, au plus 1 fois par jour, silencieuse
-setTimeout(async()=>{try{const lb=LB();if(!lb.auto||!navigator.onLine)return;if(lb.last&&Date.now()-lb.last.at<20*3600*1000)return;await init();const r=await checkUpdate(false);if(r.state==="updated"){try{toast("🆕 Bibliothèque V11 mise à jour")}catch(_){}try{draw()}catch(_){}}}catch(_){}},6000);
+/*__MAJ__*/
 })();
