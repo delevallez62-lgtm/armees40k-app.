@@ -61,20 +61,34 @@ function draw(){
  const b=box();
  if(!W){b.innerHTML="";return}
  const m=S.coll[W.ref];if(!m){W=null;b.innerHTML="";return}
- const n=W.sel.size;
- b.innerHTML='<div class="ov ovd" style="z-index:45" data-act="wpx"><div class="pn dlgp"><div class="top"><h3 style="margin:0 0 8px">Armes de « '+esc2(m.name)+' »</h3><button class="b cx" data-act="wpx" aria-label="Fermer">✕</button></div>'
- +'<p class="mu">Coche les armes que cette unité aura dans la liste. Seules les armes validées seront visibles.</p>'
- +'<div class="wpl">'+m.weapons.map(function(w,i){
-   const on=W.sel.has(i),ds=[w.range,w.a?"A "+w.a:"",w.hit,w.f?"F "+w.f:"",w.pa?"PA "+w.pa:"",w.d?"D "+w.d:""].filter(Boolean).join(" · ");
+ const n=W.sel.size,st=m.stats||{},K6=["M","E","SV","PV","CD","CO"];
+ let sg="";try{sg=typeof stx==="function"?stx(st):""}catch(_){sg=""}
+ if(!sg)sg='<div class="sg">'+K6.map(function(k){return'<div class="sx"><i>'+k+'</i><b>'+esc2(st[k]||"–")+'</b></div>'}).join("")+'</div>';
+ let apn="";try{apn=(typeof apNames==="function"?apNames(m):String(m.apt||"").split(",")).map(function(x){return String(x).trim()}).filter(Boolean).map(function(x){return'<span class="an">'+esc2(x)+'</span>'}).join(" ")}catch(_){}
+ const kw=[m.kw,m.fkw].filter(Boolean).join(" · ");
+ b.innerHTML='<div class="ov ovd" style="z-index:45" data-act="wpx"><div class="pn dlgp" style="width:min(560px,100%)!important;max-height:94vh;overflow:auto">'
+ +'<div class="mb"><span class="mu">Fiche d’unité</span><button class="b cx" data-act="wpx" aria-label="Fermer">✕</button></div>'
+ +'<h2 class="cap" style="margin:0">'+esc2(m.name)+'</h2><span class="mu">'+(m.pts?m.pts+" pts":"")+'</span>'
+ +sg
+ +'<div class="sech">Armes · coche celles de cette unité</div>'
+ +'<div class="row" style="gap:6px;margin:4px 0"><button class="b" data-act="wpa">'+(n===m.weapons.length?"Tout décocher":"Tout cocher")+'</button><span class="mu" style="align-self:center">'+n+' / '+m.weapons.length+' cochée'+(n>1?"s":"")+'</span></div>'
+ +'<div class="wpl" style="max-height:none">'+m.weapons.map(function(w,i){
+   const on=W.sel.has(i),ds=[w.range,w.a?"A "+w.a:"",w.hit,w.f?"F "+w.f:"",w.pa?"PA "+w.pa:"",w.d?"D "+w.d:"",w.caps||""].filter(Boolean).join(" · ");
    return'<button type="button" class="wpr'+(on?" on":"")+'" data-act="wpt" data-i="'+i+'"><span class="wpc">'+(on?"✔":"")+'</span><span><b>'+esc2(w.name)+'</b><span class="mu" style="display:block;font-size:12px">'+esc2(ds)+'</span></span></button>'}).join("")+'</div>'
- +'<div class="row" style="margin-top:10px"><button class="b" data-act="wpa">'+(n===m.weapons.length?"Tout décocher":"Tout cocher")+'</button></div>'
- +'<p><button class="b p" data-act="wpok" style="width:100%;padding:10px"'+(n?"":" disabled")+'>Valider ('+n+' arme'+(n>1?"s":"")+')</button></p></div></div>';
+ +(apn?'<div class="sech">Aptitudes</div><p class="apn">'+apn+'</p>':'')
+ +(kw?'<div class="sech">Mots-clés</div><p class="mu">'+esc2(kw)+'</p>':'')
+ +'<div class="sv"><button class="b p" data-act="wpok"'+(n?"":" disabled")+'>'+(W.edit?"Valider":"Ajouter à la liste")+' ('+n+' arme'+(n>1?"s":"")+')</button></div></div></div>';
 }
 window.WPK={
  ask:function(ref,lead){
   const m=S.coll[ref];if(!m)return false;
-  if(!m.weapons||m.weapons.length<2)return false;
-  W={ref:ref,lead:!!lead,sel:new Set(m.weapons.map(function(_,i){return i}))};
+  if(!m.weapons||m.weapons.length<1)return false;
+  const nz=function(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’`]/g,"'").replace(/\s+/g," ").trim()};
+  const eq=[];String(m.equip||"").split(/,(?![^()]*\))/).forEach(function(x){x=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").trim();if(x)eq.push(nz(x))});
+  const cov=function(w){const a=nz(w.name);return eq.some(function(e){return a===e||a.indexOf(e+" - ")===0||a.indexOf(e+" (")===0})};
+  let pre=m.weapons.map(function(w,i){return cov(w)?i:-1}).filter(function(i){return i>=0});
+  if(!pre.length)pre=m.weapons.map(function(_,i){return i});
+  W={ref:ref,lead:!!lead,sel:new Set(pre)};
   draw();return true;
  },
  btn:function(u){
