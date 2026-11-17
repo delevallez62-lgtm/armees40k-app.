@@ -410,10 +410,10 @@
   {
    "id": "fr",
    "file": "fr.json",
-   "sha1": "6196297327bdf2e63b66710ca8eb517d5f4b94f2",
-   "bytes": 2147053,
+   "sha1": "bdef8a9def31fa820c0138511508f069b5edaee2",
+   "bytes": 2152114,
    "counts": {
-    "translations": 14598
+    "translations": 14614
    }
   }
  ]

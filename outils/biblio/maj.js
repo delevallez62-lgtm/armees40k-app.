@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:26,d:"2026-11-17",t:"Noms français Space Marines et chapitres",s:"145 noms français Space Marines (génériques, Ultramarines, Blood Angels, Dark Angels, Space Wolves, Black Templars, Deathwatch…) enregistrés tels quels depuis ta liste et affichés en français ; les noms anglais restent pour la recherche et la fiche originale."},
  {id:25,d:"2026-11-17",t:"Noms français Orks/Nécrons : liste utilisée telle quelle",s:"Les noms français de ta liste Orks et Nécrons sont enregistrés tels quels, sans vérification, et affichés en français ; les noms anglais restent pour la recherche et la fiche originale."},
  {id:24,d:"2026-11-17",t:"Listes de noms français Orks et Nécrons",s:"Tes listes de noms français sont enregistrées avec les noms anglais conservés : les noms confirmés par une source officielle restent « confirmés », les autres sont « à vérifier ». La recherche accepte les deux langues."},
  {id:23,d:"2026-11-17",t:"Noms français officiels (Nécrons, Orks) et ~2 700 noms traduits",s:"Noms d'unités confirmés par des sources françaises de Games Workshop (ex. Guerriers Nécrons, Immortels, Boss de Guerre, Médiko) ; les cas moins sûrs restent en « à vérifier ». Environ 2 700 noms de capacités, stratagèmes, améliorations et détachements traduits (propositions à vérifier) ; les noms propres et le jargon ork restent en anglais."},

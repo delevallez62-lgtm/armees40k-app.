@@ -1,0 +1,152 @@
+Ancient| Ancien
+Apothecary| Apothicaire
+Apothecary Biologis| Apothicaire Biologis
+Captain| Capitaine
+Captain in Gravis Armour| Capitaine en armure Gravis
+Captain in Phobos Armour| Capitaine en armure Phobos
+Captain in Terminator Armour| Capitaine en armure Terminator
+Chaplain| Chapelain
+Chaplain in Terminator Armour| Chapelain en armure Terminator
+Chaplain with Jump Pack| Chapelain avec réacteur dorsal
+Judiciar| Judiciar
+Librarian| Archiviste
+Librarian in Phobos Armour| Archiviste en armure Phobos
+Librarian in Terminator Armour| Archiviste en armure Terminator
+Lieutenant| Lieutenant
+Lieutenant in Phobos Armour| Lieutenant en armure Phobos
+Lieutenant with Combi-weapon| Lieutenant avec arme combinée
+Techmarine| Techmarine
+Company Heroes| Héros de Compagnie
+Assault Intercessor Squad| Escouade d'Intercessors d'assaut
+Heavy Intercessor Squad| Escouade d'Intercessors lourds
+Intercessor Squad| Escouade d'Intercessors
+Tactical Squad| Escouade tactique
+Infernus Squad| Escouade Infernus
+Sternguard Veteran Squad| Escouade de Vétérans Sternguards
+Vanguard Veteran Squad| Escouade de Vétérans Vanguard
+Bladeguard Veteran Squad| Escouade de Vétérans Bladeguards
+Terminator Squad| Escouade de Terminators
+Terminator Assault Squad| Escouade de Terminators d'assaut
+Scout Squad| Escouade de Scouts
+Aggressor Squad| Escouade d'Aggressors
+Eradicator Squad| Escouade d'Eradicators
+Hellblaster Squad| Escouade de Hellblasters
+Eliminator Squad| Escouade d'Eliminators
+Desolation Squad| Escouade de Desolators
+Devastator Squad| Escouade de Devastators
+Suppressor Squad| Escouade de Suppressors
+Inceptor Squad| Escouade d'Inceptors
+Reiver Squad| Escouade de Reivers
+Incursor Squad| Escouade d'Incursors
+Infiltrator Squad| Escouade d'Infiltrators
+Outrider Squad| Escouade d'Outriders
+Bike Squad| Escouade de motos
+Dreadnought| Dreadnought
+Redemptor Dreadnought| Dreadnought Redemptor
+Brutalis Dreadnought| Dreadnought Brutalis
+Ballistus Dreadnought| Dreadnought Ballistus
+Ironclad Dreadnought| Dreadnought Ironclad
+Venerable Dreadnought| Dreadnought vénérable
+Invader ATV| Invader ATV
+Repulsor| Repulsor
+Repulsor Executioner| Repulsor Executioner
+Impulsor| Impulsor
+Gladiator Lancer| Gladiator Lancer
+Gladiator Reaper| Gladiator Reaper
+Gladiator Valiant| Gladiator Valiant
+Predator Destructor| Predator Destructor
+Predator Annihilator| Predator Annihilator
+Vindicator| Vindicator
+Whirlwind| Whirlwind
+Land Raider| Land Raider
+Land Raider Crusader| Land Raider Crusader
+Land Raider Redeemer| Land Raider Redeemer
+Drop Pod| Module de largage
+Storm Speeder Hailstrike| Storm Speeder Hailstrike
+Storm Speeder Hammerstrike| Storm Speeder Hammerstrike
+Storm Speeder Thunderstrike| Storm Speeder Thunderstrike
+Stormhawk Interceptor| Stormhawk Interceptor
+Stormtalon Gunship| Stormtalon Gunship
+Stormraven Gunship| Stormraven Gunship
+Marneus Calgar| Marneus Calgar
+Cato Sicarius| Cato Sicarius
+Chief Librarian Tigurius| Grand Archiviste Tigurius
+Chaplain Cassius| Chapelain Cassius
+Vulkan He'stan| Vulkan He'stan
+Adrax Agatone| Adrax Agatone
+Darnath Lysander| Darnath Lysander
+Tor Garadon| Tor Garadon
+Kayvaan Shrike| Kayvaan Shrike
+Iron Father Feirros| Père de Fer Feirros
+Kor'sarro Khan| Kor'sarro Khan
+Commander Dante| Commandeur Dante
+Chief Librarian Mephiston| Grand Archiviste Mephiston
+Astorath| Astorath
+Lemartes| Lemartes
+Sanguinary Priest| Prêtre Sanguinien
+Sanguinary Guard| Garde Sanguinienne
+Death Company Marines| Marines de la Compagnie de la Mort
+Death Company Marines with Jump Packs| Marines de la Compagnie de la Mort avec réacteurs dorsaux
+Death Company Dreadnought| Dreadnought de la Compagnie de la Mort
+Death Company Captain| Capitaine de la Compagnie de la Mort
+Baal Predator| Predator Baal
+Furioso Dreadnought| Dreadnought Furioso
+Librarian Dreadnought| Dreadnought Archiviste
+Lion El'Jonson| Lion El'Jonson
+Azrael| Azrael
+Ezekiel| Ezekiel
+Belial| Belial
+Asmodai| Asmodai
+Lazarus| Lazarus
+Sammael| Sammael
+Deathwing Knights| Chevaliers de la Deathwing
+Deathwing Terminator Squad| Escouade de Terminators de la Deathwing
+Deathwing Command Squad| Escouade de commandement de la Deathwing
+Ravenwing Black Knights| Chevaliers Noirs de la Ravenwing
+Ravenwing Command Squad| Escouade de commandement de la Ravenwing
+Ravenwing Darkshroud| Darkshroud de la Ravenwing
+Ravenwing Dark Talon| Dark Talon de la Ravenwing
+Nephilim Jetfighter| Chasseur Nephilim
+Logan Grimnar| Logan Grimnar
+Ragnar Blackmane| Ragnar Blackmane
+Arjac Rockfist| Arjac Rockfist
+Bjorn the Fell-Handed| Bjorn Main-Terrible
+Njal Stormcaller| Njal Stormcaller
+Ulrik the Slayer| Ulrik le Tueur
+Canis Wolfborn| Canis Wolfborn
+Harald Deathwolf| Harald Deathwolf
+Krom Dragongaze| Krom Dragongaze
+Wolf Lord| Seigneur Loup
+Wolf Guard Battle Leader| Chef de Bataille de la Garde Loup
+Wolf Guard Terminators| Terminators de la Garde Loup
+Wolf Guard| Garde Loup
+Blood Claws| Griffes Sanglantes
+Grey Hunters| Chasseurs Gris
+Thunderwolf Cavalry| Cavalerie sur Loups-Tonnerre
+Fenrisian Wolves| Loups Fenrissiens
+Cyberwolves| Loups Cybernétiques
+Wulfen| Wulfen
+Wulfen Dreadnought| Dreadnought Wulfen
+Murderfang| Murderfang
+Stormfang Gunship| Stormfang Gunship
+Stormwolf| Stormwolf
+High Marshal Helbrecht| Grand Maréchal Helbrecht
+Chaplain Grimaldus| Chapelain Grimaldus
+Emperor's Champion| Champion de l'Empereur
+Marshal| Maréchal
+Castellan| Castellan
+Crusader Squad| Escouade de Croisés
+Primaris Crusader Squad| Escouade de Croisés Primaris
+Sword Brethren| Frères d'Épée
+Primaris Sword Brethren| Frères d'Épée Primaris
+Cenobyte Servitors| Serviteurs Cénobites
+Watch Master| Maître de la Deathwatch
+Watch Captain Artemis| Capitaine Artemis de la Deathwatch
+Deathwatch Veterans| Vétérans de la Deathwatch
+Deathwatch Terminators| Terminators de la Deathwatch
+Deathwatch Kill Team| Kill Team Deathwatch
+Proteus Kill Team| Kill Team Proteus
+Fortis Kill Team| Kill Team Fortis
+Indomitor Kill Team| Kill Team Indomitor
+Spectrus Kill Team| Kill Team Spectrus
+Kill Team Cassius| Kill Team Cassius
