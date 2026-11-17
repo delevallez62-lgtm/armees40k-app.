@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:15,d:"2026-11-17",t:"Constructeur guidé et points de détachement",s:"Parcours en étapes avec aides pour débutants, plusieurs détachements tant qu'il reste des points de détachement (500 pts = 1, 1 000 = 2, 2 000 = 3), et règle d'armée principale toujours visible (Doctrines de combat, Waaagh!, Protocoles de réanimation)."},
  {id:14,d:"2026-11-17",t:"Missions principales et règle de faction",s:"Les détachements de toutes les factions indiquent leurs Forces Dispositions (Wahapedia) : tu choisis la mission principale de ton armée, avec les missions selon l'adversaire. La règle de faction est notée sur l'armée et lisible dans la liste et le mode jeu."},
  {id:13,d:"2026-11-17",t:"Constructeur d'armée",s:"Catalogue visuel (collection et bibliothèque, une seule carte par unité), effectifs et paliers de points V11, armes compactes, équipements payants, meneurs, détachements, optimisations, récapitulatif, export PDF et JSON, et mise à jour des points avec différences."},
  {id:12,d:"2026-11-17",t:"Mises à jour automatiques et onglet Nouveautés",s:"À chaque lancement, l'appli récupère la dernière version de la bibliothèque et applique les changements à toutes tes fiches et listes. Une fenêtre résume ce qui a changé. L'onglet Nouveautés garde tout, avec des tiroirs modifiables."},

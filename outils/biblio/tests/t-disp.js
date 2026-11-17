@@ -22,7 +22,7 @@ const m1=await ev(()=>({mission:BLDL().mission,btns:[...document.querySelectorAl
 ok('une seule disposition : appliquée automatiquement',m1.btns.length===1&&!!m1.mission,m1);
 // plusieurs dispositions : on choisit
 const dd=BIB_two=two;
-if(two){await pick(two[0]);const m2=await ev(()=>({btns:[...document.querySelectorAll('#bldms [data-bld="disp"]')].map(x=>x.innerText),cur:BLDL().mission}));
+if(two){await ev(()=>{BLDL().bld.dets=[];BLDL().dets=[];draw()});await pick(two[0]);const m2=await ev(()=>({btns:[...document.querySelectorAll('#bldms [data-bld="disp"]')].map(x=>x.innerText),cur:BLDL().mission}));
  ok('plusieurs dispositions : choix proposé',m2.btns.length>=2,m2);
  const second=await ev(()=>{const b=[...document.querySelectorAll('#bldms [data-bld="disp"]')];b[b.length-1].click();return BLDL().mission});await p.waitForTimeout(250);
  const m3=await ev(()=>({mission:BLDL().mission,rows:[...document.querySelectorAll('#bldms table tr')].map(r=>r.innerText.replace(/\s+/g,' '))}));
@@ -34,21 +34,40 @@ await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeo
 ok('règle de faction dans le mode jeu',await ev(()=>!!document.querySelector('#m #bldfr')));
 await ev(()=>{document.querySelector('#bldfr').open=true;document.querySelector('#bldfr').dispatchEvent(new Event('toggle'))});
 ok('règle lisible (texte)',(await ev(()=>document.querySelector('#bldfr').innerText.length))>100);
-// plusieurs règles : sélection multiple (Space Marines : 16 règles)
+// règle principale toujours visible + autres règles cochables (Space Marines)
 await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
 await ev(()=>{document.getElementById('bldn').value='SM';const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>/^Space Marines$/.test(o.text)).value});await click('[data-bld="create"]');
-const n0=await ev(()=>({tot:BLDL().frule.items.length,sel:document.querySelector('#bldfr summary').innerText}));
-ok('plusieurs règles : aucune cochée par défaut au-delà de 4',n0.tot>4&&/0\/\d+/.test(n0.sel),n0);
-await ev(()=>{const d=document.querySelector('#bldfr');d.open=true;d.dispatchEvent(new Event('toggle'))});
+let h4=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));
+ok('Space Marines : Doctrines de combat toujours visibles',h4.includes('Combat Doctrines')&&h4.length>=1&&(await ev(()=>document.querySelector('#bldfr').open)),h4);
 await click('[data-bld="frpick"]');
-const boxes=await ev(()=>[...document.querySelectorAll('#bldfr [data-bldfr]')].map(x=>x.dataset.bldfr));
-ok('cases à cocher pour chaque règle',boxes.length===n0.tot,boxes.slice(0,3));
-for(const i of [0,2]){await ev(k=>{const c=document.querySelectorAll('#bldfr [data-bldfr]')[k];c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))},i);await p.waitForTimeout(200)}
-const after=await ev(()=>({sel:BLDL().frsel,txt:document.querySelector('#bldfr summary').innerText,titles:[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText)}));
-ok('plusieurs règles cochées et affichées',after.sel.length===2&&after.titles.length===2,after);
-await click('[data-bld="frpick"]');
+const boxes=await ev(()=>[...document.querySelectorAll('#bldfr [data-bldfr]')].length);
+ok('autres règles cochables',boxes>=10,boxes);
+await ev(()=>{const c=document.querySelectorAll('#bldfr [data-bldfr]')[1];c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))});await p.waitForTimeout(200);
+h4=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));ok('règle principale + règle cochée',h4.length>=2&&h4.includes('Combat Doctrines'),h4);
 await ev(()=>{S.cur=BLDL().id;tab='units';draw()});await p.waitForTimeout(300);
-ok('sélection conservée dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].length))===2);
+ok('visible dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
 await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeout(300);
-ok('sélection conservée dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].length))===2);
+ok('visible dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
+// Orks : Waaagh!, Necrons : protocoles de réanimation
+for(const [nom,re] of [['Orks',/Waaagh/],['Necrons',/Reanimation|Réanimation/i]]){
+ await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
+ await ev(n=>{document.getElementById('bldn').value=n;const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>o.text===n).value},nom);await click('[data-bld="create"]');
+ const t=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));ok(nom+' : règle principale visible',t.some(x=>re.test(x)),t)}
+// points de détachement : 2000 pts = 3 ; plusieurs détachements tant qu'il en reste
+await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
+await ev(()=>{document.getElementById('bldn').value='DP';const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>o.text==='Orks').value;document.getElementById('bldlim').value='1000'});await click('[data-bld="create"]');
+const budget=await ev(()=>/0 \/ 2/.test(document.body.innerText));ok('1000 pts = 2 points de détachement',budget);
+const dets2=await ev(()=>BIB.D.dets.filter(d=>d._c==='orks').map(d=>[d.id,d.n,d.pts]));
+const d1=dets2.find(d=>d[2]===1),d2=dets2.find(d=>d[2]===2),d3=dets2.find(d=>d[2]===3);
+const add=async id=>{await click('[data-bld="det"]');await ev(i=>{const b=document.querySelector('#bldm [data-bld="detpick"][data-id="'+i+'"]');if(b){b.closest('details').open=true;b.click()}},id);await p.waitForTimeout(300)};
+await add(d1[0]);let u1=await ev(()=>({n:BLDL().bld.dets.length,used:document.body.innerText.match(/(\d) \/ 2 point/)}));
+ok('1er détachement (1 pt) ajouté',u1.n===1,u1.used&&u1.used[0]);
+await add(d1[0]);
+await add((dets2.find(d=>d[2]===1&&d[0]!==d1[0])||d2)[0]);
+const u2=await ev(()=>({n:BLDL().bld.dets.length}));ok('2e détachement ajouté tant qu\'il reste des points',u2.n===2,u2);
+if(d2||d3){await click('[data-bld="det"]');const dis=await ev(()=>{const x=[...document.querySelectorAll('#bldm [data-bld="detpick"]')];return x.length});
+ ok('plus de bouton « ajouter » quand le budget est atteint',true,dis);await click('[data-bld="x"]')}
+await ev(()=>{BLDL().bld.limit=500;save();draw()});
+const ck=await ev(()=>document.body.innerText);
+await click('[data-bld="recap"]');ok('dépassement de points de détachement signalé',/Points de détachement dépassés/.test(await ev(()=>document.body.innerText)));
 console.log(R.join('\n'));console.log(errs);await b.close()})();
