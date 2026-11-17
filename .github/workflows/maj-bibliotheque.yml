@@ -1,0 +1,52 @@
+name: Mise à jour de la bibliothèque V11
+# Récupère chaque jour les nouveautés de Wahapedia (11e) et de warhammer-oracle, puis publie data/biblio.
+# Aucune IA : les nouveaux textes restent en anglais (« non traduit ») jusqu'à ce qu'une traduction soit ajoutée.
+on:
+  schedule:
+    - cron: '12 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: maj-bibliotheque
+  cancel-in-progress: false
+jobs:
+  maj:
+    runs-on: ubuntu-latest
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Données warhammer-oracle (lecture seule, aucun code exécuté)
+        run: |
+          git clone --depth 1 https://github.com/gregario/warhammer-oracle /tmp/oracle
+          echo "OCOMMIT=$(git -C /tmp/oracle log -1 --format=%h)" >> "$GITHUB_ENV"
+          echo "ODATE=$(git -C /tmp/oracle log -1 --format=%ad --date=short)" >> "$GITHUB_ENV"
+      - name: Export de données Wahapedia (11e)
+        run: |
+          mkdir -p /tmp/wp11; WP_OK=1
+          for f in Factions Source Datasheets Datasheets_abilities Datasheets_keywords Datasheets_models Datasheets_options Datasheets_wargear Datasheets_unit_composition Datasheets_leader Abilities Detachments Detachment_abilities Enhancements Stratagems Last_update; do
+            ok=0
+            for i in 1 2 3 4; do
+              if curl -fsS -m 120 -o "/tmp/wp11/$f.csv" "https://wahapedia.ru/wh40k11ed/$f.csv"; then ok=1; break; fi
+              sleep 8
+            done
+            if [ "$ok" = 0 ]; then echo "Fichier $f introuvable : Wahapedia ignoré pour cette fois"; WP_OK=0; break; fi
+          done
+          echo "WP_OK=$WP_OK" >> "$GITHUB_ENV"
+      - name: Construire la bibliothèque
+        run: |
+          cp data/biblio/manifest.json /tmp/ancien-manifest.json
+          python3 outils/biblio/build-biblio.py /tmp/oracle/src/data data/biblio "$OCOMMIT" "$ODATE"
+          if [ "$WP_OK" = 1 ]; then python3 outils/biblio/build-wahapedia.py /tmp/wp11 data/biblio; fi
+      - name: Contrôler avant publication
+        run: python3 outils/biblio/check-maj.py data/biblio /tmp/ancien-manifest.json
+      - name: Publier s'il y a du nouveau
+        run: |
+          if git diff --quiet -- data/biblio && [ -z "$(git ls-files --others --exclude-standard data/biblio)" ]; then echo "inchangée"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/biblio
+          git commit -m "Mise à jour automatique de la bibliothèque V11 ($(date -u +%F))"
+          git pull --rebase origin main
+          git push origin HEAD:main
