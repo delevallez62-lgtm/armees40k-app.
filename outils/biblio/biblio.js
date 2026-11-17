@@ -141,7 +141,7 @@ function syncOne(ref){const lb=LB(),lk=lb.links[ref],m=S.coll[ref];if(!lk||!m||!
 function syncAll(){if(!D.ready)return 0;let t=0;try{Object.keys(LB().links||{}).forEach(r=>{try{t+=syncOne(r)}catch(_){}})}catch(_){}if(t){sv();Object.keys(AM).forEach(k=>delete AM[k])}return t}
 window.BIBSYNC=function(p){try{if(p&&p.ref&&S.coll[p.ref]===p&&syncOne(p.ref))sv()}catch(_){}return""};
 setInterval(()=>{try{if(LB()&&Object.keys(LB().links||{}).length)syncAll()}catch(_){}},4000);
-function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});snapEq(m,u,u.wp||{});delete AM[m.ref];return n}
+function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});snapEq(m,u,u.wp||{});delete AM[m.ref];BD.open[m.ref]=true;return n}
 function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
  const done=[];const p=profOf(u,pi);m.stats=m.stats||{};
  rows.stats.forEach(r=>{if(pick[r.id]){m.stats[r.k]=r.lib;done.push(r.k)}});
@@ -337,7 +337,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"fac":B.fac=b.dataset.v;try{draw()}catch(_){}break;
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
-  case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast(n?"Liée · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":"")+" ✓":"Liée à la version anglaise ✓ (aucune arme à ajouter)")}catch(_){}break}
+  case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}break}
   case"mk":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);try{draw()}catch(_){}try{toast("Fiche « "+m.name+" » créée ✓")}catch(_){}break}
   case"cmpx":await init();openCmp(b.dataset.r,b.dataset.id);break;
   case"ckw":{const C=B.cmp;if(!C)break;const v=b.dataset.v==="1";C.rows.weapons.forEach(r=>{if(r.kind==="add")C.pick[r.id]=v});drawCmp();break}
@@ -434,12 +434,12 @@ window.BIBLNK=function(u){try{if(!u||!u.ref||!S.coll[u.ref])return"";css();
  const ref=u.ref,m=S.coll[ref],lk=LB().links[ref],am=autoMatch(m),lu=(lk&&D.byId[lk.id])||(am&&am.u);const r=E(ref);
  if(!lu)return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-meta">Non liée</div><button type="button" class="b p" data-bib="open" data-r="${r}">🔎 Lier à la fiche anglaise</button></div>${eqo(m)}`;
  const n=buildCmp(m,lu,0).weapons.filter(x=>x.kind==="add").length,sure=lk||(am&&am.level==="ok");
- return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-lkn">${E(tName(lu.n).t)}${sure?"":" <span class=\"bib-meta\">(à confirmer)</span>"}</div><div class="row" style="gap:6px;flex-wrap:wrap">${!lk&&!sure?`<button type="button" class="b p" data-bibdr="okm" data-r="${r}" data-id="${E(lu.id)}">✔ Confirmer</button>`:""}${n?`<button type="button" class="b p" data-bib="cmp" data-r="${r}" data-id="${E(lu.id)}">➕ ${n} arme${n>1?"s":""} à ajouter</button>`:""}<button type="button" class="b" data-bib="open" data-r="${r}">Changer</button>${lk?`<button type="button" class="b x" data-bib="unlink" data-r="${r}">Délier</button>`:""}</div></div>${eqo(m)}`}catch(e){return""}};
+ return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-lkn">${E(tName(lu.n).t)}${sure?"":" <span class=\"bib-meta\">(à confirmer)</span>"}</div>${m.eqx&&(m.eqx.opt||[]).length?`<div class="bib-meta">✓ ${m.eqx.opt.length} option${m.eqx.opt.length>1?"s":""} d'équipement et restrictions enregistrée${m.eqx.opt.length>1?"s":""} sur la fiche</div>`:""}<div class="row" style="gap:6px;flex-wrap:wrap">${!lk&&!sure?`<button type="button" class="b p" data-bibdr="okm" data-r="${r}" data-id="${E(lu.id)}">✔ Confirmer</button>`:""}${n?`<button type="button" class="b p" data-bib="cmp" data-r="${r}" data-id="${E(lu.id)}">➕ ${n} arme${n>1?"s":""} à ajouter</button>`:""}<button type="button" class="b" data-bib="open" data-r="${r}">Changer</button>${lk?`<button type="button" class="b x" data-bib="unlink" data-r="${r}">Délier</button>`:""}</div></div>${eqo(m)}`}catch(e){return""}};
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.classList.contains("bib-dr")){BD.open[d.dataset.bibref]=d.open}},true);
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bibdr]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.bibdr;
  if(a==="en"){BD.en[b.dataset.k]=!BD.en[b.dataset.k];try{draw()}catch(_){}}
  else if(a==="enall"){BD.enAll=!BD.enAll;try{draw()}catch(_){}}
- else if(a==="okm"){const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(m&&u){const n=autoLink(m,u);try{draw()}catch(_){}try{toast("Liée"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" ✓")}catch(_){}}}
+ else if(a==="okm"){const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(m&&u){const n=autoLink(m,u);try{draw()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}}}
  else if(a==="wadd"){const m=S.coll[b.dataset.r],am=m&&autoMatch(m);if(!am)return;const u=am.u,libW=[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))],aw=libW[+b.dataset.i];if(!aw)return;m.weapons=Array.isArray(m.weapons)?m.weapons:[];if(!m.weapons.some(x=>wSig(x)===wSig(aw))){m.weapons.push(clone(aw));sv();try{draw()}catch(_){}try{toast("Arme ajoutée à ta fiche ✓")}catch(_){}}}
 },true);
 

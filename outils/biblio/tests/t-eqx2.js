@@ -8,4 +8,4 @@ console.log(JSON.stringify(await p.evaluate(async()=>{const c=document.querySele
  const u=BIB.D.units.find(x=>x.n==='Immortals'&&x._c==='necrons');
  const set=()=>{const x=document.createElement('button');x.dataset.bib='cmp';x.dataset.r='nx';x.dataset.id=u.id;document.body.appendChild(x);x.click()};
  const before=!!S.coll.nx.eqx;set();await new Promise(r=>setTimeout(r,600));
- const e=S.coll.nx.eqx;return{before,after:!!e,opt:e&&e.opt.length,loadout:e&&e.loadout.slice(0,60),comp:e&&e.comp,id:e&&e.id}})),errs);await b.close()})();
+ const e=S.coll.nx.eqx;ed=S.coll.nx;ctx='coll';edit=false;draw();await new Promise(r=>setTimeout(r,300));const d=document.querySelector('#md details.bib-dr');return{ouvert:d&&d.open,aperçu:d&&d.innerText.replace(/\n/g,' | ').slice(0,160),before,after:!!e,opt:e&&e.opt.length,loadout:e&&e.loadout.slice(0,60),comp:e&&e.comp,id:e&&e.id}})),errs);await b.close()})();
