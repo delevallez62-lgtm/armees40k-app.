@@ -48,6 +48,8 @@ await ev(()=>{S.cur=BLDL().id;tab='units';draw()});await p.waitForTimeout(300);
 ok('visible dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
 await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeout(300);
 ok('visible dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
+// règle principale = la plus présente sur les unités de la faction
+const mains=await ev(()=>{const o={};['space-marines','orks','necrons','aeldari','tyranids','t-au-empire','death-guard'].forEach(g=>o[g]=BLDMAIN(g));return o});ok('règle principale calculée d\'après les unités',mains['space-marines'][0]==='Combat Doctrines'&&mains.orks[0]==='Waaagh!'&&mains.necrons[0]==='Reanimation Protocols'&&mains.tyranids[0]==='Synapse',mains);
 // Orks : Waaagh!, Necrons : protocoles de réanimation
 for(const [nom,re] of [['Orks',/Waaagh/],['Necrons',/Reanimation|Réanimation/i]]){
  await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});

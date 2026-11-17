@@ -221,8 +221,16 @@ function frItems(L){const g=listGroup(L),src=g&&D.frules&&D.frules[g];
  if(src&&src.length){const it=src.map(r=>{const t=trDesc(r.d),tx=stripMd(t.st==="ok"?t.t:(t.prop||r.d));return{n:tAB(r.n).t,_en:r.n,d:tx}});
   if(JSON.stringify((L.frule||{}).items)!==JSON.stringify(it)){L.frule={g,at:Date.now(),items:it};try{save()}catch(_){}}return it}
  return(L.frule&&L.frule.items)||[]}
-const MAINR={"space-marines":["Combat Doctrines","Assault Doctrine","Devastator Doctrine","Tactical Doctrine"],"orks":["Waaagh!"],"necrons":["Reanimation Protocols"]};
-const mainOf=(L,it)=>{const m=MAINR[listGroup(L)];return m?it.filter(x=>m.includes(x._en||x.n)):[]};
+/* règle de faction principale = celle qui se retrouve sur le plus d'unités de la faction (+ les sous-règles citées dans son texte) */
+const MAINC={};
+function mainNames(g){const fr=(D.frules||{})[g]||[];if(!fr.length)return[];const key=D.units.length+"|"+fr.length;if(MAINC[g]&&MAINC[g].k===key)return MAINC[g].n;
+ const nz=t=>nk(String(t).replace(/\s*\(.*?\)/g,"").replace(/\s+\d.*$/,"")),cnt={};
+ D.units.forEach(u=>{if(u._c!==g)return;const seen=new Set((u.ab||[]).map(a=>nz(a.n)));fr.forEach(r=>{if(seen.has(nz(r.n)))cnt[r.n]=(cnt[r.n]||0)+1})});
+ const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];let n=[];
+ if(top){const t=fr.find(r=>r.n===top),tx=nk(t.d||"");n=[top].concat(fr.filter(r=>r.n!==top&&tx.includes(nk(r.n))).map(r=>r.n))}
+ else if(fr.length===1)n=[fr[0].n];
+ MAINC[g]={k:key,n};return n}
+const mainOf=(L,it)=>{const m=mainNames(listGroup(L));return m.length?it.filter(x=>m.includes(x._en||x.n)):[]};
 function frSel(L,it){const main=mainOf(L,it),rest=it.filter(x=>!main.includes(x));const s=L.frsel;
  if(Array.isArray(s))return main.concat(rest.filter(x=>s.includes(x.n)));
  return main.length?main:(it.length>4?[]:it)}
@@ -315,3 +323,4 @@ document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const
 window.BLDSYNC=()=>{try{(S.lists||[]).forEach(l=>{if(l.bld)syncPts(l)});save()}catch(_){}};
 window.BLDCALC=calc;window.BLDCOST=costOf;
 window.BLDL=curL;window.BLDSTATE=BLD;
+window.BLDMAIN=mainNames;
