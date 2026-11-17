@@ -107,7 +107,7 @@ function suggest(m){const T=toks(m.name),alias=LB().tr["n:"+nk(m.name)];const ou
   sc=h/Math.max(T.length,U.length||1);if(nk(u.n)===nk(m.name))sc=1;if(sc>=.5)out.push({u,sc})});
  return out.sort((a,b)=>b.sc-a.sc||a.u.n.localeCompare(b.u.n)).slice(0,8)}
 function search(q,fac){const k=nk(q),w=k.split(" ").filter(Boolean);
- return D.units.filter(u=>(!fac||u._c===fac)&&(!w.length||w.every(x=>(nk(u.n)+" "+nk((LB().tr["n:"+nk(u.n)]||{}).fr||"")+" "+nk((u.kw||[]).join(" "))).includes(x)))).slice(0,60)}
+ return D.units.filter(u=>(!fac||inFac(u,fac))&&(!w.length||w.every(x=>(nk(u.n)+" "+nk((LB().tr["n:"+nk(u.n)]||{}).fr||"")+" "+nk((u.kw||[]).join(" "))).includes(x)))).slice(0,60)}
 /* ---------- rapprochement : comparaison puis choix ---------- */
 /* arme « déjà présente » : mêmes chiffres (≥5 sur 6) + nom qui se ressemble un peu + capacités proches */
 const bg=t=>{t=nk(t).replace(/ /g,"");const o=new Set();for(let i=0;i<t.length-1;i++)o.add(t.slice(i,i+2));return o};
@@ -233,7 +233,7 @@ const closeM=id=>{const b=document.getElementById(id);if(b)b.innerHTML=""};
 const fmtD=t=>{try{return new Date(t).toLocaleDateString("fr-FR")}catch(_){return""}};
 const STATS=[["M","M"],["E","E"],["SV","Sv"],["PV","PV"],["CD","Cd"],["CO","CO"]];
 function unitHtml(u){const tn=tName(u.n);
- let h=`<h4>${E(u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p>Nom français : <b>${E(tn.t)}</b></p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>${tn.st==="chk"?trx(u.n,"nom d'unité").replace(/^<div>.*?<\/div>/,""):""}`}<p class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source : ${u.src==="wahapedia"?"Wahapedia":"BSData"}${u.wp&&u.src!=="wahapedia"?" + Wahapedia":""} · ${E(u.id)}</p>`;
+ let h=`<h4>${E(u.n)} ${badge(tn.st)}</h4>${tn.st==="ok"?`<p>Nom français : <b>${E(tn.t)}</b></p>`:`<p class="bib-meta">Nom original anglais · pas de traduction confirmée</p>${tn.st==="chk"?trx(u.n,"nom d'unité").replace(/^<div>.*?<\/div>/,""):""}`}<p class="bib-meta">${E(facLbl(u))} · ${u.pts!=null?u.pts+" pts · ":""}${u.sz?"taille "+u.sz.min+(u.sz.max&&u.sz.max!==u.sz.min?"–"+u.sz.max:"")+" · ":""}source : ${u.src==="wahapedia"?"Wahapedia":"BSData"}${u.wp&&u.src!=="wahapedia"?" + Wahapedia":""} · ${E(u.id)}</p>`;
  h+=u.pr.map(p=>`<div class="bib-row"><b>${E(p.n)}</b><div>${STATS.map(([k,l])=>`${l} <b>${E(nm(p[k])||"–")}</b>`).join(" · ")}</div></div>`).join("");
  const W=(a,melee)=>a.map(w=>{const aw=wToApp(w,melee),ks=(w.kw||[]).map(k=>{const r=tWK(k);return`${E(r.t)}${badge(r.st)}`}).join(", ");return`<div class="bib-row"><b>${E(aw.name)}</b> <span class="bib-meta">${E(w.n!==aw.name?w.n:"")}</span><div>${melee?"Mêlée":"Portée "+E(aw.range)+'"'} · A ${E(aw.a)} · ${melee?"CC":"CT"} ${E(aw.hit)} · F ${E(aw.f)} · PA ${E(aw.pa)} · D ${E(aw.d)}</div>${ks?`<div class="bib-wl">${ks}</div>`:""}</div>`}).join("");
  h+=`<h4>Armes de tir (${u.rw.length})</h4>${W(u.rw,false)||'<p class="bib-meta">Aucune</p>'}<h4>Armes de mêlée (${u.mw.length})</h4>${W(u.mw,true)||'<p class="bib-meta">Aucune</p>'}`;
@@ -245,7 +245,13 @@ function unitHtml(u){const tn=tName(u.n);
   +(w.opt&&w.opt.length?`<div class="bib-row"><b>Options d'équipement</b>${w.opt.map(t=>`<div class="bib-opt">${trx(t,"option d'équipement")}</div>`).join("")}</div>`:"")
   +(w.ledby&&w.ledby.length?`<div class="bib-row"><b>Peut être mené par</b><br>${E(w.ledby.join(", "))}</div>`:"")+(w.leads&&w.leads.length?`<div class="bib-row"><b>Peut mener</b><br>${E(w.leads.join(", "))}</div>`:"")+(w.transport?`<div class="bib-row"><b>Transport</b>${trx(w.transport,"composition")}</div>`:"")}
  else h+=`<p class="bib-meta">Options d'équipement et restrictions : absentes de cette source.</p>`;return h}
-function facList(){const m=new Map();D.units.forEach(u=>{const e=m.get(u._c)||[u._c,(u.f&&u.f[0])||u._c,0];e[2]++;m.set(u._c,e)});return[...m.values()].sort((a,b)=>a[1].localeCompare(b[1]))}
+const FACN={"space-marines":"Space Marines","orks":"Orks"};
+const inFac=(u,g)=>String(g).indexOf("sm:")===0?(u._c==="space-marines"&&(u.f||[]).includes(String(g).slice(3))):u._c===g;
+function facList(){const m=new Map();D.units.forEach(u=>{const e=m.get(u._c)||[u._c,FACN[u._c]||(u.f&&u.f[0])||u._c,0];e[2]++;m.set(u._c,e)});
+ const L=[...m.values()],ch=new Map();D.units.filter(u=>u._c==="space-marines").forEach(u=>(u.f||[]).forEach(c=>{if(c!=="Space Marines")ch.set(c,(ch.get(c)||0)+1)}));
+ ch.forEach((n,c)=>L.push(["sm:"+c,"Space Marines — "+c,n]));
+ return L.sort((a,b)=>a[1].localeCompare(b[1]))}
+const facLbl=u=>(u._c==="space-marines"&&(u.f||[]).length>1)?"Space Marines":(u.f||[]).join(", ");
 function libView(){css();const lb=LB(),man=D.man;
  let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>📚 Bibliothèque V11</b><button class="b" data-bib="menu">⚙ Gérer</button></div>`;
  if(!D.ready){h+=`<p class="mu">${D.err?"Erreur : "+E(D.err):"Chargement de la bibliothèque…"}</p></div>`;if(!D.err)init().then(()=>{try{draw()}catch(_){}});return h}
@@ -254,7 +260,7 @@ function libView(){css();const lb=LB(),man=D.man;
  if(lb.news.length)h+=`<details class="card" ${un.length?"open":""}><summary><b>🆕 Nouveautés</b> ${un.length?`<span class="bib-st">${un.length} non lue(s)</span>`:""}</summary>${lb.news.slice(0,5).map((n,i)=>`<div class="bib-new"><b>${fmtD(n.at)}</b> · version ${E(n.to||"")}<br>${n.items.add.length?`➕ ${n.items.add.length} nouveauté(s) : ${E(n.items.add.slice(0,6).map(x=>x.t+" "+x.n).join(" ; "))}${n.items.add.length>6?"…":""}<br>`:""}${n.items.chg.length?`✎ ${n.items.chg.length} modifiée(s) : ${E(n.items.chg.slice(0,6).map(x=>x.t+" "+x.n).join(" ; "))}${n.items.chg.length>6?"…":""}<br>`:""}${n.items.del.length?`➖ ${n.items.del.length} retirée(s)<br>`:""}${n.stale?`⚠ ${n.stale} fiche(s) de ta collection liées à une fiche modifiée : ouvre-les pour revoir.<br>`:""}</div>`).join("")}<button class="b" data-bib="seen">Tout marquer comme lu</button></details>`;
  h+=`<div class="card"><label>Rechercher<input id="bibq" value="${E(B.q)}" placeholder="Nom, mot-clé…" autocomplete="off"></label><label>Faction<select id="bibfac"><option value="">Toutes les factions (${D.units.length})</option>${facList().map(([k,n,c])=>`<option value="${E(k)}"${B.fac===k?" selected":""}>${E(n)} (${c})</option>`).join("")}</select></label><div class="bib-chips">${[["units","Unités"],["det","Détachements"],["str","Stratagèmes"],["enh","Améliorations"],["rules","Règles"]].map(([k,n])=>`<button class="${B.tab===k?"on":""}" data-bib="tab" data-v="${k}">${n}</button>`).join("")}</div></div><div id="bibl">${list()}</div>`;return h}
 function list(){const q=nk(B.q),f=B.fac,inF=x=>!f||x._c===f||x._c==="common",hit=s=>!q||q.split(" ").every(w=>nk(s).includes(w));let h="";
- if(B.tab==="units"){const L=search(B.q,f);h=L.map(u=>{const t=tName(u.n);return`<div class="card hv" data-bib="unit" data-id="${E(u.id)}"><b class="cap">${E(t.t)}</b> ${badge(t.st)}${t.st==="chk"&&t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:""}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pts!=null?u.pts+" pts":""} ${u.src==="wahapedia"?"· 🌐 Wahapedia":(u.wp?"· + Wahapedia":"")}</div></div>`}).join("")||'<p class="mu">Aucune fiche.</p>';if(D.units.length&&L.length===60)h+='<p class="mu">Affine la recherche pour voir la suite.</p>'}
+ if(B.tab==="units"){const L=search(B.q,f);h=L.map(u=>{const t=tName(u.n);return`<div class="card hv" data-bib="unit" data-id="${E(u.id)}"><b class="cap">${E(t.t)}</b> ${badge(t.st)}${t.st==="chk"&&t.prop?` <span class="bib-meta">· proposé : ${E(t.prop)}</span>`:""}<div class="bib-meta">${E(facLbl(u))} · ${u.pts!=null?u.pts+" pts":""} ${u.src==="wahapedia"?"· 🌐 Wahapedia":(u.wp?"· + Wahapedia":"")}</div></div>`}).join("")||'<p class="mu">Aucune fiche.</p>';if(D.units.length&&L.length===60)h+='<p class="mu">Affine la recherche pour voir la suite.</p>'}
  else if(B.tab==="det"){h=D.dets.filter(x=>inF(x)&&hit(x.n+" "+(x.f||""))).map(d=>`<details class="card"><summary><b>${E(d.n)}</b> <span class="bib-meta">${E(d.f||"")} · ${d.pts!=null?d.pts+" pt(s)":""}</span> ${badge("no")}</summary>${d.ab?`<p>${nameHtml(d.ab.name)}</p>${trx(d.ab.description,"règle de détachement")}`:""}${(d.abx||[]).map(x=>`<p>${nameHtml(x.name)}</p>${trx(x.description,"règle de détachement")}`).join("")}<p class="bib-meta">Dispositions : ${E((d.dp||[]).join(", ")||"—")} · source : ${d.src==="wahapedia"?"Wahapedia":"BSData"}</p><p><b>Stratagèmes liés :</b> ${D.str.filter(s=>s.det===d.n).length} · <b>Améliorations :</b> ${D.enh.filter(e=>e.det===d.n).length}</p></details>`).join("")||'<p class="mu">Aucun.</p>'}
  else if(B.tab==="str"){h=D.str.filter(x=>inF(x)&&hit(x.n+" "+(x.det||"")+" "+(x.f||""))).slice(0,120).map(s=>{const p=tPhase(s.ph||"");return`<details class="card"><summary><b>${E(s.n)}</b> <span class="bib-st">${s.cp!=null?s.cp+" PC":""}</span> <span class="bib-meta">${E(s.det||s.f||"")}</span></summary><p class="bib-meta">Phase : ${E(p.t)} ${badge(p.st)} · Type : ${E(s.t||"—")}</p><p><b>Quand :</b></p>${trx(s.when||"—","stratagème : quand")}<p><b>Cible :</b></p>${trx(s.tg||"—","stratagème : cible")}<p><b>Effet :</b></p>${trx(s.fx||"—","stratagème : effet")}${s.rs?`<p><b>Restrictions :</b></p>${trx(s.rs,"stratagème : restrictions")}`:""}<p class="bib-meta">Source : ${s.src==="wahapedia"?"Wahapedia":"Warhammer Oracle (Faction Packs)"}</p></details>`}).join("")||'<p class="mu">Aucun.</p>'}
  else if(B.tab==="enh"){h=D.enh.filter(x=>inF(x)&&hit(x.n+" "+(x.det||""))).map(e=>`<details class="card"><summary><b>${E(e.n)}</b> <span class="bib-meta">${E(e.det||"")} · ${e.pts!=null?e.pts+" pts":""}</span></summary>${trx(e.d,"texte d'amélioration")}<p class="bib-meta">Source : ${e.src==="wahapedia"?"Wahapedia":"BSData"}</p></details>`).join("")||'<p class="mu">Aucune.</p>'}
@@ -274,7 +280,7 @@ function openLink(ref){css();const m=S.coll[ref];if(!m)return;const lb=LB(),lk=l
  B.ref=ref;B.sq=undefined;if(D.ready)run();else init().then(run)}
 function sres(m){const q=B.sq==null?m.name:B.sq;let L;if(B.sq==null){L=suggest(m).map(x=>x.u);return(L.length?`<p class="bib-meta">Correspondances possibles (à vérifier) :</p>`:`<p class="tt-miss" style="color:#e0a030">Aucune correspondance proposée pour « ${E(m.name)} » : cette unité ne semble pas être dans la bibliothèque. Tu peux quand même chercher à la main.</p>`)+L.map(u=>cand(m,u)).join("")}
  L=search(q,"");return L.map(u=>cand(m,u)).join("")||'<p class="mu">Aucun résultat.</p>'}
-const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(u.f.join(", "))} · ${u.pr.length} profil(s) · ${u.rw.length+u.mw.length} arme(s)</div><button class="b p" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}">Lier et ajouter les armes</button></div>`};
+const cand=(m,u)=>{const t=tName(u.n);return`<div class="bib-row"><b>${E(t.t)}</b> ${badge(t.st)}<div class="bib-meta">${E(facLbl(u))} · ${u.pr.length} profil(s) · ${u.rw.length+u.mw.length} arme(s)</div><button class="b p" data-bib="cmp" data-r="${E(m.ref)}" data-id="${E(u.id)}">Lier et ajouter les armes</button></div>`};
 function openCmp(ref,id,pi){const m=S.coll[ref],u=D.byId[id];if(!m||!u)return;css();pi=pi==null?(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0):pi;
  const rows=buildCmp(m,u,pi);B.cmp={ref,id,pi,rows,pick:{},map:{}};
  // valeurs par défaut : on ajoute ce qui manque ; on garde tes données quand elles diffèrent
@@ -482,7 +488,7 @@ function createFromLib(u){const pi=Math.max(0,u.pr.findIndex(p=>nk(p.n)===nk(u.n
  const apt=[],text=[];(u.ab||[]).forEach(a=>{const x=abLines(a);if(!apt.some(n=>nk(n)===nk(x.name)))apt.push(x.name);x.lines.forEach(l=>text.push(l))});
  const kw=(u.kw||[]).map(k=>tKW(k).t).filter(Boolean);
  const fac=(S.fac||[]).find(f=>(u.f||[]).some(n=>nk(n)===nk(f.name||"")));
- const m={ref,name:frName(u.n),stats,weapons:wl,equip:wl.map(w=>w.name).join(", "),apt:apt.join(", "),kw:kw.join(", "),fkw:(u.f||[]).join(", "),text,xab:[],mdl:[],pts:u.pts!=null?+u.pts:0,nb:0,subs:[],fromLib:1};
+ const m={ref,name:frName(u.n),stats,weapons:wl,equip:wl.map(w=>w.name).join(", "),apt:apt.join(", "),kw:kw.join(", "),fkw:(u._c==="space-marines"&&(u.f||[]).length>1?"Space Marines":(u.f||[]).join(", ")),text,xab:[],mdl:[],pts:u.pts!=null?+u.pts:0,nb:0,subs:[],fromLib:1};
  if(fac)m.fac=fac.id;
  S.coll[ref]=m;LB().links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:["fiche créée depuis la bibliothèque"],stale:false};snapEq(m,u,u.wp||{});sv();return m}
 window.BIBCS=function(q){try{q=String(q||"").trim();if(q.length<2)return"";css();
@@ -490,7 +496,7 @@ window.BIBCS=function(q){try{q=String(q||"").trim();if(q.length<2)return"";css()
  const L=search(q,"").slice(0,8);if(!L.length)return`<div class="bib-cs"><b>📚 Dans la bibliothèque</b><p class="bib-meta">Aucune unité trouvée.</p></div>`;
  const have=new Set(Object.values(S.coll).map(m=>nnm(m.name)));
  return`<div class="bib-cs"><b>📚 Dans la bibliothèque</b>`+L.map(u=>{const n=frName(u.n),dup=have.has(nnm(n))||have.has(nnm(u.n));
-  return`<div class="bib-row"><b class="cap">${E(n)}</b><div class="bib-meta">${E(u.f.join(", "))}${u.pts!=null?" · "+u.pts+" pts":""}</div>${dup?`<span class="bib-meta">✓ déjà dans ta collection</span>`:`<button class="b p" data-bib="mk" data-id="${E(u.id)}">➕ Créer la fiche</button>`}</div>`}).join("")+`</div>`}catch(e){return""}};
+  return`<div class="bib-row"><b class="cap">${E(n)}</b><div class="bib-meta">${E(facLbl(u))}${u.pts!=null?" · "+u.pts+" pts":""}</div>${dup?`<span class="bib-meta">✓ déjà dans ta collection</span>`:`<button class="b p" data-bib="mk" data-id="${E(u.id)}">➕ Créer la fiche</button>`}</div>`}).join("")+`</div>`}catch(e){return""}};
 function libUnitOf(m){const lk=LB().links[m.ref];return lk&&D.byId[lk.id]}
 window.BIBMERGE={
  cands(units){const out=[];if(!D.ready)return out;const used=new Set();
@@ -524,22 +530,23 @@ window.BIBPK=function(pk){try{
  css();const q=nk(pk.q||""),coll=Object.values(S.coll||{}).filter(m=>!(m.mrg&&S.coll[m.mrg])),slugs=new Map(coll.map(m=>[m.ref,slugOfColl(m)]));
  const have=new Set(coll.map(m=>nnm(m.name))),linked=new Set(coll.map(m=>{const l=LB().links[m.ref];return l&&l.id}).filter(Boolean));
  const cardC=m=>{const n=(S.lists.find(l=>l.id===S.cur)||{units:[]}).units.filter(x=>x.ref===m.ref).length;return`<div class="card hv" data-act="pick" data-r="${E(m.ref)}">${n?`<span class="mu" style="float:right">✓ ×${n}</span>`:""}<div class="row">${typeof pimg==="function"?pimg(m):""}<b class="cap">${E(m.name)}</b></div></div>`};
- const cardL=u=>`<div class="card hv" data-bib="pklib" data-id="${E(u.id)}"><div class="row"><b class="cap">${E(frName(u.n))}</b></div><div class="bib-meta">📚 Bibliothèque · ${E((u.f||[]).join(", "))}${u.pts!=null?" · "+u.pts+" pts":""} — la fiche sera créée dans ta collection</div></div>`;
+ const cardL=u=>`<div class="card hv" data-bib="pklib" data-id="${E(u.id)}"><div class="row"><b class="cap">${E(frName(u.n))}</b></div><div class="bib-meta">📚 Bibliothèque · ${E(facLbl(u))}${u.pts!=null?" · "+u.pts+" pts":""} — la fiche sera créée dans ta collection</div></div>`;
  const match=(m,n)=>!q||q.split(" ").every(w=>nk(n).includes(w));
  const sel=pk.facs||(pk.facs=[]),fname=g=>g==="__other"?"Autres fiches de ma collection":(facList().find(x=>x[0]===g)||[g,g])[1];
+ const unitOf=m=>{try{const lk=LB().links[m.ref];let u=lk&&D.byId[lk.id];if(!u){const am=autoMatch(m);if(am&&am.level==="ok")u=am.u}return u}catch(_){return null}};
+ const inF=(m,g)=>g==="__other"?!slugs.get(m.ref):String(g).indexOf("sm:")===0?(()=>{const u=unitOf(m);return !!u&&inFac(u,g)})():slugs.get(m.ref)===g;
  // choix d'une faction (première ou supplémentaire)
  if((!sel.length&&!q)||pk.addf){
-  const fl=facList().filter(x=>!sel.includes(x[0])).map(([g,n,c])=>({g,n,c,k:coll.filter(m=>slugs.get(m.ref)===g).length})),other=coll.filter(m=>!slugs.get(m.ref)).length;
+  const fl=facList().filter(x=>!sel.includes(x[0])).map(([g,n,c])=>({g,n,c,k:coll.filter(m=>inF(m,g)).length})),other=coll.filter(m=>!slugs.get(m.ref)).length;
   fl.sort((a,b)=>(b.k>0)-(a.k>0)||a.n.localeCompare(b.n));
   const back=sel.length?`<div class="row" style="margin:6px 0"><button class="b" data-bib="pkfaca" data-v="0">↩ Retour aux figurines</button></div>`:"";
   return`${back}<p class="bib-meta">${sel.length?"Ajoute une autre faction : ses figurines s'afficheront avec celles de "+E(sel.map(fname).join(", "))+".":"Choisis d'abord une faction. Tu verras ensuite toutes ses figurines : celles de ta collection et celles de la bibliothèque. Tu pourras ajouter d'autres factions ensuite."}</p><div class="grid" style="margin-top:8px">${fl.map(x=>`<div class="card hv" data-bib="pkfac" data-v="${E(x.g)}"><b>${E(x.n)}</b><div class="bib-meta">${x.k?x.k+" dans ta collection · ":""}${x.c} dans la bibliothèque</div></div>`).join("")}${other&&!sel.includes("__other")?`<div class="card hv" data-bib="pkfac" data-v="__other"><b>Autres fiches de ma collection</b><div class="bib-meta">${other} sans faction identifiée</div></div>`:""}</div>`}
  // figurines des factions choisies (ou recherche dans toutes)
- const inF=(m,g)=>g==="__other"?!slugs.get(m.ref):slugs.get(m.ref)===g;
  let head="",out="";
  if(sel.length){
   head=`<div class="bib-chips" style="margin:6px 0">${sel.map(g=>`<button class="on" data-bib="pkfacx" data-v="${E(g)}">${E(fname(g))} ✕</button>`).join("")}<button data-bib="pkfaca" data-v="1">➕ Ajouter une faction</button></div>`;
   sel.forEach(g=>{const C=coll.filter(m=>inF(m,g)&&match(m,m.name)).sort((a,b)=>String(a.name).localeCompare(b.name)),
-   L=(g==="__other"?[]:D.units.filter(u=>u._c===g&&!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n)))).sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
+   L=(g==="__other"?[]:D.units.filter(u=>inFac(u,g)&&!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n)))).sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
    if(!C.length&&!L.length)return;
    out+=`<h3 style="margin:14px 0 4px">${E(fname(g))}</h3>`+(C.length?`<h4>Ma collection (${C.length})</h4><div class="grid">${C.map(cardC).join("")}</div>`:"")+(L.length?`<h4>Bibliothèque (${L.length})</h4><div class="grid">${L.map(cardL).join("")}</div>`:"")});
  }else{

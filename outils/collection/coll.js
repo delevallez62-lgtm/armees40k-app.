@@ -61,6 +61,7 @@ function draw(){
  const b=box();
  if(!W){b.innerHTML="";return}
  const m=S.coll[W.ref];if(!m){W=null;b.innerHTML="";return}
+ const old=b.querySelector(".pn"),keep=old?old.scrollTop:0,na=old?" na":"";
  const n=W.sel.size,st=m.stats||{},K6=["M","E","SV","PV","CD","CO"];
  let sg="";try{sg=typeof stx==="function"?stx(st):""}catch(_){sg=""}
  if(!sg)sg='<div class="sg">'+K6.map(function(k){return'<div class="sx"><i>'+k+'</i><b>'+esc2(st[k]||"–")+'</b></div>'}).join("")+'</div>';
@@ -68,7 +69,7 @@ function draw(){
  let abt="";try{abt=typeof abil==="function"?abil(m):""}catch(_){}
  let lnk="",eqh="";try{lnk=window.BIBLNKP?window.BIBLNKP(m):""}catch(_){}try{eqh=window.BIBDRW?window.BIBDRW(m,true):""}catch(_){}
  const kw=[m.kw,m.fkw].filter(Boolean).join(" · ");
- b.innerHTML='<div class="ov ovd" style="z-index:45" data-act="wpx"><div class="pn dlgp" style="width:min(560px,100%)!important;max-height:94vh;overflow:auto">'
+ b.innerHTML='<div class="ov ovd'+na+'" style="z-index:45" data-act="wpx"><div class="pn dlgp'+na+'" style="width:min(560px,100%)!important;max-height:94vh;overflow:auto">'
  +'<div class="mb"><span class="mu">Fiche d’unité</span><button class="b cx" data-act="wpx" aria-label="Fermer">✕</button></div>'
  +'<h2 class="cap" style="margin:0">'+esc2(m.name)+'</h2><span class="mu">'+(m.pts?m.pts+" pts":"")+'</span>'
  +sg
@@ -82,6 +83,7 @@ function draw(){
  +(kw?'<div class="sech">Mots-clés</div><p class="mu">'+esc2(kw)+'</p>':'')
  +eqh
  +'<div class="sv"><button class="b p" data-act="wpok"'+(n?"":" disabled")+'>'+(W.edit?"Valider":"Ajouter à la liste")+' ('+n+' arme'+(n>1?"s":"")+')</button></div></div></div>';
+ const np=b.querySelector(".pn");if(np&&keep)np.scrollTop=keep;
 }
 window.WPK={
  refresh:function(){try{if(W)draw()}catch(_){}},

@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+await p.evaluate(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init();
+ S.lists=[{id:'lnew',name:'Vide',units:[]}];S.cur='lnew';tab='units';draw()});await p.waitForTimeout(300);
+await p.evaluate(()=>document.querySelector('[data-act="npick"]').click());await p.waitForTimeout(500);
+console.log('factions:',await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pkfac"] b')].map(x=>x.innerText).filter(x=>/space|blood|orks|black|dark|wolves|ultra/i.test(x))));
+console.log('bibliothèque:',await p.evaluate(()=>{tab='bib';draw();return [...document.querySelectorAll('#bibfac option')].map(o=>o.innerText).filter(x=>/space|blood|orks/i.test(x))}));
+await p.evaluate(()=>{tab='units';draw();document.querySelector('[data-act="npick"]').click()});await p.waitForTimeout(400);
+await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pkfac"]')].find(e=>/Black Templars/.test(e.innerText)).click());await p.waitForTimeout(400);
+console.log('Black Templars:',await p.evaluate(()=>{const e=document.querySelector('#pr');return{h3:[...e.querySelectorAll('h3')].map(x=>x.innerText),n:e.querySelectorAll('[data-bib="pklib"]').length,ex:[...e.querySelectorAll('[data-bib="pklib"] b')].slice(0,5).map(x=>x.innerText),meta:[...e.querySelectorAll('[data-bib="pklib"] .bib-meta')].slice(0,2).map(x=>x.innerText)}}));
+console.log(errs);await b.close()})();
