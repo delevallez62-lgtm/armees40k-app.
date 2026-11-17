@@ -51,7 +51,7 @@ let INIT=null;
 function init(){if(INIT)return INIT;INIT=(async()=>{try{
   const em=window.__BIBLIO;let m=null;try{m=await idbGet("meta","manifest")}catch(_){}
   if(!m||(m.origin==="embedded"&&em&&m.man.version!==em.manifest.version))await importEmbedded();
-  await loadFromIdb();D.ready=true;D.err=null;setTimeout(()=>{try{syncAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
+  await loadFromIdb();D.ready=true;D.err=null;setTimeout(()=>{try{syncAll();snapAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
   return D})();return INIT}
 /* ---------- traduction : vocabulaire officiel français connu, jamais inventé ---------- */
 // Chaque paire a été retrouvée dans les règles de base françaises officielles, les fiches françaises ou l'encyclopédie V11 de l'appli.
@@ -405,26 +405,36 @@ const chip=i=>`<span class="bib-chip">${i.n?E(i.n)+" × ":""}${E(i.name)}</span>
 function actions(k,sure){return sure?"":`<div class="bib-oa">⚠ à vérifier · <button class="bib-warn" data-bibdr="en" data-k="${k}">${BD.en[k]?"FR":"EN"}</button> <button class="bib-warn ok" data-bibdr-ok="1" data-bibtr="ok" data-k="${k}">✔</button></div>`}
 function optCard(en){const x=frItem(en,"option d'équipement"),o=ruleOpt(en,twRule);
  if(BD.enAll||BD.en[x.k]||!o||x.st==="ok")return`<div class="bib-oc"><div>${x.html}</div>${actions(x.k,x.st==="ok")}</div>`;
- return`<div class="bib-oc"><div class="bib-oh">${o.mode==="replace"?"🔁 Remplacement":"➕ Ajout d'équipement"}</div><div class="bib-ol"><span class="bib-ot">Qui</span> <span style="flex:1;min-width:0">${E(o.who)}</span></div>${o.old.length?`<div class="bib-ol"><span class="bib-ot">Retire</span> ${o.old.map(n=>`<span class="bib-chip">${E(n)}</span>`).join("")}</div>`:""}<div class="bib-ol"><span class="bib-ot">${o.mode==="replace"?(o.oneOf?"Par, au choix":"Par"):(o.oneOf?"Au choix":"Reçoit")}</span> ${o.choices.map(chip).join("")}</div>${actions(x.k,false)}</div>`}
+ return`<div class="bib-oc"><div class="bib-oh">${o.mode==="replace"?"🔁 Remplacement":"➕ Ajout d'équipement"}</div><div class="bib-ol"><span class="bib-ot">Qui</span> <span style="flex:1;min-width:0">${E(o.who)}</span></div>${o.old.length?`<div class="bib-ol"><span class="bib-ot">Retire</span> ${o.old.map(n=>`<span class="bib-chip">${E(n)}</span>`).join("")}</div>`:""}<div class="bib-ol"><span class="bib-ot">${o.mode==="replace"?(o.oneOf?"Par, au choix":"Par"):(o.oneOf?"Au choix":"Reçoit")}</span> ${o.choices.map(chip).join("")}</div>${actions(x.k,false)}<details class="bib-meta" style="margin-top:4px"><summary>Texte complet</summary><div style="white-space:pre-wrap">${E(en)}</div></details></div>`}
 function loadCard(en){const x=frItem(en,"équipement de base"),o=ruleLoad(en,twRule);
  if(BD.enAll||BD.en[x.k]||!o||x.st==="ok")return`<div class="bib-oc"><div>${x.html}</div>${actions(x.k,x.st==="ok")}</div>`;
  return`<div class="bib-oc">${o.map(b=>`<div class="bib-ol"><span class="bib-ot">${E(b.who)}</span> ${b.items.map(chip).join("")}</div>`).join("")}${actions(x.k,false)}</div>`}
 function compCard(list){const rows=list.map(t=>{const x=frItem(t,"composition");return`<span class="bib-chip">${x.html}</span>`}).join("");return`<div class="bib-oc"><div class="bib-ol">${rows}</div></div>`}
+function snapEq(p,u,w){try{const x={id:u.id,n:u.n,loadout:w.loadout||"",opt:(w.opt||[]).slice(),comp:(w.comp||[]).slice()};if(!(x.loadout||x.opt.length||x.comp.length))return;
+ if(JSON.stringify(p.eqx)!==JSON.stringify(x)){p.eqx=x;sv()}}catch(_){}}
+function snapAll(){if(!D.ready)return;try{Object.values(S.coll||{}).forEach(m=>{try{const lk=LB().links[m.ref];let u=lk&&D.byId[lk.id];if(!u){const am=autoMatch(m);if(am&&am.level==="ok")u=am.u}if(u)snapEq(m,u,u.wp||{})}catch(_){}})}catch(_){}}
+window.BIBSNAP=snapAll;
 window.BIBDRW=function(p){try{
  if(!p||!p.ref||!S.coll[p.ref])return"";p=S.coll[p.ref];
  const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return stub(D.err?"Bibliothèque indisponible : "+E(D.err):"Chargement de la bibliothèque…",false)}
- const am=autoMatch(p);if(!am)return stub("Pas de version anglaise liée. Ouvre « Modifier » pour la lier.",false);css();const u=am.u,w=u.wp||{},ref=p.ref,isOpen=!!BD.open[ref],warn=am.level!=="ok";
+ const am=autoMatch(p);css();const ref=p.ref,isOpen=!!BD.open[ref],own=String(p.eqo||"").trim();
+ let w=null,warn=false,saved=false;
+ if(am){const u=am.u;w=u.wp||{};warn=am.level!=="ok";snapEq(p,u,w)}
+ else if(p.eqx&&(p.eqx.loadout||(p.eqx.opt||[]).length||(p.eqx.comp||[]).length)){w=p.eqx;saved=true}
+ const ownH=own?`<h4>📝 Mes notes d'équipement</h4><div class="bib-oc" style="white-space:pre-wrap">${E(own)}</div>`:"";
+ if(!w&&!own)return stub("Pas de version anglaise liée. Ouvre « Modifier » pour la lier ou pour écrire toi-même les options et restrictions.",false);
+ w=w||{};
  const loadout=w.loadout?`<h4>🎒 Équipement de base</h4>${loadCard(w.loadout)}`:"";
- const opts=(w.opt&&w.opt.length)?`<h4>🔧 Options d'équipement</h4>${w.opt.map(optCard).join("")}`:`<h4>🔧 Options d'équipement</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`;
- const empty=!w.loadout&&!(w.opt&&w.opt.length);
- return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${empty?`<p class="bib-meta">Rien de listé pour cette unité dans la bibliothèque.</p>`:loadout+opts}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq"><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
+ const opts=(w.opt&&w.opt.length)?`<h4>🔧 Options d'équipement et restrictions</h4>${w.opt.map(optCard).join("")}`:(w.loadout||am?`<h4>🔧 Options d'équipement et restrictions</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`:"");
+ return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${saved?`<p class="bib-meta">Copie enregistrée sur ta fiche${p.eqx.n?" (« "+E(p.eqx.n)+" »)":""}.</p>`:""}${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq"><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
+const eqo=m=>`<label>Options d'équipement et restrictions (texte libre, affiché dans le tiroir de la fiche)<textarea data-p="eqo" rows="4" placeholder="ex. Peut remplacer son canon par…">${E(m.eqo||"")}</textarea></label>`;
 window.BIBLNK=function(u){try{if(!u||!u.ref||!S.coll[u.ref])return"";css();
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
  const ref=u.ref,m=S.coll[ref],lk=LB().links[ref],am=autoMatch(m),lu=(lk&&D.byId[lk.id])||(am&&am.u);const r=E(ref);
- if(!lu)return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-meta">Non liée</div><button type="button" class="b p" data-bib="open" data-r="${r}">🔎 Lier à la fiche anglaise</button></div>`;
+ if(!lu)return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-meta">Non liée</div><button type="button" class="b p" data-bib="open" data-r="${r}">🔎 Lier à la fiche anglaise</button></div>${eqo(m)}`;
  const n=buildCmp(m,lu,0).weapons.filter(x=>x.kind==="add").length,sure=lk||(am&&am.level==="ok");
- return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-lkn">${E(tName(lu.n).t)}${sure?"":" <span class=\"bib-meta\">(à confirmer)</span>"}</div><div class="row" style="gap:6px;flex-wrap:wrap">${!lk&&!sure?`<button type="button" class="b p" data-bibdr="okm" data-r="${r}" data-id="${E(lu.id)}">✔ Confirmer</button>`:""}${n?`<button type="button" class="b p" data-bib="cmp" data-r="${r}" data-id="${E(lu.id)}">➕ ${n} arme${n>1?"s":""} à ajouter</button>`:""}<button type="button" class="b" data-bib="open" data-r="${r}">Changer</button>${lk?`<button type="button" class="b x" data-bib="unlink" data-r="${r}">Délier</button>`:""}</div></div>`}catch(e){return""}};
+ return`<div class="bib-lkc"><b>📚 Version anglaise</b><div class="bib-lkn">${E(tName(lu.n).t)}${sure?"":" <span class=\"bib-meta\">(à confirmer)</span>"}</div><div class="row" style="gap:6px;flex-wrap:wrap">${!lk&&!sure?`<button type="button" class="b p" data-bibdr="okm" data-r="${r}" data-id="${E(lu.id)}">✔ Confirmer</button>`:""}${n?`<button type="button" class="b p" data-bib="cmp" data-r="${r}" data-id="${E(lu.id)}">➕ ${n} arme${n>1?"s":""} à ajouter</button>`:""}<button type="button" class="b" data-bib="open" data-r="${r}">Changer</button>${lk?`<button type="button" class="b x" data-bib="unlink" data-r="${r}">Délier</button>`:""}</div></div>${eqo(m)}`}catch(e){return""}};
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.classList.contains("bib-dr")){BD.open[d.dataset.bibref]=d.open}},true);
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bibdr]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.bibdr;
  if(a==="en"){BD.en[b.dataset.k]=!BD.en[b.dataset.k];try{draw()}catch(_){}}
@@ -447,7 +457,7 @@ window.BIBCLEAN=function(){let n=0;try{
    n++}
   (p.subs||[]).forEach(fix)};
  Object.values(S.coll||{}).forEach(fix);(S.lists||[]).forEach(l=>(l.units||[]).forEach(fix));
- if(n)sv()}catch(e){try{console.error(e)}catch(_){}}return n};
+ if(n)sv()}catch(e){try{console.error(e)}catch(_){}}try{snapAll()}catch(_){}return n};
 setTimeout(()=>{try{BIBCLEAN()}catch(_){}},800);
 /* ---------- créer une fiche de collection depuis la bibliothèque + fusion à l'import ---------- */
 const nnm=t=>String(t||"").replace(/\s+[x×]\s?\d+(?=\s|$)/i,"").toLowerCase().trim();
