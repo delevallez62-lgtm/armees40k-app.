@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:19,d:"2026-11-17",t:"Avertissement « À traduire »",s:"Quand le traducteur n'arrive pas à traduire un texte (nouvelle règle, nouveau stratagème…), une tuile « ⚠ À traduire » apparaît sur l'accueil avec le nombre de textes. Tu écris ou corriges la traduction, tu l'enregistres, et elle est utilisée partout et apprise par le traducteur. Une recherche permet aussi de corriger n'importe quelle traduction existante."},
  {id:18,d:"2026-11-17",t:"Traduction : équipements, mots-clés et traducteur hors ligne amélioré",s:"45 textes d'équipement traduits en français, nouveaux mots-clés d'unités et d'armes en français, et traducteur automatique hors ligne renforcé (mémoire par propositions, accords masculin/féminin, signes + et − conservés). Les noms d'unités et d'armes restent en anglais."},
  {id:17,d:"2026-11-17",t:"Création d'armée en 4 onglets",s:"Chaque étape a sa propre page : 1 Armée (faction, taille, détachements), 2 Règles (mission principale et règle de faction), 3 Unités, 4 Vérifier. Boutons « Suivant » en bas de chaque page."},
  {id:16,d:"2026-11-17",t:"Interface simplifiée",s:"Création d'armée repensée : une seule « prochaine étape » affichée, bouton Ajouter une unité en premier, réglages (faction, limite, détachements) repliés une fois remplis, total de points toujours visible en haut, boutons plus grands et textes plus lisibles."},
@@ -134,6 +135,34 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   const r=saveOvr(k,patch);c.innerHTML=itemBody(k,false);try{toast("Modifié ✓ · "+r.sheets+" fiche(s) et "+r.lists+" élément(s) de liste mis à jour")}catch(_){}try{draw()}catch(_){}}
 },true);
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-bib]");if(!b)return;const a=b.dataset.bib;if(a==="popx"||a==="bgp"&&e.target===b){popClose(false);e.stopPropagation()}else if(a==="popn"){popClose(true);e.stopPropagation()}},true);
+/* ----- À traduire : textes que le traducteur n'a pas su traduire (avertissement + correction/enregistrement) ----- */
+window.XV=window.XV||{};
+const TRW={ver:0,key:"",all:[],q:"",more:15,open:{}};
+function trwAll(){if(!D.ready||!KPREADY)return TRW.all;const key=(D.man&&D.man.version||"")+"|"+D.units.length+"|"+TRW.ver;if(TRW.key===key)return TRW.all;
+ const seen=new Set(),out=[],add=(t,kind,name)=>{t=String(t||"").trim();if(t.length<3||!/[A-Za-z]{3}/.test(t))return;const k=hh(t);if(seen.has(k))return;seen.add(k);let r;try{r=name?tName(t):trDesc(t)}catch(_){return}out.push({k,en:t,kind,name:!!name,todo:r.st!=="ok"&&!r.prop&&!D.fr[k],cur:r.st==="ok"?r.t:(r.prop||"")})};
+ D.dets.forEach(d=>{add(d.n,"Nom de détachement",1);if(d.ab)add(d.ab.description,"Règle de détachement");(d.abx||[]).forEach(x=>add(x.description,"Règle de détachement"))});
+ D.enh.forEach(e=>{add(e.n,"Nom d'amélioration",1);add(e.d,"Amélioration")});
+ D.str.forEach(x=>{add(x.n,"Nom de stratagème",1);[["when","quand"],["tg","cible"],["fx","effet"],["rs","restrictions"]].forEach(([f,l])=>add(x[f],"Stratagème ("+l+")"))});
+ (D.rules||[]).forEach(r=>{add(r.n,"Nom de règle",1);add(r.d,"Règle")});
+ Object.values(D.frules||{}).forEach(l=>l.forEach(r=>{add(r.n,"Nom de règle de faction",1);add(r.d,"Règle de faction")}));
+ D.units.forEach(u=>(u.ab||[]).forEach(a=>add(a.d,"Capacité de "+u.n)));
+ TRW.key=key;TRW.all=out;return out}
+const trwTodo=()=>trwAll().filter(x=>x.todo);
+function trwCard(i){TXM[i.k]={en:i.en,name:i.name};return`<details class="bib-nw" ${TRW.open[i.k]?"open":""} data-trwk="${i.k}"><summary><b>${E(i.kind)}</b> <span class="bib-meta">${E(stripMd(i.en).slice(0,70))}${i.en.length>70?"…":""}</span></summary><div class="bib-nwb"><div class="bib-meta" style="white-space:pre-wrap">${E(stripMd(i.en))}</div><label>Traduction française<textarea data-trwf="${i.k}" rows="${i.name?1:5}" placeholder="Écris la traduction ici">${E(stripMd(i.cur||""))}</textarea></label><div class="row" style="gap:6px"><button class="b p" data-trw="save" data-k="${i.k}">✔ Enregistrer</button></div></div></details>`}
+function trwView(){css();const td=trwTodo(),ready=D.ready&&KPREADY;
+ let h=`<div class="card"><b>⚠ Textes à traduire</b><p class="bib-meta">${!ready?"Analyse des traductions en cours…":td.length?"Le traducteur n'a pas su traduire <b>"+td.length+"</b> texte"+(td.length>1?"s":"")+". Écris la traduction et touche Enregistrer : elle sera utilisée partout et apprise par le traducteur.":"✅ Tout est traduit. Tu peux quand même rechercher un texte ci-dessous pour le corriger."}</p></div>`;
+ if(td.length){h+=`<div class="card"><b>Sans traduction (${td.length})</b>${td.slice(0,TRW.more).map(trwCard).join("")}${td.length>TRW.more?`<button class="b" data-trw="more" style="width:100%;margin-top:8px">Voir plus (${td.length-TRW.more})</button>`:""}</div>`}
+ h+=`<div class="card"><b>🔎 Corriger une traduction existante</b><input id="trwq" placeholder="Mot ou phrase (anglais ou français)" value="${E(TRW.q)}" style="width:100%;margin:6px 0">`;
+ const q=nk(TRW.q);if(q.length>=3&&ready){const m=trwAll().filter(x=>nk(x.en).includes(q)||nk(x.cur||"").includes(q)).slice(0,12);h+=m.length?m.map(trwCard).join(""):`<p class="bib-meta">Aucun résultat.</p>`}else h+=`<p class="bib-meta">Tape au moins 3 lettres.</p>`;
+ return h+`</div>`}
+XV.trw=function(){try{if(!D.ready&&!D.err)init();return trwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
+window.BIBTRW={all:()=>trwAll(),n:()=>{try{return trwTodo().length}catch(_){return 0}}};
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trw]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.trw;
+ if(a==="more"){TRW.more+=20;try{draw()}catch(_){}return}
+ if(a==="save"){const k=b.dataset.k,ta=document.querySelector('[data-trwf="'+k+'"]'),v=ta&&ta.value.trim(),m=TXM[k];if(!v||!m){try{toast("Écris d'abord la traduction")}catch(_){}return}
+  const dg=x=>(String(x).match(/\d+/g)||[]).sort().join(",");if(dg(m.en)!==dg(v)&&!confirm("Les nombres ne sont pas les mêmes que dans l'original. Enregistrer quand même ?"))return;
+  storeTr(k,v);TRW.ver++;TRW.open={};try{toast("Traduction enregistrée ✓")}catch(_){}try{draw()}catch(_){}}},true);
+document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trwq"){TRW.q=t.value;clearTimeout(TRW.t);TRW.t=setTimeout(()=>{try{draw();const i=document.getElementById("trwq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}catch(_){}},350)}});
 window.XV=window.XV||{};XV.news=function(){try{if(!D.ready&&!D.err)init();return nwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 /* ----- lancement : mise à jour automatique puis fenêtre de résumé ----- */
 setTimeout(async()=>{try{const lb=LB();await init();
