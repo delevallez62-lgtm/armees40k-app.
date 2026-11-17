@@ -30,3 +30,5 @@ man['chunks']=[c for c in man['chunks'] if c['id']!='fr']
 man['chunks'].append({'id':'fr','file':'fr.json','sha1':hashlib.sha1(raw.encode()).hexdigest(),'bytes':len(raw.encode()),'counts':{'translations':len(fr['tr'])}})
 open(os.path.join(d,'manifest.json'),'w',encoding='utf8').write(json.dumps(man,ensure_ascii=False,indent=1))
 print('confirmés',n_ok,'à relire',n_chk,'sans correspondance dans la bibliothèque',miss)
+
+import subprocess;subprocess.run([sys.executable,os.path.join(os.path.dirname(os.path.abspath(__file__)),'bump-version.py'),d])

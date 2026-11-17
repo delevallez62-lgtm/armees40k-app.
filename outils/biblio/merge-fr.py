@@ -23,7 +23,9 @@ rawj=json.dumps(fr,ensure_ascii=False,separators=(',',':'))
 open(os.path.join(d,'fr.json'),'w',encoding='utf8').write(rawj)
 man['chunks']=[c for c in man['chunks'] if c['id']!='fr']
 man['chunks'].append({'id':'fr','file':'fr.json','sha1':hashlib.sha1(rawj.encode()).hexdigest(),'bytes':len(rawj.encode()),'counts':{'translations':len(fr['tr'])}})
-base=re.sub(r'\+fr\d+$','',man['version']);man['version']=base+'+fr%d'%len(fr['tr'])
+base=re.sub(r'\+fr\d+(\.[0-9a-f]+)?$','',man['version']);man['version']=base+'+fr%d'%len(fr['tr'])
 man['generated']=datetime.date.today().isoformat()
 open(os.path.join(d,'manifest.json'),'w',encoding='utf8').write(json.dumps(man,ensure_ascii=False,indent=1))
 print('ajoutées',ok,'refusées',len(bad),bad[:5],'| total',len(fr['tr']))
+
+import subprocess;subprocess.run([sys.executable,os.path.join(os.path.dirname(os.path.abspath(__file__)),'bump-version.py'),d])

@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr14575",
+ "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr14614.9be479",
  "generated": "2026-11-17",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",

@@ -176,7 +176,7 @@ man['chunks']=[c for c in man['chunks'] if not c['id'].startswith('wp-')]
 for i,raw,cnt in newchunks:
     fn=i+'.json';open(os.path.join(OUT,fn),'w',encoding='utf8').write(raw)
     man['chunks'].append({'id':i,'file':fn,'sha1':hashlib.sha1(raw.encode()).hexdigest(),'bytes':len(raw.encode()),'counts':cnt})
-frs=re.search(r'\+fr\d+$',man['version']);base=re.sub(r'\+(wp|fr)[^+]*','',man['version']);man['version']=base+'+wp'+(last[:10] or datetime.date.today().isoformat())+(frs.group(0) if frs else '')
+frs=re.search(r'\+fr\d+(\.[0-9a-f]+)?$',man['version']);base=re.sub(r'\+(wp|fr)[^+]*','',man['version']);man['version']=base+'+wp'+(last[:10] or datetime.date.today().isoformat())+(frs.group(0) if frs else '')
 man['source']['wahapedia']={'site':'wahapedia.ru (export de données, 11e édition)','last_update':last}
 man['source']['points']={'source':'Wahapedia, export de données 11e (barème de points par unité)','published':last,'synchronised':datetime.date.today().isoformat()}
 man['generated']=datetime.date.today().isoformat()

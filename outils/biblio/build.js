@@ -5,7 +5,7 @@ const roleOf=u=>{if(!u)return"Autre";const r=u.wp&&u.wp.role;if(r)return RG(r);c
 const isChar=u=>/Personnage|Héros/.test(roleOf(u));
 const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ");
 const ptsMeta=()=>{const m=D.man||{},p=(m.source&&m.source.points)||{};return{src:p.source||"Données de la bibliothèque",pub:p.published||(m.source&&m.source.wahapedia&&m.source.wahapedia.last_update)||"",ver:m.version||"",sync:p.synchronised||m.generated||"",chk:(LB().last&&LB().last.at)||0}};
-const ptsVer=()=>ptsMeta().pub+"|"+ptsMeta().ver.replace(/\+fr\d+/,"");
+const ptsVer=()=>ptsMeta().pub+"|"+ptsMeta().ver.replace(/\+fr\d+(\.[0-9a-f]+)?/,"");
 /* points de détachement : 500 pts = 1, 1 000 pts = 2, 2 000 pts = 3 (règle donnée par l'utilisateur) */
 const dpMax=lim=>lim>=2000?3:lim>=1000?2:lim>=500?1:0;
 function detsOf(L){const b=L.bld||(L.bld={});if(!Array.isArray(b.dets))b.dets=b.det?[{id:b.det.id,name:b.det.name,en:b.det.en||b.det.name}]:[];
