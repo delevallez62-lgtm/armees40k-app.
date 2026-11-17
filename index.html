@@ -7822,7 +7822,7 @@ const show=r=>r.st==="ok"?r.t:r.t; // un texte « à vérifier » ou « non trad
 const nm=x=>String(x==null?"":x).replace(/"/g,"").trim();
 const stripMd=s=>String(s||"").replace(/\*\*(.+?)\*\*/g,"$1").replace(/\*(.+?)\*/g,"$1").replace(/■/g,"•");
 function wToApp(w,melee){const name=String(w.n).replace(/^➤\s*/,""),cp=(w.kw||[]).map(k=>{const r=tWK(k);return r.t}).filter(x=>x&&x!=="-").join(", ");
- const tn=tName(name);return{name:tn.t,range:melee?"Mêlée":nm(w.r),a:nm(w.a),hit:nm(w.sk)==="N/A"?"-":nm(w.sk),f:nm(w.s),pa:nm(w.ap),d:nm(w.d),caps:cp}}
+ const tn=tName(name);return{name:tn.t,range:melee?"Mêlée":nm(w.r),a:nm(w.a),hit:(h=>h==="N/A"?"-":/^\d$/.test(h)?h+"+":h)(nm(w.sk)),f:nm(w.s),pa:nm(w.ap),d:nm(w.d),caps:cp}}
 const wSig=w=>[String(w.range||"").toLowerCase().replace(/m[êe]l[ée]e|melee/,"m"),w.a,w.hit==="N/A"?"-":w.hit,w.f,w.pa,w.d].map(x=>String(x==null?"":x).replace(/\s/g,"").toLowerCase()).join("|");
 const statOf=(p,k)=>nm(p&&p[k]);
 function profOf(u,i){return u.pr[Math.max(0,Math.min(u.pr.length-1,i||0))]}
