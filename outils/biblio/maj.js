@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:20,d:"2026-11-17",t:"Appui et bouton Enregistrer",s:"Tu peux maintenant ajouter un appui (en plus du meneur) à une unité pendant la création de liste. La dernière étape n'a plus de boutons d'export : un seul bouton « Enregistrer la liste »."},
  {id:19,d:"2026-11-17",t:"Avertissement « À traduire »",s:"Quand le traducteur n'arrive pas à traduire un texte (nouvelle règle, nouveau stratagème…), une tuile « ⚠ À traduire » apparaît sur l'accueil avec le nombre de textes. Tu écris ou corriges la traduction, tu l'enregistres, et elle est utilisée partout et apprise par le traducteur. Une recherche permet aussi de corriger n'importe quelle traduction existante."},
  {id:18,d:"2026-11-17",t:"Traduction : équipements, mots-clés et traducteur hors ligne amélioré",s:"45 textes d'équipement traduits en français, nouveaux mots-clés d'unités et d'armes en français, et traducteur automatique hors ligne renforcé (mémoire par propositions, accords masculin/féminin, signes + et − conservés). Les noms d'unités et d'armes restent en anglais."},
  {id:17,d:"2026-11-17",t:"Création d'armée en 4 onglets",s:"Chaque étape a sa propre page : 1 Armée (faction, taille, détachements), 2 Règles (mission principale et règle de faction), 3 Unités, 4 Vérifier. Boutons « Suivant » en bas de chaque page."},

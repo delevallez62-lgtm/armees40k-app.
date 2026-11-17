@@ -30,7 +30,7 @@ function calc(L){const lines=[],seen={};let total=0,unk=0;const bump=id=>seen[id
   const pc=pcOf(lu);((pc&&pc.wg)||[]).forEach(w=>{const q=(c.wg||{})[w.n]||0;if(q)add({i,k:"w",name:q+" × "+w.n,pts:q*w.pts,note:w.pts+" pts pièce"})});
   if(c.enh&&c.enh.id){const e=D.enh.find(x=>x.id===c.enh.id);add({i,k:"e",name:"Optimisation : "+(e?tName(e.n).t:c.enh.name),pts:e&&e.pts!=null?+e.pts:null,note:e&&e.pts!=null?"":"Coût à vérifier"})}
   (u.subs||[]).forEach((s,j)=>{const sc=s.cfg,sl=sc&&sc.lib&&D.byId[sc.lib];if(!sl){add({i,j,k:"l",name:(s.label||"Meneur")+" : "+s.name,pts:+((S.coll[s.ref]||{}).pts??s.pts)||0,note:"coût saisi à la main"});return}
-   const cp=bump(sl.id),cc=costOf(sl,sc.size||1,cp);add({i,j,k:"l",name:"Meneur : "+s.name,pts:cc.pts,note:cc.note||("barème "+cc.src+(cc.tier?" · exemplaire "+cc.tier:"")),lib:sl.id});
+   const cp=bump(sl.id),cc=costOf(sl,sc.size||1,cp);add({i,j,k:"l",name:(s.label||"Meneur")+" : "+s.name,pts:cc.pts,note:cc.note||("barème "+cc.src+(cc.tier?" · exemplaire "+cc.tier:"")),lib:sl.id});
    if(sc.enh&&sc.enh.id){const e=D.enh.find(x=>x.id===sc.enh.id);add({i,j,k:"e",name:"Optimisation : "+(e?tName(e.n).t:sc.enh.name),pts:e&&e.pts!=null?+e.pts:null,note:e&&e.pts!=null?"":"Coût à vérifier"})}})});
  return{lines,total,unk}}
 /* écrit les coûts dans les champs classiques (points d'unité) pour que le reste de l'appli reste cohérent */
@@ -81,7 +81,10 @@ function openCfg(key,idx){const L=curL(),e=entryOf(key);if(!L||!e)return;let c;
 function preview(L,c,e){const lib=e&&e.lib,tmp={name:e.name,size:c.size,pts:+c.manual||0,cfg:{lib:lib?lib.id:null,size:c.size,wg:c.wg,enh:c.enh},subs:c.subs||[]},L2={units:c.idx!=null?L.units.map((u,i)=>i===c.idx?tmp:u):[...L.units,tmp]},R=calc(L2),i=c.idx!=null?c.idx:L2.units.length-1;
  const mine=R.lines.filter(l=>l.i===i);return{lines:mine,total:mine.reduce((a,l)=>a+(l.pts||0),0),unk:mine.filter(l=>l.pts==null).length}}
 const stepper=(a,k,v,mx)=>`<span class="bld-st"><button type="button" data-bld="${a}" data-k="${E(k)}" data-d="-1">−</button><b>${v}</b><button type="button" data-bld="${a}" data-k="${E(k)}" data-d="1" ${mx!=null&&v>=mx?"disabled":""}>+</button></span>`;
-function compat(ul,ll){if(!ul||!ll)return{s:"?",t:"À vérifier"};const a=((ul.wp||{}).ledby||[]).map(nk),b=((ll.wp||{}).leads||[]).map(nk);
+function supList(ll){const a=((ll&&ll.ab)||[]).find(x=>/^support$/i.test(x.n)&&/attached to/i.test(x.d||""));if(!a)return null;return stripMd(a.d).replace(/^[\s\S]*?attached to the following units?:/i,"").split(/[,\n■•]+/).map(x=>nk(x)).filter(Boolean)}
+function compat(ul,ll,kind){if(!ul||!ll)return{s:"?",t:"À vérifier"};
+ if(kind==="Appui"){const l=supList(ll);if(l&&l.length)return l.includes(nk(ul.n))?{s:"ok",t:"✓ Peut rejoindre cette unité"}:{s:"?",t:"À vérifier : non listé"};return{s:"?",t:"À vérifier"}}
+ const a=((ul.wp||{}).ledby||[]).map(nk),b=((ll.wp||{}).leads||[]).map(nk);
  if(a.includes(nk(ll.n))||b.includes(nk(ul.n)))return{s:"ok",t:"✓ Peut rejoindre cette unité"};if(!a.length&&!b.length)return{s:"?",t:"À vérifier"};return{s:"?",t:"À vérifier : non listé"}}
 function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";const lib=e.lib,copy=copyIdx(L,c),sizes=lib?sizesOf(lib,copy):[],pv=preview(L,c,e),pc=lib&&pcOf(lib),W=weaponsOf(e);
  let h=`<div class="bib-top"><h2>${E(e.name)}</h2><button class="b" data-bld="x">✕</button></div><div class="row" style="gap:10px;align-items:center"><span class="bld-im" style="width:64px;height:64px">${e.img?`<img src="${e.img}" alt="">`:"🛡"}</span><span class="bib-meta">${e.coll?"📦 Ma collection ":""}${e.lib?"📚 Bibliothèque":""}<br>${E(e.role)}${lib?" · "+E(facLbl(lib)):""}</span></div>`;
@@ -95,7 +98,7 @@ function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";
  const eq=lib&&lib.wp&&((lib.wp.opt||[]).length||lib.wp.loadout);if(eq)h+=`<details class="bib-nw"><summary><b>Options et restrictions d'équipement</b> <span class="bib-meta">À vérifier à la main</span></summary>${lib.wp.loadout?`<p>${frItem(lib.wp.loadout,"équipement de base").html}</p>`:""}<ul style="padding-left:18px">${(lib.wp.opt||[]).map(o=>`<li>${frItem(o,"option d'équipement").html}</li>`).join("")}</ul></details>`;
  if(lib&&isChar(lib)){const det=detsOf(L).length,list=enhFor(L),used=new Set(L.units.filter((u,i)=>i!==c.idx&&u.cfg&&u.cfg.enh).map(u=>u.cfg.enh.id));
   h+=`<h4>Amélioration de personnage <span class="bib-meta">(optimisation, coûte des points)</span></h4>`+(!det?`<p class="bib-meta">Choisis d'abord un détachement pour voir ses optimisations.</p>`:!list.length?`<p class="bib-meta">Aucune optimisation connue pour ce détachement.</p>`:`<button type="button" class="b ${!c.enh?"p":""}" data-bld="enh" data-v="">Aucune</button>`+list.map(x=>`<div class="bld-w ${c.enh&&c.enh.id===x.id?"on":""}"><div class="row" style="justify-content:space-between;gap:6px"><b>${E(tName(x.n).t)}</b><span>${x.pts==null?"à vérifier":"+"+x.pts+" pts"}</span></div><div class="bib-meta">${md2(trDesc(x.d).st==="ok"?trDesc(x.d).t:(trDesc(x.d).prop||x.d))}</div>${used.has(x.id)?`<span class="bib-meta">Déjà prise par une autre unité</span>`:`<button type="button" class="b ${c.enh&&c.enh.id===x.id?"p":""}" data-bld="enh" data-v="${E(x.id)}">${c.enh&&c.enh.id===x.id?"✓ Choisie":"Choisir"}</button>`}</div>`).join(""))}
- if(!lib||!isChar(lib)){h+=`<h4>Meneur <span class="bib-meta">(un personnage qui rejoint l'unité)</span></h4>`+((c.subs||[]).length?c.subs.map((s,j)=>{const sl=s.cfg&&s.cfg.lib&&D.byId[s.cfg.lib],cp=sl?costOf(sl,1,2):null,cm=compat(lib,sl);return`<div class="bld-w on"><div class="row" style="gap:8px;align-items:center"><span class="bld-im" style="width:44px;height:44px">${imgOf(S.coll[s.ref])?`<img src="${imgOf(S.coll[s.ref])}" alt="">`:"🛡"}</span><span style="flex:1"><b>${E(s.name)}</b><div class="bib-meta">${sl?(costOf(sl,1,1).pts==null?"Coût à vérifier":costOf(sl,1,1).pts+" pts"):"coût saisi"} · ${E(cm.t)}</div></span></div><div class="row" style="gap:6px;margin-top:6px"><button type="button" class="b" data-bld="ldr">Changer</button><button type="button" class="b x" data-bld="ldrx">Retirer</button></div></div>`}).join(""):`<button type="button" class="b" data-bld="ldr">➕ Ajouter un meneur</button>`)}
+ if(!lib||!isChar(lib)){const slot=(kind,hint)=>{const mine=(c.subs||[]).map((x,j)=>[x,j]).filter(([x])=>(x.label||"Meneur")===kind);return`<h4>${kind} <span class="bib-meta">(${hint})</span></h4>`+(mine.length?mine.map(([sb])=>{const sl=sb.cfg&&sb.cfg.lib&&D.byId[sb.cfg.lib],cm=compat(lib,sl,kind);return`<div class="bld-w on"><div class="row" style="gap:8px;align-items:center"><span class="bld-im" style="width:44px;height:44px">${imgOf(S.coll[sb.ref])?`<img src="${imgOf(S.coll[sb.ref])}" alt="">`:"🛡"}</span><span style="flex:1"><b>${E(sb.name)}</b><div class="bib-meta">${sl?(costOf(sl,1,1).pts==null?"Coût à vérifier":costOf(sl,1,1).pts+" pts"):"coût saisi"} · ${E(cm.t)}</div></span></div><div class="row" style="gap:6px;margin-top:6px"><button type="button" class="b" data-bld="ldr" data-kind="${kind}">Changer</button><button type="button" class="b x" data-bld="ldrx" data-kind="${kind}">Retirer</button></div></div>`}).join(""):`<button type="button" class="b" data-bld="ldr" data-kind="${kind}" style="width:100%">➕ Ajouter ${kind==="Appui"?"un appui":"un meneur"}</button>`)};h+=slot("Meneur","un personnage qui rejoint l'unité")+slot("Appui","un personnage de soutien qui s'ajoute à l'unité")}
  h+=`<div class="bld-bar"><div><b>${pv.unk?"≥ ":""}${fmt(pv.total)} pts</b><div class="bib-meta">${pv.unk?pv.unk+" coût à vérifier":"unité + équipements"}</div></div><button class="b p" data-bld="ok" style="flex:1">${c.idx!=null?"Enregistrer":"Ajouter à l'armée"}</button></div>`;return h}
 function ensureSheet(e){return e.coll||createFromLib(e.lib)}
 function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)return;const m=ensureSheet(e),W=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
@@ -105,15 +108,15 @@ function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)retu
  n.cfg={lib:e.lib?e.lib.id:null,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,enh:c.enh||null,manual:+c.manual||0,eq:eqLines(c)};if(!e.lib)n.pts=+c.manual||0;
  if(!old)L.units.push(n);syncPts(L);applyPts(L);save();BLD.cfg=null;BLD.scr="edit";try{draw()}catch(_){}render()}
 /* ----- meneurs ----- */
-function ldrHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key),ul=e&&e.lib,q=nk(BLD.lq||"");
- let A=catEntries().filter(x=>(x.lib?isChar(x.lib):/Personnage|Héros/.test(x.role))&&(!q||nk(x.name+" "+(x.lib?x.lib.n:"")).includes(q)));
+function ldrHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key),ul=e&&e.lib,q=nk(BLD.lq||""),K=BLD.ldrKind||"Meneur",isSup=x=>x&&(x.kw||[]).some(k=>/^support$/i.test(k));
+ let A=catEntries().filter(x=>(x.lib?(K==="Appui"?isSup(x.lib):isChar(x.lib)):(K==="Appui"?/Appui/.test(x.role):/Personnage|Héros/.test(x.role)))&&(!q||nk(x.name+" "+(x.lib?x.lib.n:"")).includes(q)));
  const g=L.bld&&L.bld.fac;A=A.filter(x=>!x.lib||!g||inFac(x.lib,g)||BLD.lall);
- A.sort((a,b)=>{const ca=compat(ul,a.lib).s==="ok",cb=compat(ul,b.lib).s==="ok";return(cb-ca)||String(a.name).localeCompare(b.name)});
- return`<div class="bib-top"><h2>Ajouter un meneur</h2><button class="b" data-bld="back">← Retour</button></div><p class="bib-meta">Pour : <b>${E(e.name)}</b>. Le coût du meneur s'ajoute à part. « À vérifier » = association non confirmée par les données : rien n'est interdit.</p>
- <input id="bldlq" placeholder="Rechercher un personnage…" value="${E(BLD.lq)}" autocomplete="off"><label class="bib-ck" style="margin:6px 0"><input type="checkbox" data-bldck="lall" ${BLD.lall?"checked":""}><span>Afficher les personnages de toutes les factions</span></label>
- <div class="bld-g">${A.slice(0,60).map(x=>{const cm=compat(ul,x.lib),ct=x.lib?costTxt(x.lib,1):(x.coll&&x.coll.pts?x.coll.pts+" pts (saisi)":"Coût à vérifier");return`<button type="button" class="bld-c" data-bld="ldrpick" data-k="${E(x.key)}"><span class="bld-im">${x.img?`<img src="${x.img}" alt="">`:"🛡"}</span><b>${E(x.name)}</b><small>${E(ct)}</small><small>${E(cm.t)}</small><span class="bld-bd">${x.coll?"<i>📦</i>":""}${x.lib?"<i>📚</i>":""}</span></button>`}).join("")}</div>`}
-function ldrPick(key){const c=BLD.cfg,le=entryOf(key);if(!le)return;const m=ensureSheet(le),s={label:"Meneur",ref:m.ref};SH.forEach(f=>{s[f]=clone(m[f])});s.weapons=clone(m.weapons||[]);s.cfg={lib:le.lib?le.lib.id:null,size:1,enh:null};
- s.pts=le.lib?(costOf(le.lib,1,1).pts||0):(+m.pts||0);c.subs=[s];BLD.scr="cfg";render()}
+ A.sort((a,b)=>{const ca=compat(ul,a.lib,K).s==="ok",cb=compat(ul,b.lib,K).s==="ok";return(cb-ca)||String(a.name).localeCompare(b.name)});
+ return`<div class="bib-top"><h2>${K==="Appui"?"Ajouter un appui":"Ajouter un meneur"}</h2><button class="b" data-bld="back">← Retour</button></div><p class="bib-meta">Pour : <b>${E(e.name)}</b>. Le coût du ${K==="Appui"?"personnage d'appui":"meneur"} s'ajoute à part. « À vérifier » = association non confirmée par les données : rien n'est interdit.</p>
+ <input id="bldlq" placeholder="Rechercher ${K==="Appui"?"un appui":"un personnage"}…" value="${E(BLD.lq)}" autocomplete="off"><label class="bib-ck" style="margin:6px 0"><input type="checkbox" data-bldck="lall" ${BLD.lall?"checked":""}><span>Afficher les personnages de toutes les factions</span></label>
+ <div class="bld-g">${A.slice(0,60).map(x=>{const cm=compat(ul,x.lib,K),ct=x.lib?costTxt(x.lib,1):(x.coll&&x.coll.pts?x.coll.pts+" pts (saisi)":"Coût à vérifier");return`<button type="button" class="bld-c" data-bld="ldrpick" data-k="${E(x.key)}"><span class="bld-im">${x.img?`<img src="${x.img}" alt="">`:"🛡"}</span><b>${E(x.name)}</b><small>${E(ct)}</small><small>${E(cm.t)}</small><span class="bld-bd">${x.coll?"<i>📦</i>":""}${x.lib?"<i>📚</i>":""}</span></button>`}).join("")}</div>`}
+function ldrPick(key){const c=BLD.cfg,le=entryOf(key);if(!le)return;const m=ensureSheet(le),K=BLD.ldrKind||"Meneur",s={label:K,ref:m.ref};SH.forEach(f=>{s[f]=clone(m[f])});s.weapons=clone(m.weapons||[]);s.cfg={lib:le.lib?le.lib.id:null,size:1,enh:null};
+ s.pts=le.lib?(costOf(le.lib,1,1).pts||0):(+m.pts||0);c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K).concat([s]).sort((a,b)=>((a.label||"Meneur")==="Meneur"?0:1)-((b.label||"Meneur")==="Meneur"?0:1));BLD.scr="cfg";render()}
 /* ----- détachements ----- */
 function detList(L){const g=L.bld&&L.bld.fac;const grp=String(g||"").indexOf("sm:")===0?"space-marines":g;return D.dets.filter(d=>!grp||d._c===grp).sort((a,b)=>a.n.localeCompare(b.n))}
 function detHtml(){const L=curL(),cur=detsOf(L),q=nk(BLD.dq||""),mx=dpMax(L.bld.limit||0),used=dpUsed(L),left=mx-used,chosen=new Set(cur.map(d=>d.id));let A=detList(L).filter(d=>!q||nk(d.n).includes(q));
@@ -142,14 +145,14 @@ function checks(L){const R=calc(L),out=[],b=L.bld||{};
  if(R.unk)out.push({lv:"warn",t:R.unk+" coût"+(R.unk>1?"s":"")+" à vérifier : le total n'est pas exact"});
  const ds=detsOf(L);if(!ds.length)out.push({lv:"info",t:"Aucun détachement choisi"});else if(b.limit){const mx=dpMax(b.limit),u=dpUsed(L);if(u>mx)out.push({lv:"bad",t:"Points de détachement dépassés : "+u+" / "+mx});else out.push({lv:"ok",t:"Points de détachement : "+u+" / "+mx})}
  (L.units||[]).forEach((u,i)=>{const c=u.cfg,lu=c&&c.lib&&D.byId[c.lib];if(!lu)return;const sz=sizesOf(lu,1);if(sz.length&&!sz.some(s=>c.size>=s.n&&c.size<=s.m))out.push({lv:"warn",t:u.name+" : effectif "+c.size+" hors barème (à vérifier)"});
-  (u.subs||[]).forEach(s=>{const sl=s.cfg&&s.cfg.lib&&D.byId[s.cfg.lib],cm=compat(lu,sl);if(cm.s!=="ok")out.push({lv:"info",t:u.name+" + "+s.name+" : association à vérifier"})})});
+  (u.subs||[]).forEach(s=>{const sl=s.cfg&&s.cfg.lib&&D.byId[s.cfg.lib],cm=compat(lu,sl,s.label);if(cm.s!=="ok")out.push({lv:"info",t:u.name+" + "+s.name+" : association à vérifier"})})});
  const seen={};(L.units||[]).forEach(u=>{if(u.cfg&&u.cfg.enh){seen[u.cfg.enh.id]=(seen[u.cfg.enh.id]||0)+1}});Object.keys(seen).forEach(k=>{if(seen[k]>1)out.push({lv:"bad",t:"Optimisation prise "+seen[k]+" fois"})});
  return out}
 /* ----- récapitulatif compact ----- */
 function unitText(u,i,R){const c=u.cfg||{},ln=R.lines.filter(l=>l.i===i&&l.j==null),base=ln.find(l=>l.k==="u"),tot=ln.filter(l=>l.pts!=null).reduce((a,l)=>a+l.pts,0),unk=ln.some(l=>l.pts==null);
  const eq=(c.eq&&c.eq.length?c.eq:eqLines(c)),out=[`${u.name} — ${c.size||u.size||"?"} figurine${(c.size||u.size)>1?"s":""} — ${unk?"coût à vérifier":tot+" pts"}`];
  eq.forEach(x=>out.push("   "+x));ln.filter(l=>l.k==="w"||l.k==="e").forEach(l=>out.push("   "+l.name+(l.pts!=null?" ("+l.pts+" pts)":" (à vérifier)")));
- (u.subs||[]).forEach((s,j)=>{const sl=R.lines.filter(l=>l.i===i&&l.j===j),st=sl.filter(l=>l.pts!=null).reduce((a,l)=>a+l.pts,0);out.push("   Meneur : "+s.name+" — "+(sl.some(l=>l.pts==null)?"coût à vérifier":st+" pts"))});return out}
+ (u.subs||[]).forEach((s,j)=>{const sl=R.lines.filter(l=>l.i===i&&l.j===j),st=sl.filter(l=>l.pts!=null).reduce((a,l)=>a+l.pts,0);out.push("   "+(s.label||"Meneur")+" : "+s.name+" — "+(sl.some(l=>l.pts==null)?"coût à vérifier":st+" pts"))});return out}
 function recapText(L){const R=calc(L),b=L.bld||{},m=ptsMeta(),o=[L.name,[b.facN,detsOf(L).map(d=>d.name).join(" + "),b.fmt].filter(Boolean).join(" · "),"Points : "+(R.unk?"≥ ":"")+fmt(R.total)+(b.limit?" / "+fmt(b.limit):"")+" pts"+(R.unk?" ("+R.unk+" coût à vérifier)":""),""];
  (L.units||[]).forEach((u,i)=>{unitText(u,i,R).forEach(x=>o.push(x));o.push("")});o.push("Barème : "+m.src+(m.pub?" · publié "+String(m.pub).slice(0,10):"")+(m.sync?" · synchronisé "+m.sync:""));return o.join("\n")}
 function recapHtml(L,forPrint){const R=calc(L),b=L.bld||{},m=ptsMeta(),ck=checks(L),old=m.chk&&Date.now()-m.chk>7*864e5;
@@ -159,8 +162,7 @@ function recapHtml(L,forPrint){const R=calc(L),b=L.bld||{},m=ptsMeta(),ck=checks
  ${(L.units||[]).map(row).join("")||'<p class="bib-meta">Aucune unité.</p>'}
  <h4>Détail des points</h4><table style="width:100%;font-size:13px">${R.lines.map(l=>`<tr><td>${E(l.name)}${l.sz?" ("+l.sz+")":""}<div class="bib-meta">${E(l.note||"")}</div></td><td style="text-align:right">${l.pts==null?"à vérifier":l.pts+" pts"}</td></tr>`).join("")}<tr><td><b>Total</b></td><td style="text-align:right"><b>${R.unk?"≥ ":""}${R.total} pts</b></td></tr></table>
  <h4>Vérifications</h4>${ck.map(x=>`<div class="bld-ck ${x.lv}">${x.lv==="ok"?"✓":x.lv==="bad"?"⛔":x.lv==="warn"?"⚠":"ℹ"} ${E(x.t)}</div>`).join("")}
- <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""}${m.ver?" · version "+E(m.ver):""}${m.sync?" · synchronisé le "+E(m.sync):""}.${old||!m.chk?" ⚠ Aucune vérification récente de mise à jour : les points peuvent ne plus être à jour.":" Dernière vérification : "+E(fmtD(m.chk))+"."}</p>
- ${forPrint?"":`<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="b p" data-bld="print">📄 PDF</button><button class="b" data-bld="json">💾 Exporter</button><button class="b" data-bld="share">📤 Partager</button><button class="b" data-bld="copy">📋 Copier le texte</button></div>`}`}
+ <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""}${m.ver?" · version "+E(m.ver):""}${m.sync?" · synchronisé le "+E(m.sync):""}.${old||!m.chk?" ⚠ Aucune vérification récente de mise à jour : les points peuvent ne plus être à jour.":" Dernière vérification : "+E(fmtD(m.chk))+"."}</p>`}
 /* ----- export / import ----- */
 function exportJson(L){const sheets={};(L.units||[]).forEach(u=>{[u].concat(u.subs||[]).forEach(x=>{if(x.ref&&S.coll[x.ref])sheets[x.ref]=clone(S.coll[x.ref])})});return JSON.stringify({kind:"hammer-armee",v:1,at:Date.now(),pts:ptsMeta(),list:clone(L),sheets})}
 function importJson(txt){let o;try{o=JSON.parse(txt)}catch(_){throw new Error("Fichier illisible")}if(!o||o.kind!=="hammer-armee"||!o.list)throw new Error("Ce n'est pas une armée HAMMER");
@@ -217,7 +219,8 @@ ${st==="3"?` <div class="card"><b>Unités</b> <span class="bib-meta">${(L.units|
  ${un||'<div class="card"><p class="bib-meta">Aucune unité pour l\'instant. Touche « Ajouter une unité ».</p></div>'}
 
  <button class="b p bld-nx" data-bld="step" data-s="4">Suivant : vérifier →</button>${ruleBlock(L)}`:""}
-${st==="4"?` <div class="card"><b>Vérifier et partager</b><div class="row" style="gap:6px;flex-wrap:wrap"><button class="b p" data-bld="recap">📋 Récapitulatif</button><button class="b" data-bld="json">💾 Exporter</button><button class="b" data-bld="dup">⧉ Dupliquer</button><button class="b" data-bld="classic">Ouvrir comme liste classique</button></div></div>
+${st==="4"?`<div class="card bld-rcp">${recapHtml(L,true)}</div>
+ <button class="b p bld-save" data-bld="savelist">💾 Enregistrer la liste</button>
 `:""}
  <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""} · synchronisé le ${E(m.sync||"—")}${!m.chk||Date.now()-m.chk>7*864e5?" · ⚠ aucune vérification récente":""}</p>`}
 function sheetHtml(L){if(BLD.scr==="cat")return catHtml(L);if(BLD.scr==="cfg")return cfgHtml();if(BLD.scr==="ldr")return ldrHtml();if(BLD.scr==="det")return detHtml();if(BLD.scr==="recap")return recapHtml(L);return""}
@@ -299,14 +302,15 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   if(a==="wq"){const k=b.dataset.k;c.wq[k]=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
   if(a==="wg"){const k=b.dataset.k;c.wg[k]=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));if(!c.wg[k])delete c.wg[k];render();return}
   if(a==="enh"){const v=b.dataset.v;c.enh=v?{id:v,name:(D.enh.find(x=>x.id===v)||{}).n||""}:null;render();return}
-  if(a==="ldr"){BLD.scr="ldr";render();return}
-  if(a==="ldrx"){c.subs=[];render();return}
+  if(a==="ldr"){BLD.ldrKind=b.dataset.kind||"Meneur";BLD.lq="";BLD.scr="ldr";render();return}
+  if(a==="ldrx"){const K=b.dataset.kind||"Meneur";c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K);render();return}
   if(a==="ldrpick"){ldrPick(b.dataset.k);return}
   if(a==="ok"){commitCfg();return}
  }
  if(a==="det"){BLD.scr="det";BLD.dq="";render();return}
  if(a==="detpick"){detPick(b.dataset.id);return}
  if(a==="detx"){const id=b.dataset.id;L.bld.dets=detsOf(L).filter(d=>d.id!==id).map(d=>({id:d.id,name:d.name,en:d.en}));detSync(L);save();rd();return}
+ if(a==="savelist"){try{save()}catch(_){}try{toast("Liste « "+(L.name||"armée")+" » enregistrée ✓")}catch(_){}BLD.scr="home";BLD.id=null;rd();return}
  if(a==="recap"){BLD.scr="recap";render();return}
  if(a==="print"){printList(L);return}
  if(a==="json"){dl2((L.name||"armee").replace(/[^\w-]+/g,"_")+".hammer.json",exportJson(L));return}

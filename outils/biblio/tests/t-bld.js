@@ -80,6 +80,24 @@ const withL=await ev(()=>BLDCALC(BLDL()));ok('meneur : coût ajouté séparémen
 const tot1=withL.total;
 await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldrx"]');await click('[data-bld="ok"]');
 const noL=await ev(()=>BLDCALC(BLDL()).total);ok('retrait du meneur',noL<tot1,[tot1,noL]);
+// 8b) appui (en plus du meneur)
+await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldr"][data-kind="Appui"]');
+const ah=await html();ok('écran « Ajouter un appui »',/Ajouter un appui/.test(ah),ah.slice(0,100));
+await ev(()=>{const q=document.getElementById('bldlq');q.value='ancient';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
+const sc=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')));ok('appuis proposés (unités Support)',sc.length>0&&sc.some(x=>/Ancient/i.test(x)),sc.slice(0,3));
+await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Ancient/i.test(x.innerText)).click());await p.waitForTimeout(300);
+await click('[data-bld="ok"]');
+const wa=await ev(()=>({subs:BLDL().units[2].subs.map(s=>s.label),lines:BLDCALC(BLDL()).lines.filter(l=>l.k==='l').map(l=>l.name+':'+l.pts)}));ok('appui ajouté avec son coût',wa.subs.includes('Appui')&&wa.lines.some(l=>/^Appui :/.test(l)),wa);
+await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldr"][data-kind="Meneur"]');
+await ev(()=>{const q=document.getElementById('bldlq');q.value='captain';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
+await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Captain|Capitaine/i.test(x.innerText)).click());await p.waitForTimeout(300);
+const both=await ev(()=>BLDSTATE&&BLDL?0:0);const bs=await ev(()=>{const c=BLDSTATE.cfg||{};return (c.subs||[]).map(s=>s.label)});ok('meneur + appui ensemble',bs.length===2&&bs[0]==='Meneur'&&bs[1]==='Appui',bs);
+await click('[data-bld="ldrx"][data-kind="Appui"]');const bs2=await ev(()=>(BLDSTATE.cfg.subs||[]).map(s=>s.label));ok('retrait de l\'appui seul',bs2.length===1&&bs2[0]==='Meneur',bs2);
+await click('[data-bld="ldrx"][data-kind="Meneur"]');await click('[data-bld="ok"]');
+// fin : un seul bouton Enregistrer, plus d'export
+await click('[data-bld="step"][data-s="4"]');const f4=await ev(()=>({save:!!document.querySelector('[data-bld="savelist"]'),exp:!!document.querySelector('[data-bld="json"],[data-bld="print"],[data-bld="share"],[data-bld="copy"],[data-bld="dup"]'),txt:document.body.innerText}));
+ok('étape finale : bouton « Enregistrer la liste »',f4.save&&/Enregistrer la liste/.test(f4.txt),f4.save);ok('plus aucun bouton d\'export',!f4.exp&&!/Exporter|PDF|Partager/.test(f4.txt.replace(/Importer.*/g,'')),f4.exp);
+
 // 9/10) détachement + optimisation
 await click('[data-bld="det"]');const dets=await ev(()=>[...document.querySelectorAll('#bldm details.bib-nw summary b')].map(x=>x.innerText));ok('détachements de la faction proposés',dets.length>3,dets.slice(0,3));
 await ev(()=>{document.querySelector('#bldm details.bib-nw').open=true});
@@ -109,7 +127,7 @@ await ev(()=>{const id=S.lists[S.lists.length-1].id;[...document.querySelectorAl
 const reopen=await ev(()=>({n:BLDL().units.length,det:!!BLDL().bld.det,cfg:BLDL().units.map(u=>u.cfg&&u.cfg.size)}));ok('réouverture : choix conservés',reopen.n>=3&&reopen.det,reopen);
 const imp=await ev(txt=>{const L=BLD_IMPORT?0:0;return 0},json).catch(()=>0);
 // 10) récapitulatif + vérifications
-await click('[data-bld="recap"]');const rc=await html();ok('récapitulatif (unités, équipements, détail des points, vérifications)',/Détail des points/.test(rc)&&/Vérifications/.test(rc)&&/Barème :/.test(rc));
+await click('[data-bld="step"][data-s="4"]');const rc=await html();ok('récapitulatif (unités, équipements, détail des points, vérifications)',/Détail des points/.test(rc)&&/Vérifications/.test(rc)&&/Barème :/.test(rc));
 ok('barème : source, publication, synchro',/Wahapedia/.test(rc)&&/publié le/.test(rc)&&/synchronisé le/.test(rc));
 // 13) hors ligne
 await ctx.setOffline(true);await ev(()=>{BLDSTATE.scr='edit';draw()});await p.waitForTimeout(200);
