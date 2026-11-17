@@ -628,4 +628,5 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /*__MAJ__*/
 /*__BLD__*/
 /*__UNI__*/
+/*__LORE__*/
 })();
