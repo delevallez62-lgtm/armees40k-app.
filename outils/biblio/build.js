@@ -192,8 +192,12 @@ function frItems(L){const g=listGroup(L),src=g&&D.frules&&D.frules[g];
  if(src&&src.length){const it=src.map(r=>{const t=trDesc(r.d),tx=stripMd(t.st==="ok"?t.t:(t.prop||r.d));return{n:tAB(r.n).t,d:tx}});
   if(JSON.stringify((L.frule||{}).items)!==JSON.stringify(it)){L.frule={g,at:Date.now(),items:it};try{save()}catch(_){}}return it}
  return(L.frule&&L.frule.items)||[]}
-function ruleBlock(L){const it=frItems(L);if(!it.length)return"";const fl=facList().find(x=>x[0]===listGroup(L));
- return`<details class="card bld-fr" id="bldfr" ${BLD.fro?"open":""}><summary><b>📜 Règle de faction</b> <small class="bib-meta">${E(fl?fl[1]:"")}</small></summary>${it.map(x=>`<h4 style="margin:8px 0 2px">${E(x.n)}</h4><div style="font-size:14px">${md2(x.d)}</div>`).join("")}</details>`}
+function frSel(L,it){const s=L.frsel;return Array.isArray(s)?it.filter(x=>s.includes(x.n)):(it.length>4?[]:it)}
+function ruleBlock(L){const it=frItems(L);if(!it.length)return"";const sel=frSel(L,it),pick=!!BLD.frpick&&it.length>1,fl=facList().find(x=>x[0]===listGroup(L));
+ return`<details class="card bld-fr" id="bldfr" ${BLD.fro||pick?"open":""}><summary><b>📜 Règle de faction</b> <small class="bib-meta">${E(fl?fl[1]:"")}${it.length>1?" · "+sel.length+"/"+it.length:""}</small></summary>
+ ${it.length>1?`<div style="margin:6px 0"><button type="button" class="b" data-bld="frpick">${pick?"✔ Terminé":"☑ Choisir les règles"}</button></div>`:""}
+ ${pick?`<div class="bld-w">${it.map(x=>`<label class="bib-ck"><input type="checkbox" data-bldfr="${E(x.n)}" ${sel.includes(x)?"checked":""}><span>${E(x.n)}</span></label>`).join("")}</div>`:""}
+ ${sel.length?sel.map(x=>`<h4 style="margin:8px 0 2px">${E(x.n)}</h4><div style="font-size:14px">${md2(x.d)}</div>`).join(""):`<p class="bib-meta">Aucune règle sélectionnée.${it.length>1?" Touche « Choisir les règles » pour en cocher plusieurs.":""}</p>`}</details>`}
 function dispsOf(L){const names=[];if(L.bld&&L.bld.det)names.push(L.bld.det.en||L.bld.det.name);(L.dets||[]).forEach(d=>names.push(d.name));const out=[],seen=new Set();
  names.forEach(n=>{const d=D.dets.find(x=>nk(x.n)===nk(n)||nk(tName(x.n).t)===nk(n));if(d)(d.dp||[]).forEach(p=>{const id=DISP[p];if(id&&!seen.has(id)){seen.add(id);out.push({id,en:p,det:d.n})}})});return out}
 const msdOf=(me,op)=>{const M=window.__msd||[],l=M.filter(m=>m.cat===me);return l[ORD5.indexOf(op)]||null};
@@ -216,6 +220,7 @@ window.XV=window.XV||{};XV.bld=function(){try{if(!D.ready&&!D.err)init();const L
 const rd=()=>{try{draw()}catch(_){}render()};
 const clampQ=(c)=>{Object.keys(c.wq||{}).forEach(k=>{if(c.wq[k]>c.size)c.wq[k]=c.size})};
 document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.closest("[data-bld]");if(!b)return;const a=b.dataset.bld,L=curL(),c=BLD.cfg;
+ if(a==="frpick"){e.preventDefault();e.stopPropagation();BLD.frpick=!BLD.frpick;BLD.fro=true;try{draw()}catch(_){}render();return}
  if(a==="bg"){if(e.target===b){BLD.scr="edit";BLD.cfg=null;render()}return}
  e.preventDefault();e.stopPropagation();
  if(a==="lim"){const i=document.getElementById("bldlim");if(i)i.value=b.dataset.v;return}
@@ -264,6 +269,7 @@ document.addEventListener("input",e=>{const t=e.target;if(!t)return;
  else if(t.id==="bldman"&&BLD.cfg){BLD.cfg.manual=parseInt(t.value,10)||0}
  else if(t.dataset&&t.dataset.bldn&&BLD.cfg){BLD.cfg.wn[t.dataset.bldn]=t.value}},true);
 document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const L=curL();
+ if(t.dataset&&t.dataset.bldfr!=null){const LL=(S.lists||[]).find(l=>l.id===S.cur)||L;if(LL){const it=frItems(LL),cur=Array.isArray(LL.frsel)?LL.frsel.slice():frSel(LL,it).map(x=>x.n),n=t.dataset.bldfr,i=cur.indexOf(n);if(t.checked&&i<0)cur.push(n);if(!t.checked&&i>=0)cur.splice(i,1);LL.frsel=cur;BLD.fro=true;save();try{draw()}catch(_){}render()}return}
  if(t.id==="bldf"){BLD.fac=t.value;render()}else if(t.id==="bldr"){BLD.role=t.value;render()}
  else if(t.dataset&&t.dataset.bldck==="lall"){BLD.lall=t.checked;render()}
  else if(t.id==="bldname"&&L){L.name=t.value.trim()||L.name;save()}

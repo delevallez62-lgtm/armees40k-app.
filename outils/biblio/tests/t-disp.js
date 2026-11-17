@@ -34,8 +34,21 @@ await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeo
 ok('règle de faction dans le mode jeu',await ev(()=>!!document.querySelector('#m #bldfr')));
 await ev(()=>{document.querySelector('#bldfr').open=true;document.querySelector('#bldfr').dispatchEvent(new Event('toggle'))});
 ok('règle lisible (texte)',(await ev(()=>document.querySelector('#bldfr').innerText.length))>100);
-// armée Necrons (autre faction) : règle propre
+// plusieurs règles : sélection multiple (Space Marines : 16 règles)
 await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
-await ev(()=>{document.getElementById('bldn').value='Nec';const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>/^Necrons$/.test(o.text)).value});await click('[data-bld="create"]');
-ok('règle de faction Necrons',await ev(()=>BLDL().frule.items.some(x=>/Reanimation|Réanimation/i.test(x.n))));
+await ev(()=>{document.getElementById('bldn').value='SM';const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>/^Space Marines$/.test(o.text)).value});await click('[data-bld="create"]');
+const n0=await ev(()=>({tot:BLDL().frule.items.length,sel:document.querySelector('#bldfr summary').innerText}));
+ok('plusieurs règles : aucune cochée par défaut au-delà de 4',n0.tot>4&&/0\/\d+/.test(n0.sel),n0);
+await ev(()=>{const d=document.querySelector('#bldfr');d.open=true;d.dispatchEvent(new Event('toggle'))});
+await click('[data-bld="frpick"]');
+const boxes=await ev(()=>[...document.querySelectorAll('#bldfr [data-bldfr]')].map(x=>x.dataset.bldfr));
+ok('cases à cocher pour chaque règle',boxes.length===n0.tot,boxes.slice(0,3));
+for(const i of [0,2]){await ev(k=>{const c=document.querySelectorAll('#bldfr [data-bldfr]')[k];c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))},i);await p.waitForTimeout(200)}
+const after=await ev(()=>({sel:BLDL().frsel,txt:document.querySelector('#bldfr summary').innerText,titles:[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText)}));
+ok('plusieurs règles cochées et affichées',after.sel.length===2&&after.titles.length===2,after);
+await click('[data-bld="frpick"]');
+await ev(()=>{S.cur=BLDL().id;tab='units';draw()});await p.waitForTimeout(300);
+ok('sélection conservée dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].length))===2);
+await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeout(300);
+ok('sélection conservée dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].length))===2);
 console.log(R.join('\n'));console.log(errs);await b.close()})();
