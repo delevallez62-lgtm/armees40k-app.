@@ -109,12 +109,21 @@ function suggest(m){const T=toks(m.name),alias=LB().tr["n:"+nk(m.name)];const ou
 function search(q,fac){const k=nk(q),w=k.split(" ").filter(Boolean);
  return D.units.filter(u=>(!fac||u._c===fac)&&(!w.length||w.every(x=>(nk(u.n)+" "+nk((LB().tr["n:"+nk(u.n)]||{}).fr||"")+" "+nk((u.kw||[]).join(" "))).includes(x)))).slice(0,60)}
 /* ---------- rapprochement : comparaison puis choix ---------- */
+/* arme « déjà présente » : mêmes chiffres (≥5 sur 6) + nom qui se ressemble un peu + capacités proches */
+const bg=t=>{t=nk(t).replace(/ /g,"");const o=new Set();for(let i=0;i<t.length-1;i++)o.add(t.slice(i,i+2));return o};
+const dice=(a,b)=>{const A=bg(a),B=bg(b);if(!A.size||!B.size)return 0;let i=0;A.forEach(x=>{if(B.has(x))i++});return 2*i/(A.size+B.size)};
+const capSet=t=>new Set(nk(String(t||"")).split(" ").filter(w=>w.length>2));
+const capSim=(a,b)=>{const A=capSet(a),B=capSet(b);if(!A.size&&!B.size)return 1;if(!A.size||!B.size)return 0;let i=0;A.forEach(x=>{if(B.has(x))i++});return i/(A.size+B.size-i)};
+function wLike(aw,mw,names){const A=wSig(aw).split("|"),B=wSig(mw).split("|");let eq=0;for(let i=0;i<6;i++)if(A[i]===B[i])eq++;if(eq<5)return false;
+ const ns=[aw.name].concat(names||[]).filter(Boolean),base=x=>nk(String(x).replace(/^➤\s*/,"").split(" - ")[0]);
+ const nameOk=ns.some(n=>dice(base(n),base(mw.name))>=.3||dice(n,mw.name)>=.3);
+ return nameOk&&capSim(aw.caps,mw.caps)>=.5}
 function buildCmp(m,u,pi){const p=profOf(u,pi),rows={stats:[],weapons:[],abil:[],kw:[],misc:[]};
  const ms=m.stats||{};["M","E","SV","PV","CD","CO"].forEach(k=>{const lib=statOf(p,k),mine=String(ms[k]==null?"":ms[k]).trim();
   if(!lib)return;if(!mine)rows.stats.push({id:"st:"+k,k,lib,mine,kind:"add"});else if(nk(mine)!==nk(lib))rows.stats.push({id:"st:"+k,k,lib,mine,kind:"diff"});else rows.stats.push({id:"st:"+k,k,lib,mine,kind:"same"})});
  const mine=(m.weapons||[]).map(w=>({w,s:wSig(w),n:nk(w.name)}));
  const libW=[...(u.rw||[]).map(w=>({lw:w,aw:wToApp(w,false)})),...(u.mw||[]).map(w=>({lw:w,aw:wToApp(w,true)}))];
- libW.forEach((x,i)=>{const s=wSig(x.aw),same=mine.find(y=>y.s===s),byName=mine.find(y=>y.n===nk(x.aw.name)||y.n===nk(String(x.lw.n).replace(/^➤\s*/,"")));
+ libW.forEach((x,i)=>{const s=wSig(x.aw),same=mine.find(y=>y.s===s)||mine.find(y=>wLike(x.aw,y.w,[String(x.lw.n)])),byName=mine.find(y=>y.n===nk(x.aw.name)||y.n===nk(String(x.lw.n).replace(/^➤\s*/,"")));
   if(same)rows.weapons.push({id:"w:"+i,x,kind:"same",mine:same.w,learn:nk(same.w.name)!==nk(x.aw.name)});
   else if(byName)rows.weapons.push({id:"w:"+i,x,kind:"diff",mine:byName.w});
   else rows.weapons.push({id:"w:"+i,x,kind:"add"})});
@@ -477,7 +486,7 @@ window.BIBMERGE={
  ask(r,items,o,go){try{const pairs=this.cands(r.units);if(!pairs.length)return false;
   ask({t:"Fusionner avec la bibliothèque ?",p:"Ces unités importées correspondent à des fiches créées depuis la bibliothèque. En fusionnant, tes textes français sont toujours gardés ; seuls les éléments qui manquent (armes, aptitudes, mots-clés) sont ajoutés à la fiche de collection.",items:pairs.map(x=>x.p.name+" ↔ "+x.m.name+" (bibliothèque)"),ok:"Fusionner",alt:"Garder séparées",altcb:()=>{pairs.forEach(x=>{if(nnm(x.m.name)===nnm(x.p.name))x.m.name=x.m.name+" (bibliothèque)"});go(r,items,Object.assign({},o,{bm:1}))}},
    ()=>{pairs.forEach(x=>this.prep(x));go(r,items,Object.assign({},o,{bm:1,_pairs:pairs}))});return true}catch(e){return false}},
- prep(x){const m=x.m,p=x.p;m.name=p.name;m.weapons=(m.weapons||[]).filter(w=>!(p.weapons||[]).some(y=>wSig(y)===wSig(w)||nk(y.name)===nk(w.name)))},
+ prep(x){const m=x.m,p=x.p;m.name=p.name;m.weapons=(m.weapons||[]).filter(w=>!(p.weapons||[]).some(y=>wSig(y)===wSig(w)||nk(y.name)===nk(w.name)||wLike(w,y)))},
  post(o){try{const pairs=o&&o._pairs;if(!pairs)return;pairs.forEach(x=>{const m=S.coll[x.m.ref];const u=m&&libUnitOf(m);if(!m||!u)return;
    const pi=(LB().links[m.ref]||{}).prof||0,pf=profOf(u,pi);m.stats=m.stats||{};["M","E","SV","PV","CD","CO"].forEach(k=>{if(!String(m.stats[k]||"").trim()){const v=statOf(pf,k);if(v)m.stats[k]=v}});
    const have=new Set(String(m.apt||"").split(",").map(t=>nk(t)).filter(Boolean)),apt=String(m.apt||"").split(",").map(t=>t.trim()).filter(Boolean);m.text=Array.isArray(m.text)?m.text:[];
@@ -489,7 +498,7 @@ window.BIBMERGE={
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
 window.BIBAUTO=autoMatch;window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
-window.BIB={trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
+window.BIB={wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
 // vérification automatique, au plus 1 fois par jour, silencieuse
 setTimeout(async()=>{try{const lb=LB();if(!lb.auto||!navigator.onLine)return;if(lb.last&&Date.now()-lb.last.at<20*3600*1000)return;await init();const r=await checkUpdate(false);if(r.state==="updated"){try{toast("🆕 Bibliothèque V11 mise à jour")}catch(_){}try{draw()}catch(_){}}}catch(_){}},6000);
 })();
