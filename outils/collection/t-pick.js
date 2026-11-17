@@ -12,7 +12,7 @@ const ref=await p.evaluate(()=>Object.values(S.coll).find(m=>/^boyz$/i.test(m.na
 await p.evaluate(r=>{const u=BIBAUTO(S.coll[r]);const x=document.createElement('button');x.dataset.bib='cmp';x.dataset.r=r;x.dataset.id=u.u.id;document.body.appendChild(x);x.click()},ref);await p.waitForTimeout(600);
 await p.evaluate(()=>{S.lists.push({id:'lnew',name:'Vide',units:[]});S.cur='lnew';tab='units';draw()});await p.waitForTimeout(300);
 await p.evaluate(()=>{const e=document.querySelector('[data-act="npick"]');e.click()});await p.waitForTimeout(400);
-await p.evaluate(r=>document.querySelector('[data-act="pick"][data-r="'+r+'"]').click(),ref);await p.waitForTimeout(500);
+await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pkfac"]')].find(e=>/^Orks/.test(e.innerText)).click());await p.waitForTimeout(300);await p.evaluate(r=>document.querySelector('[data-act="pick"][data-r="'+r+'"]').click(),ref);await p.waitForTimeout(500);
 console.log('fiche ouverte:',await p.evaluate(()=>{const e=document.querySelector('#wpk .pn');return e?e.innerText.replace(/\n/g,' | ').slice(0,200):null}));
 console.log('cochées par défaut:',await p.evaluate(()=>[...document.querySelectorAll('#wpk .wpr')].map(e=>(e.classList.contains('on')?'✔':'·')+e.querySelector('b').innerText).join(', ')));
 await p.screenshot({path:'pick.png'});

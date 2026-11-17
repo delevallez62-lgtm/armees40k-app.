@@ -338,6 +338,8 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
   case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}break}
+  case"pkfac":{if(typeof pk!=="undefined"&&pk){pk.fac=b.dataset.v||undefined;pk.q="";pkDraw()}break}
+  case"pklib":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);const x=document.createElement("button");x.dataset.act="pick";x.dataset.r=m.ref;document.body.appendChild(x);x.click();x.remove();break}
   case"mk":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);try{draw()}catch(_){}try{toast("Fiche « "+m.name+" » créée ✓")}catch(_){}break}
   case"cmpx":await init();openCmp(b.dataset.r,b.dataset.id);break;
   case"ckw":{const C=B.cmp;if(!C)break;const v=b.dataset.v==="1";C.rows.weapons.forEach(r=>{if(r.kind==="add")C.pick[r.id]=v});drawCmp();break}
@@ -416,7 +418,7 @@ function snapAll(){if(!D.ready)return;try{Object.values(S.coll||{}).forEach(m=>{
 window.BIBSNAP=snapAll;
 window.BIBDRW=function(p){try{
  if(!p||!p.ref||!S.coll[p.ref])return"";p=S.coll[p.ref];
- const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]===false?"":"open"}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
+ const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return stub(D.err?"Bibliothèque indisponible : "+E(D.err):"Chargement de la bibliothèque…",false)}
  const am=autoMatch(p);css();const ref=p.ref,isOpen=!!BD.open[ref],own=String(p.eqo||"").trim();
  let w=null,warn=false,saved=false;
@@ -427,7 +429,7 @@ window.BIBDRW=function(p){try{
  w=w||{};
  const loadout=w.loadout?`<h4>Équipement de base</h4><p>${frItem(w.loadout,"équipement de base").html}</p>`:"";
  const opts=(w.opt&&w.opt.length)?`<h4>Options d'équipement et restrictions</h4><ul style="margin:4px 0;padding-left:18px">${w.opt.map(o=>`<li style="margin:6px 0">${frItem(o,"option d'équipement").html}</li>`).join("")}</ul>`:(w.loadout||am?`<h4>Options d'équipement et restrictions</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`:"");
- return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${BD.open[ref]===false?"":"open"}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq" open><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
+ return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${BD.open[ref]?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq" open><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
 const eqo=m=>`<label>Options d'équipement et restrictions (texte libre, affiché dans le tiroir de la fiche)<textarea data-p="eqo" rows="4" placeholder="ex. Peut remplacer son canon par…">${E(m.eqo||"")}</textarea></label>`;
 window.BIBLNK=function(u){try{if(!u||!u.ref||!S.coll[u.ref])return"";css();
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
@@ -504,6 +506,35 @@ window.BIBMERGE={
    (u.ab||[]).forEach(a=>{const en=nk(a.n),fr=abLines(a);if(have.has(en)||have.has(nk(fr.name)))return;const bw=wd(fr.lines.join(" "));if(bw.size>=4&&tl.some(t=>jac(t,bw)>=.5))return;apt.push(fr.name);fr.lines.forEach(l=>m.text.push(l))});m.apt=apt.join(", ");
    const kws=String(m.kw||"").split(",").map(t=>t.trim()).filter(Boolean),hk=new Set(kws.map(nk));(u.kw||[]).forEach(k=>{const t=tKW(k).t;if(t&&!hk.has(nk(t))&&!hk.has(nk(k))){kws.push(t);hk.add(nk(t))}});m.kw=kws.join(", ");
    snapEq(m,u,u.wp||{});delete m.fromLib;m.merged=1;delete AM[m.ref]});sv()}catch(e){try{console.error(e)}catch(_){}}}};
+/* ---------- création d'armée : faction d'abord, puis toutes les figurines (collection + bibliothèque) ---------- */
+function slugOfColl(m){try{const lk=LB().links[m.ref];let u=lk&&D.byId[lk.id];if(!u){const am=autoMatch(m);if(am&&am.level==="ok")u=am.u}if(u)return u._c;
+ const f=(S.fac||[]).find(x=>x.id===m.fac);if(f){const g=facList().find(x=>nk(x[1])===nk(f.name));if(g)return g[0]}}catch(_){}return null}
+window.BIBPK=function(pk){try{
+ if(!pk||pk.lead||pk.mode==="d")return null;
+ if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{const r=document.getElementById("pr");if(r)r.innerHTML=pkRes()}catch(_){}})}return null}
+ css();const q=nk(pk.q||""),coll=Object.values(S.coll||{}).filter(m=>!(m.mrg&&S.coll[m.mrg])),slugs=new Map(coll.map(m=>[m.ref,slugOfColl(m)]));
+ const have=new Set(coll.map(m=>nnm(m.name))),linked=new Set(coll.map(m=>{const l=LB().links[m.ref];return l&&l.id}).filter(Boolean));
+ const cardC=m=>{const n=(S.lists.find(l=>l.id===S.cur)||{units:[]}).units.filter(x=>x.ref===m.ref).length;return`<div class="card hv" data-act="pick" data-r="${E(m.ref)}">${n?`<span class="mu" style="float:right">✓ ×${n}</span>`:""}<div class="row">${typeof pimg==="function"?pimg(m):""}<b class="cap">${E(m.name)}</b></div></div>`};
+ const cardL=u=>`<div class="card hv" data-bib="pklib" data-id="${E(u.id)}"><div class="row"><b class="cap">${E(frName(u.n))}</b></div><div class="bib-meta">📚 Bibliothèque · ${E((u.f||[]).join(", "))}${u.pts!=null?" · "+u.pts+" pts":""} — la fiche sera créée dans ta collection</div></div>`;
+ const match=(m,n)=>!q||q.split(" ").every(w=>nk(n).includes(w));
+ // étape 1 : choisir la faction
+ if(!pk.fac&&!q){
+  const fl=facList().map(([g,n,c])=>({g,n,c,k:coll.filter(m=>slugs.get(m.ref)===g).length})),other=coll.filter(m=>!slugs.get(m.ref)).length;
+  fl.sort((a,b)=>(b.k>0)-(a.k>0)||a.n.localeCompare(b.n));
+  return`<p class="bib-meta">Choisis d'abord une faction. Tu verras ensuite toutes ses figurines : celles de ta collection et celles de la bibliothèque.</p><div class="grid" style="margin-top:8px">${fl.map(x=>`<div class="card hv" data-bib="pkfac" data-v="${E(x.g)}"><b>${E(x.n)}</b><div class="bib-meta">${x.k?x.k+" dans ta collection · ":""}${x.c} dans la bibliothèque</div></div>`).join("")}${other?`<div class="card hv" data-bib="pkfac" data-v="__other"><b>Autres fiches de ma collection</b><div class="bib-meta">${other} sans faction identifiée</div></div>`:""}</div>`}
+ // étape 2 : figurines de la faction (ou recherche dans toutes)
+ let head="",C,L;
+ if(pk.fac){
+  const g=pk.fac,name=g==="__other"?"Autres fiches de ma collection":(facList().find(x=>x[0]===g)||[g,g])[1];
+  head=`<div class="row" style="margin:6px 0;justify-content:space-between"><b>${E(name)}</b><button class="b" data-bib="pkfac" data-v="">↩ Changer de faction</button></div>`;
+  C=coll.filter(m=>(g==="__other"?!slugs.get(m.ref):slugs.get(m.ref)===g)&&match(m,m.name));
+  L=g==="__other"?[]:D.units.filter(u=>u._c===g&&!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n)));
+ }else{
+  head=`<div class="row" style="margin:6px 0;justify-content:space-between"><b>Toutes les factions</b><button class="b" data-bib="pkfac" data-v="">↩ Choisir une faction</button></div>`;
+  C=coll.filter(m=>match(m,m.name));L=D.units.filter(u=>!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n))).slice(0,40);
+ }
+ C.sort((a,b)=>String(a.name).localeCompare(b.name));L.sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
+ return head+(C.length?`<h4>Ma collection (${C.length})</h4><div class="grid">${C.map(cardC).join("")}</div>`:"")+(L.length?`<h4>Bibliothèque (${L.length})</h4><div class="grid">${L.map(cardL).join("")}</div>`:"")+(!C.length&&!L.length?`<p class="mu">Aucune figurine trouvée.</p>`:"")}catch(e){try{console.error(e)}catch(_){}return null}};
 /* ---------- intégration ---------- */
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};

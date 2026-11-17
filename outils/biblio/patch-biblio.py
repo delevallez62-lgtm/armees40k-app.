@@ -11,6 +11,7 @@ rep('const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="$
 rep('function cres(){','function cres(){const _r=cres0();return _r+(window.BIBCS?window.BIBCS(q):"")}function cres0(){')
 rep('function doImport(r,items,o){','function doImport(r,items,o){if(window.BIBMERGE&&!o.bm&&window.BIBMERGE.ask(r,items,o,doImport))return;')
 rep('syncAll(r.units);','syncAll(r.units);window.BIBMERGE&&window.BIBMERGE.post(o);window.BIBCLEAN&&window.BIBCLEAN();',2)
+rep('function pkRes(){if(pk.mode==="d")return pkResD();','function pkRes(){if(pk.mode==="d")return pkResD();if(!pk.lead&&window.BIBPK){const _h=window.BIBPK(pk);if(_h!==null)return _h}')
 # lien discret dans « Modifier » (fiche de collection uniquement)
 rep('${co?"":`<label>Optimisation (visible uniquement','${co&&window.BIBLNK?window.BIBLNK(u):""}${co?"":`<label>Optimisation (visible uniquement')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')

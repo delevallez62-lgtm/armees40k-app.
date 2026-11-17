@@ -9,7 +9,7 @@ await p.evaluate(async b64=>{await readPdf(new File([Uint8Array.from(atob(b64),c
 await p.evaluate(async()=>{const d=document.querySelector('#dg [data-act="dgno"]');if(d)d.click();await BIB.init()});
 const ref=await p.evaluate(()=>Object.values(S.coll).find(m=>/^boyz$/i.test(m.name)).ref);
 await p.evaluate(r=>{ed=S.coll[r];ctx='coll';edit=false;draw()},ref);await p.waitForTimeout(500);
-console.log('ouvert au départ:',await p.evaluate(()=>document.querySelector('#md details.bib-dr').open));
+console.log('fermé au départ:',await p.evaluate(()=>!document.querySelector('#md details.bib-dr').open));await p.evaluate(()=>document.querySelector('#md details.bib-dr summary').click());await p.waitForTimeout(250);
 await p.evaluate(()=>document.querySelector('#md details.bib-dr summary').click());await p.waitForTimeout(250);
 console.log('après 1 clic (fermé):',await p.evaluate(()=>!document.querySelector('#md details.bib-dr').open));
 await p.evaluate(()=>{ed=S.coll[ed.ref];draw()});await p.waitForTimeout(250);
