@@ -4,7 +4,8 @@ un nom officiel déjà confirmé n'est pas écrasé (la variante fournie est gar
 import sys,json,os,re,hashlib,datetime
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from frlib import *
-d,f=sys.argv[1],sys.argv[2];skip={nk(x) for x in (sys.argv[3].split(';') if len(sys.argv)>3 else [])}
+DIRECT='--direct' in sys.argv;args=[a for a in sys.argv if a!='--direct']
+d,f=args[1],args[2];skip={nk(x) for x in (args[3].split(';') if len(args)>3 else [])}
 man,ch=load_chunks(d);S=strings(ch);fr=ch['fr']
 byn={}
 for k,(t,kind,p) in S.items():
@@ -17,11 +18,14 @@ for l in open(f,encoding='utf8'):
     hits=byn.get(nk(en)) or [(hh(en),en)]
     inlib=nk(en) in byn
     for k,real in hits:
+        suf=re.search(r'\s*\[[^\]]*\]\s*$',real);t2=t+(' '+suf.group(0).strip() if suf and not re.search(r'\[',t) else '')
         cur=fr['tr'].get(k)
-        if cur and cur.get('ok'):
+        if cur and cur.get('ok') and not DIRECT:
             if nk(cur['fr'])!=nk(t):cur.setdefault('alt',[]);(t not in cur['alt']) and cur['alt'].append(t);n_alt+=1
             continue
-        fr['tr'][k]={'fr':t,'at':today,'ok':False,'src':"liste fournie par l'utilisateur (non sourcée)"}
+        e={'fr':t2,'at':today,'ok':bool(DIRECT),'src':"liste fournie par l'utilisateur"+('' if DIRECT else ' (non sourcée)')}
+        if DIRECT and cur and cur.get('ok') and nk(cur['fr'])!=nk(t2):e['alt']=[cur['fr']]  # ancien nom officiel gardé
+        fr['tr'][k]=e
         n_new+=inlib;n_pend+=(not inlib)
 fr['count']=len(fr['tr'])
 raw=json.dumps(fr,ensure_ascii=False,separators=(',',':'))
