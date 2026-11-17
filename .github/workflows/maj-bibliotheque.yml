@@ -25,7 +25,7 @@ jobs:
       - name: Export de données Wahapedia (11e)
         run: |
           mkdir -p /tmp/wp11; WP_OK=1
-          for f in Factions Source Datasheets Datasheets_abilities Datasheets_keywords Datasheets_models Datasheets_options Datasheets_wargear Datasheets_unit_composition Datasheets_leader Abilities Detachments Detachment_abilities Enhancements Stratagems Last_update; do
+          for f in Factions Source Datasheets Datasheets_abilities Datasheets_keywords Datasheets_models Datasheets_options Datasheets_wargear Datasheets_unit_composition Datasheets_models_cost Datasheets_leader Abilities Detachments Detachment_abilities Enhancements Stratagems Last_update; do
             ok=0
             for i in 1 2 3 4; do
               if curl -fsS -m 120 -o "/tmp/wp11/$f.csv" "https://wahapedia.ru/wh40k11ed/$f.csv"; then ok=1; break; fi

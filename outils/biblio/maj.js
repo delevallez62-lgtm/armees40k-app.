@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:13,d:"2026-11-17",t:"Constructeur d'armée",s:"Catalogue visuel (collection et bibliothèque, une seule carte par unité), effectifs et paliers de points V11, armes compactes, équipements payants, meneurs, détachements, optimisations, récapitulatif, export PDF et JSON, et mise à jour des points avec différences."},
  {id:12,d:"2026-11-17",t:"Mises à jour automatiques et onglet Nouveautés",s:"À chaque lancement, l'appli récupère la dernière version de la bibliothèque et applique les changements à toutes tes fiches et listes. Une fenêtre résume ce qui a changé. L'onglet Nouveautés garde tout, avec des tiroirs modifiables."},
  {id:11,d:"2026-11-17",t:"Traduction qui apprend",s:"Le lexique est appris des traductions déjà présentes. Une phrase proche d'une phrase connue est adaptée, et chaque traduction que tu valides enrichit la mémoire."},
  {id:10,d:"2026-11-17",t:"Mise à jour gratuite sur GitHub",s:"Chaque jour, GitHub récupère les nouveautés de Wahapedia et d'Oracle et les publie, sans dépendre de l'abonnement."},
@@ -66,6 +67,7 @@ async function majAfter(news){const lb=LB();let sheets=0,lists=0,created=[];
   news.items.add.filter(i=>i.k.indexOf("units:")===0).slice(0,300).forEach(i=>{const u=D.byId[i.k.slice(6)];if(!u||linked.has(u.id)||have.has(nnm(u.n))||have.has(nnm(frName(u.n))))return;const m=createFromLib(u);m.auto=1;created.push(m.name);have.add(nnm(m.name))});
   try{syncAll();snapAll()}catch(_){}
  }catch(e){try{console.error(e)}catch(_){}}
+ try{window.BLDSYNC&&window.BLDSYNC()}catch(_){}
  news.prop={sheets,lists};news.created=created.slice(0,50);news.nCreated=created.length;PREVU={};sv()}
 /* ----- modification d'une nouveauté par l'utilisateur : enregistrée, appliquée partout ----- */
 function saveOvr(key,patch){const lb=LB();lb.ovr=lb.ovr||{};const o=lb.ovr[key]=lb.ovr[key]||{};

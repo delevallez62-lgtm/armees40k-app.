@@ -31,15 +31,43 @@ lib={g:json.load(open(os.path.join(OUT,g+'.json'),encoding='utf8')) for g in ('s
 libnames={g:{norm(u['n']):u for u in lib[g]['units']} for g in lib}
 libnames=type('D',(dict,),{'__missing__':lambda self,k:{}})(libnames)
 DS={d['id']:d for d in rd('Datasheets') if d['faction_id'] in GRP and not re.match(r'(?i)example',d['name'])}
-MODELS={};WG={};AB={};KW={};OPT={};COMP={};LEAD={};LEDBY={}
+MODELS={};WG={};AB={};KW={};OPT={};COMP={};LEAD={};LEDBY={};COST={}
 for m in rd('Datasheets_models'):MODELS.setdefault(m['datasheet_id'],[]).append(m)
 for w in rd('Datasheets_wargear'):WG.setdefault(w['datasheet_id'],[]).append(w)
 SHARED={a['id']:a for a in rd('Abilities')}
 for a in rd('Datasheets_abilities'):AB.setdefault(a['datasheet_id'],[]).append(a)
 for k in rd('Datasheets_keywords'):KW.setdefault(k['datasheet_id'],[]).append(k)
 for o in rd('Datasheets_options'):OPT.setdefault(o['datasheet_id'],[]).append(o)
+for c in rd('Datasheets_models_cost'):COST.setdefault(c['datasheet_id'],[]).append(c)
 for c in rd('Datasheets_unit_composition'):COMP.setdefault(c['datasheet_id'],[]).append(c)
 for l in rd('Datasheets_leader'):LEAD.setdefault(l['leader_id'],[]).append(l['attached_id']);LEDBY.setdefault(l['attached_id'],[]).append(l['leader_id'])
+def ordn(t):return int(re.sub(r'\D','',t))
+def costs_of(did):
+    """Barème de points 11e : paliers selon le nombre d'exemplaires de l'unité dans l'armée, puis taille d'unité ; équipements payants."""
+    rows=sorted(COST.get(did,[]),key=lambda r:int(r.get('line') or 0));tiers={};cur=None;wg=[];mode=None
+    for r in rows:
+        d=clean(r['description']).strip();c=(r.get('cost') or '').strip()
+        m=re.match(r'YOUR (?:UNIT COSTS|(\d+)(?:ST|ND|RD|TH)(\+)? UNITS?(?: COSTS?)?|(\d+)(?:ST|ND|RD|TH) TO (\d+)(?:ST|ND|RD|TH) UNITS? COSTS?)',d,re.I)
+        if m:
+            if d.upper().startswith('YOUR UNIT COSTS'):a,b=1,None
+            elif m.group(3):a,b=int(m.group(3)),int(m.group(4))
+            else:a=int(m.group(1));b=None if m.group(2) else a
+            cur=tiers.setdefault((a,b),{'a':a,'b':b,'sz':[]});mode='u';continue
+        if d.upper()=='WARGEAR OPTIONS':mode='w';continue
+        m=re.match(r'per (.+)$',d,re.I)
+        if m and c.isdigit():
+            x={'n':m.group(1).strip(),'pts':int(c)}
+            if x not in wg:wg.append(x)
+            continue
+        m=re.match(r'(\d+)(?:-(\d+))? models?$',d,re.I)
+        if m and c.isdigit() and cur is not None and mode=='u':
+            x={'n':int(m.group(1)),'pts':int(c)}
+            if m.group(2):x['m']=int(m.group(2))
+            if not any(y['n']==x['n'] and y.get('m')==x.get('m') for y in cur['sz']):cur['sz'].append(x)
+    t=sorted(tiers.values(),key=lambda x:x['a']);
+    for x in t:x['sz'].sort(key=lambda y:y['n'])
+    t=[x for x in t if x['sz']]
+    return {'tiers':t,'wg':wg} if t else None
 def kwsplit(s):
     out=[];cur='';d=0
     for ch in s or '':
@@ -74,6 +102,8 @@ def unit_of(d):
     fk=[k['keyword'] for k in KW.get(d['id'],[]) if k['is_faction_keyword'] in ('true','True','1')]
     ext={'id':'w-'+d['id'],'role':d['role'],'loadout':clean(d['loadout']),'comp':[clean(c['description']) for c in srt(COMP.get(d['id'],[]))],'opt':[clean(o['description']) for o in srt(OPT.get(d['id'],[]))],
          'transport':clean(d['transport']),'link':d['link']}
+    pc=costs_of(d['id'])
+    if pc:ext['pc']=pc
     return {'n':d['name'],'kw':kw+fk,'pr':pr,'rw':rw,'mw':mw,'ab':ab,'pts':None,'sz':None},ext
 units_new={g:[] for g in GROUPS};exts={g:{} for g in GROUPS}
 byid={}
@@ -82,6 +112,8 @@ for d in DS.values():
     if k in libnames[g]:exts[g][k]={**ext,'n':d['name']}
     else:
         u['id']='w-'+d['id'];u['ids']={FNAME[d['faction_id']]:'w-'+d['id']};u['f']=[FNAME[d['faction_id']]];u['src']='wahapedia';u['wp']=ext
+        if ext.get('pc'):
+            t0=ext['pc']['tiers'][0]['sz'];u['pts']=t0[0]['pts'];u['sz']={'min':t0[0]['n'],'max':max(x.get('m') or x['n'] for x in t0)}
         u['h']=hashlib.sha1(json.dumps(u,sort_keys=True,ensure_ascii=False).encode()).hexdigest()[:10];units_new[g].append(u)
 for g in exts:
     for k,e in exts[g].items():
@@ -141,6 +173,7 @@ for i,raw,cnt in newchunks:
     man['chunks'].append({'id':i,'file':fn,'sha1':hashlib.sha1(raw.encode()).hexdigest(),'bytes':len(raw.encode()),'counts':cnt})
 frs=re.search(r'\+fr\d+$',man['version']);base=re.sub(r'\+(wp|fr)[^+]*','',man['version']);man['version']=base+'+wp'+(last[:10] or datetime.date.today().isoformat())+(frs.group(0) if frs else '')
 man['source']['wahapedia']={'site':'wahapedia.ru (export de données, 11e édition)','last_update':last}
+man['source']['points']={'source':'Wahapedia, export de données 11e (barème de points par unité)','published':last,'synchronised':datetime.date.today().isoformat()}
 man['generated']=datetime.date.today().isoformat()
 open(os.path.join(OUT,'manifest.json'),'w',encoding='utf8').write(json.dumps(man,ensure_ascii=False,indent=1))
 print('mise à jour Wahapedia',last,json.dumps({i:c for i,_,c in newchunks},ensure_ascii=False))
