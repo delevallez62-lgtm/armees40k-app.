@@ -28,6 +28,17 @@ J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/t
 assert '</script>' not in J
 rep('(e.u.name+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)','(e.u.name+" "+(window.BIBAL?BIBAL(e.u.ref):"")+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)',2)
 rep('p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n if(!p.me)','p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n {const L0=S.lists.find(l=>l.id===p.l);if(L0&&L0.mission){p.m1="";p.i1=L0.mid||""}}\n if(!p.me)')
+# --- lanceur de dés : aptitude Torrent (toutes les touches réussissent après le premier jet) ---
+rep('<button data-z="xd" title="Blessures dévastatrices">💥 Dévastatrices</button></div></div>','<button data-z="xd" title="Blessures dévastatrices">💥 Dévastatrices</button><button data-z="xt" title="Torrent : toutes les touches réussissent automatiquement">🌊 Torrent</button></div></div>')
+rep('map(d=>({v:d.v|0,k:!!d.k}))','map(d=>({v:d.v|0,k:!!d.k,au:!!d.au}))',2)
+rep('function paint(){','function torrent(){if(busy||D.st!==0||!D.dice.length)return;const on=!D.dice.every(d=>d.au);D.dice.forEach(d=>{if(on)d.au=true;else delete d.au;d.dm=false});if(on)D.act="keep";save();paint();stats();play(on?"keep":"click")}\nfunction paint(){')
+rep('e.classList.toggle("x",!busy&&D.act==="keep"&&d.v<D.thr);e.classList.toggle("s",!busy&&d.v>=D.thr)','e.classList.toggle("x",!busy&&D.act==="keep"&&!d.au&&d.v<D.thr);e.classList.toggle("s",!busy&&(d.au||d.v>=D.thr))')
+rep('const ok=D.dice.filter(d=>d.v>=T).length,c=D.dice.filter(d=>d.v>=cr&&d.v>=T).length,o=','const ok=D.dice.filter(d=>d.au||d.v>=T).length,c=D.dice.filter(d=>!d.au&&d.v>=cr&&d.v>=T).length,o=')
+rep('ok=D.dice.filter(d=>d.v>=D.thr).length,m=D.dice.filter(match).length,k=D.dice.filter(d=>d.v<D.thr).length','ok=D.dice.filter(d=>d.au||d.v>=D.thr).length,m=D.dice.filter(match).length,k=D.dice.filter(d=>!d.au&&d.v<D.thr).length')
+rep('else if(D.act==="keep"){const ok=D.dice.filter(d=>d.v>=D.thr).length,f=fx();','else if(D.act==="keep"){const ok=D.dice.filter(d=>d.au||d.v>=D.thr).length,f=fx();')
+rep('b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");','b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");{const tw=n>0&&D.dice.every(d=>d.au);b[3].hidden=!(D.st===0&&n>0&&!busy);b[3].textContent="🌊 Torrent"+(tw?" : oui":"");b[3].classList.toggle("sel",tw)}')
+rep('else if(D.act==="rr")tx=`<b>Relance.</b>','else if(D.st===0&&D.dice.every(d=>d.au))tx="<b>Torrent.</b> Toutes les touches réussissent automatiquement : valide pour passer à la blessure.";\n    else if(D.act==="rr")tx=`<b>Relance.</b>')
+rep('else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}','else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}\n  else if(z==="xt"){torrent()}')
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))

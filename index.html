@@ -1908,7 +1908,7 @@ let gen=0,atkBusy=false;
 let D={n:10,dice:[],rolls:0,op:"le",val:2,thr:4,done:false,removed:0,und:null,snd:true,act:"",rx:2,w:null,hit:false,auto:false,atk:"",m:1,va:"",dv:[],vb:0,vf:6,vc:1,st:0,aw:0,crh:6,crw:6,lh:true,sd:[],hist:[],xs:"",xl:false,xd:false,te:4,mo:0,nt:0,bo:0,rc:null},P=null,busy=false,isOpen=false;
 try{const j=JSON.parse(localStorage.getItem(KEY)||"null");if(j){if(j.D)Object.assign(D,j.D);P=j.P||null}}catch(e){}
 D.n=Math.min(200,Math.max(1,parseInt(D.n)||10));D.m=1;D.va="";D.dv=[];D.vb=0;D.vf=6;D.vc=1;if(!OPS[D.op])D.op="le";D.val=Math.min(6,Math.max(1,D.val|0||2));D.thr=Math.min(6,Math.max(2,D.thr|0||4));
-D.dice=(Array.isArray(D.dice)?D.dice:[]).filter(d=>d&&d.v>=1&&d.v<=6).map(d=>({v:d.v|0,k:!!d.k}));D.rolls=D.rolls|0;D.removed=D.removed|0;D.act=D.act==="keep"||D.act==="rr"?D.act:"";D.rx=Math.min(6,Math.max(2,D.rx|0||2));D.snd=D.snd!==false;D.und=Array.isArray(D.und)?D.und.filter(d=>d&&d.v>=1&&d.v<=6).map(d=>({v:d.v|0,k:!!d.k})):null;if(D.und&&!D.und.length)D.und=null;D.done=!!D.done&&D.dice.length>0;
+D.dice=(Array.isArray(D.dice)?D.dice:[]).filter(d=>d&&d.v>=1&&d.v<=6).map(d=>({v:d.v|0,k:!!d.k,au:!!d.au}));D.rolls=D.rolls|0;D.removed=D.removed|0;D.act=D.act==="keep"||D.act==="rr"?D.act:"";D.rx=Math.min(6,Math.max(2,D.rx|0||2));D.snd=D.snd!==false;D.und=Array.isArray(D.und)?D.und.filter(d=>d&&d.v>=1&&d.v<=6).map(d=>({v:d.v|0,k:!!d.k,au:!!d.au})):null;if(D.und&&!D.und.length)D.und=null;D.done=!!D.done&&D.dice.length>0;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({D,P}))}catch(e){}};
 const cr=window.crypto||window.msCrypto;
 const rnd=()=>{if(!cr)return 1+Math.floor(Math.random()*6);const b=new Uint8Array(1);do{cr.getRandomValues(b)}while(b[0]>=252);return b[0]%6+1};
@@ -1968,7 +1968,7 @@ p.innerHTML=`<div class="dzh"><h4>Lanceur de dés</h4><button class="dzx" data-z
 <div class="dzcmp" id="dzcmp" hidden></div>
 <div class="dzcard"><div class="dzlb">Réglage du jet</div><div class="dzseg2"><button class="dzb" data-z="act" data-v="keep">🎯 Réussite à…</button><button class="dzb" data-z="act" data-v="rr">↻ Relancer les dés sous…</button></div>
 <div class="dzg5" id="dzch"></div><div class="dzpv" id="dzpv" hidden></div><div id="dzund"></div>
-<div class="dzlb" id="dzabl" hidden>Capacités de l'arme <small>touche pour activer</small></div><div class="dzab" id="dzab" hidden><button data-z="xs" title="Touches soutenues : toucher pour augmenter">✦ Soutenues</button><button data-z="xl" title="Touches fatales">⚡ Fatales</button><button data-z="xd" title="Blessures dévastatrices">💥 Dévastatrices</button></div></div>
+<div class="dzlb" id="dzabl" hidden>Capacités de l'arme <small>touche pour activer</small></div><div class="dzab" id="dzab" hidden><button data-z="xs" title="Touches soutenues : toucher pour augmenter">✦ Soutenues</button><button data-z="xl" title="Touches fatales">⚡ Fatales</button><button data-z="xd" title="Blessures dévastatrices">💥 Dévastatrices</button><button data-z="xt" title="Torrent : toutes les touches réussissent automatiquement">🌊 Torrent</button></div></div>
 <div class="dzft"><button class="dzb go dzbig" data-z="go" id="dzrr" style="margin-top:0;min-height:50px">↻ Relancer les dés concernés</button>
 <div class="r3"><button class="dzb" data-z="newroll" id="dznew">↺ Refaire</button><button class="dzb" data-z="keep" id="dzkp">✔ Terminer</button><button class="dzb" data-z="close">✕ Fermer</button></div></div>`;
 document.body.appendChild(p);
@@ -1984,7 +1984,8 @@ function build(){
   tbl.innerHTML=D.dice.map((d,i)=>`<div class="dzd" style="transform:rotate(${rot(i)}deg)"><div class="${faceCls(d.v)}">${"<i></i>".repeat(9)}</div></div>`).join("");
   paint();
 }
-function paint(){[...tbl.children].forEach((e,i)=>{const d=D.dice[i];if(!d)return;e.classList.toggle("k",d.k);e.classList.toggle("dm",!!d.dm);e.classList.toggle("m",!busy&&D.act==="rr"&&match(d));e.classList.toggle("x",!busy&&D.act==="keep"&&d.v<D.thr);e.classList.toggle("s",!busy&&d.v>=D.thr)})}
+function torrent(){if(busy||D.st!==0||!D.dice.length)return;const on=!D.dice.every(d=>d.au);D.dice.forEach(d=>{if(on)d.au=true;else delete d.au;d.dm=false});if(on)D.act="keep";save();paint();stats();play(on?"keep":"click")}
+function paint(){[...tbl.children].forEach((e,i)=>{const d=D.dice[i];if(!d)return;e.classList.toggle("k",d.k);e.classList.toggle("dm",!!d.dm);e.classList.toggle("m",!busy&&D.act==="rr"&&match(d));e.classList.toggle("x",!busy&&D.act==="keep"&&!d.au&&d.v<D.thr);e.classList.toggle("s",!busy&&(d.au||d.v>=D.thr))})}
 function setFace(i){const e=tbl.children[i];if(e)e.querySelector(".dzf6").className=faceCls(D.dice[i].v)}
 const E=x=>String(x??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const WIC={r:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/></svg>',m:'<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l9 9M19 3l-9 9M13 15l-8 6M11 15l8 6M3.5 19.5l2 2M20.5 19.5l-2 2"/></svg>'};
@@ -2019,7 +2020,7 @@ function openWeapon(w){
 const FXR={sus:/(?:touches?\s+soutenues?|sustained\s+hits)\s*(d3|d6|\d+)?/i,lh:/touches?\s+fatales?|lethal\s+hits/i,dv:/blessures?\s+d[ée]vastatrices?|devastating\s+wounds/i,ch:/touches?\s+critiques?\s+sur\s+(\d)\s*\+/i,an:/anti[-\s][^\d,]*?(\d)\s*\+/i};
 function wab(){return{sus:D.xs||null,lh:!!D.xl,dv:!!D.xd}}
 function fx(){const w=D.w||{};if(!D.dice.length)return null;const a=wab(),st=D.st,cr=st===0?D.crh:D.crw,T=D.thr;
-  const ok=D.dice.filter(d=>d.v>=T).length,c=D.dice.filter(d=>d.v>=cr&&d.v>=T).length,o={a,st,cr,c,ok,bonus:0,aw:0,cnt:ok,mort:0,saves:ok,dmg:/^\d+$/.test(String(w.d).trim())?+w.d:null};
+  const ok=D.dice.filter(d=>d.au||d.v>=T).length,c=D.dice.filter(d=>!d.au&&d.v>=cr&&d.v>=T).length,o={a,st,cr,c,ok,bonus:0,aw:0,cnt:ok,mort:0,saves:ok,dmg:/^\d+$/.test(String(w.d).trim())?+w.d:null};
   if(st===0){if(a.sus){const num=/^\d+$/.test(a.sus);if(num)o.bonus=+a.sus*c;else{const f=a.sus==="D3"?3:6;while(D.sd.length<c)D.sd.push(f===3?Math.ceil(rnd()/2):rnd());o.bonus=D.sd.slice(0,c).reduce((x,y)=>x+y,0)}}
     if(a.lh&&D.lh)o.aw=c;o.cnt=ok+o.bonus-o.aw}
   else if(st===1){if(a.dv){o.mort=o.dmg===null?null:c*o.dmg;o.saves=ok-c+D.aw}else o.saves=ok+D.aw;o.aw=D.aw;o.cnt=o.saves}
@@ -2030,7 +2031,7 @@ const wF=()=>D.w&&/^\d+$/.test(String(D.w.f).trim())?+D.w.f:null;
 const hitT=()=>{const m=/^\s*(\d)\s*\+?\s*$/.exec(String(D.w&&D.w.ct||""));return m?Math.min(6,Math.max(2,+m[1])):null}
 function stats(){
   wbanner();
-  const n=D.dice.length,sum=D.dice.reduce((a,d)=>a+d.v,0),ok=D.dice.filter(d=>d.v>=D.thr).length,m=D.dice.filter(match).length,k=D.dice.filter(d=>d.v<D.thr).length,T=D.thr,X=D.rx;
+  const n=D.dice.length,sum=D.dice.reduce((a,d)=>a+d.v,0),ok=D.dice.filter(d=>d.au||d.v>=D.thr).length,m=D.dice.filter(match).length,k=D.dice.filter(d=>!d.au&&d.v<D.thr).length,T=D.thr,X=D.rx;
   p.classList.toggle("bsy",busy||atkBusy);p.classList.toggle("rolled",n>0);
   {const hs=$("#dzhs");hs.hidden=true;hs.innerHTML=D.hist.map(h=>`<span><i>${E(h.l)}</i><b>${h.v}</b><small>sur ${h.n} dé${h.n>1?"s":""}</small></span>`).join("<em>›</em>")}
   {const ph=$("#dzph");ph.innerHTML=(D.w?["Toucher","Blesser","Dégâts"]:["Jet 1","Jet 2","Jet 3"]).map((t,i)=>{const h=i<D.st?D.hist[i]:null;return`<span class="${i===D.st?"on":i<D.st?"dn":""}"><i>${i<D.st?"✓":i+1}</i><span class="pt">${t}${h?`<small>${h.v} sur ${h.n}</small>`:i===D.st&&n&&!busy&&D.st<2?`<small>en cours</small>`:""}</span></span>`}).join('<em aria-hidden="true">›</em>');
@@ -2038,12 +2039,13 @@ function stats(){
     if(D.st>=2&&n)tx="<b>Résultat de l'attaque.</b> Voici ce que l'adversaire doit sauvegarder.";
     else if(!n)tx=D.w?`<b>Étape ${D.st+1} · jet pour ${nm}.</b> Règle le nombre de dés, puis lance.`:"Choisis le nombre de dés, puis lance.";
     else if(busy)tx="Les dés roulent…";
+    else if(D.st===0&&D.dice.every(d=>d.au))tx="<b>Torrent.</b> Toutes les touches réussissent automatiquement : valide pour passer à la blessure.";
     else if(D.act==="rr")tx=`<b>Relance.</b> Les dés sous ${X} sont entourés : touche le bouton du bas pour les relancer.`;
     else if(D.w)tx=`<b>Étape ${D.st+1} · jet pour ${nm}.</b> Chaque dé à <b>${T}+</b> est une ${un}. Les dés ratés sont grisés.`;
     else tx=D.act==="keep"?`Chaque dé à <b>${T}+</b> est une réussite. Les autres sont grisés.`:"Choisis un réglage : seuil de réussite ou relance.";
     how.innerHTML=tx}
    const cm=$("#dzcmp"),F=wF();cm.hidden=!(D.st===1&&F!==null);if(!cm.hidden)cm.innerHTML=`<span>Force <b>${F}</b> contre Endurance</span><span class="ctl2"><button data-z="te-" aria-label="Endurance moins">−</button><b>${D.te}</b><button data-z="te+" aria-label="Endurance plus">+</button></span><span>→ <b>${wt(F,D.te)}+</b></span>`}
-  {const ab=$("#dzab");ab.hidden=D.st>1;const b=ab.children;b[0].hidden=b[1].hidden=D.st!==0;b[2].hidden=D.st!==1;b[0].textContent="✦ Touches soutenues"+(D.xs?" "+D.xs:" : non");b[1].textContent="⚡ Touches fatales : "+(D.xl?"oui":"non");b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");$("#dzabl").hidden=ab.hidden;b[0].classList.toggle("sel",!!D.xs);b[1].classList.toggle("sel",!!D.xl);b[2].classList.toggle("sel",!!D.xd)}
+  {const ab=$("#dzab");ab.hidden=D.st>1;const b=ab.children;b[0].hidden=b[1].hidden=D.st!==0;b[2].hidden=D.st!==1;b[0].textContent="✦ Touches soutenues"+(D.xs?" "+D.xs:" : non");b[1].textContent="⚡ Touches fatales : "+(D.xl?"oui":"non");b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");{const tw=n>0&&D.dice.every(d=>d.au);b[3].hidden=!(D.st===0&&n>0&&!busy);b[3].textContent="🌊 Torrent"+(tw?" : oui":"");b[3].classList.toggle("sel",tw)}$("#dzabl").hidden=ab.hidden;b[0].classList.toggle("sel",!!D.xs);b[1].classList.toggle("sel",!!D.xl);b[2].classList.toggle("sel",!!D.xd)}
   {const sx=$("#dzsx");sx.hidden=!n;if(n){const c6=D.dice.filter(d=>d.v===6).length,c5=D.dice.filter(d=>d.v===5).length;
     sx.innerHTML=`<span class="sxl">Dont</span>`+[[6,c6],[5,c5]].map(([v,c])=>`<span class="sxc"><b>${busy?"…":c}</b> × <i>${v}</i></span>`).join("")}}$("#dzadj").hidden=!n;$("#dzadj").querySelector("[data-z=drem]").disabled=busy||n<=1;$("#dzadj").querySelector("[data-z=dadd]").disabled=busy||n>=200;$("#dznew").disabled=!n||busy;
   {const un=D.w&&D.st<2?["touche","blessure"][D.st]:"réussite";$("#dzres").innerHTML=n&&D.st<2?`<div class="suc"><b>${busy?"…":ok}</b><div class="tx"><span class="pc">${un}${ok>1?"s":""} <small>(dés à ${T}+)</small></span><i>sur ${n} dé${n>1?"s":""} lancé${n>1?"s":""}${D.rolls?` · ${D.rolls} relance${D.rolls>1?"s":""}`:""}</i></div>${D.w?"":`<div class="tt"><b>${busy?"…":sum}</b><i>somme des dés</i></div>`}</div>`:""}
@@ -2165,7 +2167,7 @@ p.addEventListener("click",e=>{const b=e.target.closest("[data-z]");if(!b||b.dis
   else if(z==="again")throwN(D.dice.length||total());
   else if(z==="act"){D.act=D.act===v?"":v;save();paint();stats();play("click")}
   else if(z==="cv"){if(D.act==="rr")D.rx=+v;else D.thr=+v;save();paint();stats();play("click")}
-  else if(z==="go"){if(D.st>=2)$("#dznew").click();else if(D.st===1&&!(D.act==="rr"&&D.dice.some(match)))goNext(0);else if(D.act==="keep"){const ok=D.dice.filter(d=>d.v>=D.thr).length,f=fx();if(D.st<2&&(ok||(f&&f.cnt>0)))goNext(ok)}else if(D.act==="rr")reroll()}
+  else if(z==="go"){if(D.st>=2)$("#dznew").click();else if(D.st===1&&!(D.act==="rr"&&D.dice.some(match)))goNext(0);else if(D.act==="keep"){const ok=D.dice.filter(d=>d.au||d.v>=D.thr).length,f=fx();if(D.st<2&&(ok||(f&&f.cnt>0)))goNext(ok)}else if(D.act==="rr")reroll()}
   else if(z==="keep"){D.dice.forEach(d=>d.k=true);D.done=true;save();play("keep");paint();stats()}
   else if(z==="newroll"){D.hist=[];D.st=0;D.aw=0;D.mo=0;D.nt=0;D.bo=0;D.rc=null;{const h=hitT();if(h)D.thr=h}D.sd=[];D.dice=[];D.rolls=0;D.done=false;D.removed=0;D.und=null;D.act="";D.hit=false;if(D.va){D.dv=[];fixM()}save();paint();stats();if(D.va)animAtk(0);play("click")}
   else if(z==="crit"){if(D.st===0)D.crh=D.crh<=2?6:D.crh-1;else D.crw=D.crw<=2?6:D.crw-1;save();stats();play("click")}
@@ -2176,6 +2178,7 @@ p.addEventListener("click",e=>{const b=e.target.closest("[data-z]");if(!b||b.dis
   else if(z==="xs"){const L=["","1","2","3","D3"],i=L.indexOf(D.xs);D.xs=i<0?"":L[(i+1)%L.length];D.sd=[];save();stats();play("click")}
   else if(z==="xl"){D.xl=!D.xl;save();stats();play("click")}
   else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}
+  else if(z==="xt"){torrent()}
   else if(z==="lh"){D.lh=!D.lh;save();stats();play("click")}
   else if(z==="dadd")addDie();else if(z==="drem")remDie();
   else if(z==="undo")undoRm();
@@ -8364,6 +8367,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:35,d:"2026-11-17",t:"Lanceur de dés : aptitude Torrent",s:"Après le premier jet (toucher), un bouton « 🌊 Torrent » dans les capacités de l'arme fait réussir tous les dés : tu valides et tu passes directement à la blessure. Les touches automatiques ne comptent pas comme critiques. Tu peux le désactiver pour revenir aux vrais jets."},
  {id:34,d:"2026-11-17",t:"Mise à jour des noms français sur tous les appareils",s:"Correction : les nouveaux noms français (Sororitas et autres) étaient bien dans la bibliothèque mais certains appareils gardaient l'ancienne copie. La bibliothèque se recharge maintenant dès que des noms ou traductions changent."},
  {id:33,d:"2026-11-17",t:"Noms français provisoires visibles",s:"Dans la bibliothèque, le nom français fourni s'affiche même quand il est provisoire (astérisque), avec la mention « ⚠ provisoire ». Il reste dans l'onglet « À vérifier » jusqu'à validation."},
  {id:32,d:"2026-11-17",t:"Noms français Adepta Sororitas",s:"Les noms français de ta liste Sororitas sont enregistrés (34 confirmés tels quels, 4 provisoires marqués « à vérifier »). Les noms anglais restent pour la recherche."},
