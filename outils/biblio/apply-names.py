@@ -18,6 +18,8 @@ for x in json.load(open(f,encoding='utf8')):
     if not hit:miss.append(en);continue
     k,real=hit
     if sorted(re.findall(r'\d+',real))!=sorted(re.findall(r'\d+',t)):miss.append(en+' (nombres)');continue
+    cur=fr['tr'].get(k) or {}
+    if str(cur.get('src','')).startswith('liste fournie'):continue  # nom fourni par l'utilisateur : jamais remplacé
     ok=nk(en) not in doubt
     fr['tr'][k]={'fr':t,'at':datetime.date.today().isoformat(),'ok':ok,'src':x.get('url','')}
     n_ok+=ok;n_chk+=not ok

@@ -1,0 +1,782 @@
+[
+ {
+  "en": "Accursed Cultists",
+  "fr": "Cultistes Maudits",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "CULTISTES MAUDITS"
+ },
+ {
+  "en": "Angron",
+  "fr": "Angron",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "ANGRON"
+ },
+ {
+  "en": "Beasts Of Nurgle",
+  "fr": "Bêtes de Nurgle",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "BÊTES DE NURGLE"
+ },
+ {
+  "en": "Be’lakor",
+  "fr": "Be’lakor",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "BE’LAKOR"
+ },
+ {
+  "en": "Bloodcrushers",
+  "fr": "Équarrisseurs",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "ÉQUARRISSEURS"
+ },
+ {
+  "en": "Bloodletters",
+  "fr": "Sanguinaires",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SANGUINAIRES"
+ },
+ {
+  "en": "Bloodmaster",
+  "fr": "Maître du Sang",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "MAÎTRE DU SANG"
+ },
+ {
+  "en": "Bloodthirster",
+  "fr": "Buveur de Sang",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "BUVEUR DE SANG"
+ },
+ {
+  "en": "Blue Horrors",
+  "fr": "Horreurs Bleues",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "HORREURS BLEUES"
+ },
+ {
+  "en": "Burning Chariot",
+  "fr": "Char Ardent",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "CHAR ARDENT"
+ },
+ {
+  "en": "Changecaster",
+  "fr": "Falsificateur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "FALSIFICATEUR"
+ },
+ {
+  "en": "Chaos Acastus Knight Asterius",
+  "fr": "Chevalier Acastus Astérius du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER ACASTUS ASTÉRIUS DU CHAOS"
+ },
+ {
+  "en": "Chaos Acastus Knight Porphyrion",
+  "fr": "Chevalier Acastus Porphyrion du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER ACASTUS PORPHYRION DU CHAOS"
+ },
+ {
+  "en": "Chaos Cerastus Knight Acheron",
+  "fr": "Chevalier Cerastus Achéron du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER CERASTUS ACHÉRON DU CHAOS"
+ },
+ {
+  "en": "Chaos Cerastus Knight Atrapos",
+  "fr": "Chevalier Cerastus Atrapos du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER CERASTUS ATRAPOS DU CHAOS"
+ },
+ {
+  "en": "Chaos Cerastus Knight Castigator",
+  "fr": "Chevalier Cerastus Castigateur du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER CERASTUS CASTIGATEUR DU CHAOS"
+ },
+ {
+  "en": "Chaos Cerastus Knight Lancer",
+  "fr": "Chevalier Cerastus Lancier du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER CERASTUS LANCIER DU CHAOS"
+ },
+ {
+  "en": "Chaos Land Raider",
+  "fr": "Land Raider du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "LAND RAIDER DU CHAOS"
+ },
+ {
+  "en": "Chaos Lord",
+  "fr": "Seigneur du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SEIGNEUR DU CHAOS"
+ },
+ {
+  "en": "Chaos Lord In Terminator Armour",
+  "fr": "Seigneur du Chaos en Armure Terminator",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SEIGNEUR DU CHAOS EN ARMURE TERMINATOR"
+ },
+ {
+  "en": "Chaos Lord with Jump Pack",
+  "fr": "Seigneur du Chaos à Réacteur Dorsal",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SEIGNEUR DU CHAOS À RÉACTEUR DORSAL"
+ },
+ {
+  "en": "Chaos Predator Annihilator",
+  "fr": "Predator Annihilator du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "PREDATOR ANNIHILATOR DU CHAOS"
+ },
+ {
+  "en": "Chaos Predator Destructor",
+  "fr": "Predator Destructor du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "PREDATOR DESTRUCTOR DU CHAOS"
+ },
+ {
+  "en": "Chaos Questoris Knight Magaera",
+  "fr": "Chevalier Questoris Magaera du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER QUESTORIS MAGAERA DU CHAOS"
+ },
+ {
+  "en": "Chaos Questoris Knight Styrix",
+  "fr": "Chevalier Questoris Styrix du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER QUESTORIS STYRIX DU CHAOS"
+ },
+ {
+  "en": "Chaos Rhino",
+  "fr": "Rhino du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "RHINO DU CHAOS"
+ },
+ {
+  "en": "Chaos Spawn",
+  "fr": "Rejetons du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "REJETONS DU CHAOS"
+ },
+ {
+  "en": "Chaos Terminator Squad",
+  "fr": "Escouade Terminator du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "ESCOUADE TERMINATOR DU CHAOS"
+ },
+ {
+  "en": "Chaos Terminators",
+  "fr": "Terminators du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "TERMINATORS DU CHAOS"
+ },
+ {
+  "en": "Chosen",
+  "fr": "Élus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "ÉLUS"
+ },
+ {
+  "en": "Contorted Epitome",
+  "fr": "Épitome Tortueux",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "ÉPITOME TORTUEUX"
+ },
+ {
+  "en": "Cultist Firebrand",
+  "fr": "Cultiste Boutefeu",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "CULTISTE BOUTEFEU"
+ },
+ {
+  "en": "Cultist Mob",
+  "fr": "Bande de Cultistes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "BANDE DE CULTISTES"
+ },
+ {
+  "en": "Daemon Prince Of Chaos With Wings",
+  "fr": "Prince Démon du Chaos Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "PRINCE DÉMON DU CHAOS AILÉ"
+ },
+ {
+  "en": "Daemon Prince of Chaos",
+  "fr": "Prince Démon du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "PRINCE DÉMON DU CHAOS"
+ },
+ {
+  "en": "Daemon Prince of Khorne",
+  "fr": "Prince Démon de Khorne",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "PRINCE DÉMON DE KHORNE"
+ },
+ {
+  "en": "Daemon Prince of Khorne with Wings",
+  "fr": "Prince Démon de Khorne Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "PRINCE DÉMON DE KHORNE AILÉ"
+ },
+ {
+  "en": "Daemon Prince of Slaanesh",
+  "fr": "Prince Démon de Slaanesh",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "PRINCE DÉMON DE SLAANESH"
+ },
+ {
+  "en": "Daemon Prince of Slaanesh with Wings",
+  "fr": "Prince Démon de Slaanesh Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "PRINCE DÉMON DE SLAANESH AILÉ"
+ },
+ {
+  "en": "Daemonettes",
+  "fr": "Démonettes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "DÉMONETTES"
+ },
+ {
+  "en": "Dark Apostle",
+  "fr": "Apôtre Noir",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "APÔTRE NOIR"
+ },
+ {
+  "en": "Dark Commune",
+  "fr": "Sombre Communion",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SOMBRE COMMUNION"
+ },
+ {
+  "en": "Defiler",
+  "fr": "Profanateur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "PROFANATEUR"
+ },
+ {
+  "en": "Eightbound",
+  "fr": "Octoliés",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "OCTOLIÉS"
+ },
+ {
+  "en": "Epidemius",
+  "fr": "Epidemius",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "EPIDEMIUS"
+ },
+ {
+  "en": "Exalted Eightbound",
+  "fr": "Octoliés Exaltés",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "OCTOLIÉS EXALTÉS"
+ },
+ {
+  "en": "Exalted Flamer",
+  "fr": "Incendiaire Exalté",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "INCENDIAIRE EXALTÉ"
+ },
+ {
+  "en": "Fateskimmer",
+  "fr": "Fortunarque",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "FORTUNARQUE"
+ },
+ {
+  "en": "Feculent Gnarlmaw",
+  "fr": "Gueule Noueuse Immonde",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "GUEULE NOUEUSE IMMONDE"
+ },
+ {
+  "en": "Fellgor Beastmen",
+  "fr": "Hommes-Bêtes Affregors",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "HOMMES-BÊTES AFFREGORS"
+ },
+ {
+  "en": "Fiends",
+  "fr": "Charnelles",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "CHARNELLES"
+ },
+ {
+  "en": "Flamers",
+  "fr": "Incendiaires",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "INCENDIAIRES"
+ },
+ {
+  "en": "Flawless Blades",
+  "fr": "Lames Infaillibles",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "LAMES INFAILLIBLES"
+ },
+ {
+  "en": "Flesh Hounds",
+  "fr": "Molosses de Khorne",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "MOLOSSES DE KHORNE"
+ },
+ {
+  "en": "Fluxmaster",
+  "fr": "Fluctuarque",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "FLUCTUARQUE"
+ },
+ {
+  "en": "Forgefiend",
+  "fr": "Ferrocentaurus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "FERROCENTAURUS"
+ },
+ {
+  "en": "Fulgrim",
+  "fr": "Fulgrim",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "FULGRIM"
+ },
+ {
+  "en": "Goremongers",
+  "fr": "Munifisangs",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "MUNIFISANGS"
+ },
+ {
+  "en": "Great Unclean One",
+  "fr": "Grand Immonde",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "GRAND IMMONDE"
+ },
+ {
+  "en": "Havocs",
+  "fr": "Havocs",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "HAVOCS"
+ },
+ {
+  "en": "Helbrute",
+  "fr": "Métabrutus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "MÉTABRUTUS"
+ },
+ {
+  "en": "Heldrake",
+  "fr": "Métadrak",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "MÉTADRAK"
+ },
+ {
+  "en": "Hellflayers",
+  "fr": "Chars Écorcheurs",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "CHARS ÉCORCHEURS"
+ },
+ {
+  "en": "Horticulous Slimux",
+  "fr": "Horticulous Slimux",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "HORTICULOUS SLIMUX"
+ },
+ {
+  "en": "Infernal Enrapturess",
+  "fr": "Séductrice Infernale",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SÉDUCTRICE INFERNALE"
+ },
+ {
+  "en": "Infractors",
+  "fr": "Infracteurs",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "INFRACTEURS"
+ },
+ {
+  "en": "Jakhals",
+  "fr": "Chakhals",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "CHAKHALS"
+ },
+ {
+  "en": "Kairos Fateweaver",
+  "fr": "Kairos Fateweaver",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "KAIROS FATEWEAVER"
+ },
+ {
+  "en": "Karanak",
+  "fr": "Karanak",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "KARANAK"
+ },
+ {
+  "en": "Keeper Of Secrets",
+  "fr": "Gardien des Secrets",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "GARDIEN DES SECRETS"
+ },
+ {
+  "en": "Keeper of Secrets",
+  "fr": "Gardien des Secrets",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "GARDIEN DES SECRETS"
+ },
+ {
+  "en": "Khorne Berzerkers",
+  "fr": "Berzerks de Khorne",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "BERZERKS DE KHORNE"
+ },
+ {
+  "en": "Khorne Lord of Skulls",
+  "fr": "Seigneur des Crânes de Khorne",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SEIGNEUR DES CRÂNES DE KHORNE"
+ },
+ {
+  "en": "Khârn The Betrayer",
+  "fr": "Khârn le Félon",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "KHÂRN LE FÉLON"
+ },
+ {
+  "en": "Knight Abominant",
+  "fr": "Chevalier Abominable",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER ABOMINABLE"
+ },
+ {
+  "en": "Knight Desecrator",
+  "fr": "Chevalier Profanateur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER PROFANATEUR"
+ },
+ {
+  "en": "Knight Despoiler",
+  "fr": "Chevalier Pillard",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER PILLARD"
+ },
+ {
+  "en": "Knight Rampager",
+  "fr": "Chevalier Saccageur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER SACCAGEUR"
+ },
+ {
+  "en": "Knight Ruinator",
+  "fr": "Chevalier Ruineur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER RUINEUR"
+ },
+ {
+  "en": "Knight Tyrant",
+  "fr": "Chevalier Tyran",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "CHEVALIER TYRAN"
+ },
+ {
+  "en": "Legionaries",
+  "fr": "Légionnaires",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "LÉGIONNAIRES"
+ },
+ {
+  "en": "Lord Exultant",
+  "fr": "Seigneur Exultant",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "SEIGNEUR EXULTANT"
+ },
+ {
+  "en": "Lord Invocatus",
+  "fr": "Seigneur Invocatus",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "SEIGNEUR INVOCATUS"
+ },
+ {
+  "en": "Lord Kakophonist",
+  "fr": "Seigneur Kakophoniste",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "SEIGNEUR KAKOPHONISTE"
+ },
+ {
+  "en": "Lord of Change",
+  "fr": "Duc du Changement",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "DUC DU CHANGEMENT"
+ },
+ {
+  "en": "Lord on Juggernaut",
+  "fr": "Seigneur sur Juggernaut",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "SEIGNEUR SUR JUGGERNAUT"
+ },
+ {
+  "en": "Lucius the Eternal",
+  "fr": "Lucius l’Éternel",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "LUCIUS L’ÉTERNEL"
+ },
+ {
+  "en": "Master Of Possession",
+  "fr": "Maître de la Possession",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "MAÎTRE DE LA POSSESSION"
+ },
+ {
+  "en": "Master of Executions",
+  "fr": "Maître des Exécutions",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "MAÎTRE DES EXÉCUTIONS"
+ },
+ {
+  "en": "Maulerfiend",
+  "fr": "Ferrocerberus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "FERROCERBERUS"
+ },
+ {
+  "en": "Noise Marines",
+  "fr": "Marines du Vacarme",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "MARINES DU VACARME"
+ },
+ {
+  "en": "Nurglings",
+  "fr": "Nurglings",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "NURGLINGS"
+ },
+ {
+  "en": "Pink Horrors",
+  "fr": "Horreurs Roses",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "HORREURS ROSES"
+ },
+ {
+  "en": "Plague Drones",
+  "fr": "Bourdons de la Peste",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "BOURDONS DE LA PESTE"
+ },
+ {
+  "en": "Plaguebearers",
+  "fr": "Portepestes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "PORTEPESTES"
+ },
+ {
+  "en": "Possessed",
+  "fr": "Possédés",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "POSSÉDÉS"
+ },
+ {
+  "en": "Poxbringer",
+  "fr": "Porte-Vérole",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "PORTE-VÉROLE"
+ },
+ {
+  "en": "Raptors",
+  "fr": "Rapaces",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "RAPACES"
+ },
+ {
+  "en": "Rendmaster On Blood Throne",
+  "fr": "Mutileur sur Trône de Sang",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "MUTILEUR SUR TRÔNE DE SANG"
+ },
+ {
+  "en": "Rotigus",
+  "fr": "Rotigus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "ROTIGUS"
+ },
+ {
+  "en": "Screamers",
+  "fr": "Hurleurs",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "HURLEURS"
+ },
+ {
+  "en": "Seekers",
+  "fr": "Veneuses",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "VENEUSES"
+ },
+ {
+  "en": "Shalaxi Helbane",
+  "fr": "Shalaxi Helbane",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SHALAXI HELBANE"
+ },
+ {
+  "en": "Skarbrand",
+  "fr": "Skarbrand",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SKARBRAND"
+ },
+ {
+  "en": "Skull Altar",
+  "fr": "Autel des Crânes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "AUTEL DES CRÂNES"
+ },
+ {
+  "en": "Skull Cannon",
+  "fr": "Canon à Crânes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "CANON À CRÂNES"
+ },
+ {
+  "en": "Skullmaster",
+  "fr": "Maître des Crânes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "MAÎTRE DES CRÂNES"
+ },
+ {
+  "en": "Skulltaker",
+  "fr": "Preneur de Crânes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "PRENEUR DE CRÂNES"
+ },
+ {
+  "en": "Slaughterbound",
+  "fr": "Occilié",
+  "url": "https://mfm.warhammer-community.com/fr/world-eaters",
+  "preuve": "OCCILIÉ"
+ },
+ {
+  "en": "Sloppity Bilepiper",
+  "fr": "Comique Tripier",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "COMIQUE TRIPIER"
+ },
+ {
+  "en": "Sorcerer",
+  "fr": "Sorcier",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SORCIER"
+ },
+ {
+  "en": "Sorcerer In Terminator Armour",
+  "fr": "Sorcier en Armure Terminator",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SORCIER EN ARMURE TERMINATOR"
+ },
+ {
+  "en": "Soul Grinder",
+  "fr": "Broyeur d’Âmes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "BROYEUR D’ÂMES"
+ },
+ {
+  "en": "Spoilpox Scrivener",
+  "fr": "Scribe Avarieur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SCRIBE AVARIEUR"
+ },
+ {
+  "en": "Syll’esske",
+  "fr": "Syll’esske",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "SYLL’ESSKE"
+ },
+ {
+  "en": "The Blue Scribes",
+  "fr": "Les Scribes Bleus",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "LES SCRIBES BLEUS"
+ },
+ {
+  "en": "The Changeling",
+  "fr": "Le Mystificateur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "LE MYSTIFICATEUR"
+ },
+ {
+  "en": "The Masque Of Slaanesh",
+  "fr": "Le Masque de Slaanesh",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "LE MASQUE DE SLAANESH"
+ },
+ {
+  "en": "Tormentbringer",
+  "fr": "Tourmenteuse",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "TOURMENTEUSE"
+ },
+ {
+  "en": "Tormentors",
+  "fr": "Tourmenteurs",
+  "url": "https://mfm.warhammer-community.com/fr/emperors-children",
+  "preuve": "TOURMENTEURS"
+ },
+ {
+  "en": "Traitor Enforcer",
+  "fr": "Accusateur Renégat",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "ACCUSATEUR RENÉGAT"
+ },
+ {
+  "en": "Traitor Guardsmen Squad",
+  "fr": "Escouade de Gardes Renégats",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "ESCOUADE DE GARDES RENÉGATS"
+ },
+ {
+  "en": "Tranceweaver",
+  "fr": "Tissetranse",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-daemons",
+  "preuve": "TISSETRANSE"
+ },
+ {
+  "en": "War Dog Brigand",
+  "fr": "Dogue Brigand",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE BRIGAND"
+ },
+ {
+  "en": "War Dog Executioner",
+  "fr": "Dogue Exécuteur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE EXÉCUTEUR"
+ },
+ {
+  "en": "War Dog Huntsman",
+  "fr": "Dogue Chasseur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE CHASSEUR"
+ },
+ {
+  "en": "War Dog Karnivore",
+  "fr": "Dogue Karnivore",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE KARNIVORE"
+ },
+ {
+  "en": "War Dog Moirax",
+  "fr": "Dogue Moirax",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE MOIRAX"
+ },
+ {
+  "en": "War Dog Stalker",
+  "fr": "Dogue Rabatteur",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-knights",
+  "preuve": "DOGUE RABATTEUR"
+ },
+ {
+  "en": "Warp Talons",
+  "fr": "Serres du Warp",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "SERRES DU WARP"
+ }
+]
