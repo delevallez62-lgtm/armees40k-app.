@@ -401,17 +401,17 @@
   {
    "id": "lex",
    "file": "lex.json",
-   "sha1": "e77f84da16c43c6663a4c6d00c84f0e3a400ed7f",
-   "bytes": 105622,
+   "sha1": "5c5c81114457951665e4e622ddae54fc27f5aef2",
+   "bytes": 100168,
    "counts": {
-    "words": 3607
+    "words": 3395
    }
   },
   {
    "id": "fr",
    "file": "fr.json",
-   "sha1": "5bf51f684c5c32ed65f54db2e2e34a4ec1d264d0",
-   "bytes": 2121985,
+   "sha1": "307d16a57fcad7a9dc8c1c2a9ca091369f4db181",
+   "bytes": 2139422,
    "counts": {
     "translations": 14575
    }

@@ -16,6 +16,7 @@ for k,t in items:
     en=S[k][0];t=(t or '').strip()
     if not t:bad.append((k,'vide'));continue
     if sorted(re.findall(r'\d+',en))!=sorted(re.findall(r'\d+',t)):bad.append((k,'nombres différents'));continue
+    if (fr['tr'].get(k) or {}).get('ok'):continue  # nom officiel confirmé : jamais écrasé
     fr['tr'][k]={'fr':t,'at':datetime.date.today().isoformat()};ok+=1
 fr['count']=len(fr['tr'])
 rawj=json.dumps(fr,ensure_ascii=False,separators=(',',':'))

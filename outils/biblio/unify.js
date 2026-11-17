@@ -40,7 +40,7 @@ function unify(opts){if(!D.ready||UNI.busy)return null;UNI.busy=true;UNI.need=fa
  return res}finally{UNI.busy=false}}
 /* ----- statuts ----- */
 function nameStatus(u){const lb=LB(),t=lb.tr["n:"+nk(u.n)];if(t&&t.fr){if(t.st==="ok")return{k:"ok",t:"Français confirmé",fr:t.fr,src:t.src==="collection"?"ta collection":"toi"};return{k:"chk",t:"Traduction à vérifier",fr:t.fr}}
- const o=D.fr[hh(u.n)];if(o&&o.fr&&!sameNm(o.fr,u.n))return{k:"chk",t:"Traduction à vérifier",fr:o.fr};return{k:"todo",t:"Anglais conservé : traduction à effectuer",fr:""}}
+ const o=D.fr[hh(u.n)];if(o&&o.ok)return{k:"ok",t:"Français confirmé",fr:o.fr,src:"source officielle Games Workshop France"};if(o&&o.fr&&!sameNm(o.fr,u.n))return{k:"chk",t:"Traduction à vérifier",fr:o.fr};return{k:"todo",t:"Anglais conservé : traduction à effectuer",fr:""}}
 function linkStatus(ref){const lb=LB(),lk=lb.links[ref];if(lk&&D.byId[lk.id])return lk.st==="manual"?{k:"man",t:"Correspondance manuelle validée"}:{k:"auto",t:"Correspondance confirmée automatiquement"};if(lb.unc&&lb.unc[ref])return{k:"unc",t:"Correspondance incertaine"};return{k:"none",t:"Aucune correspondance trouvée"}}
 /* ----- recherche dans les deux langues ----- */
 window.BIBAL=ref=>{try{if(!D.ready)return"";const lb=LB(),lk=lb.links[ref],u=lk&&D.byId[lk.id];if(!u)return"";return u.n+" "+(lb.al&&lb.al[u.id]||[]).join(" ")+" "+(((lb.tr["n:"+nk(u.n)]||{}).fr)||"")}catch(_){return""}};
