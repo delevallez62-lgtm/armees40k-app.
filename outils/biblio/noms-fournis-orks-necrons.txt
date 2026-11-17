@@ -1,0 +1,130 @@
+Ghazghkull Thraka| Ghazghkull Thraka
+Makari| Makari
+Warboss| Boss de Guerre
+Warboss in Mega Armour| Boss de Guerre en Méga-armure
+Big Mek| Gros Mek
+Big Mek in Mega Armour| Gros Mek en Méga-armure
+Big Mek with Shokk Attack Gun| Gros Mek avec Kanon Shokk
+Mek| Mékano
+Weirdboy| Bizarboy
+Wurrboy| Bizarboy Wurrboy
+Painboy| Médiko
+Mad Dok Grotsnik| Médiko Grotsnik
+Boss Snikrot| Boss Snikrot
+Zodgrod Wortsnagga| Zodgrod Wortsnagga
+Beastboss| Boss Dresseur
+Beastboss on Squigosaur| Boss Dresseur sur Squigosaure
+Mozrog Skragbad| Mozrog Skragbad
+Nob on Smasha Squig| Nob sur Squig Krazeur
+Deffkilla Wartrike| Motochnill'
+Big Mek with Kustom Force Field| Gros Mek avec Champ de Force Kustom
+Boyz| Boyz
+Beast Snagga Boyz| Boyz Alpagueurs
+Nobz| Nobz
+Meganobz| Méganobz
+Gretchin| Gretchins
+Runtherd| Fouettard
+Burna Boyz| Boyz Krameurs
+Lootas| Boyz Pillards
+Flash Gitz| Flash Gitz
+Tankbustas| Chokboyz Antichars
+Kommandos| Kommandos
+Stormboyz| Chokboyz
+Nob with Waaagh! Banner| Nob avec Bannière Waaagh !
+Ammo Runt| Grot Munition
+Bomb Squig| Squig Bombe
+Grot Orderly| Grot Infirmier
+Runtherd and Gretchin| Fouettard et Gretchins
+Squighog Boyz| Boyz sur Squigliers
+Squigosaur| Squigosaure
+Squigbuggy| Buggy Fourre-squigs
+Squig Herd| Troupeau de Squigs
+Smasha Squig| Squig Krazeur
+Warbikers| Motards
+Nobz on Warbikes| Nobz sur Motos
+Deffkoptas| Deffkoptas
+Deff Dread| Dread Eud'la Mort
+Killa Kans| Boît'kitu
+Gorkanaut| Gorkanaut
+Morkanaut| Morkanaut
+Stompa| Stompa
+Battlewagon| Chariot d'Guerre
+Bonebreaka| Chariot d'Guerre Bonebreaka
+Kill Rig| Chariot d'Guerre Kill Rig
+Hunta Rig| Chariot d'Guerre Hunta Rig
+Trukk| Trukk
+Boomdakka Snazzwagon| Chariot Boumdakka de lux'
+Kustom Boosta-blasta| Boosta-klata Kustom
+Megatrakk Scrapjet| Brikojet Mégach'nillé
+Rukkatrukk Squigbuggy| Buggy Fourre-squigs
+Shokkjump Dragsta| Dragsta Shokkjump
+Mek Gunz| Mek Gunz
+Big Trakk| Big Trakk
+Gunwagon| Gunwagon
+Dakkajet| Dakkajet
+Burna-bommer| Krabouilleur
+Blitza-bommer| Blitza-bomba
+Wazbom Blastajet| Wazbom Blastajet
+Warkopta| Warkopta
+The Silent King| Le Roi Silencieux
+Szarekh| Szarekh
+Imotekh the Stormlord| Imotekh le Seigneur des Tempêtes
+Trazyn the Infinite| Trazyn l'Infini
+Orikan the Diviner| Orikan le Devin
+Anrakyr the Traveller| Anrakyr le Voyageur
+Illuminor Szeras| Illuminor Szeras
+Nemesor Zahndrekh| Némésor Zahndrekh
+Vargard Obyron| Vargarde Obyron
+Overlord| Tétrarque
+Overlord with Translocation Shroud| Tétrarque avec Voile de Translocation
+Lord| Dynaste
+Royal Warden| Garde Royal
+Catacomb Command Barge| Console de Commandement
+Chronomancer| Chronomancien
+Technomancer| Technomancien
+Plasmancer| Plasmancien
+Psychomancer| Psychomancien
+Hexmark Destroyer| Destroyer Hexmark
+Lokhust Lord| Seigneur Lokhust
+Skorpekh Lord| Seigneur Skorpekh
+Destroyer Lord| Seigneur Destroyer
+Nekrosor Ammentar| Nékrosor Ammentar
+Geomancer| Géomancien
+Necron Warriors| Guerriers Nécrons
+Immortals| Immortels
+Deathmarks| Traqueurs
+Lychguard| Factionnaires
+Triarch Praetorians| Prétoriens du Triarcat
+Flayed Ones| Dépeceurs
+Cryptothralls| Cryptoserfs
+Canoptek Reanimator| Réanimateur Canoptek
+Skorpekh Destroyers| Destroyers Skorpekhs
+Ophydian Destroyers| Destroyers Ophydiens
+Lokhust Destroyers| Destroyers Lokhusts
+Lokhust Heavy Destroyers| Destroyers Lourds Lokhusts
+Canoptek Plasmacyte| Plasmacyte Canoptek
+Canoptek Scarab Swarms| Nuées de Scarabées Canopteks
+Canoptek Wraiths| Spectres Canopteks
+Canoptek Spyders| Arachnydes Canopteks
+Canoptek Doomstalker| Arpenteur du Jugement Dernier Canoptek
+Canoptek Tomb Sentinel| Sentinelle Sépulcrale Canoptek
+Canoptek Tomb Stalker| Traqueur Sépulcral Canoptek
+Canoptek Macrocytes| Macrocystes Canopteks
+Canoptek Tomb Crawlers| Maraudeurs Canopteks
+Doomsday Ark| Arche du Jugement Dernier
+Ghost Ark| Arche Fantôme
+Annihilation Barge| Console d'Annihilation
+Tesseract Ark| Arche Tesseract
+Monolith| Monolithe
+Obelisk| Obélisque
+Tesseract Vault| Crypte Tesseract
+Seraptek Heavy Construct| Construction Lourde Seraptek
+Triarch Stalker| Rôdeur du Triarcat
+Tomb Blades| Mécanoptères
+Night Scythe| Faucheur
+Doom Scythe| Moissonneur
+Convergence of Dominion| Convergence de Domination
+C'tan Shard of the Nightbringer| Écharde C'tan du Nyctophore
+C'tan Shard of the Deceiver| Écharde C'tan du Mystificateur
+C'tan Shard of the Void Dragon| Écharde C'tan du Dragon du Néant
+Transcendent C'tan| C'tan Transcendant

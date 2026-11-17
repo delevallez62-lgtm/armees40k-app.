@@ -165,7 +165,7 @@ function suggest(m){const T=toks(m.name),alias=LB().tr["n:"+nk(m.name)];const ou
   sc=h/Math.max(T.length,U.length||1);if(nk(u.n)===nk(m.name))sc=1;if(sc>=.5)out.push({u,sc})});
  return out.sort((a,b)=>b.sc-a.sc||a.u.n.localeCompare(b.u.n)).slice(0,8)}
 function search(q,fac){const k=nk(q),w=k.split(" ").filter(Boolean);
- return D.units.filter(u=>(!fac||inFac(u,fac))&&(!w.length||w.every(x=>(nk(u.n)+" "+nk((LB().tr["n:"+nk(u.n)]||{}).fr||"")+" "+nk((u.kw||[]).join(" "))).includes(x)))).slice(0,60)}
+ return D.units.filter(u=>(!fac||inFac(u,fac))&&(!w.length||w.every(x=>(nk(u.n)+" "+nk((LB().tr["n:"+nk(u.n)]||{}).fr||"")+" "+nk((D.fr[hh(u.n)]||{}).fr||"")+" "+nk((u.kw||[]).join(" "))).includes(x)))).slice(0,60)}
 /* ---------- rapprochement : comparaison puis choix ---------- */
 /* arme « déjà présente » : mêmes chiffres (≥5 sur 6) + nom qui se ressemble un peu + capacités proches */
 const bg=t=>{t=nk(t).replace(/ /g,"");const o=new Set();for(let i=0;i<t.length-1;i++)o.add(t.slice(i,i+2));return o};

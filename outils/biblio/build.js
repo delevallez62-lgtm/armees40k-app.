@@ -55,7 +55,7 @@ function catEntries(){const out=[],by=new Map(),links=LB().links;
  D.units.forEach(u=>{const key="u:"+u.id;if(by.has(key))return;const t=tName(u.n),e={key,name:t.st==="ok"?t.t:u.n,lib:u,coll:null,colls:[],img:"",role:roleOf(u),fac:u._c};by.set(key,e);out.push(e)});return out}
 function entryOf(key){return catEntries().find(e=>e.key===key)||null}
 function catFilter(L){let A=catEntries();const q=nk(BLD.q||""),f=BLD.fac===""?(L&&L.bld&&L.bld.fac||""):BLD.fac==="*"?"":BLD.fac;
- A=A.filter(e=>(BLD.src==="all"||(BLD.src==="coll"?!!e.coll:!!e.lib))&&(!f||!e.lib||inFac(e.lib,f))&&(!BLD.role||e.role===BLD.role)&&(!q||q.split(" ").every(w=>nk(e.name+" "+(e.lib?e.lib.n:"")).includes(w))));
+ A=A.filter(e=>(BLD.src==="all"||(BLD.src==="coll"?!!e.coll:!!e.lib))&&(!f||!e.lib||inFac(e.lib,f))&&(!BLD.role||e.role===BLD.role)&&(!q||q.split(" ").every(w=>nk(e.name+" "+(e.lib?e.lib.n+" "+((D.fr[hh(e.lib.n)]||{}).fr||""):"")).includes(w))));
  return A.sort((a,b)=>String(a.name).localeCompare(b.name))}
 function catHtml(L){const A=catFilter(L),roles=[...new Set(catEntries().map(e=>e.role))].sort(),lim=BLD.more?9999:48;
  const facs=facList(),curF=BLD.fac===""?(L&&L.bld&&L.bld.fac||""):BLD.fac==="*"?"":BLD.fac;
