@@ -57,16 +57,16 @@ function init(){if(INIT)return INIT;INIT=(async()=>{try{
   return D})();return INIT}
 /* ---------- traduction : vocabulaire officiel français connu, jamais inventé ---------- */
 // Chaque paire a été retrouvée dans les règles de base françaises officielles, les fiches françaises ou l'encyclopédie V11 de l'appli.
-const KW={"infantry":"Infanterie","vehicle":"Véhicule","monster":"Monstre","character":"Personnage","battleline":"Ligne","walker":"Marcheur","titanic":"Titanesque","fortification":"Fortification","grenades":"Grenades","explosives":"Explosifs","psyker":"Psyker","frame":"Châssis","dedicated transport":"Transport assigné","leader":"Meneur","support":"Appui","fly":"Vol","epic hero":"Héros épique","mounted":"Monté","transport":"Transport","daemon":"Daemon","imperium":"Imperium"};
-const WK={"assault":"Assaut","heavy":"Lourd","rapid fire":"Tir rapide","melta":"Fusion","ignores cover":"Ignore le couvert","twin-linked":"Jumelé","lethal hits":"Touches fatales","sustained hits":"Touches soutenues","devastating wounds":"Blessures dévastatrices","blast":"Déflagration","cleave":"Abattage","torrent":"Torrent","hazardous":"À risque","indirect fire":"Tir indirect","close-quarters":"Combat rapproché","pistol":"Pistolet","precision":"Précision","extra attacks":"Attaques bonus","lance":"Lance","psychic":"Psychique","one shot":"Tir unique"};
+const KW={"infantry":"Infanterie","vehicle":"Véhicule","monster":"Monstre","character":"Personnage","battleline":"Ligne","walker":"Marcheur","titanic":"Titanesque","fortification":"Fortification","grenades":"Grenades","explosives":"Explosifs","psyker":"Psyker","frame":"Châssis","dedicated transport":"Transport assigné","leader":"Meneur","support":"Appui","fly":"Vol","epic hero":"Héros épique","mounted":"Monté","transport":"Transport","daemon":"Daemon","imperium":"Imperium","aircraft":"Aéronef","smoke":"Fumigènes","squadron":"Escadron","regiment":"Régiment","artillery":"Artillerie","officer":"Officier","synapse":"Synapse","summoned":"Invoqué","beast":"Bête","beasts":"Bêtes","battlesuit":"Combinaison de combat","platoon":"Peloton","swarm":"Nuée","captain":"Capitaine","chaplain":"Chapelain","librarian":"Bibliothécaire","apothecary":"Apothicaire","lieutenant":"Lieutenant","ancient":"Ancien","chapter master":"Maître de chapitre","inquisitor":"Inquisiteur","sorcerer":"Sorcier","jump pack":"Réacteur dorsal","jump packs":"Réacteurs dorsaux","noble":"Noble","penitent":"Pénitent","mutant":"Mutant","primarch":"Primarque","marshal":"Maréchal","undivided":"Indivisible","damned":"Damnés","chaos":"Chaos","orks":"Orks","necrons":"Nécrons","tyranids":"Tyranides","harlequins":"Arlequins","t’au empire":"Empire T’au","imperial knights":"Chevaliers impériaux","chaos knights":"Chevaliers du Chaos","genestealer cults":"Cultes Genestealers","great devourer":"Grand Dévoreur","agents of the imperium":"Agents de l’Imperium","unaligned forces":"Forces non alignées","leagues of votann":"Ligues de Votann","emperor’s children":"Enfants de l’Empereur","thousand sons":"Mille Fils","world eaters":"Dévoreurs de Mondes","grey knights":"Chevaliers Gris","blood angels":"Anges Sanglants","dark angels":"Anges Sombres","black templars":"Templiers Noirs"};
+const WK={"assault":"Assaut","heavy":"Lourd","rapid fire":"Tir rapide","melta":"Fusion","ignores cover":"Ignore le couvert","twin-linked":"Jumelé","lethal hits":"Touches fatales","sustained hits":"Touches soutenues","devastating wounds":"Blessures dévastatrices","blast":"Déflagration","cleave":"Abattage","torrent":"Torrent","hazardous":"À risque","indirect fire":"Tir indirect","close-quarters":"Combat rapproché","pistol":"Pistolet","precision":"Précision","extra attacks":"Attaques bonus","lance":"Lance","psychic":"Psychique","one shot":"Tir unique","conversion":"Conversion"};
 const AB={"deep strike":"Frappe en profondeur","lone operative":"Agent solitaire","feel no pain":"Insensible à la douleur","deadly demise":"Destruction néfaste","firing deck":"Pont de tir","leader":"Meneur"};
 const PH={"command phase":"Phase de Commandement","movement phase":"Phase de Mouvement","shooting phase":"Phase de Tir","charge phase":"Phase de Charge","fight phase":"Phase de Combat"};
 const cap1=s=>s.charAt(0).toUpperCase()+s.slice(1);
 function trWords(s){ // « non-Monster/Vehicle » → « non-Monstre/Véhicule » seulement si tous les mots sont connus
  const parts=String(s).split(/([\/,\s:]+|non-)/i);let ok=true,out=parts.map(p=>{if(!p||/^([\/,\s:]+|non-)$/i.test(p))return p;const k=p.toLowerCase().replace(/s$/,"");const f=KW[p.toLowerCase()]||KW[k];if(f)return/^[A-ZÀ-Ý]+$/.test(p)&&p.length>2?f.toUpperCase():f;if(/^(d?\d*d?\d*\+?)$/i.test(p)||/^\d+\+?$/.test(p))return p;ok=false;return p});return ok?out.join(""):null}
 function tWK(en){const s=String(en||"").trim();if(!s)return{t:s,st:"no"};
- const m=/^(anti)-(.+?)\s*(\d\+)?$/i.exec(s);if(m){const x=KW[m[2].toLowerCase().replace(/\s+/g," ").replace(/^non-/,"")];if(x)return{t:"Anti-"+x+(m[3]?" "+m[3]:""),st:"ok"}}
- const m2=/^([A-Za-z' -]+?)\s*((?:D?\d+[+]?|D\d)?)\s*(?::\s*(.+))?$/.exec(s);if(m2){const base=m2[1].trim().toLowerCase(),f=WK[base];if(f){let t=f+(m2[2]?" "+m2[2]:"");if(m2[3]){const w=trWords(m2[3]);if(w===null)return{t:s,st:"no"};t+=": "+w}return{t,st:"ok"}}}
+ const m=/^(anti)-(.+?)\s*(\d\+)?$/i.exec(s);if(m){const raw=m[2].toLowerCase().replace(/\s+/g," "),nn=/^non-/.test(raw),w=trWords(raw.replace(/^non-/,""));if(w){return{t:"Anti-"+(nn?"non-":"")+w+(m[3]?" "+m[3]:""),st:"ok"}}}
+ const m2=/^([A-Za-z' -]+?)\s*((?:D?\d+[+]?|D\d)?)\s*(?::\s*(.+))?$/i.exec(s);if(m2){const base=m2[1].trim().toLowerCase(),f=WK[base];if(f){let t=f+(m2[2]?" "+m2[2].toUpperCase():"");if(m2[3]){const w=trWords(m2[3]);if(w===null)return{t:s,st:"no"};t+=": "+w}return{t,st:"ok"}}}
  return{t:s,st:"no"}}
 function tKW(en){const s=String(en||"").trim(),f=KW[s.toLowerCase()];return f?{t:f,st:"ok"}:{t:s,st:"no"}}
 function tAB(en){const s=String(en||"").trim(),u=LB().tr["n:"+nk(s)];if(u&&u.fr)return{t:u.fr,st:u.st||"ok",src:"user"};
@@ -86,12 +86,18 @@ function trDesc(en){const tm=LB().tm,k=hh(en),all=tm["t:"+k];if(all)return{t:all
    1) un lexique mot à mot appris des traductions déjà présentes (bloc `lex` + mots appris chez toi) ;
    2) une mémoire de phrases (traductions existantes) : une phrase proche d'une phrase connue est adaptée mot à mot ;
    3) chaque traduction que tu valides enrichit la mémoire et le lexique. Rien n'est inventé : sans phrase proche, pas de proposition. */
-const ETK=/[a-z0-9]+(?:['’][a-z0-9]+)*/g,FTK=/[a-zàâäçéèêëîïôöùûüÿœ0-9]+(?:['’-][a-zàâäçéèêëîïôöùûüÿœ0-9]+)*/g;
+const ETK=/(?<![a-z0-9])[+\-−]\d+|[a-z0-9]+(?:['’][a-z0-9]+)*/g,FTK=/[a-zàâäçéèêëîïôöùûüÿœ0-9]+(?:['’-][a-zàâäçéèêëîïôöùûüÿœ0-9]+)*/g;
 const tk=(t,rx)=>(stripMd(t||"").toLowerCase().replace(/’/g,"'").match(rx)||[]);
 const lexOf=w=>{const lb=LB();return(lb.lex&&lb.lex[w])||(D.lexB&&D.lexB[w])||null};
 let KP=null,KPB=false,KPREADY=false;const ATC=new Map();
-function kpAdd(en,fr){const a=sents(en),b=sents(fr);if(!a.length||a.length!==b.length)return;
- a.forEach((x,i)=>{const t=tk(x,ETK);if(t.length<4)return;const key=nk(x);if(KP.map.has(key))return;const e={en:x,fr:b[i],tk:t,set:new Set(t)};const id=KP.arr.push(e)-1;KP.map.set(key,id);e.set.forEach(w=>{(KP.inv[w]=KP.inv[w]||[]).push(id)})})}
+const GEN={};const GM=new Set(["le","un","ce","du","au","cet"]),GF=new Set(["la","une","cette"]);
+function gnAdd(fr){const T=tk(fr,FTK);for(let i=1;i<T.length;i++){const g=GM.has(T[i-1])?"m":GF.has(T[i-1])?"f":null;if(g&&T[i].length>2){const e=GEN[T[i]]||(GEN[T[i]]={m:0,f:0});e[g]++}}}
+const gnOf=w=>{const e=GEN[String(w).toLowerCase()];if(!e||e.m+e.f<2)return null;return e.m>e.f*2?"m":e.f>e.m*2?"f":null};
+function kpAdd(en,fr){const a=sents(en),b=sents(fr);if(!a.length||a.length!==b.length)return;gnAdd(fr);
+ const put=(x,f,mn)=>{f=String(f).replace(/^[\s•«»"“”]+|[\s«»"“”]+$/g,"");x=String(x).replace(/^[\s•]+/,"");const t=tk(x,ETK);if(t.length<mn)return;const key=nk(x);if(KP.map.has(key))return;const e={en:x,fr:f,tk:t,set:new Set(t)};const id=KP.arr.push(e)-1;KP.map.set(key,id);e.set.forEach(w=>{(KP.inv[w]=KP.inv[w]||[]).push(id)})};
+ a.forEach((x,i)=>{put(x,b[i],4);const ca=CLS(x),cb=CLS(b[i]);if(ca.length>1&&ca.length===cb.length)ca.forEach((c,j)=>put(c,cb[j],3))})}
+/* clauses : découpe aux virgules, points-virgules et deux-points ; la ponctuation finale est retirée pour pouvoir recoller les morceaux */
+const CLS=s=>String(s).split(/(?<=[,;:])\s+/).map(c=>c.replace(/[\s.,;:]+$/,"")).filter(Boolean);
 function buildKP(){if(KP||KPB)return;KPB=true;const P={map:new Map(),arr:[],inv:{}};KP=P;const todo=[],lb=LB();
  const push=t=>{t=String(t||"").trim();if(t.length>20)todo.push(t)};
  D.units.forEach(u=>(u.ab||[]).forEach(a=>push(a.d)));D.dets.forEach(d=>{if(d.ab)push(d.ab.description);(d.abx||[]).forEach(x=>push(x.description))});D.enh.forEach(e=>push(e.d));D.str.forEach(x=>["when","tg","fx","rs"].forEach(k=>push(x[k])));(D.rules||[]).forEach(r=>push(r.d));
@@ -101,7 +107,7 @@ function buildKP(){if(KP||KPB)return;KPB=true;const P={map:new Map(),arr:[],inv:
  step()}
 function frSub(fr,r,x){const esc=t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
  if(/\d/.test(r)||/\d/.test(x)){const re=new RegExp("(?<![\\p{L}\\d])"+esc(r)+"(?![\\p{L}\\d])","iu");if(!re.test(fr))return null;const nv=/^\d*d\d+$/i.test(x)?x.toUpperCase():x;return fr.replace(re,nv)}
- const a=lexOf(r),b=lexOf(x);if(!a||!b||a[1]<.5||b[1]<.5)return null;const re=new RegExp("(?<![\\p{L}\\d'])"+esc(a[0])+"(?![\\p{L}\\d])","iu"),m=re.exec(fr);if(!m)return null;
+ const a=lexOf(r),b=lexOf(x);if(!a||!b||a[1]<.5||b[1]<.5)return null;{const ga=gnOf(a[0]),gb=gnOf(b[0]);if(ga&&gb&&ga!==gb)return null}const re=new RegExp("(?<![\\p{L}\\d'])"+esc(a[0])+"(?![\\p{L}\\d])","iu"),m=re.exec(fr);if(!m)return null;
  const cap=m[0][0]!==m[0][0].toLowerCase()&&m[0][0]===m[0][0].toUpperCase();const nv=cap?b[0][0].toUpperCase()+b[0].slice(1):b[0];return fr.slice(0,m.index)+nv+fr.slice(m.index+m[0].length)}
 function adaptSent(c,B){const A=c.tk,n=A.length,m=B.length,L=Array.from({length:n+1},()=>new Array(m+1).fill(0));
  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=A[i]===B[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
@@ -109,15 +115,16 @@ function adaptSent(c,B){const A=c.tk,n=A.length,m=B.length,L=Array.from({length:
  while(i<n||j<m){if(i<n&&j<m&&A[i]===B[j]){if(da.length||ib.length){H.push([da,ib]);da=[];ib=[]}i++;j++}else if(j<m&&(i>=n||L[i][j+1]>=L[i+1][j])){ib.push(B[j]);j++}else{da.push(A[i]);i++}}
  if(da.length||ib.length)H.push([da,ib]);
  let fr=c.fr;for(const[d,a]of H){if(!d.length||d.length!==a.length)return null;for(let k=0;k<d.length;k++){fr=frSub(fr,d[k],a[k]);if(fr==null)return null}}return fr}
-function trSent(s){const ex=KP.map.get(nk(s));if(ex!=null)return KP.arr[ex].fr;const T=tk(s,ETK);if(T.length<4)return null;
+function trSent(s,mn,mj){mn=mn||4;mj=mj||(window.__MJ||.6);const ex=KP.map.get(nk(s));if(ex!=null)return KP.arr[ex].fr;const T=tk(s,ETK);if(T.length<mn)return null;
  const set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});
  let best=null;[...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,12).forEach(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});const j=i/(c.set.size+set.size-i);if(!best||j>best.j)best={id,j}});
- if(!best||best.j<.55)return null;return adaptSent(KP.arr[best.id],T)}
+ let r=best&&best.j>=mj?adaptSent(KP.arr[best.id],T):null;if(r!=null||mn<4)return r;
+ const cl=CLS(s);if(cl.length<2)return null;const out=[];for(let i=0;i<cl.length;i++){const f=trSent(cl[i],3,.6);if(f==null)return null;const tail=(/[.,;:]+$/.exec(s.split(/(?<=[,;:])\s+/)[i]||"")||[""])[0];out.push(f.replace(/[\s.,;:]+$/,"")+tail)}return out.join(" ")}
 function autoTr(en){en=String(en||"").trim();if(!en)return null;if(!KPREADY){buildKP();return null}
  const k=hh(en);if(ATC.has(k))return ATC.get(k);let res=null;
  try{const out=[];let ok=true;for(const line of stripMd(en).split("\n")){if(!line.trim()){out.push("");continue}
    const m=/^(\s*[•\-*]+\s*)?(.*)$/.exec(line),pre=m[1]||"",ss=sents(m[2]);if(!ss.length){out.push(line);continue}
-   const fs=[];for(const x of ss){const f=trSent(x);if(f==null){ok=false;break}fs.push(f)}if(!ok)break;out.push(pre+fs.join(" "))}
+   const fs=[];for(const x of ss){let f=trSent(x);if(f==null){ok=false;break}f=String(f).trim();if(/^[A-ZÀ-Ý*■•]/.test(x.trim())&&/^[a-zà-ÿ]/.test(f))f=f.charAt(0).toUpperCase()+f.slice(1);{const e=/[.!?]+$/.exec(x.trim());if(e&&!/[.!?]$/.test(f))f+=e[0]}fs.push(f)}if(!ok)break;out.push(pre+fs.join(" "))}
   if(ok){const fr=out.join("\n");if(JSON.stringify((en.match(/\d+/g)||[]).sort())===JSON.stringify((fr.match(/\d+/g)||[]).sort()))res=fr}}catch(_){res=null}
  ATC.set(k,res);return res}
 /* apprentissage : chaque traduction validée enrichit la mémoire et le lexique */
@@ -610,7 +617,7 @@ window.BIBPK=function(pk){try{
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
 window.BIBAUTO=autoMatch;window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
-window.BIB={kpNear:s=>{const T=tk(s,ETK),set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});return [...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,4).map(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});return [Math.round(100*i/(c.set.size+set.size-i)),c.en,c.fr]})},kpInfo:()=>({ready:KPREADY,n:KP&&KP.arr.length,sample:KP&&KP.arr.slice(0,2).map(x=>[x.en,x.fr])}),autoTr,learnPair,wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
+window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:s=>{const T=tk(s,ETK),set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});return [...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,4).map(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});return [Math.round(100*i/(c.set.size+set.size-i)),c.en,c.fr]})},kpInfo:()=>({ready:KPREADY,n:KP&&KP.arr.length,sample:KP&&KP.arr.slice(0,2).map(x=>[x.en,x.fr])}),autoTr,learnPair,wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
 // vérification automatique, au plus 1 fois par jour, silencieuse
 /*__MAJ__*/
 /*__BLD__*/
