@@ -60,9 +60,10 @@ function catFilter(L){let A=catEntries();const q=nk(BLD.q||""),f=BLD.fac===""?(L
 function catHtml(L){const A=catFilter(L),roles=[...new Set(catEntries().map(e=>e.role))].sort(),lim=BLD.more?9999:48;
  const facs=facList(),curF=BLD.fac===""?(L&&L.bld&&L.bld.fac||""):BLD.fac==="*"?"":BLD.fac;
  const card=e=>{const sz=e.lib?sizeTxt(e.lib,1):(e.coll&&e.coll.nb?"":"");const ct=e.lib?costTxt(e.lib,1):(e.coll&&e.coll.pts?e.coll.pts+" pts (saisi)":"Coût à vérifier");
-  return`<button type="button" class="bld-c" data-bld="pick" data-k="${E(e.key)}"><span class="bld-im">${e.img?`<img src="${e.img}" alt="">`:"🛡"}</span><b>${E(e.name)}</b><small>${E([sz,ct].filter(Boolean).join(" — "))}</small><small>${E(e.role)}</small><span class="bld-bd">${e.coll?'<i title="Ma collection">📦</i>':""}${e.lib?'<i title="Bibliothèque V11">📚</i>':""}</span></button>`};
+  return`<button type="button" class="bld-c" data-bld="pick" data-k="${E(e.key)}"><span class="bld-im">${e.img?`<img src="${e.img}" alt="">`:"🛡"}</span><b>${E(e.name)}</b><small>${E([sz,ct].filter(Boolean).join(" — "))}</small><small>${E(e.role)}</small><span class="bld-bd">${e.coll?'<i title="Ma collection">📦</i>':""}${e.lib?'<i title="Bibliothèque V11">📚</i>':""}</span>${e.coll&&!e.lib?'<span class="bld-nl">🔗 à lier</span>':""}</button>`};
+ const nl=A.filter(e=>e.coll&&!e.lib).length;
  return`<div class="bib-top"><h2>Ajouter une unité</h2><button class="b" data-bld="x">✕</button></div>
- <input id="bldq" placeholder="Rechercher une unité…" value="${E(BLD.q)}" autocomplete="off">
+ <input id="bldq" placeholder="Rechercher une unité…" value="${E(BLD.q)}" autocomplete="off">${nl?`<p class="bib-meta">🔗 ${nl} fiche${nl>1?"s":""} de ta collection ${nl>1?"ne sont":"n'est"} pas liée${nl>1?"s":""} à la bibliothèque. Touche-en une, puis « Lier » : le lien vaut partout dans l'appli.</p>`:""}
  <div class="row" style="gap:6px;margin:6px 0">${[["all","Toutes les unités"],["coll","📦 Ma collection"],["lib","📚 Bibliothèque"]].map(([k,n])=>`<button class="b ${BLD.src===k?"p":""}" data-bld="src" data-v="${k}">${n}</button>`).join("")}</div>
  <div class="row" style="gap:6px"><select id="bldf" style="flex:1"><option value="*"${curF===""?" selected":""}>Toutes les factions</option>${facs.map(([k,n,c])=>`<option value="${E(k)}"${curF===k?" selected":""}>${E(n)}</option>`).join("")}</select><select id="bldr" style="flex:1"><option value="">Toutes les catégories</option>${roles.map(r=>`<option${BLD.role===r?" selected":""}>${E(r)}</option>`).join("")}</select></div>
  <div class="bld-hint">Touche une unité pour la configurer. <b>📦</b> = dans ta collection, <b>📚</b> = dans la bibliothèque. Utilise la recherche ou les filtres pour trouver plus vite.</div><p class="bib-meta">${A.length} unité${A.length>1?"s":""}</p><div class="bld-g">${A.slice(0,lim).map(card).join("")}</div>${A.length>lim?`<button class="b" data-bld="more" style="width:100%;margin-top:8px">Afficher les ${A.length-lim} autres</button>`:""}`}
@@ -88,6 +89,7 @@ function compat(ul,ll,kind){if(!ul||!ll)return{s:"?",t:"À vérifier"};
  if(a.includes(nk(ll.n))||b.includes(nk(ul.n)))return{s:"ok",t:"✓ Peut rejoindre cette unité"};if(!a.length&&!b.length)return{s:"?",t:"À vérifier"};return{s:"?",t:"À vérifier : non listé"}}
 function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";const lib=e.lib,copy=copyIdx(L,c),sizes=lib?sizesOf(lib,copy):[],pv=preview(L,c,e),pc=lib&&pcOf(lib),W=weaponsOf(e);
  let h=`<div class="bib-top"><h2>${E(e.name)}</h2><button class="b" data-bld="x">✕</button></div><div class="row" style="gap:10px;align-items:center"><span class="bld-im" style="width:64px;height:64px">${e.img?`<img src="${e.img}" alt="">`:"🛡"}</span><span class="bib-meta">${e.coll?"📦 Ma collection ":""}${e.lib?"📚 Bibliothèque":""}<br>${E(e.role)}${lib?" · "+E(facLbl(lib)):""}</span></div>`;
+ if(e.coll&&!e.lib&&window.BIBLNKP){try{h+=window.BIBLNKP(e.coll)}catch(_){}}
  h+=`<h4>Effectif <span class="bib-meta">(combien de figurines)</span></h4>`;
  if(sizes.length){h+=`<div class="row" style="gap:6px;flex-wrap:wrap">${sizes.map(s=>`<button type="button" class="b ${c.size===s.n?"p":""}" data-bld="size" data-v="${s.n}">${s.n} figurine${s.n>1?"s":""} · ${s.pts==null?"à vérifier":s.pts+" pts"}</button>`).join("")}</div><p class="bib-meta">Tailles et coûts lus dans le barème${pc?" Wahapedia 11e (exemplaire n°"+copy+" de cette unité)":" de la bibliothèque"}.</p>`}
  else h+=`<div class="row" style="gap:8px;align-items:center">${stepper("sz","sz",c.size,40)}<label style="flex:1">Coût (saisi à la main)<input id="bldman" inputmode="numeric" value="${E(c.manual||"")}"></label></div><p class="bib-meta">Aucun barème pour cette unité : le coût reste « à vérifier » tant que tu ne l'as pas saisi.</p>`;
@@ -117,6 +119,11 @@ function ldrHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key),ul=e&&e.lib,q=nk(BL
  <div class="bld-g">${A.slice(0,60).map(x=>{const cm=compat(ul,x.lib,K),ct=x.lib?costTxt(x.lib,1):(x.coll&&x.coll.pts?x.coll.pts+" pts (saisi)":"Coût à vérifier");return`<button type="button" class="bld-c" data-bld="ldrpick" data-k="${E(x.key)}"><span class="bld-im">${x.img?`<img src="${x.img}" alt="">`:"🛡"}</span><b>${E(x.name)}</b><small>${E(ct)}</small><small>${E(cm.t)}</small><span class="bld-bd">${x.coll?"<i>📦</i>":""}${x.lib?"<i>📚</i>":""}</span></button>`}).join("")}</div>`}
 function ldrPick(key){const c=BLD.cfg,le=entryOf(key);if(!le)return;const m=ensureSheet(le),K=BLD.ldrKind||"Meneur",s={label:K,ref:m.ref};SH.forEach(f=>{s[f]=clone(m[f])});s.weapons=clone(m.weapons||[]);s.cfg={lib:le.lib?le.lib.id:null,size:1,enh:null};
  s.pts=le.lib?(costOf(le.lib,1,1).pts||0):(+m.pts||0);c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K).concat([s]).sort((a,b)=>((a.label||"Meneur")==="Meneur"?0:1)-((b.label||"Meneur")==="Meneur"?0:1));BLD.scr="cfg";render()}
+/* ----- lien collection ↔ bibliothèque fait depuis le constructeur : mise à jour de l'écran en cours ----- */
+let LKSIG=null;const lkSig=()=>{try{const l=LB().links;return Object.keys(l).map(k=>k+":"+(l[k]&&l[k].id)).join("|")}catch(_){return""}};
+function relinked(){const c=BLD.cfg;if(c&&BLD.scr==="cfg"){const m=/^c:(.+)$/.exec(c.key||""),ref=m?m[1]:(c.refKey||null);if(m){const ne=catEntries().find(x=>x.colls.some(y=>y.ref===ref));if(ne&&ne.key!==c.key){c.key=ne.key;c.refKey=ref;if(ne.lib&&c.idx==null){const sz=sizesOf(ne.lib,copyIdx(curL(),{key:ne.key,idx:null}));if(sz.length)c.size=sz[0].n;c.wq={};c.wn={};c.wg={};defaultWeapons(ne,c)}}}}
+ try{draw()}catch(_){}render()}
+setInterval(()=>{try{if(!BLD.id||!["cat","cfg","ldr"].includes(BLD.scr)){LKSIG=lkSig();return}const n=lkSig();if(LKSIG!==null&&n!==LKSIG){LKSIG=n;relinked()}else LKSIG=n}catch(_){}},500);
 /* ----- détachements ----- */
 function detList(L){const g=L.bld&&L.bld.fac;const grp=String(g||"").indexOf("sm:")===0?"space-marines":g;return D.dets.filter(d=>!grp||d._c===grp).sort((a,b)=>a.n.localeCompare(b.n))}
 function detHtml(){const L=curL(),cur=detsOf(L),q=nk(BLD.dq||""),mx=dpMax(L.bld.limit||0),used=dpUsed(L),left=mx-used,chosen=new Set(cur.map(d=>d.id));let A=detList(L).filter(d=>!q||nk(d.n).includes(q));
@@ -339,5 +346,5 @@ document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const
 /* points mis à jour avec la bibliothèque : recalcul de toutes les armées du constructeur */
 window.BLDSYNC=()=>{try{(S.lists||[]).forEach(l=>{if(l.bld)syncPts(l)});save()}catch(_){}};
 window.BLDCALC=calc;window.BLDCOST=costOf;
-window.BLDL=curL;window.BLDSTATE=BLD;
+window.BLDL=curL;window.BLDSTATE=BLD;window.BLDRELINK=relinked;
 window.BLDMAIN=mainNames;
