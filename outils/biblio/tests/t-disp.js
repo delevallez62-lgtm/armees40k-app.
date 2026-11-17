@@ -38,20 +38,20 @@ ok('règle lisible (texte)',(await ev(()=>document.querySelector('#bldfr').inner
 await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
 await ev(()=>{document.getElementById('bldn').value='SM';const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>/^Space Marines$/.test(o.text)).value});await click('[data-bld="create"]');
 let h4=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));
-ok('Space Marines : Doctrines de combat toujours visibles',h4.includes('Combat Doctrines')&&h4.length>=1&&(await ev(()=>document.querySelector('#bldfr').open)),h4);
+ok('Space Marines : Doctrines de combat toujours visibles',h4.some(x=>/Combat Doctrines|Doctrines de combat/.test(x))&&h4.length>=1&&(await ev(()=>document.querySelector('#bldfr').open)),h4);
 await click('[data-bld="frpick"]');
 const boxes=await ev(()=>[...document.querySelectorAll('#bldfr [data-bldfr]')].length);
 ok('autres règles cochables',boxes>=10,boxes);
 await ev(()=>{const c=document.querySelectorAll('#bldfr [data-bldfr]')[1];c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))});await p.waitForTimeout(200);
-h4=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));ok('règle principale + règle cochée',h4.length>=2&&h4.includes('Combat Doctrines'),h4);
+h4=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));ok('règle principale + règle cochée',h4.length>=2&&h4.some(x=>/Combat Doctrines|Doctrines de combat/.test(x)),h4);
 await ev(()=>{S.cur=BLDL().id;tab='units';draw()});await p.waitForTimeout(300);
-ok('visible dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
+ok('visible dans la liste d\'unités',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).some(x=>/Combat Doctrines|Doctrines de combat/.test(x)));
 await ev(()=>{S.pm=BLDL().id;S.mg=false;tab='play';draw()});await p.waitForTimeout(300);
-ok('visible dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).includes('Combat Doctrines'));
+ok('visible dans le mode jeu',(await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText))).some(x=>/Combat Doctrines|Doctrines de combat/.test(x)));
 // règle principale = la plus présente sur les unités de la faction
 const mains=await ev(()=>{const o={};['space-marines','orks','necrons','aeldari','tyranids','t-au-empire','death-guard'].forEach(g=>o[g]=BLDMAIN(g));return o});ok('règle principale calculée d\'après les unités',mains['space-marines'][0]==='Combat Doctrines'&&mains.orks[0]==='Waaagh!'&&mains.necrons[0]==='Reanimation Protocols'&&mains.tyranids[0]==='Synapse',mains);
 // Orks : Waaagh!, Necrons : protocoles de réanimation
-for(const [nom,re] of [['Orks',/Waaagh/],['Necrons',/Reanimation|Réanimation/i]]){
+for(const [nom,re] of [['Orks',/Waaagh/],['Necrons',/Reanimation|réanimation/i]]){
  await ev(()=>{S.pm=null;S.mg=true;BLDSTATE.scr='home';BLDSTATE.id=null;tab='bld';draw()});
  await ev(n=>{document.getElementById('bldn').value=n;const f=document.getElementById('bldfac');f.value=[...f.options].find(o=>o.text===n).value},nom);await click('[data-bld="create"]');
  const t=await ev(()=>[...document.querySelectorAll('#bldfr h4')].map(x=>x.innerText));ok(nom+' : règle principale visible',t.some(x=>re.test(x)),t)}

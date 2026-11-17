@@ -37,4 +37,5 @@ def strings(ch):
             add(s['n'],'nom de stratagème',2)
             for k in ('when','tg','fx','rs'):add(s.get(k),'stratagème : '+{'when':'quand','tg':'cible','fx':'effet','rs':'restrictions'}[k],5)
         for r in c.get('rules',[]):add(r['n'],'nom de règle',2);add(r['d'],'règle',6)
+        for r in c.get('frules',[]):add(r['n'],'nom de règle de faction',2);add(r['d'],'règle de faction',4)
     return out

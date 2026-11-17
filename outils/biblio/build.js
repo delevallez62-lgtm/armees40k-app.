@@ -119,7 +119,7 @@ function detList(L){const g=L.bld&&L.bld.fac;const grp=String(g||"").indexOf("sm
 function detHtml(){const L=curL(),cur=detsOf(L),q=nk(BLD.dq||""),mx=dpMax(L.bld.limit||0),used=dpUsed(L),left=mx-used,chosen=new Set(cur.map(d=>d.id));let A=detList(L).filter(d=>!q||nk(d.n).includes(q));
  const sub=d=>{const ab=d.ab||{},t=trDesc(ab.description||""),tx=t.st==="ok"?t.t:(t.prop||ab.description||""),rs=/Restrictions?:\s*([\s\S]*)$/i.exec(stripMd(tx)),st=D.str.filter(x=>nk(x.det||"")===nk(d.n)),en=D.enh.filter(x=>nk(x.det||"")===nk(d.n)),cost=d.pts!=null?+d.pts:null,over=L.bld.limit&&cost!=null&&cost>left;
   return`<details class="bib-nw"><summary><b>${E(tName(d.n).t)}</b> ${chosen.has(d.id)?'<span class="bib-st">choisi</span>':""} <span class="bib-meta">${cost!=null?cost+" point"+(cost>1?"s":"")+" de détachement · ":""}${st.length} stratagème${st.length>1?"s":""} · ${en.length} amélioration${en.length>1?"s":""}</span><div class="bib-meta">🎯 Mission : ${(d.dp||[]).length?E((d.dp||[]).map(p=>{try{return misTag(DISP[p])}catch(_){return p}}).join(" · ")):"inconnue"}</div></summary>
-  ${ab.name?`<h4>${E(tAB(ab.name).t)} <span class="bib-meta">(règle du détachement)</span></h4><div>${md2(tx)}</div>`:""}${rs?`<h4>Restrictions connues</h4><p>${E(rs[1].trim())}</p>`:""}
+  ${ab.name?`<h4>${E(frAbN(ab.name))} <span class="bib-meta">(règle du détachement)</span></h4><div>${md2(tx)}</div>`:""}${rs?`<h4>Restrictions connues</h4><p>${E(rs[1].trim())}</p>`:""}
   ${st.length?`<h4>Stratagèmes</h4><ul style="padding-left:18px;margin:4px 0">${st.map(x=>`<li><b>${E(tName(x.n).t)}</b> <span class="bib-meta">${x.cp!=null?x.cp+" PC":""}</span></li>`).join("")}</ul>`:""}
   ${en.length?`<h4>Améliorations de personnage</h4><ul style="padding-left:18px;margin:4px 0">${en.map(x=>`<li><b>${E(tName(x.n).t)}</b> <span class="bib-meta">${x.pts==null?"coût à vérifier":x.pts+" pts"}</span></li>`).join("")}</ul>`:""}
   ${chosen.has(d.id)?`<button type="button" class="b x" data-bld="detx" data-id="${E(d.id)}" style="width:100%;margin-top:6px">Retirer ce détachement</button>`:over?`<p class="bib-meta" style="color:#e0a030">⛔ Il ne te reste que ${Math.max(0,left)} point(s) de détachement : retire un détachement ou augmente la limite de points.</p>`:`<button type="button" class="b p" data-bld="detpick" data-id="${E(d.id)}" style="width:100%;margin-top:6px">➕ Ajouter ce détachement</button>`}</details>`};
@@ -129,7 +129,7 @@ function detHtml(){const L=curL(),cur=detsOf(L),q=nk(BLD.dq||""),mx=dpMax(L.bld.
  <input id="bldd" placeholder="Rechercher un détachement…" value="${E(BLD.dq)}" autocomplete="off">${A.length?A.map(sub).join(""):'<p class="bib-meta">Aucun détachement dans la bibliothèque pour cette faction.</p>'}`}
 function detSync(L){L.dets=(L.dets||[]).filter(x=>!x.bld);L.strats=(L.strats||[]).filter(x=>!x.bld);const ds=detsOf(L);L.bld.det=ds[0]?{id:ds[0].id,name:ds[0].name,en:ds[0].en}:null;
  ds.forEach(dd=>{const d=dd.x;if(!d)return;const ab=d.ab||{},t=trDesc(ab.description||""),tx=stripMd(t.st==="ok"?t.t:(t.prop||ab.description||""));
-  L.dets.push({name:tName(d.n).t,cost:d.pts!=null?String(d.pts):"",rule:(ab.name?tAB(ab.name).t+" : ":"")+tx,bld:1});
+  L.dets.push({name:tName(d.n).t,cost:d.pts!=null?String(d.pts):"",rule:(ab.name?frAbN(ab.name)+" : ":"")+tx,bld:1});
   D.str.filter(x=>nk(x.det||"")===nk(d.n)).forEach(x=>{const parts=[["when","Quand"],["tg","Cible"],["fx","Effet"],["rs","Restrictions"]].map(([k,l])=>x[k]?l+" : "+stripMd((trDesc(x[k]).st==="ok"?trDesc(x[k]).t:(trDesc(x[k]).prop||x[k]))):"").filter(Boolean).join("\\n");L.strats.push({det:tName(d.n).t,name:tName(x.n).t,cp:x.cp,body:parts,bld:1})})});
  const okE=new Set(enhFor(L).map(e=>e.id));let lost=0;L.units.forEach(u=>{if(u.cfg&&u.cfg.enh&&!okE.has(u.cfg.enh.id)){u.cfg.enh=null;lost++}(u.subs||[]).forEach(sb=>{if(sb.cfg&&sb.cfg.enh&&!okE.has(sb.cfg.enh.id)){sb.cfg.enh=null;lost++}})});
  syncPts(L);applyPts(L);return lost}
@@ -218,7 +218,7 @@ const ORD5=["take-and-hold","purge-the-foe","disruption","reconnaissance","prior
 const grpOfFac=f=>String(f||"").indexOf("sm:")===0?"space-marines":String(f||"");
 function listGroup(L){let g=grpOfFac(L.bld&&L.bld.fac);if(g)return g;const c={};(L.units||[]).forEach(u=>{const lu=u.cfg&&u.cfg.lib&&D.byId[u.cfg.lib],lk=!lu&&LB().links[u.ref],x=lu||(lk&&D.byId[lk.id]);if(x)c[x._c]=(c[x._c]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""}
 function frItems(L){const g=listGroup(L),src=g&&D.frules&&D.frules[g];
- if(src&&src.length){const it=src.map(r=>{const t=trDesc(r.d),tx=stripMd(t.st==="ok"?t.t:(t.prop||r.d));return{n:tAB(r.n).t,_en:r.n,d:tx}});
+ if(src&&src.length){const it=src.map(r=>{const t=trDesc(r.d),tx=stripMd(t.st==="ok"?t.t:(t.prop||r.d));const tn=tAB(r.n);return{n:tn.st==="ok"?tn.t:(tn.prop||tn.t),_en:r.n,d:tx}});
   if(JSON.stringify((L.frule||{}).items)!==JSON.stringify(it)){L.frule={g,at:Date.now(),items:it};try{save()}catch(_){}}return it}
  return(L.frule&&L.frule.items)||[]}
 /* règle de faction principale = celle qui se retrouve sur le plus d'unités de la faction (+ les sous-règles citées dans son texte) */
