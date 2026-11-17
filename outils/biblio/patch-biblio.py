@@ -27,6 +27,7 @@ for c in man['chunks']:
 J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read())
 assert '</script>' not in J
 rep('(e.u.name+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)','(e.u.name+" "+(window.BIBAL?BIBAL(e.u.ref):"")+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)',2)
+rep('p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n if(!p.me)','p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n {const L0=S.lists.find(l=>l.id===p.l);if(L0&&L0.mission){p.m1="";p.i1=L0.mid||""}}\n if(!p.me)')
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
