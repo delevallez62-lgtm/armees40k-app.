@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:17,d:"2026-11-17",t:"Création d'armée en 4 onglets",s:"Chaque étape a sa propre page : 1 Armée (faction, taille, détachements), 2 Règles (mission principale et règle de faction), 3 Unités, 4 Vérifier. Boutons « Suivant » en bas de chaque page."},
  {id:16,d:"2026-11-17",t:"Interface simplifiée",s:"Création d'armée repensée : une seule « prochaine étape » affichée, bouton Ajouter une unité en premier, réglages (faction, limite, détachements) repliés une fois remplis, total de points toujours visible en haut, boutons plus grands et textes plus lisibles."},
  {id:15,d:"2026-11-17",t:"Constructeur guidé et points de détachement",s:"Parcours en étapes avec aides pour débutants, plusieurs détachements tant qu'il reste des points de détachement (500 pts = 1, 1 000 = 2, 2 000 = 3), et règle d'armée principale toujours visible (Doctrines de combat, Waaagh!, Protocoles de réanimation)."},
  {id:14,d:"2026-11-17",t:"Missions principales et règle de faction",s:"Les détachements de toutes les factions indiquent leurs Forces Dispositions (Wahapedia) : tu choisis la mission principale de ton armée, avec les missions selon l'adversaire. La règle de faction est notée sur l'armée et lisible dans la liste et le mode jeu."},

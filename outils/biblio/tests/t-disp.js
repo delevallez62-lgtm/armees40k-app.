@@ -3,7 +3,7 @@ const R=[];const ok=(n,c,x)=>R.push((c?'✅ ':'❌ ')+n+(x!==undefined?' → '+J
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});
 await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
-const ev=(f,a)=>p.evaluate(f,a);const click=async s=>{await p.evaluate(x=>{const e=document.querySelector(x);if(!e)throw new Error('absent '+x);e.click()},s);await p.waitForTimeout(250)};
+const ev=async(f,a)=>{if(/#bldms|bldfr|bldmis/.test(String(f)))await p.evaluate(()=>{const t=document.querySelector('[data-bld="step"][data-s="2"]');t&&t.click()});return p.evaluate(f,a)};const click=async s=>{await p.evaluate(x=>{let e=document.querySelector(x);if(!e&&!x.includes('[data-bld="step"]')){for(const n of ['1','2','3','4']){const t=document.querySelector('[data-bld="step"][data-s="'+n+'"]');if(t){t.click();e=document.querySelector(x);if(e)break}}}if(!e)throw new Error('absent '+x);e.click()},s);await p.waitForTimeout(250)};
 await ev(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init();window.__majPop=1;tab='bld';draw()});
 const info=await ev(()=>{const f=(BIB.D.frules||{});const ds=BIB.D.dets;return{groupes:Object.keys(f).length,orks:(f.orks||[]).map(x=>x.n),nDets:ds.length,multi:ds.filter(d=>(d.dp||[]).length>1).length,sans:ds.filter(d=>!(d.dp||[]).length).length}});
 ok('données : règles de faction et dispositions de tous les détachements',info.groupes>=15&&info.nDets>200,info);

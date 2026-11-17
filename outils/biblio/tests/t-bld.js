@@ -4,7 +4,7 @@ const R=[];const ok=(n,c,x)=>{R.push((c?'✅ ':'❌ ')+n+(x!==undefined?' → '+
 await ctx.route(/^https?:\/\/(?!localhost)/,r=>{const u=r.request().url();if(/localhost:8766/.test(u))return r.continue();r.abort()});
 const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
-const ev=(f,a)=>p.evaluate(f,a);const click=async sel=>{await p.evaluate(s=>{const e=document.querySelector(s);if(!e)throw new Error('absent '+s);e.click()},sel);await p.waitForTimeout(250)};
+const ev=(f,a)=>p.evaluate(f,a);const click=async sel=>{await p.evaluate(s=>{let e=document.querySelector(s);if(!e&&!s.includes('[data-bld="step"]')){for(const n of ['1','2','3','4']){const t=document.querySelector('[data-bld="step"][data-s="'+n+'"]');if(t){t.click();e=document.querySelector(s);if(e)break}}}if(!e)throw new Error('absent '+s);e.click()},sel);await p.waitForTimeout(250)};
 await ev(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init();window.__majPop=1;
  // fiches de collection : 1 liée à Terminator Squad, 1 non liée
  const W=(n,r,a,h,f,pa,d)=>({name:n,range:r,a,hit:h,f,pa,d,caps:''});

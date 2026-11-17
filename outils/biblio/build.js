@@ -1,5 +1,5 @@
 /* ===== Constructeur d'armée V11 : catalogue visuel, effectifs, armes, meneurs, détachement, optimisations, points ===== */
-const BLD={id:null,scr:"home",q:"",src:"all",fac:"",role:"",cfg:null,ldr:null,dq:"",lq:"",log:null};
+const BLD={id:null,scr:"home",step:"1",q:"",src:"all",fac:"",role:"",cfg:null,ldr:null,dq:"",lq:"",log:null};
 const RG=r=>{r=String(r||"");return/Epic Hero/i.test(r)?"Héros épiques":/Character/i.test(r)?"Personnages":/Battleline/i.test(r)?"Ligne":/Dedicated Transport/i.test(r)?"Transports assignés":/Aircraft/i.test(r)?"Aéronefs":/Titanic/i.test(r)?"Titanesques":/Monster/i.test(r)?"Monstres":/Walker/i.test(r)?"Marcheurs":/Mounted/i.test(r)?"Montés":/Vehicle/i.test(r)?"Véhicules":/Infantry/i.test(r)?"Infanterie":/Fortification/i.test(r)?"Fortifications":r||"Autre"};
 const roleOf=u=>{if(!u)return"Autre";const r=u.wp&&u.wp.role;if(r)return RG(r);const k=(u.kw||[]).join(" ");return RG(/Epic Hero/i.test(k)?"Epic Hero":/Character/i.test(k)?"Character":/Battleline/i.test(k)?"Battleline":/Vehicle/i.test(k)?"Vehicle":/Monster/i.test(k)?"Monster":/Infantry/i.test(k)?"Infantry":"")};
 const isChar=u=>/Personnage|Héros/.test(roleOf(u));
@@ -182,33 +182,43 @@ function homeHtml(){const lists=S.lists||[];
  <div class="card"><b>Mes armées</b>${lists.length?lists.map(l=>{let p=0;try{p=l.bld?calc(l).total:lpts(l)}catch(_){}return`<div class="row" style="justify-content:space-between;gap:6px;margin:6px 0"><span><b>${E(l.name)}</b><div class="bib-meta">${(l.units||[]).length} unité(s) · ${p} pts${l.bld&&l.bld.limit?" / "+l.bld.limit:""}</div></span><button class="b" data-bld="open" data-id="${E(l.id)}">Ouvrir</button></div>`}).join(""):'<p class="bib-meta">Tu n\'as pas encore d\'armée. Remplis le formulaire ci-dessus.</p>'}
  <label class="b" style="cursor:pointer;display:inline-block;margin-top:6px">📂 Importer une armée enregistrée<input type="file" id="bldimp" accept=".json,application/json" hidden></label></div>`}
 function stepsHtml(L,R){const b=L.bld||{},ds=detsOf(L),n=(L.units||[]).length;let t;
- if(!b.fac||!b.limit)t=["1","Choisis ta faction et la limite de points","dans « Réglages » ci-dessous"];
- else if(!ds.length)t=["2","Choisis un détachement","dans « Réglages » ci-dessous"];
- else if(!n)t=["3","Ajoute ta première unité","touche le gros bouton doré"];
- else if(R.unk)t=["4","Vérifie "+R.unk+" coût(s) incertain(s)","touche « Modifier » sur les unités marquées ⚠"];
+ if(!b.fac||!b.limit)t=["1","Choisis ta faction et la limite de points","onglet 1 « Armée »"];
+ else if(!ds.length)t=["2","Choisis un détachement","onglet 1 « Armée »"];
+ else if(!n)t=["3","Ajoute ta première unité","onglet 3 « Unités »"];
+ else if(R.unk)t=["4","Vérifie "+R.unk+" coût(s) incertain(s)","onglet 3 : touche « Modifier » sur les unités ⚠"];
  else if(b.limit&&R.total>b.limit)t=["!","Limite dépassée","retire une unité ou réduis un effectif"];
  else t=["✓","Armée valide","ajoute d'autres unités ou ouvre le récapitulatif"];
  return`<div class="bld-next"><span class="bld-nn">${t[0]}</span><span><b>${E(t[1])}</b><br><span class="bib-meta">${E(t[2])}</span></span></div>
  <details class="bld-how"><summary class="bib-meta">ℹ Comment ça marche ?</summary><div class="bld-hint"><b>1.</b> Choisis faction, limite et <b>détachement</b>. <b>2.</b> Touche <b>Ajouter une unité</b> (📦 = ta collection, 📚 = bibliothèque). <b>3.</b> Règle l'<b>effectif</b> et les <b>armes</b>. <b>4.</b> Ajoute un <b>meneur</b> si tu veux. <b>5.</b> Ouvre le <b>récapitulatif</b>. « ⚠ à vérifier » = information non confirmée.</div></details>`}
-function editHtml(L){syncPts(L);const R=calc(L),b=L.bld||(L.bld={}),ds=detsOf(L),mx=dpMax(b.limit||0),used=dpUsed(L),pct=b.limit?Math.min(100,R.total/b.limit*100):0,over=b.limit&&R.total>b.limit,m=ptsMeta();
+function editHtml(L){syncPts(L);const st=BLD.step||"1";const R=calc(L),b=L.bld||(L.bld={}),ds=detsOf(L),mx=dpMax(b.limit||0),used=dpUsed(L),pct=b.limit?Math.min(100,R.total/b.limit*100):0,over=b.limit&&R.total>b.limit,m=ptsMeta();
  const un=(L.units||[]).map((u,i)=>{const t=unitText(u,i,R);return`<div class="card bld-u"><div class="row" style="gap:8px;align-items:center"><span class="bld-im" style="width:48px;height:48px">${imgOf(S.coll[u.ref])?`<img src="${imgOf(S.coll[u.ref])}" alt="">`:"🛡"}</span><span style="flex:1;min-width:0"><b>${E(t[0])}</b></span></div>${t.slice(1).map(x=>`<div class="bib-meta">${E(x.trim())}</div>`).join("")}<div class="row" style="gap:6px;margin-top:6px"><button class="b" data-bld="edit" data-i="${i}">✎ Modifier</button><button class="b x" data-bld="del" data-i="${i}">Retirer</button></div></div>`}).join("");
  const lg=(b.log||[]).find(x=>!x.seen);
  return`<div class="card bld-top"><div class="row" style="justify-content:space-between;gap:6px"><input id="bldname" value="${E(L.name)}" style="font-weight:700;flex:1;min-width:0" aria-label="Nom de l'armée"><button class="b" data-bld="home" aria-label="Retour à mes armées" style="flex:none">←</button></div>
  <div class="bld-pts ${over?"over":""}"><b>${R.unk?"≥ ":""}${fmt(R.total)} / ${b.limit?fmt(b.limit):"—"} points</b><div class="bld-bar2"><i style="width:${pct}%"></i></div>${R.unk?`<span class="bib-meta">${R.unk} coût à vérifier : le total n'est pas exact</span>`:""}${over?`<span class="bib-meta" style="color:#e0563f">Limite dépassée de ${fmt(R.total-b.limit)} pts</span>`:""}</div></div>
+<div class="bld-tabs" role="tablist">${[["1","Armée"],["2","Règles"],["3","Unités"],["4","Vérifier"]].map(x=>`<button type="button" role="tab" data-bld="step" data-s="${x[0]}" class="${st==x[0]?"on":""}"><i>${x[0]}</i>${x[1]}</button>`).join("")}</div>
  ${stepsHtml(L,R)}
- <div class="card"><b>Unités</b> <span class="bib-meta">${(L.units||[]).length}</span>
- <button class="b p" data-bld="add" style="width:100%;min-height:52px;font-size:1.05em">➕ Ajouter une unité</button></div>
- ${un||'<div class="card"><p class="bib-meta">Aucune unité pour l\'instant. Touche « Ajouter une unité ».</p></div>'}
- ${missionBlock(L)}${ruleBlock(L)}
- <details class="card bld-sett" ${(!b.fac||!b.limit||!ds.length)?"open":""}><summary><b>⚙ Réglages</b> <span class="bib-meta">${b.facN?E(b.facN)+(b.limit?" · "+fmt(b.limit)+" pts":""):"à choisir"} · ${ds.length?"⚔ "+E(ds.map(d=>d.name).join(", ")):"aucun détachement"}</span></summary>
+ ${lg?`<div class="card" style="border-color:var(--ac)"><b>Mise à jour des points</b><p class="bib-meta">Ancien total : ${fmt(lg.o)} pts · Nouveau total : ${fmt(lg.n)} pts · Différence : ${lg.n-lg.o>=0?"+":""}${lg.n-lg.o} pts</p>${lg.ch.map(x=>`<div class="bib-meta">${E(x.n)} : ${x.o} → ${x.p} pts</div>`).join("")}<p class="bib-meta">Les effectifs et équipements n'ont pas changé.</p><button class="b" data-bld="logok">OK</button></div>`:""}
+${st==="2"||st==="4"?ruleBlock(L):""}
+${st==="1"?` <div class="card bld-sett"><h3 class="bld-h">Faction, taille et détachements</h3><p class="bib-meta">${b.facN?E(b.facN)+(b.limit?" · "+fmt(b.limit)+" pts":""):"à choisir"} · ${ds.length?"⚔ "+E(ds.map(d=>d.name).join(", ")):"aucun détachement"}</p>
  <div class="bld-set"><b>Faction et taille</b>
  <div class="row" style="gap:6px;flex-wrap:wrap"><label style="flex:1;min-width:130px">Faction<select id="bldfac2"><option value="">—</option>${facList().map(([k,n])=>`<option value="${E(k)}"${b.fac===k?" selected":""}>${E(n)}</option>`).join("")}</select></label><label style="width:110px">Limite (pts)<input id="bldlim2" inputmode="numeric" value="${E(b.limit||"")}"></label><label style="flex:1;min-width:130px">Format<input id="bldfmt2" value="${E(b.fmt||"")}"></label></div></div>
  <div class="bld-set"><b>Détachements</b><p class="bib-meta">Les détachements donnent des règles, des stratagèmes et des améliorations. Chacun coûte des « points de détachement » : ${b.limit?"tu en as <b>"+mx+"</b> pour "+fmt(b.limit)+" pts":"définis d'abord la limite de points"} (500 pts = 1, 1 000 = 2, 2 000 = 3).</p>
  <p><b>${used} / ${b.limit?mx:"?"}</b> point${used>1?"s":""} de détachement utilisé${used>1?"s":""}</p>
  ${ds.map(d=>`<div class="row" style="justify-content:space-between;gap:6px;margin:4px 0"><span>⚔ <b>${E(d.name)}</b> <span class="bib-meta">${d.dp!=null?d.dp+" pt"+(d.dp>1?"s":""):""}</span></span><button class="b x" data-bld="detx" data-id="${E(d.id)}">Retirer</button></div>`).join("")}
- <button class="b ${ds.length?"":"p"}" data-bld="det" style="width:100%;margin-top:4px">${ds.length?"➕ Ajouter un autre détachement":"➕ Choisir un détachement"}</button>${b.limit&&used>=mx&&ds.length?`<p class="bib-meta">Tous tes points de détachement sont utilisés.</p>`:""}</div></details>
- ${lg?`<div class="card" style="border-color:var(--ac)"><b>Mise à jour des points</b><p class="bib-meta">Ancien total : ${fmt(lg.o)} pts · Nouveau total : ${fmt(lg.n)} pts · Différence : ${lg.n-lg.o>=0?"+":""}${lg.n-lg.o} pts</p>${lg.ch.map(x=>`<div class="bib-meta">${E(x.n)} : ${x.o} → ${x.p} pts</div>`).join("")}<p class="bib-meta">Les effectifs et équipements n'ont pas changé.</p><button class="b" data-bld="logok">OK</button></div>`:""}
- <div class="card"><b>Vérifier et partager</b><div class="row" style="gap:6px;flex-wrap:wrap"><button class="b p" data-bld="recap">📋 Récapitulatif</button><button class="b" data-bld="json">💾 Exporter</button><button class="b" data-bld="dup">⧉ Dupliquer</button><button class="b" data-bld="classic">Ouvrir comme liste classique</button></div></div>
+ <button class="b ${ds.length?"":"p"}" data-bld="det" style="width:100%;margin-top:4px">${ds.length?"➕ Ajouter un autre détachement":"➕ Choisir un détachement"}</button>${b.limit&&used>=mx&&ds.length?`<p class="bib-meta">Tous tes points de détachement sont utilisés.</p>`:""}</div></div>
+
+ <button class="b p bld-nx" data-bld="step" data-s="2">Suivant : règles →</button>`:""}
+${st==="1"?ruleBlock(L):""}
+${st==="2"?` ${missionBlock(L)}
+
+ <button class="b p bld-nx" data-bld="step" data-s="3">Suivant : unités →</button>`:""}
+${st==="3"?` <div class="card"><b>Unités</b> <span class="bib-meta">${(L.units||[]).length}</span>
+ <button class="b p" data-bld="add" style="width:100%;min-height:52px;font-size:1.05em">➕ Ajouter une unité</button></div>
+ ${un||'<div class="card"><p class="bib-meta">Aucune unité pour l\'instant. Touche « Ajouter une unité ».</p></div>'}
+
+ <button class="b p bld-nx" data-bld="step" data-s="4">Suivant : vérifier →</button>${ruleBlock(L)}`:""}
+${st==="4"?` <div class="card"><b>Vérifier et partager</b><div class="row" style="gap:6px;flex-wrap:wrap"><button class="b p" data-bld="recap">📋 Récapitulatif</button><button class="b" data-bld="json">💾 Exporter</button><button class="b" data-bld="dup">⧉ Dupliquer</button><button class="b" data-bld="classic">Ouvrir comme liste classique</button></div></div>
+`:""}
  <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""} · synchronisé le ${E(m.sync||"—")}${!m.chk||Date.now()-m.chk>7*864e5?" · ⚠ aucune vérification récente":""}</p>`}
 function sheetHtml(L){if(BLD.scr==="cat")return catHtml(L);if(BLD.scr==="cfg")return cfgHtml();if(BLD.scr==="ldr")return ldrHtml();if(BLD.scr==="det")return detHtml();if(BLD.scr==="recap")return recapHtml(L);return""}
 function render(){css();const L=curL(),ov=["cat","cfg","ldr","det","recap"].includes(BLD.scr)&&L,b=box("bldm");
@@ -237,7 +247,7 @@ function frSel(L,it){const main=mainOf(L,it),rest=it.filter(x=>!main.includes(x)
  if(Array.isArray(s))return main.concat(rest.filter(x=>s.includes(x.n)));
  return main.length?main:(it.length>4?[]:it)}
 function ruleBlock(L){const it=frItems(L);if(!it.length)return"";const main=mainOf(L,it),sel=frSel(L,it),pick=!!BLD.frpick&&it.length>1,fl=facList().find(x=>x[0]===listGroup(L)),rest=it.filter(x=>!main.includes(x));
- return`<details class="card bld-fr" id="bldfr" ${BLD.fro!==false||pick?"open":""}><summary><b>📜 Règle de faction</b> <small class="bib-meta">${E(fl?fl[1]:"")}</small></summary>
+ return`<details class="card bld-fr" id="bldfr" ${(BLD.fro!==false&&(BLD.step==="2"||BLD.step==="4"))||pick?"open":""}><summary><b>📜 Règle de faction</b> <small class="bib-meta">${E(fl?fl[1]:"")}</small></summary>
  ${main.length?`<p class="bib-meta">Règle d'armée principale : toujours affichée.</p>`:""}
  ${rest.length>0&&it.length>1?`<div style="margin:6px 0"><button type="button" class="b" data-bld="frpick">${pick?"✔ Terminé":"☑ Autres règles de la faction ("+rest.filter(x=>sel.includes(x)).length+"/"+rest.length+")"}</button></div>`:""}
  ${pick?`<div class="bld-w">${rest.map(x=>`<label class="bib-ck"><input type="checkbox" data-bldfr="${E(x.n)}" ${sel.includes(x)?"checked":""}><span>${E(x.n)}</span></label>`).join("")}</div>`:""}
@@ -270,8 +280,9 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="lim"){const i=document.getElementById("bldlim");if(i)i.value=b.dataset.v;return}
  if(a==="create"){const g=id=>(document.getElementById(id)||{}).value||"",fac=g("bldfac");if(!fac){try{toast("Choisis d'abord une faction")}catch(_){}return}
   await init();const n=g("bldn").trim()||"Armée "+((S.lists||[]).length+1),fl=facList().find(x=>x[0]===fac),l={id:"l"+Date.now(),name:n,units:[],dets:[],strats:[],total:"",bld:{fac,facN:fl?fl[1]:fac,fmt:g("bldfmt").trim(),limit:parseInt(g("bldlim"),10)||0,pv:ptsVer(),tot:0}};
-  S.lists.push(l);S.cur=l.id;BLD.id=l.id;BLD.scr="edit";try{frItems(l)}catch(_){}save();rd();return}
- if(a==="open"){BLD.id=b.dataset.id;const l=curL();if(l&&!l.bld)l.bld={fac:"",facN:"",fmt:"",limit:+l.ovP||0,pv:ptsVer(),tot:null};BLD.scr="edit";S.cur=BLD.id;rd();return}
+  S.lists.push(l);S.cur=l.id;BLD.id=l.id;BLD.scr="edit";BLD.step="1";try{frItems(l)}catch(_){}save();rd();return}
+ if(a==="open"){BLD.id=b.dataset.id;const l=curL();if(l&&!l.bld)l.bld={fac:"",facN:"",fmt:"",limit:+l.ovP||0,pv:ptsVer(),tot:null};BLD.scr="edit";S.cur=BLD.id;{const l2=curL(),b2=l2&&l2.bld||{};BLD.step=(!b2.fac||!b2.limit||!detsOf(l2).length)?"1":((l2.units||[]).length?"3":"3")}rd();return}
+ if(a==="step"){BLD.step=b.dataset.s;rd();try{window.scrollTo(0,0)}catch(_){}return}
  if(a==="home"){BLD.scr="home";BLD.id=null;rd();return}
  if(!L)return;
  if(a==="add"){BLD.scr="cat";BLD.src="all";BLD.fac="";BLD.q="";BLD.role="";BLD.more=false;render();return}
