@@ -72,324 +72,348 @@
    }
   },
   {
-   "id": "lex",
-   "file": "lex.json",
-   "sha1": "a05117427f8c4f0507c600b20a8aeec0cc45539e",
-   "bytes": 80440,
-   "counts": {
-    "words": 2773
-   }
-  },
-  {
    "id": "wp-adepta-sororitas",
    "file": "wp-adepta-sororitas.json",
-   "sha1": "4c4c08d7e38b59dc62231e0b3f8e978189a8e128",
-   "bytes": 187485,
+   "sha1": "ad84640f2b3809e39c4014a223178313f4fa4f35",
+   "bytes": 223955,
    "counts": {
     "units": 38,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 8,
+    "enhancements": 25,
+    "stratagems": 36,
+    "frules": 1
    }
   },
   {
    "id": "wp-adeptus-custodes",
    "file": "wp-adeptus-custodes.json",
-   "sha1": "e7cc70171a2eeacdf3015f8b5971d7ee07cfa043",
-   "bytes": 164194,
+   "sha1": "dec29878cf774a3da4703741a4401edf29954991",
+   "bytes": 202222,
    "counts": {
     "units": 36,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 13,
+    "enhancements": 29,
+    "stratagems": 41,
+    "frules": 6
    }
   },
   {
    "id": "wp-adeptus-mechanicus",
    "file": "wp-adeptus-mechanicus.json",
-   "sha1": "6b6c484c4972880de36fec5fc30792bff8a4531a",
-   "bytes": 140042,
+   "sha1": "c00410f80449d25781e94cd615d81f90912df975",
+   "bytes": 186674,
    "counts": {
     "units": 38,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 10,
+    "enhancements": 34,
+    "stratagems": 51,
+    "frules": 1
    }
   },
   {
    "id": "wp-adeptus-titanicus",
    "file": "wp-adeptus-titanicus.json",
-   "sha1": "6797993f318b191d0399c295fe83fc8863ab9cac",
-   "bytes": 14006,
+   "sha1": "07b5b5cc2099e04b184356c7afa19ef66882aeb7",
+   "bytes": 15714,
    "counts": {
     "units": 4,
     "ext": 0,
     "detachments": 0,
     "enhancements": 0,
-    "stratagems": 0
+    "stratagems": 0,
+    "frules": 5
    }
   },
   {
    "id": "wp-aeldari",
    "file": "wp-aeldari.json",
-   "sha1": "6bb3ff7a8513f81e4755f0bcdd91d4f9dd6c7c6d",
-   "bytes": 473459,
+   "sha1": "49820ad26e40e403ca3599e87bd55254b1980ce3",
+   "bytes": 546370,
    "counts": {
     "units": 99,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 15,
+    "enhancements": 52,
+    "stratagems": 78,
+    "frules": 4
    }
   },
   {
    "id": "wp-astra-militarum",
    "file": "wp-astra-militarum.json",
-   "sha1": "adc21a64f2f57f2082efac95ed99c2c44a455f5b",
-   "bytes": 422628,
+   "sha1": "9418ba889b26cad56216c512ab15189bfa2a9e8e",
+   "bytes": 471999,
    "counts": {
     "units": 135,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 11,
+    "enhancements": 38,
+    "stratagems": 57,
+    "frules": 1
    }
   },
   {
    "id": "wp-chaos-daemons",
    "file": "wp-chaos-daemons.json",
-   "sha1": "d024cf3343d7df923a74ab22532b3330615ae988",
-   "bytes": 399168,
+   "sha1": "11d7f97b3e26735b87369764470701b484f0c102",
+   "bytes": 445862,
    "counts": {
     "units": 101,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 29,
+    "stratagems": 46,
+    "frules": 3
    }
   },
   {
    "id": "wp-chaos-knights",
    "file": "wp-chaos-knights.json",
-   "sha1": "b1908b43adca1c45fea7c7e2c458adc8fb3eccb1",
-   "bytes": 138863,
+   "sha1": "c35804a696a0abe479a175d297c4548cc135e9b0",
+   "bytes": 177354,
    "counts": {
     "units": 37,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 8,
+    "enhancements": 28,
+    "stratagems": 39,
+    "frules": 4
    }
   },
   {
    "id": "wp-chaos-space-marines",
    "file": "wp-chaos-space-marines.json",
-   "sha1": "a40a70998094471e869b8ac1965499e506d3ed73",
-   "bytes": 285571,
+   "sha1": "8516cd42a8fd97f9409c8350fee63a42a5b1f9a9",
+   "bytes": 379387,
    "counts": {
     "units": 89,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 17,
+    "enhancements": 62,
+    "stratagems": 93,
+    "frules": 6
    }
   },
   {
    "id": "wp-death-guard",
    "file": "wp-death-guard.json",
-   "sha1": "f24f3e952d593906966b007db2f482a4d508a1ee",
-   "bytes": 192946,
+   "sha1": "e5397cfc002e3e3fcd5aaa5def7285b0e17fa55e",
+   "bytes": 232702,
    "counts": {
     "units": 49,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 30,
+    "stratagems": 45,
+    "frules": 3
    }
   },
   {
    "id": "wp-drukhari",
    "file": "wp-drukhari.json",
-   "sha1": "699ed47010d6f29ce9f0bb12010601106a16fdbe",
-   "bytes": 230638,
+   "sha1": "7dd5db479c75df747a0b256700516e6007e36a2a",
+   "bytes": 276477,
    "counts": {
     "units": 46,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 30,
+    "stratagems": 45,
+    "frules": 4
    }
   },
   {
    "id": "wp-emperor-s-children",
    "file": "wp-emperor-s-children.json",
-   "sha1": "da394ed3f70cb0e7bda8c2c3e34f693bf5127d48",
-   "bytes": 68811,
+   "sha1": "24790de2139233cd91c2ac9245f48af8c90d13ce",
+   "bytes": 116003,
    "counts": {
     "units": 23,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 10,
+    "enhancements": 34,
+    "stratagems": 51,
+    "frules": 2
    }
   },
   {
    "id": "wp-genestealer-cults",
    "file": "wp-genestealer-cults.json",
-   "sha1": "2fa93a55eb4c479c9573ad495098155293d22b2e",
-   "bytes": 450568,
+   "sha1": "1681a0aea69b2620d22c85eaa89e83cf1f69d403",
+   "bytes": 494623,
    "counts": {
     "units": 146,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 30,
+    "stratagems": 45,
+    "frules": 3
    }
   },
   {
    "id": "wp-grey-knights",
    "file": "wp-grey-knights.json",
-   "sha1": "2e08cbf9784f74ac912e8c70f4a75a1a54d892aa",
-   "bytes": 102604,
+   "sha1": "1119ef35e5c0c11f777463d28dee80c1b2e907f8",
+   "bytes": 140777,
    "counts": {
     "units": 31,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 30,
+    "stratagems": 45,
+    "frules": 1
    }
   },
   {
    "id": "wp-imperial-agents",
    "file": "wp-imperial-agents.json",
-   "sha1": "dab2e4b50fb4e2d93b95e01cbd932b45cc359320",
-   "bytes": 207970,
+   "sha1": "737df2a23cb70bbdee6be3113fa97c83773e62a2",
+   "bytes": 240481,
    "counts": {
     "units": 46,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 5,
+    "enhancements": 20,
+    "stratagems": 30,
+    "frules": 2
    }
   },
   {
    "id": "wp-imperial-knights",
    "file": "wp-imperial-knights.json",
-   "sha1": "8fcf1ef2201a91991cd141604e7d22de1cd10f1b",
-   "bytes": 146644,
+   "sha1": "59b37afb1f13d1d27e4e2719adf3f196d4ec737a",
+   "bytes": 185994,
    "counts": {
     "units": 28,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 8,
+    "enhancements": 26,
+    "stratagems": 39,
+    "frules": 5
    }
   },
   {
    "id": "wp-leagues-of-votann",
    "file": "wp-leagues-of-votann.json",
-   "sha1": "46d3c680306629d4e945b74264012f9078cd3dad",
-   "bytes": 133787,
+   "sha1": "33730a6a753972145177d4b90be7c715d39baf89",
+   "bytes": 182796,
    "counts": {
     "units": 22,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 10,
+    "enhancements": 34,
+    "stratagems": 51,
+    "frules": 1
    }
   },
   {
    "id": "wp-necrons",
    "file": "wp-necrons.json",
-   "sha1": "1ba49b265d11b6e80c1fd5e386dbd6b794a09d1c",
-   "bytes": 210771,
+   "sha1": "c4b261a872e4b92c9bf33f944214bf014bdf7e79",
+   "bytes": 265244,
    "counts": {
     "units": 64,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 12,
+    "enhancements": 42,
+    "stratagems": 63,
+    "frules": 1
    }
   },
   {
    "id": "wp-orks",
    "file": "wp-orks.json",
-   "sha1": "39dd22efe9ad284d9e9945e3331d1210d40127f3",
-   "bytes": 55489,
+   "sha1": "d8122a7dc43979e490322093199b5697674bef07",
+   "bytes": 54476,
    "counts": {
     "units": 0,
     "ext": 67,
     "detachments": 0,
     "enhancements": 3,
-    "stratagems": 40
+    "stratagems": 32,
+    "frules": 4
    }
   },
   {
    "id": "wp-space-marines",
    "file": "wp-space-marines.json",
-   "sha1": "3b637f530762c1fb8b0e9e0c4a919ebd61e40112",
-   "bytes": 193757,
+   "sha1": "3abd14b2713781002c35b3e68dfc39041d047567",
+   "bytes": 187880,
    "counts": {
     "units": 1,
     "ext": 184,
-    "detachments": 4,
-    "enhancements": 27,
-    "stratagems": 97
+    "detachments": 0,
+    "enhancements": 19,
+    "stratagems": 81,
+    "frules": 16
    }
   },
   {
    "id": "wp-t-au-empire",
    "file": "wp-t-au-empire.json",
-   "sha1": "f74d30ea048a6b61b7323f7abf2234d5e7da8e11",
-   "bytes": 226302,
+   "sha1": "3b551e0f874b223225e6cb429e62e2f69bdb767d",
+   "bytes": 256245,
    "counts": {
     "units": 62,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 7,
+    "enhancements": 23,
+    "stratagems": 31,
+    "frules": 1
    }
   },
   {
    "id": "wp-thousand-sons",
    "file": "wp-thousand-sons.json",
-   "sha1": "48b131ac77425083385af5fe4c647aff3aefdf13",
-   "bytes": 133305,
+   "sha1": "d745639b29e10a6e7b2483559f85c0bd4b32aa18",
+   "bytes": 178619,
    "counts": {
     "units": 38,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 9,
+    "enhancements": 30,
+    "stratagems": 45,
+    "frules": 3
    }
   },
   {
    "id": "wp-tyranids",
    "file": "wp-tyranids.json",
-   "sha1": "f66924bd3b59157c8fce4971f654ae305a7c71b9",
-   "bytes": 157503,
+   "sha1": "484700773d9a95a6df7681d2202beb54ae89552e",
+   "bytes": 202652,
    "counts": {
     "units": 57,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 10,
+    "enhancements": 34,
+    "stratagems": 51,
+    "frules": 2
    }
   },
   {
    "id": "wp-world-eaters",
    "file": "wp-world-eaters.json",
-   "sha1": "c99bfe22663724fa42dda1059cf875a21cfa1c05",
-   "bytes": 154608,
+   "sha1": "a9d625ecc99e99d7b2af28e602d877e2f0377269",
+   "bytes": 191884,
    "counts": {
     "units": 36,
     "ext": 0,
-    "detachments": 0,
-    "enhancements": 0,
-    "stratagems": 0
+    "detachments": 8,
+    "enhancements": 26,
+    "stratagems": 39,
+    "frules": 3
+   }
+  },
+  {
+   "id": "lex",
+   "file": "lex.json",
+   "sha1": "0a7f38592f970cc4eb639e1e849fbced6cf95a5a",
+   "bytes": 80207,
+   "counts": {
+    "words": 2765
    }
   }
  ]

@@ -32,11 +32,12 @@ async function gunzip(b64){const bin=atob(b64),u=new Uint8Array(bin.length);for(
  const rs=new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip")));return rs.text()}
 const D={fr:{},frN:0,ready:false,man:null,chunks:{},units:[],byId:{},dets:[],enh:[],str:[],rules:[],err:null,origin:""};
 const normN=s=>String(s||"").toLowerCase().replace(/’/g,"'").replace(/\[.*?\]/g,"").replace(/[^a-z0-9]/g,"");
-function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.fr={};D.frN=0;const ext={};
+function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D.frules={};D.units=[];D.dets=[];D.enh=[];D.str=[];D.rules=[];D.byId={};D.fr={};D.frN=0;const ext={};
  Object.entries(D.chunks).forEach(([id,c])=>{
   if(id==="fr"){D.fr=c.tr||{};D.frN=Object.keys(D.fr).length;return}
   if(id==="lex"){D.lexB=c.words||{};return}
   const g=id.replace(/^wp-/,"");
+  if(c.frules&&c.frules.length)D.frules[g]=c.frules;
   (c.units||[]).forEach(u=>{u._c=g;u.src=u.src||"bsdata";D.units.push(u);D.byId[u.id]=u});
   if(c.ext)Object.entries(c.ext).forEach(([k,e])=>{(ext[g]=ext[g]||{})[k]=e});
   (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});

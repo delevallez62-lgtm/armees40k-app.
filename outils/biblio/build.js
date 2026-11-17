@@ -112,7 +112,7 @@ function ldrPick(key){const c=BLD.cfg,le=entryOf(key);if(!le)return;const m=ensu
 function detList(L){const g=L.bld&&L.bld.fac;const grp=String(g||"").indexOf("sm:")===0?"space-marines":g;return D.dets.filter(d=>!grp||d._c===grp).sort((a,b)=>a.n.localeCompare(b.n))}
 function detHtml(){const L=curL(),cur=L.bld&&L.bld.det,q=nk(BLD.dq||"");let A=detList(L).filter(d=>!q||nk(d.n).includes(q));
  const sub=d=>{const ab=d.ab||{},t=trDesc(ab.description||""),tx=t.st==="ok"?t.t:(t.prop||ab.description||""),rs=/Restrictions?:\s*([\s\S]*)$/i.exec(stripMd(tx)),st=D.str.filter(x=>nk(x.det||"")===nk(d.n)),en=D.enh.filter(x=>nk(x.det||"")===nk(d.n));
-  return`<details class="bib-nw"><summary><b>${E(tName(d.n).t)}</b> ${cur&&cur.id===d.id?'<span class="bib-st">choisi</span>':""} <span class="bib-meta">${st.length} stratagème${st.length>1?"s":""} · ${en.length} optimisation${en.length>1?"s":""}${d.pts!=null?" · "+d.pts+" pts":""}</span></summary>
+  return`<details class="bib-nw"><summary><b>${E(tName(d.n).t)}</b> ${cur&&cur.id===d.id?'<span class="bib-st">choisi</span>':""} <span class="bib-meta">${st.length} stratagème${st.length>1?"s":""} · ${en.length} optimisation${en.length>1?"s":""}${d.pts!=null?" · "+d.pts+" pts":""}</span><div class="bib-meta">🎯 ${(d.dp||[]).length?E((d.dp||[]).map(p=>{try{return misTag(DISP[p])}catch(_){return p}}).join(" · ")):"Force Disposition inconnue"}</div></summary>
   ${ab.name?`<h4>${E(tAB(ab.name).t)}</h4><div>${md2(tx)}</div>`:""}${rs?`<h4>Restrictions connues</h4><p>${E(rs[1].trim())}</p>`:""}
   ${st.length?`<h4>Stratagèmes</h4><ul style="padding-left:18px;margin:4px 0">${st.map(x=>`<li><b>${E(tName(x.n).t)}</b> <span class="bib-meta">${x.cp!=null?x.cp+" PC":""}</span></li>`).join("")}</ul>`:""}
   ${en.length?`<h4>Optimisations</h4><ul style="padding-left:18px;margin:4px 0">${en.map(x=>`<li><b>${E(tName(x.n).t)}</b> <span class="bib-meta">${x.pts==null?"coût à vérifier":x.pts+" pts"}</span></li>`).join("")}</ul>`:""}
@@ -173,7 +173,7 @@ function editHtml(L){syncPts(L);const R=calc(L),b=L.bld||(L.bld={}),pct=b.limit?
  return`<div class="card"><div class="row" style="justify-content:space-between;gap:6px"><input id="bldname" value="${E(L.name)}" style="font-weight:700;flex:1"><button class="b" data-bld="home">← Armées</button></div>
  <div class="bld-pts ${over?"over":""}"><b>${R.unk?"≥ ":""}${fmt(R.total)} / ${b.limit?fmt(b.limit):"—"} points</b><div class="bld-bar2"><i style="width:${pct}%"></i></div>${R.unk?`<span class="bib-meta">${R.unk} coût à vérifier : total non exact</span>`:""}${over?`<span class="bib-meta" style="color:#e0563f">Limite dépassée de ${fmt(R.total-b.limit)} pts</span>`:""}</div>
  <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px"><label style="flex:1;min-width:120px">Faction<select id="bldfac2"><option value="">—</option>${facList().map(([k,n])=>`<option value="${E(k)}"${b.fac===k?" selected":""}>${E(n)}</option>`).join("")}</select></label><label style="width:110px">Limite<input id="bldlim2" inputmode="numeric" value="${E(b.limit||"")}"></label><label style="flex:1;min-width:120px">Format<input id="bldfmt2" value="${E(b.fmt||"")}"></label></div>
- <div class="row" style="gap:6px;margin-top:6px"><button class="b" data-bld="det">${b.det?"⚔ "+E(b.det.name):"⚔ Choisir un détachement"}</button></div></div>
+ <div class="row" style="gap:6px;margin-top:6px"><button class="b" data-bld="det">${b.det?"⚔ "+E(b.det.name):"⚔ Choisir un détachement"}</button></div></div>${missionBlock(L)}${ruleBlock(L)}
  ${lg?`<div class="card" style="border-color:var(--ac)"><b>Mise à jour des points</b><p class="bib-meta">Ancien total : ${fmt(lg.o)} pts · Nouveau total : ${fmt(lg.n)} pts · Différence : ${lg.n-lg.o>=0?"+":""}${lg.n-lg.o} pts</p>${lg.ch.map(x=>`<div class="bib-meta">${E(x.n)} : ${x.o} → ${x.p} pts</div>`).join("")}<p class="bib-meta">Les effectifs et équipements n'ont pas changé.</p><button class="b" data-bld="logok">OK</button></div>`:""}
  <div class="row" style="gap:6px;margin:8px 0"><button class="b p" data-bld="add" style="flex:2">➕ Ajouter une unité</button><button class="b" data-bld="recap" style="flex:1">📋 Récapitulatif</button></div>
  ${un||'<div class="card"><p class="bib-meta">Aucune unité. Touche « Ajouter une unité » pour ouvrir le catalogue.</p></div>'}
@@ -183,6 +183,34 @@ function sheetHtml(L){if(BLD.scr==="cat")return catHtml(L);if(BLD.scr==="cfg")re
 function render(){css();const L=curL(),ov=["cat","cfg","ldr","det","recap"].includes(BLD.scr)&&L,b=box("bldm");
  if(!ov){b.innerHTML="";return}const old=b.querySelector(".bib-pn"),st=old?old.scrollTop:0,keep=document.activeElement&&document.activeElement.id;
  b.innerHTML=`<div class="bib-ov" data-bld="bg"><div class="bib-pn">${sheetHtml(L)}</div></div>`;const pn=b.querySelector(".bib-pn");if(pn)pn.scrollTop=st;if(keep){const f=document.getElementById(keep);if(f&&f.setSelectionRange){f.focus();try{f.setSelectionRange(f.value.length,f.value.length)}catch(_){}}}}
+/* ----- règle de faction + mission principale (Force Disposition) ----- */
+const DISP={"Take and Hold":"take-and-hold","Purge the Foe":"purge-the-foe","Disruption":"disruption","Reconnaissance":"reconnaissance","Priority Assets":"priority-assets"};
+const ORD5=["take-and-hold","purge-the-foe","disruption","reconnaissance","priority-assets"];
+const grpOfFac=f=>String(f||"").indexOf("sm:")===0?"space-marines":String(f||"");
+function listGroup(L){let g=grpOfFac(L.bld&&L.bld.fac);if(g)return g;const c={};(L.units||[]).forEach(u=>{const lu=u.cfg&&u.cfg.lib&&D.byId[u.cfg.lib],lk=!lu&&LB().links[u.ref],x=lu||(lk&&D.byId[lk.id]);if(x)c[x._c]=(c[x._c]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""}
+function frItems(L){const g=listGroup(L),src=g&&D.frules&&D.frules[g];
+ if(src&&src.length){const it=src.map(r=>{const t=trDesc(r.d),tx=stripMd(t.st==="ok"?t.t:(t.prop||r.d));return{n:tAB(r.n).t,d:tx}});
+  if(JSON.stringify((L.frule||{}).items)!==JSON.stringify(it)){L.frule={g,at:Date.now(),items:it};try{save()}catch(_){}}return it}
+ return(L.frule&&L.frule.items)||[]}
+function ruleBlock(L){const it=frItems(L);if(!it.length)return"";const fl=facList().find(x=>x[0]===listGroup(L));
+ return`<details class="card bld-fr" id="bldfr" ${BLD.fro?"open":""}><summary><b>📜 Règle de faction</b> <small class="bib-meta">${E(fl?fl[1]:"")}</small></summary>${it.map(x=>`<h4 style="margin:8px 0 2px">${E(x.n)}</h4><div style="font-size:14px">${md2(x.d)}</div>`).join("")}</details>`}
+function dispsOf(L){const names=[];if(L.bld&&L.bld.det)names.push(L.bld.det.en||L.bld.det.name);(L.dets||[]).forEach(d=>names.push(d.name));const out=[],seen=new Set();
+ names.forEach(n=>{const d=D.dets.find(x=>nk(x.n)===nk(n)||nk(tName(x.n).t)===nk(n));if(d)(d.dp||[]).forEach(p=>{const id=DISP[p];if(id&&!seen.has(id)){seen.add(id);out.push({id,en:p,det:d.n})}})});return out}
+const msdOf=(me,op)=>{const M=window.__msd||[],l=M.filter(m=>m.cat===me);return l[ORD5.indexOf(op)]||null};
+function missionBlock(L){if(!L.bld||!L.bld.det&&!(L.dets||[]).length)return"";const ds=dispsOf(L),opts=ds.length?ds:ORD5.map(id=>({id,en:id})),cur=L.mission,okc=opts.some(o=>o.id===cur);
+ if(opts.length===1&&L.mission!==opts[0].id){L.mission=opts[0].id;L.game=L.game||"w40k";try{save()}catch(_){}}
+ const nm=id=>{try{return misTag(id)}catch(_){return id}};
+ const tbl=L.mission?`<table style="width:100%;font-size:12.5px;margin-top:6px">${ORD5.map(op=>{const m=msdOf(L.mission,op);return`<tr><td class="bib-meta">si l'adversaire a ${E(nm(op))}</td><td><b>${E(m?m.nm:"—")}</b></td></tr>`}).join("")}</table>`:"";
+ return`<div class="card" id="bldms"><b>🎯 Mission principale</b><p class="bib-meta">${ds.length?(opts.length>1?"Ton détachement donne le choix entre "+opts.length+" Forces Dispositions. Choisis celle de ton armée :":"Force Disposition imposée par ton détachement :"):"Force Disposition inconnue pour ce détachement : choisis librement (à vérifier)."}</p>
+ <div class="row" style="gap:6px;flex-wrap:wrap">${opts.map(o=>`<button type="button" class="b ${L.mission===o.id?"p":""}" data-bld="disp" data-v="${o.id}">${E(nm(o.id))}</button>`).join("")}</div>${tbl}${L.mission&&!okc&&ds.length?`<p class="bib-meta" style="color:#e0a030">⚠ Cette disposition n'est pas proposée par le détachement choisi (à vérifier).</p>`:""}
+ <p class="bib-meta">La mission principale exacte dépend de la Force Disposition de l'adversaire. Le mode jeu l'utilise automatiquement.</p></div>`}
+/* petit texte « Règle de faction » sous les en-têtes : liste d'unités et mode jeu */
+{const old=window.tbPost;window.tbPost=()=>{try{postRule()}catch(_){}if(old)old()}}
+function postRule(){const m=document.getElementById("m"),o=document.getElementById("bldfr");const t=typeof tab!=="undefined"?tab:"";
+ if(!m||!["units","play","pst"].includes(t)){if(o&&o.dataset.auto)o.remove();return}
+ const L=(S.lists||[]).find(l=>l.id===S.cur);if(!L){if(o&&o.dataset.auto)o.remove();return}if(o&&o.dataset.auto==="1"&&o.dataset.l===L.id+"|"+t)return;
+ const h=ruleBlock(L);if(o&&o.dataset.auto)o.remove();if(!h)return;m.insertAdjacentHTML("afterbegin",h.replace('id="bldfr"','id="bldfr" data-auto="1" data-l="'+L.id+"|"+t+'"'))}
+document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.id==="bldfr")BLD.fro=d.open},true);
 /* ----- événements ----- */
 window.XV=window.XV||{};XV.bld=function(){try{if(!D.ready&&!D.err)init();const L=curL();return L&&BLD.scr!=="home"?editHtml(L):homeHtml()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const rd=()=>{try{draw()}catch(_){}render()};
@@ -193,7 +221,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="lim"){const i=document.getElementById("bldlim");if(i)i.value=b.dataset.v;return}
  if(a==="create"){const g=id=>(document.getElementById(id)||{}).value||"",fac=g("bldfac");if(!fac){try{toast("Choisis d'abord une faction")}catch(_){}return}
   await init();const n=g("bldn").trim()||"Armée "+((S.lists||[]).length+1),fl=facList().find(x=>x[0]===fac),l={id:"l"+Date.now(),name:n,units:[],dets:[],strats:[],total:"",bld:{fac,facN:fl?fl[1]:fac,fmt:g("bldfmt").trim(),limit:parseInt(g("bldlim"),10)||0,pv:ptsVer(),tot:0}};
-  S.lists.push(l);S.cur=l.id;BLD.id=l.id;BLD.scr="edit";save();rd();return}
+  S.lists.push(l);S.cur=l.id;BLD.id=l.id;BLD.scr="edit";try{frItems(l)}catch(_){}save();rd();return}
  if(a==="open"){BLD.id=b.dataset.id;const l=curL();if(l&&!l.bld)l.bld={fac:"",facN:"",fmt:"",limit:+l.ovP||0,pv:ptsVer(),tot:null};BLD.scr="edit";S.cur=BLD.id;rd();return}
  if(a==="home"){BLD.scr="home";BLD.id=null;rd();return}
  if(!L)return;
@@ -226,6 +254,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="share"){const t=recapText(L);try{if(navigator.share)await navigator.share({title:L.name,text:t});else{await navigator.clipboard.writeText(t);toast("Liste copiée : colle-la où tu veux ✓")}}catch(_){}return}
  if(a==="dup"){const n=clone(L);n.id="l"+Date.now();n.name=L.name+" (copie)";S.lists.push(n);S.cur=n.id;BLD.id=n.id;save();toast("Armée dupliquée ✓");rd();return}
  if(a==="classic"){S.cur=L.id;tab="units";try{draw()}catch(_){}return}
+ if(a==="disp"){L.mission=b.dataset.v;L.game=L.game||"w40k";if(L.mid){try{const mm=(window.__msd||[]).find(x=>x.id===L.mid);if(!mm||mm.cat!==L.mission)L.mid=""}catch(_){}}save();rd();return}
  if(a==="logok"){(L.bld.log||[]).forEach(x=>x.seen=true);save();rd();return}
 },true);
 document.addEventListener("input",e=>{const t=e.target;if(!t)return;
@@ -238,7 +267,7 @@ document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const
  if(t.id==="bldf"){BLD.fac=t.value;render()}else if(t.id==="bldr"){BLD.role=t.value;render()}
  else if(t.dataset&&t.dataset.bldck==="lall"){BLD.lall=t.checked;render()}
  else if(t.id==="bldname"&&L){L.name=t.value.trim()||L.name;save()}
- else if(t.id==="bldfac2"&&L){L.bld.fac=t.value;const f=facList().find(x=>x[0]===t.value);L.bld.facN=f?f[1]:"";save();rd()}
+ else if(t.id==="bldfac2"&&L){L.bld.fac=t.value;const f=facList().find(x=>x[0]===t.value);L.bld.facN=f?f[1]:"";try{frItems(L)}catch(_){}save();rd()}
  else if(t.id==="bldlim2"&&L){L.bld.limit=parseInt(t.value,10)||0;save();rd()}
  else if(t.id==="bldfmt2"&&L){L.bld.fmt=t.value.trim();save()}
  else if(t.id==="bldimp"&&t.files&&t.files[0]){try{const l=importJson(await t.files[0].text());BLD.id=l.id;BLD.scr="edit";S.cur=l.id;toast("Armée importée ✓");rd()}catch(err){try{toast("⚠ "+err.message)}catch(_){}}}},true);

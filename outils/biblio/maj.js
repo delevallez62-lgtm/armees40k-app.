@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:14,d:"2026-11-17",t:"Missions principales et règle de faction",s:"Les détachements de toutes les factions indiquent leurs Forces Dispositions (Wahapedia) : tu choisis la mission principale de ton armée, avec les missions selon l'adversaire. La règle de faction est notée sur l'armée et lisible dans la liste et le mode jeu."},
  {id:13,d:"2026-11-17",t:"Constructeur d'armée",s:"Catalogue visuel (collection et bibliothèque, une seule carte par unité), effectifs et paliers de points V11, armes compactes, équipements payants, meneurs, détachements, optimisations, récapitulatif, export PDF et JSON, et mise à jour des points avec différences."},
  {id:12,d:"2026-11-17",t:"Mises à jour automatiques et onglet Nouveautés",s:"À chaque lancement, l'appli récupère la dernière version de la bibliothèque et applique les changements à toutes tes fiches et listes. Une fenêtre résume ce qui a changé. L'onglet Nouveautés garde tout, avec des tiroirs modifiables."},
  {id:11,d:"2026-11-17",t:"Traduction qui apprend",s:"Le lexique est appris des traductions déjà présentes. Une phrase proche d'une phrase connue est adaptée, et chaque traduction que tu valides enrichit la mémoire."},

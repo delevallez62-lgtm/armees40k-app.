@@ -139,32 +139,37 @@ def splitdesc(t):
 def similar(a,b):return a==b or difflib.SequenceMatcher(None,a,b).ratio()>=0.86
 dets_new={g:[] for g in GROUPS};str_new=dict((g,[]) for g in GROUPS);enh_new=dict((g,[]) for g in GROUPS)
 DET=rd('Detachments');DABI=rd('Detachment_abilities')
+MATCHED={d['id'] for d in DET if (d.get('type') or '').strip()==''}   # jeu égal (pas Boarding Actions)
+EMPTY={'detachments':[],'stratagems':[],'enhancements':[]}
 for d in DET:
-    if d['faction_id'] not in BASE:continue
+    if d['id'] not in MATCHED or d['faction_id'] not in GRP:continue
     g=GRP[d['faction_id']]
-    if any(similar(norm(d['name']),norm(x['n'])) for x in lib[g]['detachments']):continue
+    if any(similar(norm(d['name']),norm(x['n'])) for x in lib.get(g,EMPTY)['detachments']):continue
     abil=[{'name':a['name'],'description':clean(a['description'])} for a in DABI if a['detachment_id']==d['id']]
     dets_new[g].append({'id':'w-'+d['id'],'n':d['name'],'f':FNAME[d['faction_id']],'ab':abil[0] if abil else None,'abx':abil[1:],'pts':int(d['dp']) if (d.get('dp') or '').isdigit() else None,'dp':[x.strip() for x in (d.get('force_disposition') or '').split(',') if x.strip()],'rt':[],'src':'wahapedia'})
 for s in rd('Stratagems'):
-    if s['faction_id'] not in BASE:continue
+    if s['faction_id'] not in GRP or (s.get('detachment_id') and s['detachment_id'] not in MATCHED) or not s.get('detachment_id'):continue
     g=GRP[s['faction_id']];dk=norm(s['detachment'])
-    if any(norm(x.get('det') or '')==dk and similar(norm(s['name']),norm(x['n'])) for x in lib[g]['stratagems']):continue
+    if any(norm(x.get('det') or '')==dk and similar(norm(s['name']),norm(x['n'])) for x in lib.get(g,EMPTY)['stratagems']):continue
     p=splitdesc(s['description'])
     str_new[g].append({'id':'w-'+s['id'],'n':s['name'].title() if s['name'].isupper() else s['name'],'f':FNAME[s['faction_id']],'det':s['detachment'] or None,'t':s['type'],'cp':int(s['cp_cost']) if (s.get('cp_cost') or '').isdigit() else s.get('cp_cost'),'ph':s['phase'],'when':p['when'],'tg':p['tg'],'fx':p['fx'],'rs':p['rs'] or None,'src':'wahapedia'})
 for e in rd('Enhancements'):
-    if e['faction_id'] not in BASE:continue
+    if e['faction_id'] not in GRP or (e.get('detachment_id') and e['detachment_id'] not in MATCHED):continue
     g=GRP[e['faction_id']];dk=norm(e['detachment'])
-    if any(norm(x.get('det') or '')==dk and similar(norm(e['name']),norm(x['n'])) for x in lib[g]['enhancements']):continue
+    if any(norm(x.get('det') or '')==dk and similar(norm(e['name']),norm(x['n'])) for x in lib.get(g,EMPTY)['enhancements']):continue
     enh_new[g].append({'id':'w-'+e['id'],'n':e['name'],'f':FNAME[e['faction_id']],'det':e['detachment'] or None,'d':clean(e['description']),'pts':int(e['cost']) if (e.get('cost') or '').isdigit() else None,'src':'wahapedia'})
+FR={g:[] for g in GROUPS}
+for a in rd('Abilities'):
+    if a.get('faction_id') in GRP and (a.get('name') or '').strip():FR[GRP[a['faction_id']]].append({'id':'w-'+a['id'],'n':a['name'].strip(),'d':clean(a['description'])})
 # ---------- écriture ----------
 man=json.load(open(os.path.join(OUT,'manifest.json'),encoding='utf8'))
 old={c['id']:c['sha1'] for c in man['chunks']}
 newchunks=[]
 for g in GROUPS:
-    body={'schema':1,'id':'wp-'+g,'source':'Wahapedia (export de données 11e)','updated':last,'units':sorted(units_new[g],key=lambda x:x['n'].lower()),'ext':exts[g],'detachments':dets_new[g],'enhancements':enh_new[g],'stratagems':str_new[g]}
-    if not any(body[k] for k in ('units','ext','detachments','enhancements','stratagems')):continue
+    body={'schema':1,'id':'wp-'+g,'source':'Wahapedia (export de données 11e)','updated':last,'units':sorted(units_new[g],key=lambda x:x['n'].lower()),'ext':exts[g],'detachments':dets_new[g],'enhancements':enh_new[g],'stratagems':str_new[g],'frules':FR[g]}
+    if not any(body[k] for k in ('units','ext','detachments','enhancements','stratagems','frules')):continue
     raw=json.dumps(body,ensure_ascii=False,separators=(',',':'))
-    newchunks.append((body['id'],raw,{k:(len(v) if isinstance(v,(list,dict)) else 0) for k,v in body.items() if k in('units','ext','detachments','enhancements','stratagems')}))
+    newchunks.append((body['id'],raw,{k:(len(v) if isinstance(v,(list,dict)) else 0) for k,v in body.items() if k in('units','ext','detachments','enhancements','stratagems','frules')}))
 if all(old.get(i)==hashlib.sha1(r.encode()).hexdigest() for i,r,_ in newchunks):
     print('inchangée (Wahapedia)');sys.exit(0)
 man['chunks']=[c for c in man['chunks'] if not c['id'].startswith('wp-')]
