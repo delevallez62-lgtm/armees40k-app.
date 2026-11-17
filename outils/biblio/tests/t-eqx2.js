@@ -1,0 +1,11 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
+console.log(JSON.stringify(await p.evaluate(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init();
+ const W=(n,r,a,h,f,pa,d)=>({name:n,range:r,a,hit:h,f,pa,d,caps:''});
+ S.coll.nx={ref:'nx',name:'Faucheur',stats:{},weapons:[W('Masse blindée','Mêlée','3','4+','6','0','1')],equip:'',apt:'',text:[],kw:'',fkw:'',pts:0,nb:0,subs:[]};
+ const u=BIB.D.units.find(x=>x.n==='Immortals'&&x._c==='necrons');
+ const set=()=>{const x=document.createElement('button');x.dataset.bib='cmp';x.dataset.r='nx';x.dataset.id=u.id;document.body.appendChild(x);x.click()};
+ const before=!!S.coll.nx.eqx;set();await new Promise(r=>setTimeout(r,600));
+ const e=S.coll.nx.eqx;return{before,after:!!e,opt:e&&e.opt.length,loadout:e&&e.loadout.slice(0,60),comp:e&&e.comp,id:e&&e.id}})),errs);await b.close()})();

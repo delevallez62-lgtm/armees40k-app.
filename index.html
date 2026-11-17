@@ -7869,7 +7869,7 @@ function syncOne(ref){const lb=LB(),lk=lb.links[ref],m=S.coll[ref];if(!lk||!m||!
 function syncAll(){if(!D.ready)return 0;let t=0;try{Object.keys(LB().links||{}).forEach(r=>{try{t+=syncOne(r)}catch(_){}})}catch(_){}if(t){sv();Object.keys(AM).forEach(k=>delete AM[k])}return t}
 window.BIBSYNC=function(p){try{if(p&&p.ref&&S.coll[p.ref]===p&&syncOne(p.ref))sv()}catch(_){}return""};
 setInterval(()=>{try{if(LB()&&Object.keys(LB().links||{}).length)syncAll()}catch(_){}},4000);
-function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});delete AM[m.ref];return n}
+function autoLink(m,u){const pi=(u.pr.findIndex(p=>nk(p.n)===nk(u.n))>=0?u.pr.findIndex(p=>nk(p.n)===nk(u.n)):0),rows=buildCmp(m,u,pi),pick={};let n=0;rows.weapons.forEach(r=>{if(r.kind==="add"){pick[r.id]=true;n++}});applyCmp(m,u,pi,rows,pick,{});snapEq(m,u,u.wp||{});delete AM[m.ref];return n}
 function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();const bk={stats:clone(m.stats),weapons:clone(m.weapons),apt:m.apt,text:clone(m.text),kw:m.kw,pts:m.pts,at:Date.now()};lb.bk[ref]=bk;
  const done=[];const p=profOf(u,pi);m.stats=m.stats||{};
  rows.stats.forEach(r=>{if(pick[r.id]){m.stats[r.k]=r.lib;done.push(r.k)}});
@@ -7884,7 +7884,7 @@ function applyCmp(m,u,pi,rows,pick,map){map=map||{};const ref=m.ref,lb=LB();cons
  m.apt=apt.join(", ");
  const kws=String(m.kw||"").split(",").map(s=>s.trim()).filter(Boolean);rows.kw.forEach(r=>{if(pick[r.id]){kws.push(r.t.t);done.push("mot-clé:"+r.t.t)}});m.kw=kws.join(", ");
  rows.misc.forEach(r=>{if(r.id==="pts"&&pick[r.id]){m.pts=+r.lib;done.push("points")}});
- lb.links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:done,stale:false};
+ lb.links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:done,stale:false};snapEq(m,u,u.wp||{});
  if(pick.info&&u.wp){lb.links[ref].info={loadout:u.wp.loadout,comp:u.wp.comp,opt:u.wp.opt,src:"Wahapedia",at:Date.now()};done.push("informations de référence")}
  sv();return done}
 function undoLink(ref,restore){const lb=LB(),m=S.coll[ref];if(!m)return;const bk=lb.bk[ref];if(restore&&bk){m.stats=clone(bk.stats);m.weapons=clone(bk.weapons);m.apt=bk.apt;m.text=clone(bk.text);m.kw=bk.kw;m.pts=bk.pts;delete lb.bk[ref]}delete lb.links[ref];sv()}
@@ -8201,7 +8201,7 @@ function createFromLib(u){const pi=Math.max(0,u.pr.findIndex(p=>nk(p.n)===nk(u.n
  const fac=(S.fac||[]).find(f=>(u.f||[]).some(n=>nk(n)===nk(f.name||"")));
  const m={ref,name:frName(u.n),stats,weapons:wl,equip:wl.map(w=>w.name).join(", "),apt:apt.join(", "),kw:kw.join(", "),fkw:(u.f||[]).join(", "),text,xab:[],mdl:[],pts:u.pts!=null?+u.pts:0,nb:0,subs:[],fromLib:1};
  if(fac)m.fac=fac.id;
- S.coll[ref]=m;LB().links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:["fiche créée depuis la bibliothèque"],stale:false};sv();return m}
+ S.coll[ref]=m;LB().links[ref]={id:u.id,h:u.h,v:D.man.version,at:Date.now(),prof:pi,applied:["fiche créée depuis la bibliothèque"],stale:false};snapEq(m,u,u.wp||{});sv();return m}
 window.BIBCS=function(q){try{q=String(q||"").trim();if(q.length<2)return"";css();
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
  const L=search(q,"").slice(0,8);if(!L.length)return`<div class="bib-cs"><b>📚 Dans la bibliothèque</b><p class="bib-meta">Aucune unité trouvée.</p></div>`;
@@ -8231,7 +8231,7 @@ window.BIBMERGE={
    const wd=t=>new Set(nk(t).split(" ").filter(w=>w.length>3)),jac=(a,b)=>{let i=0;a.forEach(w=>{if(b.has(w))i++});const n=a.size+b.size-i;return n?i/n:0};const tl=m.text.map(wd);
    (u.ab||[]).forEach(a=>{const en=nk(a.n),fr=abLines(a);if(have.has(en)||have.has(nk(fr.name)))return;const bw=wd(fr.lines.join(" "));if(bw.size>=4&&tl.some(t=>jac(t,bw)>=.5))return;apt.push(fr.name);fr.lines.forEach(l=>m.text.push(l))});m.apt=apt.join(", ");
    const kws=String(m.kw||"").split(",").map(t=>t.trim()).filter(Boolean),hk=new Set(kws.map(nk));(u.kw||[]).forEach(k=>{const t=tKW(k).t;if(t&&!hk.has(nk(t))&&!hk.has(nk(k))){kws.push(t);hk.add(nk(t))}});m.kw=kws.join(", ");
-   delete m.fromLib;m.merged=1;delete AM[m.ref]});sv()}catch(e){try{console.error(e)}catch(_){}}}};
+   snapEq(m,u,u.wp||{});delete m.fromLib;m.merged=1;delete AM[m.ref]});sv()}catch(e){try{console.error(e)}catch(_){}}}};
 /* ---------- intégration ---------- */
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
