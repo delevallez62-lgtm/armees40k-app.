@@ -6996,6 +6996,8 @@ function draw(){
  let sg="";try{sg=typeof stx==="function"?stx(st):""}catch(_){sg=""}
  if(!sg)sg='<div class="sg">'+K6.map(function(k){return'<div class="sx"><i>'+k+'</i><b>'+esc2(st[k]||"–")+'</b></div>'}).join("")+'</div>';
  let apn="";try{apn=(typeof apNames==="function"?apNames(m):String(m.apt||"").split(",")).map(function(x){return String(x).trim()}).filter(Boolean).map(function(x){return'<span class="an">'+esc2(x)+'</span>'}).join(" ")}catch(_){}
+ let abt="";try{abt=typeof abil==="function"?abil(m):""}catch(_){}
+ let lnk="",eqh="";try{lnk=window.BIBLNKP?window.BIBLNKP(m):""}catch(_){}try{eqh=window.BIBDRW?window.BIBDRW(m,true):""}catch(_){}
  const kw=[m.kw,m.fkw].filter(Boolean).join(" · ");
  b.innerHTML='<div class="ov ovd" style="z-index:45" data-act="wpx"><div class="pn dlgp" style="width:min(560px,100%)!important;max-height:94vh;overflow:auto">'
  +'<div class="mb"><span class="mu">Fiche d’unité</span><button class="b cx" data-act="wpx" aria-label="Fermer">✕</button></div>'
@@ -7006,11 +7008,14 @@ function draw(){
  +'<div class="wpl" style="max-height:none">'+m.weapons.map(function(w,i){
    const on=W.sel.has(i),ds=[w.range,w.a?"A "+w.a:"",w.hit,w.f?"F "+w.f:"",w.pa?"PA "+w.pa:"",w.d?"D "+w.d:"",w.caps||""].filter(Boolean).join(" · ");
    return'<button type="button" class="wpr'+(on?" on":"")+'" data-act="wpt" data-i="'+i+'"><span class="wpc">'+(on?"✔":"")+'</span><span><b>'+esc2(w.name)+'</b><span class="mu" style="display:block;font-size:12px">'+esc2(ds)+'</span></span></button>'}).join("")+'</div>'
- +(apn?'<div class="sech">Aptitudes</div><p class="apn">'+apn+'</p>':'')
+ +lnk
+ +(apn||abt?'<div class="sech">Aptitudes</div>'+(apn?'<p class="apn">'+apn+'</p>':'')+abt:'')
  +(kw?'<div class="sech">Mots-clés</div><p class="mu">'+esc2(kw)+'</p>':'')
+ +eqh
  +'<div class="sv"><button class="b p" data-act="wpok"'+(n?"":" disabled")+'>'+(W.edit?"Valider":"Ajouter à la liste")+' ('+n+' arme'+(n>1?"s":"")+')</button></div></div></div>';
 }
 window.WPK={
+ refresh:function(){try{if(W)draw()}catch(_){}},
  ask:function(ref,lead){
   const m=S.coll[ref];if(!m)return false;
   if(!m.weapons||m.weapons.length<1)return false;
@@ -8065,7 +8070,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"fac":B.fac=b.dataset.v;try{draw()}catch(_){}break;
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
-  case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}break}
+  case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{window.WPK&&WPK.refresh&&WPK.refresh()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}break}
   case"pkfac":{if(typeof pk!=="undefined"&&pk){const g=b.dataset.v;pk.facs=pk.facs||[];if(g&&!pk.facs.includes(g))pk.facs.push(g);pk.addf=false;pk.q="";pkDraw()}break}
   case"pkfacx":{if(typeof pk!=="undefined"&&pk){const g=b.dataset.v;pk.facs=g?(pk.facs||[]).filter(x=>x!==g):[];pk.addf=false;pk.q="";pkDraw()}break}
   case"pkfaca":{if(typeof pk!=="undefined"&&pk){pk.addf=b.dataset.v==="1";pk.q="";pkDraw()}break}
@@ -8146,9 +8151,9 @@ function snapEq(p,u,w){try{const x={id:u.id,n:u.n,loadout:w.loadout||"",opt:(w.o
  if(JSON.stringify(p.eqx)!==JSON.stringify(x)){p.eqx=x;sv()}}catch(_){}}
 function snapAll(){if(!D.ready)return;try{Object.values(S.coll||{}).forEach(m=>{try{const lk=LB().links[m.ref];let u=lk&&D.byId[lk.id];if(!u){const am=autoMatch(m);if(am&&am.level==="ok")u=am.u}if(u)snapEq(m,u,u.wp||{})}catch(_){}})}catch(_){}}
 window.BIBSNAP=snapAll;
-window.BIBDRW=function(p){try{
+window.BIBDRW=function(p,force){try{
  if(!p||!p.ref||!S.coll[p.ref])return"";p=S.coll[p.ref];
- const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
+ const stub=(msg,btn)=>{css();const rf=E(p.ref);return`<details class="bib-dr eq" data-bibref="${rf}" ${BD.open[p.ref]||force?"open":""}><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><div class="bib-row bib-d">⚠ ${msg}${btn===false?"":`<br><button class="b p" data-bib="open" data-r="${rf}">🔎 Choisir l'équivalent anglais</button>`}</div></div></details>`};
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return stub(D.err?"Bibliothèque indisponible : "+E(D.err):"Chargement de la bibliothèque…",false)}
  const am=autoMatch(p);css();const ref=p.ref,isOpen=!!BD.open[ref],own=String(p.eqo||"").trim();
  let w=null,warn=false,saved=false;
@@ -8159,8 +8164,15 @@ window.BIBDRW=function(p){try{
  w=w||{};
  const loadout=w.loadout?`<h4>Équipement de base</h4><p>${frItem(w.loadout,"équipement de base").html}</p>`:"";
  const opts=(w.opt&&w.opt.length)?`<h4>Options d'équipement et restrictions</h4><ul style="margin:4px 0;padding-left:18px">${w.opt.map(o=>`<li style="margin:6px 0">${frItem(o,"option d'équipement").html}</li>`).join("")}</ul>`:(w.loadout||am?`<h4>Options d'équipement et restrictions</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`:"");
- return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${BD.open[ref]?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq" open><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
+ return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${BD.open[ref]||force?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq" open><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
 const eqo=m=>`<label>Options d'équipement et restrictions (texte libre, affiché dans le tiroir de la fiche)<textarea data-p="eqo" rows="4" placeholder="ex. Peut remplacer son canon par…">${E(m.eqo||"")}</textarea></label>`;
+window.BIBLNKP=function(m){try{if(!m||!m.ref||!S.coll[m.ref])return"";css();
+ if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{window.WPK&&WPK.refresh&&WPK.refresh()}catch(_){}})}return""}
+ const ref=m.ref,r=E(ref),lk=LB().links[ref];
+ if(lk&&D.byId[lk.id])return`<p class="bib-meta">📚 Liée à la version anglaise : <b>${E(tName(D.byId[lk.id].n).t)}</b></p>`;
+ const am=autoMatch(m);
+ if(am)return`<div class="bib-lkc"><b>📚 Fiche non liée</b><div class="bib-meta">Version anglaise proposée${am.level==="ok"?"":" (à vérifier)"} :</div><div class="bib-lkn">${E(tName(am.u.n).t)}</div><button type="button" class="b p" data-bib="cmp" data-r="${r}" data-id="${E(am.u.id)}">🔗 Lier et compléter la fiche</button><button type="button" class="b" data-bib="open" data-r="${r}" style="margin-top:6px">Choisir une autre fiche</button></div>`;
+ return`<div class="bib-lkc"><b>📚 Fiche non liée</b><div class="bib-meta">Aucune version anglaise trouvée automatiquement.</div><button type="button" class="b p" data-bib="open" data-r="${r}">🔎 Chercher la version anglaise</button></div>`}catch(e){return""}};
 window.BIBLNK=function(u){try{if(!u||!u.ref||!S.coll[u.ref])return"";css();
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
  const ref=u.ref,m=S.coll[ref],lk=LB().links[ref],am=autoMatch(m),lu=(lk&&D.byId[lk.id])||(am&&am.u);const r=E(ref);

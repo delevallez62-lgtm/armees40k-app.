@@ -65,6 +65,8 @@ function draw(){
  let sg="";try{sg=typeof stx==="function"?stx(st):""}catch(_){sg=""}
  if(!sg)sg='<div class="sg">'+K6.map(function(k){return'<div class="sx"><i>'+k+'</i><b>'+esc2(st[k]||"–")+'</b></div>'}).join("")+'</div>';
  let apn="";try{apn=(typeof apNames==="function"?apNames(m):String(m.apt||"").split(",")).map(function(x){return String(x).trim()}).filter(Boolean).map(function(x){return'<span class="an">'+esc2(x)+'</span>'}).join(" ")}catch(_){}
+ let abt="";try{abt=typeof abil==="function"?abil(m):""}catch(_){}
+ let lnk="",eqh="";try{lnk=window.BIBLNKP?window.BIBLNKP(m):""}catch(_){}try{eqh=window.BIBDRW?window.BIBDRW(m,true):""}catch(_){}
  const kw=[m.kw,m.fkw].filter(Boolean).join(" · ");
  b.innerHTML='<div class="ov ovd" style="z-index:45" data-act="wpx"><div class="pn dlgp" style="width:min(560px,100%)!important;max-height:94vh;overflow:auto">'
  +'<div class="mb"><span class="mu">Fiche d’unité</span><button class="b cx" data-act="wpx" aria-label="Fermer">✕</button></div>'
@@ -75,11 +77,14 @@ function draw(){
  +'<div class="wpl" style="max-height:none">'+m.weapons.map(function(w,i){
    const on=W.sel.has(i),ds=[w.range,w.a?"A "+w.a:"",w.hit,w.f?"F "+w.f:"",w.pa?"PA "+w.pa:"",w.d?"D "+w.d:"",w.caps||""].filter(Boolean).join(" · ");
    return'<button type="button" class="wpr'+(on?" on":"")+'" data-act="wpt" data-i="'+i+'"><span class="wpc">'+(on?"✔":"")+'</span><span><b>'+esc2(w.name)+'</b><span class="mu" style="display:block;font-size:12px">'+esc2(ds)+'</span></span></button>'}).join("")+'</div>'
- +(apn?'<div class="sech">Aptitudes</div><p class="apn">'+apn+'</p>':'')
+ +lnk
+ +(apn||abt?'<div class="sech">Aptitudes</div>'+(apn?'<p class="apn">'+apn+'</p>':'')+abt:'')
  +(kw?'<div class="sech">Mots-clés</div><p class="mu">'+esc2(kw)+'</p>':'')
+ +eqh
  +'<div class="sv"><button class="b p" data-act="wpok"'+(n?"":" disabled")+'>'+(W.edit?"Valider":"Ajouter à la liste")+' ('+n+' arme'+(n>1?"s":"")+')</button></div></div></div>';
 }
 window.WPK={
+ refresh:function(){try{if(W)draw()}catch(_){}},
  ask:function(ref,lead){
   const m=S.coll[ref];if(!m)return false;
   if(!m.weapons||m.weapons.length<1)return false;
