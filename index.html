@@ -8066,7 +8066,9 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
   case"unit":await init();openUnit(b.dataset.id);break;
   case"pickcoll":openPickColl(b.dataset.id);break;
   case"cmp":{await init();const m=S.coll[b.dataset.r],u=D.byId[b.dataset.id];if(!m||!u)break;const n=autoLink(m,u);closeM("bibm");try{draw()}catch(_){}try{toast("Liée ✓"+(n?" · "+n+" arme"+(n>1?"s":"")+" ajoutée"+(n>1?"s":""):"")+" · options et restrictions d'équipement ajoutées")}catch(_){}break}
-  case"pkfac":{if(typeof pk!=="undefined"&&pk){pk.fac=b.dataset.v||undefined;pk.q="";pkDraw()}break}
+  case"pkfac":{if(typeof pk!=="undefined"&&pk){const g=b.dataset.v;pk.facs=pk.facs||[];if(g&&!pk.facs.includes(g))pk.facs.push(g);pk.addf=false;pk.q="";pkDraw()}break}
+  case"pkfacx":{if(typeof pk!=="undefined"&&pk){const g=b.dataset.v;pk.facs=g?(pk.facs||[]).filter(x=>x!==g):[];pk.addf=false;pk.q="";pkDraw()}break}
+  case"pkfaca":{if(typeof pk!=="undefined"&&pk){pk.addf=b.dataset.v==="1";pk.q="";pkDraw()}break}
   case"pklib":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);const x=document.createElement("button");x.dataset.act="pick";x.dataset.r=m.ref;document.body.appendChild(x);x.click();x.remove();break}
   case"mk":{await init();const u=D.byId[b.dataset.id];if(!u)break;const m=createFromLib(u);try{draw()}catch(_){}try{toast("Fiche « "+m.name+" » créée ✓")}catch(_){}break}
   case"cmpx":await init();openCmp(b.dataset.r,b.dataset.id);break;
@@ -8245,24 +8247,27 @@ window.BIBPK=function(pk){try{
  const cardC=m=>{const n=(S.lists.find(l=>l.id===S.cur)||{units:[]}).units.filter(x=>x.ref===m.ref).length;return`<div class="card hv" data-act="pick" data-r="${E(m.ref)}">${n?`<span class="mu" style="float:right">✓ ×${n}</span>`:""}<div class="row">${typeof pimg==="function"?pimg(m):""}<b class="cap">${E(m.name)}</b></div></div>`};
  const cardL=u=>`<div class="card hv" data-bib="pklib" data-id="${E(u.id)}"><div class="row"><b class="cap">${E(frName(u.n))}</b></div><div class="bib-meta">📚 Bibliothèque · ${E((u.f||[]).join(", "))}${u.pts!=null?" · "+u.pts+" pts":""} — la fiche sera créée dans ta collection</div></div>`;
  const match=(m,n)=>!q||q.split(" ").every(w=>nk(n).includes(w));
- // étape 1 : choisir la faction
- if(!pk.fac&&!q){
-  const fl=facList().map(([g,n,c])=>({g,n,c,k:coll.filter(m=>slugs.get(m.ref)===g).length})),other=coll.filter(m=>!slugs.get(m.ref)).length;
+ const sel=pk.facs||(pk.facs=[]),fname=g=>g==="__other"?"Autres fiches de ma collection":(facList().find(x=>x[0]===g)||[g,g])[1];
+ // choix d'une faction (première ou supplémentaire)
+ if((!sel.length&&!q)||pk.addf){
+  const fl=facList().filter(x=>!sel.includes(x[0])).map(([g,n,c])=>({g,n,c,k:coll.filter(m=>slugs.get(m.ref)===g).length})),other=coll.filter(m=>!slugs.get(m.ref)).length;
   fl.sort((a,b)=>(b.k>0)-(a.k>0)||a.n.localeCompare(b.n));
-  return`<p class="bib-meta">Choisis d'abord une faction. Tu verras ensuite toutes ses figurines : celles de ta collection et celles de la bibliothèque.</p><div class="grid" style="margin-top:8px">${fl.map(x=>`<div class="card hv" data-bib="pkfac" data-v="${E(x.g)}"><b>${E(x.n)}</b><div class="bib-meta">${x.k?x.k+" dans ta collection · ":""}${x.c} dans la bibliothèque</div></div>`).join("")}${other?`<div class="card hv" data-bib="pkfac" data-v="__other"><b>Autres fiches de ma collection</b><div class="bib-meta">${other} sans faction identifiée</div></div>`:""}</div>`}
- // étape 2 : figurines de la faction (ou recherche dans toutes)
- let head="",C,L;
- if(pk.fac){
-  const g=pk.fac,name=g==="__other"?"Autres fiches de ma collection":(facList().find(x=>x[0]===g)||[g,g])[1];
-  head=`<div class="row" style="margin:6px 0;justify-content:space-between"><b>${E(name)}</b><button class="b" data-bib="pkfac" data-v="">↩ Changer de faction</button></div>`;
-  C=coll.filter(m=>(g==="__other"?!slugs.get(m.ref):slugs.get(m.ref)===g)&&match(m,m.name));
-  L=g==="__other"?[]:D.units.filter(u=>u._c===g&&!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n)));
+  const back=sel.length?`<div class="row" style="margin:6px 0"><button class="b" data-bib="pkfaca" data-v="0">↩ Retour aux figurines</button></div>`:"";
+  return`${back}<p class="bib-meta">${sel.length?"Ajoute une autre faction : ses figurines s'afficheront avec celles de "+E(sel.map(fname).join(", "))+".":"Choisis d'abord une faction. Tu verras ensuite toutes ses figurines : celles de ta collection et celles de la bibliothèque. Tu pourras ajouter d'autres factions ensuite."}</p><div class="grid" style="margin-top:8px">${fl.map(x=>`<div class="card hv" data-bib="pkfac" data-v="${E(x.g)}"><b>${E(x.n)}</b><div class="bib-meta">${x.k?x.k+" dans ta collection · ":""}${x.c} dans la bibliothèque</div></div>`).join("")}${other&&!sel.includes("__other")?`<div class="card hv" data-bib="pkfac" data-v="__other"><b>Autres fiches de ma collection</b><div class="bib-meta">${other} sans faction identifiée</div></div>`:""}</div>`}
+ // figurines des factions choisies (ou recherche dans toutes)
+ const inF=(m,g)=>g==="__other"?!slugs.get(m.ref):slugs.get(m.ref)===g;
+ let head="",out="";
+ if(sel.length){
+  head=`<div class="bib-chips" style="margin:6px 0">${sel.map(g=>`<button class="on" data-bib="pkfacx" data-v="${E(g)}">${E(fname(g))} ✕</button>`).join("")}<button data-bib="pkfaca" data-v="1">➕ Ajouter une faction</button></div>`;
+  sel.forEach(g=>{const C=coll.filter(m=>inF(m,g)&&match(m,m.name)).sort((a,b)=>String(a.name).localeCompare(b.name)),
+   L=(g==="__other"?[]:D.units.filter(u=>u._c===g&&!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n)))).sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
+   if(!C.length&&!L.length)return;
+   out+=`<h3 style="margin:14px 0 4px">${E(fname(g))}</h3>`+(C.length?`<h4>Ma collection (${C.length})</h4><div class="grid">${C.map(cardC).join("")}</div>`:"")+(L.length?`<h4>Bibliothèque (${L.length})</h4><div class="grid">${L.map(cardL).join("")}</div>`:"")});
  }else{
-  head=`<div class="row" style="margin:6px 0;justify-content:space-between"><b>Toutes les factions</b><button class="b" data-bib="pkfac" data-v="">↩ Choisir une faction</button></div>`;
-  C=coll.filter(m=>match(m,m.name));L=D.units.filter(u=>!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n))).slice(0,40);
- }
- C.sort((a,b)=>String(a.name).localeCompare(b.name));L.sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
- return head+(C.length?`<h4>Ma collection (${C.length})</h4><div class="grid">${C.map(cardC).join("")}</div>`:"")+(L.length?`<h4>Bibliothèque (${L.length})</h4><div class="grid">${L.map(cardL).join("")}</div>`:"")+(!C.length&&!L.length?`<p class="mu">Aucune figurine trouvée.</p>`:"")}catch(e){try{console.error(e)}catch(_){}return null}};
+  head=`<div class="row" style="margin:6px 0;justify-content:space-between"><b>Toutes les factions</b><button class="b" data-bib="pkfacx" data-v="">↩ Choisir une faction</button></div>`;
+  const C=coll.filter(m=>match(m,m.name)).sort((a,b)=>String(a.name).localeCompare(b.name)),L=D.units.filter(u=>!linked.has(u.id)&&!have.has(nnm(u.n))&&!have.has(nnm(frName(u.n)))&&match(u,u.n+" "+frName(u.n))).slice(0,40).sort((a,b)=>frName(a.n).localeCompare(frName(b.n)));
+  out=(C.length?`<h4>Ma collection (${C.length})</h4><div class="grid">${C.map(cardC).join("")}</div>`:"")+(L.length?`<h4>Bibliothèque (${L.length})</h4><div class="grid">${L.map(cardL).join("")}</div>`:"")}
+ return head+(out||`<p class="mu">Aucune figurine trouvée.</p>`)}catch(e){try{console.error(e)}catch(_){}return null}};
 /* ---------- intégration ---------- */
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};

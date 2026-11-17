@@ -13,12 +13,17 @@ await p.screenshot({path:'pk1.png'});
 await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pkfac"]')].find(e=>/^Orks/.test(e.innerText)).click());await p.waitForTimeout(400);
 console.log('étape 2:',await p.evaluate(()=>{const e=document.querySelector('#pr');return{h4:[...e.querySelectorAll('h4')].map(x=>x.innerText),coll:[...e.querySelectorAll('[data-act="pick"] b')].map(x=>x.innerText),lib:e.querySelectorAll('[data-bib="pklib"]').length}}));
 await p.screenshot({path:'pk2.png'});
-// recherche dans la faction
-await p.fill('#pq','warboss');await p.waitForTimeout(400);
-console.log('recherche warboss:',await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pklib"] b, #pr [data-act="pick"] b')].map(x=>x.innerText)));
-// choisir une unité de la bibliothèque
+// ajouter une 2e faction
+await p.evaluate(()=>document.querySelector('#pr [data-bib="pkfaca"][data-v="1"]').click());await p.waitForTimeout(300);
+console.log('choix 2e faction:',await p.evaluate(()=>document.querySelector('#pr').innerText.replace(/\n/g,' | ').slice(0,150)));
+await p.evaluate(()=>[...document.querySelectorAll('#pr [data-bib="pkfac"]')].find(e=>/^Necrons/.test(e.innerText)).click());await p.waitForTimeout(400);
+console.log('2 factions:',await p.evaluate(()=>{const e=document.querySelector('#pr');return{chips:[...e.querySelectorAll('.bib-chips button')].map(x=>x.innerText),h3:[...e.querySelectorAll('h3')].map(x=>x.innerText),lib:e.querySelectorAll('[data-bib="pklib"]').length}}));
+await p.screenshot({path:'pk3.png'});
+await p.fill('#pq','immortals');await p.waitForTimeout(300);
+console.log('recherche immortals:',await p.evaluate(()=>[...document.querySelectorAll('#pr h3, #pr [data-bib="pklib"] b')].map(x=>x.innerText)));
+// retirer Orks
+await p.evaluate(()=>[...document.querySelectorAll('#pr .bib-chips button')].find(e=>/^Orks/.test(e.innerText)).click());await p.waitForTimeout(300);
+console.log('après retrait Orks:',await p.evaluate(()=>[...document.querySelectorAll('#pr .bib-chips button')].map(x=>x.innerText)));
 await p.evaluate(()=>document.querySelector('#pr [data-bib="pklib"]').click());await p.waitForTimeout(700);
-console.log('fiche ouverte:',await p.evaluate(()=>{const e=document.querySelector('#wpk .pn');return e?e.innerText.replace(/\n/g,' | ').slice(0,150):null}),'fiche créée:',await p.evaluate(()=>Object.values(S.coll).filter(m=>m.fromLib).map(m=>m.name)));
-await p.evaluate(()=>document.querySelector('#wpk [data-act="wpok"]').click());await p.waitForTimeout(500);
-console.log('ajoutée à la liste:',await p.evaluate(()=>S.lists.find(l=>l.id==='lnew').units.map(u=>u.name+' ('+u.weapons.length+' armes)')));
+console.log('fiche:',await p.evaluate(()=>{const e=document.querySelector('#wpk .pn');return e?e.innerText.replace(/\n/g,' | ').slice(0,90):null}));
 console.log(errs);await b.close()})();
