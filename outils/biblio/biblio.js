@@ -422,12 +422,12 @@ window.BIBDRW=function(p){try{
  let w=null,warn=false,saved=false;
  if(am){const u=am.u;w=u.wp||{};warn=am.level!=="ok";snapEq(p,u,w)}
  else if(p.eqx&&(p.eqx.loadout||(p.eqx.opt||[]).length||(p.eqx.comp||[]).length)){w=p.eqx;saved=true}
- const ownH=own?`<h4>📝 Mes notes d'équipement</h4><div class="bib-oc" style="white-space:pre-wrap">${E(own)}</div>`:"";
+ const ownH=own?`<h4>Mes notes d'équipement</h4><p style="white-space:pre-wrap">${E(own)}</p>`:"";
  if(!w&&!own)return stub("Pas de version anglaise liée. Ouvre « Modifier » pour la lier ou pour écrire toi-même les options et restrictions.",false);
  w=w||{};
- const loadout=w.loadout?`<h4>🎒 Équipement de base</h4>${loadCard(w.loadout)}`:"";
- const opts=(w.opt&&w.opt.length)?`<h4>🔧 Options d'équipement et restrictions</h4>${w.opt.map(optCard).join("")}`:(w.loadout||am?`<h4>🔧 Options d'équipement et restrictions</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`:"");
- return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${saved?`<p class="bib-meta">Copie enregistrée sur ta fiche${p.eqx.n?" (« "+E(p.eqx.n)+" »)":""}.</p>`:""}${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq"><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
+ const loadout=w.loadout?`<h4>Équipement de base</h4><p>${frItem(w.loadout,"équipement de base").html}</p>`:"";
+ const opts=(w.opt&&w.opt.length)?`<h4>Options d'équipement et restrictions</h4><ul style="margin:4px 0;padding-left:18px">${w.opt.map(o=>`<li style="margin:6px 0">${frItem(o,"option d'équipement").html}</li>`).join("")}</ul>`:(w.loadout||am?`<h4>Options d'équipement et restrictions</h4><p class="bib-meta">Aucune option listée pour cette unité.</p>`:"");
+ return`<details class="bib-dr eq" data-bibref="${E(ref)}" ${isOpen?"open":""}><summary>🧰 Options d'équipement ${warn?'<span class="bib-warn">⚠</span>':""}</summary><div class="bib-drb">${loadout}${opts}${ownH}</div></details>`}catch(e){try{console.error("BIBDRW",e)}catch(_){}return`<details class="bib-dr eq"><summary>🧰 Options d'équipement <span class="bib-warn">⚠</span></summary><div class="bib-drb"><p class="bib-meta">Affichage impossible pour cette fiche.</p></div></details>`}};
 const eqo=m=>`<label>Options d'équipement et restrictions (texte libre, affiché dans le tiroir de la fiche)<textarea data-p="eqo" rows="4" placeholder="ex. Peut remplacer son canon par…">${E(m.eqo||"")}</textarea></label>`;
 window.BIBLNK=function(u){try{if(!u||!u.ref||!S.coll[u.ref])return"";css();
  if(!D.ready){if(!D.err&&!BD.wait){BD.wait=true;init().then(()=>{BD.wait=false;try{draw()}catch(_){}})}return""}
