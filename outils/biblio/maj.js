@@ -1,10 +1,10 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
- {id:41,d:"2026-11-18",t:"Peinture : scanner un pot par son code-barres",s:"Dans Peinture › Mes peintures, le bouton « ▦ Scanner un code-barres » reconnaît automatiquement la marque, le nom, la teinte et le type du pot (catalogue de 8 300 peintures et 3 900 codes-barres, hors ligne). Caméra, photo du code ou saisie à la main ; ajout automatique possible ; recherche dans le catalogue pour les pots sans code. Le catalogue se met à jour chaque nuit."},
+ {id:41,d:"2026-11-18",t:"Peinture : scanner un pot par son code-barres",s:"Dans Peinture › Mes peintures, le tiroir « ➕ Ajouter une nouvelle peinture » (fermé par défaut) contient le scanner de code-barres (caméra, photo ou capture d'écran, saisie à la main), la lecture de pot, l'import de capture et les peintures courantes. Le catalogue (8 300 peintures, 3 900 codes-barres) fonctionne hors ligne et se met à jour chaque nuit."},
  {id:40,d:"2026-11-18",t:"Import : même unité sous un autre nom ?",s:"Quand tu importes une unité (texte ou PDF) très proche d'une fiche de ta collection ou de la bibliothèque (mêmes caractéristiques et armes) mais avec un autre nom, l'appli te demande s'il s'agit de la même unité. Si tu confirmes, le nom existant est remplacé par celui de l'import partout, sans doublon."},
  {id:39,d:"2026-11-18",t:"Deuxième passe de traduction des noms",s:"441 noms de capacités, stratagèmes, améliorations, détachements et règles de faction traduits en plus (propositions à vérifier). Les noms de personnages, de lieux, de clans, le jargon ork et les noms d'équipements propres restent en anglais ; tu peux les corriger dans Nouveautés › Traduction."},
- {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Un menu discret en bas de l'onglet Nouveautés rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
+ {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Le menu Traduction s'ouvre depuis le bouton ⚠️🌐 à côté de la bannière de l'onglet Nouveautés. Il rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
  {id:37,d:"2026-11-18",t:"Points par nombre de figurines vérifiés automatiquement",s:"Chaque fiche de la bibliothèque affiche maintenant ses points selon le nombre de figurines (et selon le numéro de l'unité dans l'armée). La mise à jour quotidienne depuis Wahapedia contrôle ces points contre le fichier de Wahapedia avant de publier : en cas d'écart, rien n'est publié."},
  {id:36,d:"2026-11-17",t:"Menu Lore personnel",s:"Un espace Lore entièrement personnalisable et vierge : Histoire en tiroirs et chapitres (textes et images), Personnages, Organisations, Couleurs et Héraldique. Tout est modifiable, réorganisable, et reste sur ton appareil."},
  {id:35,d:"2026-11-17",t:"Lanceur de dés : aptitude Torrent",s:"Après le premier jet (toucher), un bouton « 🌊 Torrent » dans les capacités de l'arme fait réussir tous les dés : tu valides et tu passes directement à la blessure. Les touches automatiques ne comptent pas comme critiques. Tu peux le désactiver pour revenir aux vrais jets."},
@@ -134,7 +134,7 @@ function itemBody(key,edit){const it=itemOf(key);if(!it)return`<p class="bib-met
 function nwItem(i){const k=i.k,kind=k.split(":")[0],lab={units:"Fiche",detachments:"Détachement",enhancements:"Amélioration",stratagems:"Stratagème",rules:"Règle"}[kind];
  return`<details class="bib-nw" data-nwk="${E(k)}"><summary><b>${E(tName(i.n).t)}</b> <span class="bib-meta">${lab}</span></summary><div class="bib-nwb">${(i.d&&i.d.length)?`<ul class="bib-meta" style="margin:4px 0;padding-left:18px">${i.d.slice(0,10).map(x=>`<li>${E(x)}</li>`).join("")}</ul>`:""}<div class="bib-nwc"></div></div></details>`}
 function nwView(){css();const lb=LB();
- let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>🆕 Nouveautés</b><span><button class="b" data-bibnw="check">🔄 Vérifier maintenant</button></span></div><p class="bib-meta">${lb.last&&lb.last.ok?"Dernière version : "+E(lb.last.ok):"Version "+E(D.man?D.man.version:"")}${lb.last?" · vérifiée "+fmtD(lb.last.at):""}${lb.last&&lb.last.err?" · ⚠ "+E(lb.last.err):""}</p></div>`;
+ let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>🆕 Nouveautés</b><span style="display:inline-flex;gap:6px"><button class="b" data-trn="open" title="Traductions à faire" aria-label="Traductions à faire" style="font-size:18px;min-width:52px">⚠️🌐</button><button class="b" data-bibnw="check">🔄 Vérifier maintenant</button></span></div><p class="bib-meta">${lb.last&&lb.last.ok?"Dernière version : "+E(lb.last.ok):"Version "+E(D.man?D.man.version:"")}${lb.last?" · vérifiée "+fmtD(lb.last.at):""}${lb.last&&lb.last.err?" · ⚠ "+E(lb.last.err):""}</p></div>`;
  h+=`<h3 style="margin:14px 0 6px">📚 Bibliothèque (Wahapedia / Oracle)</h3>`;
  if(!lb.news.length)h+=`<div class="card"><p class="bib-meta">Aucune mise à jour reçue pour l'instant. Les nouveautés apparaîtront ici dès qu'elles seront publiées.</p></div>`;
  lb.news.forEach((n,ni)=>{const g=(arr,title)=>arr.length?`<h4>${title} (${arr.length})</h4>`+arr.slice(0,NW.more[ni+title]?9999:60).map(nwItem).join("")+(arr.length>60&&!NW.more[ni+title]?`<button class="b" data-bibnw="more" data-i="${ni+title}">Afficher les ${arr.length-60} autres</button>`:""):"";
@@ -143,7 +143,6 @@ function nwView(){css();const lb=LB();
    <p class="bib-meta">Version ${E(n.to||"")}${n.prop&&(n.prop.sheets||n.prop.lists)?" · "+n.prop.sheets+" fiche(s) de collection et "+n.prop.lists+" élément(s) de liste mis à jour":""}</p>
    ${g(add.filter(i=>i.k.indexOf("units:")===0),"➕ Nouvelles fiches")}${g(chg.filter(i=>i.k.indexOf("units:")===0),"✎ Fiches modifiées")}${g(add.filter(i=>i.k.indexOf("units:")!==0),"➕ Nouvelles règles")}${g(chg.filter(i=>i.k.indexOf("units:")!==0),"✎ Règles modifiées")}${del.length?`<h4>Retirées (${del.length})</h4><p class="bib-meta">${E(del.slice(0,12).map(i=>i.n).join(", "))}</p>`:""}</details>`});
  h+=`<h3 style="margin:14px 0 6px">🛠 Application</h3>`+APPLOG.map(x=>`<details class="card bib-nw"><summary><b>${E(x.t)}</b> <span class="bib-meta">${E(x.d)}</span></summary><p>${E(x.s)}</p></details>`).join("");
- h+=trSection();
  try{lb.news.forEach(n=>n.seen=true);lb.appSeen=Math.max(lb.appSeen||0,...APPLOG.map(x=>x.id));sv()}catch(_){}
  return h}
 document.addEventListener("toggle",e=>{const d=e.target;if(!d||!d.dataset||!d.dataset.nwk||!d.open)return;const c=d.querySelector(".bib-nwc");if(c&&!c.dataset.done){c.dataset.done=1;c.innerHTML=itemBody(d.dataset.nwk,false)}},true);
@@ -229,14 +228,16 @@ function trRender(){const c=document.getElementById("nwtrc");if(!c)return;const 
 document.addEventListener("toggle",e=>{const d=e.target;if(!d)return;if(d.id==="nwtr"&&d.open){trRender();return}
  if(d.dataset&&d.dataset.trk){const key=d.dataset.trk;TRN.open[key]=d.open;if(d.open){const b=d.querySelector(".trb");if(b&&b.dataset.empty){const it=(TRN.items||[]).find(x=>x.kind+":"+x.id===key);if(it){b.innerHTML=trBody(it);delete b.dataset.empty}}}}},true);
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trnq"){TRN.q=t.value;TRN.more=25;clearTimeout(TRN.t);TRN.t=setTimeout(()=>{trRender();const i=document.getElementById("trnq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},300)}});
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trn]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.trn;
+function trOpen(){css();const o=box("bibtr");o.innerHTML=`<div class="bib-ov" data-trn="bgx"><div class="bib-pn"><div class="bib-top"><h2>🌐 Traduction</h2><button class="b" data-trn="close" aria-label="Fermer">✕</button></div><div id="nwtrc"></div></div></div>`;trRender()}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trn]");if(!b)return;const a=b.dataset.trn;if(a==="bgx"&&e.target!==b)return;e.preventDefault();e.stopPropagation();
+ if(a==="open"){trOpen();return}if(a==="close"||a==="bgx"){closeM("bibtr");return}
  if(a==="kind"){TRN.kind=b.dataset.v;TRN.more=25;trRender();return}
  if(a==="more"){TRN.more+=25;trRender();return}
  if(a==="save"){const key=b.dataset.k,det=b.closest("details"),f=TRN.fields[key]||[];let n=0;
   det.querySelectorAll("[data-trfi]").forEach(t=>{const fd=f[+t.dataset.trfi];if(!fd)return;const v=t.value.trim();if(!v)return;const cur=fd.name?tName(fd.en):trDesc(fd.en);if(cur.st==="ok"&&nk(cur.t)===nk(v)&&cur.src==="user"||cur.st==="ok"&&nk(cur.t)===nk(v))return;
    const k=hh(fd.en);TXM[k]={en:fd.en,name:fd.name};storeTr(k,v);n++});
   TRN.ver++;try{toast(n?n+" traduction"+(n>1?"s":"")+" enregistrée"+(n>1?"s":"")+" ✓ (appliquée partout)":"Rien à enregistrer")}catch(_){}
-  try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(()=>{const d2=document.getElementById("nwtr");if(d2){d2.open=true;trRender()}},50)}
+  try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(trRender,50)}
 },true);
 window.XV=window.XV||{};XV.news=function(){try{if(!D.ready&&!D.err)init();return nwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 /* ----- lancement : mise à jour automatique puis fenêtre de résumé ----- */

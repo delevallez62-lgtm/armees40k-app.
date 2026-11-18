@@ -20,7 +20,8 @@ function psAdd(p,code){const H=window.__hob;if(!H)return null;const h=H.hob(),d=
  h.paints.push(np);try{H.commit()}catch(_){}return{p:np,dup:false}}
 /* ----- décodeur EAN-13 / UPC-A hors ligne (secours quand le navigateur n'a pas BarcodeDetector) ----- */
 const PSL={"3211":0,"2221":1,"2122":2,"1411":3,"1132":4,"1231":5,"1114":6,"1312":7,"1213":8,"3112":9},PSLA=Object.keys(PSL).map(k=>[k.split("").map(Number),PSL[k]]),PSP={LLLLLL:0,LLGLGG:1,LLGGLG:2,LLGGGL:3,LGLLGG:4,LGGLLG:5,LGGGLL:6,LGLGLG:7,LGLGGL:8,LGGLGL:9};
-function psDig(w){const T=w[0]+w[1]+w[2]+w[3];if(T<4)return null;const s=w.map(x=>x*7/T);let best=null,be=1e9;PSLA.forEach(([pt,d])=>{const e=pt.reduce((a,x,i)=>a+(x-s[i])*(x-s[i]),0);if(e<be){be=e;best=d}});return be<1.1?{d:best,e:be}:null}
+let PSTOL=1.1;
+function psDig(w){const T=w[0]+w[1]+w[2]+w[3];if(T<4)return null;const s=w.map(x=>x*7/T);let best=null,be=1e9;PSLA.forEach(([pt,d])=>{const e=pt.reduce((a,x,i)=>a+(x-s[i])*(x-s[i]),0);if(e<be){be=e;best=d}});return be<PSTOL?{d:best,e:be}:null}
 function psRuns(row,thr){const runs=[];let cur=row[0]<thr,n=1;for(let i=1;i<row.length;i++){const b=row[i]<thr;if(b===cur)n++;else{runs.push(n);n=1;cur=b}}runs.push(n);return{runs,first:row[0]<thr}}
 function psDecRuns(R){// R: runs commençant par une barre
  for(let i=0;i+59<=R.length&&i<R.length;i+=2){const g=R.slice(i,i+3),m=(g[0]+g[1]+g[2])/3;if(m<1||Math.abs(g[0]-m)>m*.6||Math.abs(g[1]-m)>m*.6||Math.abs(g[2]-m)>m*.6)continue;
@@ -35,6 +36,14 @@ function psDecodeImage(img){// img : ImageData ; teste plusieurs lignes horizont
  const W=img.width,H=img.height,g=new Uint8Array(W*H);for(let i=0;i<W*H;i++){g[i]=(img.data[i*4]*77+img.data[i*4+1]*151+img.data[i*4+2]*28)>>8}
  for(let f=.15;f<=.85;f+=.05){const y=Math.floor(H*f),row=g.subarray(y*W,y*W+W),c=psScanRow(row);if(c)return c}
  for(let f=.15;f<=.85;f+=.05){const x=Math.floor(W*f),col=new Uint8Array(H);for(let y=0;y<H;y++)col[y]=g[y*W+x];const c=psScanRow(col);if(c)return c}return null}
+/* lecture « profonde » d'une capture d'écran ou d'une photo : toutes les lignes, plusieurs échelles, rotations, négatif */
+function psGray(cv){const c=cv.getContext("2d",{willReadFrequently:true}),im=c.getImageData(0,0,cv.width,cv.height),n=cv.width*cv.height,g=new Uint8Array(n);for(let i=0;i<n;i++)g[i]=(im.data[i*4]*77+im.data[i*4+1]*151+im.data[i*4+2]*28)>>8;return{g,w:cv.width,h:cv.height}}
+function psScanGray(G,inv){const{g,w,h}=G,step=Math.max(1,Math.floor(h/160));for(let y=0;y<h;y+=step){let row=g.subarray(y*w,y*w+w);if(inv){const r=new Uint8Array(w);for(let i=0;i<w;i++)r[i]=255-row[i];row=r}const c=psScanRow(row);if(c)return c}
+ const sx=Math.max(1,Math.floor(w/160));for(let x=0;x<w;x+=sx){const col=new Uint8Array(h);for(let y=0;y<h;y++)col[y]=inv?255-g[y*w+x]:g[y*w+x];const c=psScanRow(col);if(c)return c}return null}
+function psDecodeDeep(src){// src : canvas
+ const W0=src.width,H0=src.height,scales=[1,.5,.75,1.5,2,.35];const old=PSTOL;
+ try{for(const tol of [1.1,2.2]){PSTOL=tol;for(const sc of scales){const w=Math.round(W0*sc),h=Math.round(H0*sc);if(w<240||w>3200||h<60)continue;const cv=document.createElement("canvas");cv.width=w;cv.height=h;const cx=cv.getContext("2d",{willReadFrequently:true});cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality="high";cx.drawImage(src,0,0,w,h);const G=psGray(cv);
+   let c=psScanGray(G,false)||psScanGray(G,true);if(c)return c}}}finally{PSTOL=old}return null}
 /* ----- interface ----- */
 function psCss(){if(document.getElementById("pscss"))return;const s=document.createElement("style");s.id="pscss";s.textContent=`#psc{position:fixed;inset:0;z-index:95;background:rgba(5,6,5,.92);display:flex;align-items:flex-end;justify-content:center}
 #psc .pp{background:var(--card);color:var(--tx);width:min(560px,100%);max-height:96vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
@@ -79,11 +88,11 @@ function psLoop(){let busy=false;const cv=document.createElement("canvas"),cx=cv
    if(!code){const w=Math.min(960,v.videoWidth),h=Math.round(v.videoHeight*w/v.videoWidth);cv.width=w;cv.height=h;cx.drawImage(v,0,0,w,h);code=psDecodeImage(cx.getImageData(0,0,w,h))}
    if(code)psOnCode(code,true)}catch(_){}busy=false}
   PS.tm=setTimeout(()=>{PS.raf=requestAnimationFrame(tick)},180)};tick()}
-async function psFromFile(f){if(!f)return;psSay("Analyse de la photo…");try{const bm=await createImageBitmap(f),w=Math.min(1600,bm.width),h=Math.round(bm.height*w/bm.width),cv=document.createElement("canvas");cv.width=w;cv.height=h;const cx=cv.getContext("2d",{willReadFrequently:true});cx.drawImage(bm,0,0,w,h);
-  let code=null;try{if("BarcodeDetector"in window){const r=await new BarcodeDetector({formats:["ean_13","upc_a","ean_8","upc_e"]}).detect(cv);if(r&&r.length)code=r[0].rawValue}}catch(_){}
-  if(!code)code=psDecodeImage(cx.getImageData(0,0,w,h));if(!code){// plusieurs rotations
-   for(const a of [90,270,180]){const c2=document.createElement("canvas");c2.width=a===180?w:h;c2.height=a===180?h:w;const x2=c2.getContext("2d",{willReadFrequently:true});x2.translate(c2.width/2,c2.height/2);x2.rotate(a*Math.PI/180);x2.drawImage(cv,-w/2,-h/2);code=psDecodeImage(x2.getImageData(0,0,c2.width,c2.height));if(code)break}}
-  if(code)psOnCode(code);else{psSay("⚠ Aucun code-barres lu sur cette photo : rapproche-toi, évite les reflets, ou saisis le code.");psDraw()}}catch(e){psSay("⚠ Photo illisible.");psDraw()}}
+async function psReadCanvas(cv){let code=null;try{if("BarcodeDetector"in window){const r=await new BarcodeDetector({formats:["ean_13","upc_a","ean_8","upc_e"]}).detect(cv);if(r&&r.length)code=r[0].rawValue}}catch(_){}
+ if(code)return code;code=psDecodeDeep(cv);if(code)return code;
+ for(const a of [90,270,180]){const w=cv.width,h=cv.height,c2=document.createElement("canvas");c2.width=a===180?w:h;c2.height=a===180?h:w;const x2=c2.getContext("2d");x2.translate(c2.width/2,c2.height/2);x2.rotate(a*Math.PI/180);x2.drawImage(cv,-w/2,-h/2);code=psDecodeDeep(c2);if(code)return code}return null}
+async function psFileToCanvas(f){const bm=await createImageBitmap(f),M=2600,sc=Math.min(1,M/Math.max(bm.width,bm.height)),cv=document.createElement("canvas");cv.width=Math.round(bm.width*sc);cv.height=Math.round(bm.height*sc);cv.getContext("2d").drawImage(bm,0,0,cv.width,cv.height);return cv}
+async function psFromFile(f){if(!f)return;psSay("Analyse de l'image…");try{const cv=await psFileToCanvas(f),code=await psReadCanvas(cv);if(code)psOnCode(code);else{psSay("⚠ Aucun code-barres lu sur cette image. Si c'est une capture, recadre-la sur le code-barres ; sinon saisis le code ou cherche la peinture dans le catalogue.");psDraw()}}catch(e){psSay("⚠ Image illisible.");psDraw()}}
 function psOpen(){psCss();let o=document.getElementById("psc");if(!o){o=document.createElement("div");o.id="psc";document.body.appendChild(o)}PS.msg="";PS.card="";PS.q="";psData();psDraw()}
 function psClose(){psStop();const o=document.getElementById("psc");if(o)o.remove();try{draw()}catch(_){}}
 document.addEventListener("click",e=>{const o=e.target.closest&&e.target.closest("[data-pscan]");if(o){e.preventDefault();e.stopPropagation();psOpen();return}
@@ -100,4 +109,8 @@ document.addEventListener("click",e=>{const o=e.target.closest&&e.target.closest
 document.addEventListener("change",e=>{const i=e.target;if(i&&i.dataset&&i.dataset.psf&&i.files&&i.files[0]){psFromFile(i.files[0]);i.value=""}},true);
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="psq"){PS.q=t.value;clearTimeout(PS.qt);PS.qt=setTimeout(()=>{const r=document.getElementById("psres");if(r)r.innerHTML=psSearchHtml()},250)}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="psman"){e.preventDefault();psOnCode(e.target.value)}});
-window.BIBPSC={open:psOpen,onCode:psOnCode,decode:psDecodeImage,lookup:psLookup,check:psCheck,type:psType,brand:psBrand,add:psAdd,data:psData};
+document.addEventListener("change",async e=>{const i=e.target;if(!i||i.id!=="gocrf"||!i.files||!i.files.length||i.__psdone)return;const files=[...i.files];e.stopImmediatePropagation();e.stopPropagation();
+ const rest=[],codes=[];for(const f of files){try{const cv=await psFileToCanvas(f),c=await psReadCanvas(cv);if(c)codes.push(c);else rest.push(f)}catch(_){rest.push(f)}}
+ if(codes.length){psOpen();codes.forEach(c=>psOnCode(c))}
+ if(rest.length){const dt=new DataTransfer();rest.forEach(f=>dt.items.add(f));i.__psdone=1;i.files=dt.files;i.dispatchEvent(new Event("change",{bubbles:true}));i.__psdone=0}},true);
+window.BIBPSC={decodeDeep:psDecodeDeep,fromCanvas:psReadCanvas,open:psOpen,onCode:psOnCode,decode:psDecodeImage,lookup:psLookup,check:psCheck,type:psType,brand:psBrand,add:psAdd,data:psData};

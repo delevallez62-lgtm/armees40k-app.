@@ -4373,14 +4373,14 @@ function hList(){const h=hob(),q=nk(hq);
   return`<div class="ghg">${us.map(u=>{const s=schOf(u.ref),st=STM[s.st]||STS[0],sw=[...new Set((s.steps||[]).map(x=>x.p).filter(Boolean))].slice(0,7).map(pid=>{const p=paintBy(pid);return p?`<i style="background:${p.c}" title="${e2(p.n)}"></i>`:""}).join("");const im=s.img||uimg(u);
    return`<button class="ghu" style="--sc:${st[2]}" data-x="sched" data-id="${u.ref}"><span class="ph${im?"":" no"}" style="${im?`background-image:url('${im}')`:""}"></span><span class="in"><b>${e2(u.name)}</b><small>${e2(facN(u.fac))}${(s.steps||[]).length?` · ${s.steps.length} étape${s.steps.length>1?"s":""}`:""}</small><span class="st">${st[1]}</span>${sw?`<span class="sw">${sw}</span>`:""}</span></button>`}).join("")}</div>`}
  const ps=h.paints.filter(p=>(!hty||p.t===hty)&&(!hbr||nk(p.b)===nk(hbr))&&(!q||nk(p.n+" "+p.b+" "+p.t+" "+(p.rg||"")+" "+(p.sku||"")+" "+(p.ean||"")).includes(q))).sort((a,b)=>a.n.localeCompare(b.n,"fr"));
- if(!ps.length)return`<p class="mu">${h.paints.length?"Aucune peinture ne correspond.":"Ta collection de peintures est vide."}</p>${h.paints.length?"":`<div class="gadd2"><button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-camgo="1">🎥 Lire un pot avec la caméra</button><button class="b p" data-x="ocr">📷 Importer depuis une capture d'écran</button><button class="b" data-x="pstarter">Ajouter 30 peintures Citadel courantes</button></div>`}`;
+ if(!ps.length)return`<p class="mu">${h.paints.length?"Aucune peinture ne correspond.":"Ta collection de peintures est vide."}</p>${h.paints.length?"":`<p class="mu">Ouvre « ➕ Ajouter une nouvelle peinture » ci-dessus pour scanner un pot, importer une capture ou ajouter les peintures courantes.</p>`}`;
  return ps.map(p=>{const used=Object.values(h.sch).filter(s=>(s.steps||[]).some(x=>x.p===p.id)).length;return`<button class="gpt" style="--pc:${p.c}" data-x="pted" data-id="${p.id}"><span class="gsw" style="background:${p.c}"></span><span class="tx"><b>${e2(p.n)}</b><small>${e2([p.b,p.rg||p.t,p.sku?"réf. "+p.sku:""].filter(Boolean).join(" · "))}${used?` · utilisée dans ${used} schéma${used>1?"s":""}`:""}</small></span><span class="stk ${p.s||"ok"}">${p.s==="bas"?"Presque vide":p.s==="achat"?"À racheter":"En stock"}</span></button>`}).join("")}
 XV.paint=()=>{const h=hob(),us=units(),done=us.filter(u=>schOf(u.ref).st==="fini").length,pc=us.length?Math.round(done*100/us.length):0;
  const chips=hTab==="sch"?[["","Toutes"],...STS.map(s=>[s[0],s[1]])].map(([k,n])=>`<button class="${hst===k?"on":""}" data-x="hst" data-k="${k}">${n}</button>`).join(""):[["","Tous les types"],...TYPES.map(t=>[t,t])].map(([k,n])=>`<button class="${hty===k?"on":""}" data-x="hty" data-k="${e2(k)}">${e2(n)}</button>`).join("");
  return`<div class="gxtitle" style="--tc:${col("paint")}">${icFor("paint")}<h2>Peinture &amp; Hobby<small>${done} / ${us.length} figurines terminées · ${h.paints.length} peinture${h.paints.length>1?"s":""}</small></h2></div>
  <div class="gprog" title="${pc} %"><i style="width:${pc}%"></i></div>
  <div class="ghtabs"><button class="${hTab==="sch"?"on":""}" data-x="htab" data-k="sch">🖌 Schémas par figurine</button><button class="${hTab==="pt"?"on":""}" data-x="htab" data-k="pt">🎨 Mes peintures</button></div>
- <div class="gxtop"><input type="search" id="gxhq" placeholder="${hTab==="sch"?"Chercher une figurine ou une faction…":"Chercher une peinture, une marque…"}" value="${e2(hq)}" autocomplete="off">${hTab==="pt"?`<button class="b p" data-x="ptnew">+ Peinture</button><button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-camgo="1">🎥 Lire un pot</button><button class="b" data-x="ocr">📷 Depuis une capture</button>`:""}</div>
+ <div class="gxtop"><input type="search" id="gxhq" placeholder="${hTab==="sch"?"Chercher une figurine ou une faction…":"Chercher une peinture, une marque…"}" value="${e2(hq)}" autocomplete="off"></div>${hTab==="pt"?`<details class="card" id="gxadd" style="margin:8px 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center"><b>➕ Ajouter une nouvelle peinture</b></summary><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-x="ptnew">+ Peinture à la main</button><button class="b" data-camgo="1">🎥 Lire un pot</button><button class="b" data-x="ocr">📷 Depuis une capture</button><button class="b" data-x="pstarter">30 peintures Citadel courantes</button></div></details>`:""}
  <div class="gchips">${chips}</div>${hTab==="pt"?`<div class="gchips">${[["","Toutes marques"],...brands().map(b=>[b,b])].map(([k,n])=>`<button class="${hbr===k?"on":""}" data-x="hbr" data-k="${e2(k)}">${e2(n)}</button>`).join("")}<button data-x="bmgr">🏷 Gérer les marques</button></div>`:""}<div id="gxhb">${hList()}</div>`};
 let wk=null;
 function paintOpts(sel){return`<option value="">— choisir —</option>`+hob().paints.slice().sort((a,b)=>a.n.localeCompare(b.n,"fr")).map(p=>`<option value="${p.id}"${p.id===sel?" selected":""}>${e2(p.n)}${p.b?" ("+e2(p.b)+")":""}</option>`).join("")}
@@ -8392,10 +8392,10 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
- {id:41,d:"2026-11-18",t:"Peinture : scanner un pot par son code-barres",s:"Dans Peinture › Mes peintures, le bouton « ▦ Scanner un code-barres » reconnaît automatiquement la marque, le nom, la teinte et le type du pot (catalogue de 8 300 peintures et 3 900 codes-barres, hors ligne). Caméra, photo du code ou saisie à la main ; ajout automatique possible ; recherche dans le catalogue pour les pots sans code. Le catalogue se met à jour chaque nuit."},
+ {id:41,d:"2026-11-18",t:"Peinture : scanner un pot par son code-barres",s:"Dans Peinture › Mes peintures, le tiroir « ➕ Ajouter une nouvelle peinture » (fermé par défaut) contient le scanner de code-barres (caméra, photo ou capture d'écran, saisie à la main), la lecture de pot, l'import de capture et les peintures courantes. Le catalogue (8 300 peintures, 3 900 codes-barres) fonctionne hors ligne et se met à jour chaque nuit."},
  {id:40,d:"2026-11-18",t:"Import : même unité sous un autre nom ?",s:"Quand tu importes une unité (texte ou PDF) très proche d'une fiche de ta collection ou de la bibliothèque (mêmes caractéristiques et armes) mais avec un autre nom, l'appli te demande s'il s'agit de la même unité. Si tu confirmes, le nom existant est remplacé par celui de l'import partout, sans doublon."},
  {id:39,d:"2026-11-18",t:"Deuxième passe de traduction des noms",s:"441 noms de capacités, stratagèmes, améliorations, détachements et règles de faction traduits en plus (propositions à vérifier). Les noms de personnages, de lieux, de clans, le jargon ork et les noms d'équipements propres restent en anglais ; tu peux les corriger dans Nouveautés › Traduction."},
- {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Un menu discret en bas de l'onglet Nouveautés rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
+ {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Le menu Traduction s'ouvre depuis le bouton ⚠️🌐 à côté de la bannière de l'onglet Nouveautés. Il rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
  {id:37,d:"2026-11-18",t:"Points par nombre de figurines vérifiés automatiquement",s:"Chaque fiche de la bibliothèque affiche maintenant ses points selon le nombre de figurines (et selon le numéro de l'unité dans l'armée). La mise à jour quotidienne depuis Wahapedia contrôle ces points contre le fichier de Wahapedia avant de publier : en cas d'écart, rien n'est publié."},
  {id:36,d:"2026-11-17",t:"Menu Lore personnel",s:"Un espace Lore entièrement personnalisable et vierge : Histoire en tiroirs et chapitres (textes et images), Personnages, Organisations, Couleurs et Héraldique. Tout est modifiable, réorganisable, et reste sur ton appareil."},
  {id:35,d:"2026-11-17",t:"Lanceur de dés : aptitude Torrent",s:"Après le premier jet (toucher), un bouton « 🌊 Torrent » dans les capacités de l'arme fait réussir tous les dés : tu valides et tu passes directement à la blessure. Les touches automatiques ne comptent pas comme critiques. Tu peux le désactiver pour revenir aux vrais jets."},
@@ -8525,7 +8525,7 @@ function itemBody(key,edit){const it=itemOf(key);if(!it)return`<p class="bib-met
 function nwItem(i){const k=i.k,kind=k.split(":")[0],lab={units:"Fiche",detachments:"Détachement",enhancements:"Amélioration",stratagems:"Stratagème",rules:"Règle"}[kind];
  return`<details class="bib-nw" data-nwk="${E(k)}"><summary><b>${E(tName(i.n).t)}</b> <span class="bib-meta">${lab}</span></summary><div class="bib-nwb">${(i.d&&i.d.length)?`<ul class="bib-meta" style="margin:4px 0;padding-left:18px">${i.d.slice(0,10).map(x=>`<li>${E(x)}</li>`).join("")}</ul>`:""}<div class="bib-nwc"></div></div></details>`}
 function nwView(){css();const lb=LB();
- let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>🆕 Nouveautés</b><span><button class="b" data-bibnw="check">🔄 Vérifier maintenant</button></span></div><p class="bib-meta">${lb.last&&lb.last.ok?"Dernière version : "+E(lb.last.ok):"Version "+E(D.man?D.man.version:"")}${lb.last?" · vérifiée "+fmtD(lb.last.at):""}${lb.last&&lb.last.err?" · ⚠ "+E(lb.last.err):""}</p></div>`;
+ let h=`<div class="card"><div class="row" style="justify-content:space-between"><b>🆕 Nouveautés</b><span style="display:inline-flex;gap:6px"><button class="b" data-trn="open" title="Traductions à faire" aria-label="Traductions à faire" style="font-size:18px;min-width:52px">⚠️🌐</button><button class="b" data-bibnw="check">🔄 Vérifier maintenant</button></span></div><p class="bib-meta">${lb.last&&lb.last.ok?"Dernière version : "+E(lb.last.ok):"Version "+E(D.man?D.man.version:"")}${lb.last?" · vérifiée "+fmtD(lb.last.at):""}${lb.last&&lb.last.err?" · ⚠ "+E(lb.last.err):""}</p></div>`;
  h+=`<h3 style="margin:14px 0 6px">📚 Bibliothèque (Wahapedia / Oracle)</h3>`;
  if(!lb.news.length)h+=`<div class="card"><p class="bib-meta">Aucune mise à jour reçue pour l'instant. Les nouveautés apparaîtront ici dès qu'elles seront publiées.</p></div>`;
  lb.news.forEach((n,ni)=>{const g=(arr,title)=>arr.length?`<h4>${title} (${arr.length})</h4>`+arr.slice(0,NW.more[ni+title]?9999:60).map(nwItem).join("")+(arr.length>60&&!NW.more[ni+title]?`<button class="b" data-bibnw="more" data-i="${ni+title}">Afficher les ${arr.length-60} autres</button>`:""):"";
@@ -8534,7 +8534,6 @@ function nwView(){css();const lb=LB();
    <p class="bib-meta">Version ${E(n.to||"")}${n.prop&&(n.prop.sheets||n.prop.lists)?" · "+n.prop.sheets+" fiche(s) de collection et "+n.prop.lists+" élément(s) de liste mis à jour":""}</p>
    ${g(add.filter(i=>i.k.indexOf("units:")===0),"➕ Nouvelles fiches")}${g(chg.filter(i=>i.k.indexOf("units:")===0),"✎ Fiches modifiées")}${g(add.filter(i=>i.k.indexOf("units:")!==0),"➕ Nouvelles règles")}${g(chg.filter(i=>i.k.indexOf("units:")!==0),"✎ Règles modifiées")}${del.length?`<h4>Retirées (${del.length})</h4><p class="bib-meta">${E(del.slice(0,12).map(i=>i.n).join(", "))}</p>`:""}</details>`});
  h+=`<h3 style="margin:14px 0 6px">🛠 Application</h3>`+APPLOG.map(x=>`<details class="card bib-nw"><summary><b>${E(x.t)}</b> <span class="bib-meta">${E(x.d)}</span></summary><p>${E(x.s)}</p></details>`).join("");
- h+=trSection();
  try{lb.news.forEach(n=>n.seen=true);lb.appSeen=Math.max(lb.appSeen||0,...APPLOG.map(x=>x.id));sv()}catch(_){}
  return h}
 document.addEventListener("toggle",e=>{const d=e.target;if(!d||!d.dataset||!d.dataset.nwk||!d.open)return;const c=d.querySelector(".bib-nwc");if(c&&!c.dataset.done){c.dataset.done=1;c.innerHTML=itemBody(d.dataset.nwk,false)}},true);
@@ -8620,14 +8619,16 @@ function trRender(){const c=document.getElementById("nwtrc");if(!c)return;const 
 document.addEventListener("toggle",e=>{const d=e.target;if(!d)return;if(d.id==="nwtr"&&d.open){trRender();return}
  if(d.dataset&&d.dataset.trk){const key=d.dataset.trk;TRN.open[key]=d.open;if(d.open){const b=d.querySelector(".trb");if(b&&b.dataset.empty){const it=(TRN.items||[]).find(x=>x.kind+":"+x.id===key);if(it){b.innerHTML=trBody(it);delete b.dataset.empty}}}}},true);
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trnq"){TRN.q=t.value;TRN.more=25;clearTimeout(TRN.t);TRN.t=setTimeout(()=>{trRender();const i=document.getElementById("trnq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},300)}});
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trn]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.trn;
+function trOpen(){css();const o=box("bibtr");o.innerHTML=`<div class="bib-ov" data-trn="bgx"><div class="bib-pn"><div class="bib-top"><h2>🌐 Traduction</h2><button class="b" data-trn="close" aria-label="Fermer">✕</button></div><div id="nwtrc"></div></div></div>`;trRender()}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trn]");if(!b)return;const a=b.dataset.trn;if(a==="bgx"&&e.target!==b)return;e.preventDefault();e.stopPropagation();
+ if(a==="open"){trOpen();return}if(a==="close"||a==="bgx"){closeM("bibtr");return}
  if(a==="kind"){TRN.kind=b.dataset.v;TRN.more=25;trRender();return}
  if(a==="more"){TRN.more+=25;trRender();return}
  if(a==="save"){const key=b.dataset.k,det=b.closest("details"),f=TRN.fields[key]||[];let n=0;
   det.querySelectorAll("[data-trfi]").forEach(t=>{const fd=f[+t.dataset.trfi];if(!fd)return;const v=t.value.trim();if(!v)return;const cur=fd.name?tName(fd.en):trDesc(fd.en);if(cur.st==="ok"&&nk(cur.t)===nk(v)&&cur.src==="user"||cur.st==="ok"&&nk(cur.t)===nk(v))return;
    const k=hh(fd.en);TXM[k]={en:fd.en,name:fd.name};storeTr(k,v);n++});
   TRN.ver++;try{toast(n?n+" traduction"+(n>1?"s":"")+" enregistrée"+(n>1?"s":"")+" ✓ (appliquée partout)":"Rien à enregistrer")}catch(_){}
-  try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(()=>{const d2=document.getElementById("nwtr");if(d2){d2.open=true;trRender()}},50)}
+  try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(trRender,50)}
 },true);
 window.XV=window.XV||{};XV.news=function(){try{if(!D.ready&&!D.err)init();return nwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 /* ----- lancement : mise à jour automatique puis fenêtre de résumé ----- */
@@ -9264,7 +9265,8 @@ function psAdd(p,code){const H=window.__hob;if(!H)return null;const h=H.hob(),d=
  h.paints.push(np);try{H.commit()}catch(_){}return{p:np,dup:false}}
 /* ----- décodeur EAN-13 / UPC-A hors ligne (secours quand le navigateur n'a pas BarcodeDetector) ----- */
 const PSL={"3211":0,"2221":1,"2122":2,"1411":3,"1132":4,"1231":5,"1114":6,"1312":7,"1213":8,"3112":9},PSLA=Object.keys(PSL).map(k=>[k.split("").map(Number),PSL[k]]),PSP={LLLLLL:0,LLGLGG:1,LLGGLG:2,LLGGGL:3,LGLLGG:4,LGGLLG:5,LGGGLL:6,LGLGLG:7,LGLGGL:8,LGGLGL:9};
-function psDig(w){const T=w[0]+w[1]+w[2]+w[3];if(T<4)return null;const s=w.map(x=>x*7/T);let best=null,be=1e9;PSLA.forEach(([pt,d])=>{const e=pt.reduce((a,x,i)=>a+(x-s[i])*(x-s[i]),0);if(e<be){be=e;best=d}});return be<1.1?{d:best,e:be}:null}
+let PSTOL=1.1;
+function psDig(w){const T=w[0]+w[1]+w[2]+w[3];if(T<4)return null;const s=w.map(x=>x*7/T);let best=null,be=1e9;PSLA.forEach(([pt,d])=>{const e=pt.reduce((a,x,i)=>a+(x-s[i])*(x-s[i]),0);if(e<be){be=e;best=d}});return be<PSTOL?{d:best,e:be}:null}
 function psRuns(row,thr){const runs=[];let cur=row[0]<thr,n=1;for(let i=1;i<row.length;i++){const b=row[i]<thr;if(b===cur)n++;else{runs.push(n);n=1;cur=b}}runs.push(n);return{runs,first:row[0]<thr}}
 function psDecRuns(R){// R: runs commençant par une barre
  for(let i=0;i+59<=R.length&&i<R.length;i+=2){const g=R.slice(i,i+3),m=(g[0]+g[1]+g[2])/3;if(m<1||Math.abs(g[0]-m)>m*.6||Math.abs(g[1]-m)>m*.6||Math.abs(g[2]-m)>m*.6)continue;
@@ -9279,6 +9281,14 @@ function psDecodeImage(img){// img : ImageData ; teste plusieurs lignes horizont
  const W=img.width,H=img.height,g=new Uint8Array(W*H);for(let i=0;i<W*H;i++){g[i]=(img.data[i*4]*77+img.data[i*4+1]*151+img.data[i*4+2]*28)>>8}
  for(let f=.15;f<=.85;f+=.05){const y=Math.floor(H*f),row=g.subarray(y*W,y*W+W),c=psScanRow(row);if(c)return c}
  for(let f=.15;f<=.85;f+=.05){const x=Math.floor(W*f),col=new Uint8Array(H);for(let y=0;y<H;y++)col[y]=g[y*W+x];const c=psScanRow(col);if(c)return c}return null}
+/* lecture « profonde » d'une capture d'écran ou d'une photo : toutes les lignes, plusieurs échelles, rotations, négatif */
+function psGray(cv){const c=cv.getContext("2d",{willReadFrequently:true}),im=c.getImageData(0,0,cv.width,cv.height),n=cv.width*cv.height,g=new Uint8Array(n);for(let i=0;i<n;i++)g[i]=(im.data[i*4]*77+im.data[i*4+1]*151+im.data[i*4+2]*28)>>8;return{g,w:cv.width,h:cv.height}}
+function psScanGray(G,inv){const{g,w,h}=G,step=Math.max(1,Math.floor(h/160));for(let y=0;y<h;y+=step){let row=g.subarray(y*w,y*w+w);if(inv){const r=new Uint8Array(w);for(let i=0;i<w;i++)r[i]=255-row[i];row=r}const c=psScanRow(row);if(c)return c}
+ const sx=Math.max(1,Math.floor(w/160));for(let x=0;x<w;x+=sx){const col=new Uint8Array(h);for(let y=0;y<h;y++)col[y]=inv?255-g[y*w+x]:g[y*w+x];const c=psScanRow(col);if(c)return c}return null}
+function psDecodeDeep(src){// src : canvas
+ const W0=src.width,H0=src.height,scales=[1,.5,.75,1.5,2,.35];const old=PSTOL;
+ try{for(const tol of [1.1,2.2]){PSTOL=tol;for(const sc of scales){const w=Math.round(W0*sc),h=Math.round(H0*sc);if(w<240||w>3200||h<60)continue;const cv=document.createElement("canvas");cv.width=w;cv.height=h;const cx=cv.getContext("2d",{willReadFrequently:true});cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality="high";cx.drawImage(src,0,0,w,h);const G=psGray(cv);
+   let c=psScanGray(G,false)||psScanGray(G,true);if(c)return c}}}finally{PSTOL=old}return null}
 /* ----- interface ----- */
 function psCss(){if(document.getElementById("pscss"))return;const s=document.createElement("style");s.id="pscss";s.textContent=`#psc{position:fixed;inset:0;z-index:95;background:rgba(5,6,5,.92);display:flex;align-items:flex-end;justify-content:center}
 #psc .pp{background:var(--card);color:var(--tx);width:min(560px,100%);max-height:96vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
@@ -9323,11 +9333,11 @@ function psLoop(){let busy=false;const cv=document.createElement("canvas"),cx=cv
    if(!code){const w=Math.min(960,v.videoWidth),h=Math.round(v.videoHeight*w/v.videoWidth);cv.width=w;cv.height=h;cx.drawImage(v,0,0,w,h);code=psDecodeImage(cx.getImageData(0,0,w,h))}
    if(code)psOnCode(code,true)}catch(_){}busy=false}
   PS.tm=setTimeout(()=>{PS.raf=requestAnimationFrame(tick)},180)};tick()}
-async function psFromFile(f){if(!f)return;psSay("Analyse de la photo…");try{const bm=await createImageBitmap(f),w=Math.min(1600,bm.width),h=Math.round(bm.height*w/bm.width),cv=document.createElement("canvas");cv.width=w;cv.height=h;const cx=cv.getContext("2d",{willReadFrequently:true});cx.drawImage(bm,0,0,w,h);
-  let code=null;try{if("BarcodeDetector"in window){const r=await new BarcodeDetector({formats:["ean_13","upc_a","ean_8","upc_e"]}).detect(cv);if(r&&r.length)code=r[0].rawValue}}catch(_){}
-  if(!code)code=psDecodeImage(cx.getImageData(0,0,w,h));if(!code){// plusieurs rotations
-   for(const a of [90,270,180]){const c2=document.createElement("canvas");c2.width=a===180?w:h;c2.height=a===180?h:w;const x2=c2.getContext("2d",{willReadFrequently:true});x2.translate(c2.width/2,c2.height/2);x2.rotate(a*Math.PI/180);x2.drawImage(cv,-w/2,-h/2);code=psDecodeImage(x2.getImageData(0,0,c2.width,c2.height));if(code)break}}
-  if(code)psOnCode(code);else{psSay("⚠ Aucun code-barres lu sur cette photo : rapproche-toi, évite les reflets, ou saisis le code.");psDraw()}}catch(e){psSay("⚠ Photo illisible.");psDraw()}}
+async function psReadCanvas(cv){let code=null;try{if("BarcodeDetector"in window){const r=await new BarcodeDetector({formats:["ean_13","upc_a","ean_8","upc_e"]}).detect(cv);if(r&&r.length)code=r[0].rawValue}}catch(_){}
+ if(code)return code;code=psDecodeDeep(cv);if(code)return code;
+ for(const a of [90,270,180]){const w=cv.width,h=cv.height,c2=document.createElement("canvas");c2.width=a===180?w:h;c2.height=a===180?h:w;const x2=c2.getContext("2d");x2.translate(c2.width/2,c2.height/2);x2.rotate(a*Math.PI/180);x2.drawImage(cv,-w/2,-h/2);code=psDecodeDeep(c2);if(code)return code}return null}
+async function psFileToCanvas(f){const bm=await createImageBitmap(f),M=2600,sc=Math.min(1,M/Math.max(bm.width,bm.height)),cv=document.createElement("canvas");cv.width=Math.round(bm.width*sc);cv.height=Math.round(bm.height*sc);cv.getContext("2d").drawImage(bm,0,0,cv.width,cv.height);return cv}
+async function psFromFile(f){if(!f)return;psSay("Analyse de l'image…");try{const cv=await psFileToCanvas(f),code=await psReadCanvas(cv);if(code)psOnCode(code);else{psSay("⚠ Aucun code-barres lu sur cette image. Si c'est une capture, recadre-la sur le code-barres ; sinon saisis le code ou cherche la peinture dans le catalogue.");psDraw()}}catch(e){psSay("⚠ Image illisible.");psDraw()}}
 function psOpen(){psCss();let o=document.getElementById("psc");if(!o){o=document.createElement("div");o.id="psc";document.body.appendChild(o)}PS.msg="";PS.card="";PS.q="";psData();psDraw()}
 function psClose(){psStop();const o=document.getElementById("psc");if(o)o.remove();try{draw()}catch(_){}}
 document.addEventListener("click",e=>{const o=e.target.closest&&e.target.closest("[data-pscan]");if(o){e.preventDefault();e.stopPropagation();psOpen();return}
@@ -9344,7 +9354,11 @@ document.addEventListener("click",e=>{const o=e.target.closest&&e.target.closest
 document.addEventListener("change",e=>{const i=e.target;if(i&&i.dataset&&i.dataset.psf&&i.files&&i.files[0]){psFromFile(i.files[0]);i.value=""}},true);
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="psq"){PS.q=t.value;clearTimeout(PS.qt);PS.qt=setTimeout(()=>{const r=document.getElementById("psres");if(r)r.innerHTML=psSearchHtml()},250)}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="psman"){e.preventDefault();psOnCode(e.target.value)}});
-window.BIBPSC={open:psOpen,onCode:psOnCode,decode:psDecodeImage,lookup:psLookup,check:psCheck,type:psType,brand:psBrand,add:psAdd,data:psData};
+document.addEventListener("change",async e=>{const i=e.target;if(!i||i.id!=="gocrf"||!i.files||!i.files.length||i.__psdone)return;const files=[...i.files];e.stopImmediatePropagation();e.stopPropagation();
+ const rest=[],codes=[];for(const f of files){try{const cv=await psFileToCanvas(f),c=await psReadCanvas(cv);if(c)codes.push(c);else rest.push(f)}catch(_){rest.push(f)}}
+ if(codes.length){psOpen();codes.forEach(c=>psOnCode(c))}
+ if(rest.length){const dt=new DataTransfer();rest.forEach(f=>dt.items.add(f));i.__psdone=1;i.files=dt.files;i.dispatchEvent(new Event("change",{bubbles:true}));i.__psdone=0}},true);
+window.BIBPSC={decodeDeep:psDecodeDeep,fromCanvas:psReadCanvas,open:psOpen,onCode:psOnCode,decode:psDecodeImage,lookup:psLookup,check:psCheck,type:psType,brand:psBrand,add:psAdd,data:psData};
 
 })();
 
