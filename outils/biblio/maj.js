@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Un menu discret en bas de l'onglet Nouveautés rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
  {id:37,d:"2026-11-18",t:"Points par nombre de figurines vérifiés automatiquement",s:"Chaque fiche de la bibliothèque affiche maintenant ses points selon le nombre de figurines (et selon le numéro de l'unité dans l'armée). La mise à jour quotidienne depuis Wahapedia contrôle ces points contre le fichier de Wahapedia avant de publier : en cas d'écart, rien n'est publié."},
  {id:36,d:"2026-11-17",t:"Menu Lore personnel",s:"Un espace Lore entièrement personnalisable et vierge : Histoire en tiroirs et chapitres (textes et images), Personnages, Organisations, Couleurs et Héraldique. Tout est modifiable, réorganisable, et reste sur ton appareil."},
  {id:35,d:"2026-11-17",t:"Lanceur de dés : aptitude Torrent",s:"Après le premier jet (toucher), un bouton « 🌊 Torrent » dans les capacités de l'arme fait réussir tous les dés : tu valides et tu passes directement à la blessure. Les touches automatiques ne comptent pas comme critiques. Tu peux le désactiver pour revenir aux vrais jets."},
@@ -139,6 +140,7 @@ function nwView(){css();const lb=LB();
    <p class="bib-meta">Version ${E(n.to||"")}${n.prop&&(n.prop.sheets||n.prop.lists)?" · "+n.prop.sheets+" fiche(s) de collection et "+n.prop.lists+" élément(s) de liste mis à jour":""}</p>
    ${g(add.filter(i=>i.k.indexOf("units:")===0),"➕ Nouvelles fiches")}${g(chg.filter(i=>i.k.indexOf("units:")===0),"✎ Fiches modifiées")}${g(add.filter(i=>i.k.indexOf("units:")!==0),"➕ Nouvelles règles")}${g(chg.filter(i=>i.k.indexOf("units:")!==0),"✎ Règles modifiées")}${del.length?`<h4>Retirées (${del.length})</h4><p class="bib-meta">${E(del.slice(0,12).map(i=>i.n).join(", "))}</p>`:""}</details>`});
  h+=`<h3 style="margin:14px 0 6px">🛠 Application</h3>`+APPLOG.map(x=>`<details class="card bib-nw"><summary><b>${E(x.t)}</b> <span class="bib-meta">${E(x.d)}</span></summary><p>${E(x.s)}</p></details>`).join("");
+ h+=trSection();
  try{lb.news.forEach(n=>n.seen=true);lb.appSeen=Math.max(lb.appSeen||0,...APPLOG.map(x=>x.id));sv()}catch(_){}
  return h}
 document.addEventListener("toggle",e=>{const d=e.target;if(!d||!d.dataset||!d.dataset.nwk||!d.open)return;const c=d.querySelector(".bib-nwc");if(c&&!c.dataset.done){c.dataset.done=1;c.innerHTML=itemBody(d.dataset.nwk,false)}},true);
@@ -181,6 +183,58 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
   const dg=x=>(String(x).match(/\d+/g)||[]).sort().join(",");if(dg(m.en)!==dg(v)&&!confirm("Les nombres ne sont pas les mêmes que dans l'original. Enregistrer quand même ?"))return;
   storeTr(k,v);TRW.ver++;TRW.open={};try{toast("Traduction enregistrée ✓")}catch(_){}try{draw()}catch(_){}}},true);
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trwq"){TRW.q=t.value;clearTimeout(TRW.t);TRW.t=setTimeout(()=>{try{draw();const i=document.getElementById("trwq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}catch(_){}},350)}});
+
+/* ===== Nouveautés › Traduction : tout ce qui n'est pas encore traduit, en tiroirs qui reprennent l'aspect de l'appli ===== */
+const TRN={kind:"units",q:"",more:25,ver:0,key:"",items:[],open:{},fields:{}};
+const trUn=t=>t.st!=="ok"&&(!t.prop||nk(t.prop)===nk(t.t));
+function trCur(t,en){return t.st==="ok"?t.t:(t.prop&&nk(t.prop)!==nk(en)?t.prop:"")}
+function trItems(){if(!D.ready||!KPREADY){if(D.ready&&!KP)buildKP();return null}
+ const key=(D.man&&D.man.version||"")+"|"+TRN.ver;if(TRN.key===key)return TRN.items;const o=[];
+ D.units.forEach(u=>{let a=trUn(tName(u.n));(u.ab||[]).forEach(x=>{if(trUn(tAB(x.n))||trUn(trDesc(x.d)))a=true});if(a)o.push({kind:"units",id:u.id,n:u.n,sub:facLbl(u)})});
+ D.str.forEach((x,i)=>{let a=trUn(tName(x.n));["when","tg","fx","rs"].forEach(k=>{if(x[k]&&trUn(trDesc(x[k])))a=true});if(a)o.push({kind:"str",id:String(i),n:x.n,sub:x.det||x.f||""})});
+ D.enh.forEach((x,i)=>{if(trUn(tName(x.n))||trUn(trDesc(x.d)))o.push({kind:"enh",id:String(i),n:x.n,sub:x.det||""})});
+ D.dets.forEach((x,i)=>{let a=trUn(tName(x.n));if(x.ab&&trUn(trDesc(x.ab.description)))a=true;(x.abx||[]).forEach(y=>{if(trUn(trDesc(y.description)))a=true});if(a)o.push({kind:"det",id:String(i),n:x.n,sub:x.f||""})});
+ (D.rules||[]).forEach((x,i)=>{if(trUn(tName(x.n))||trUn(trDesc(x.d)))o.push({kind:"rules",id:String(i),n:x.n,sub:""})});
+ TRN.key=key;TRN.items=o;return o}
+const trKindLab={units:"Fiches d'unités",str:"Stratagèmes",enh:"Améliorations",det:"Détachements",rules:"Règles"};
+/* un champ éditable : le texte français prérempli, l'original en dessous */
+function trField(key,en,isName,rows){en=String(en||"");if(!en.trim())return"";const f=TRN.fields[key]=TRN.fields[key]||[],i=f.length;f.push({en,name:!!isName});
+ const t=isName?tName(en):trDesc(en),cur=trCur(t,en);
+ return`<div class="trf ${t.st==="ok"?"ok":""}"><textarea data-trfi="${i}" rows="${isName?1:Math.min(8,Math.max(2,Math.ceil(stripMd(en).length/48)))}" placeholder="Traduction française…">${E(stripMd(cur))}</textarea><div class="bib-meta" style="font-size:11px">Original : ${E(stripMd(en).slice(0,260))}${en.length>260?"…":""}</div></div>`}
+function trBody(it){const key=it.kind+":"+it.id;TRN.fields[key]=[];let h="";
+ if(it.kind==="units"){const u=D.byId[it.id];if(!u)return"";const p=profOf(u,0);
+  h+=`<h4 style="margin-top:0">${trField(key,u.n,1)}</h4><p class="bib-meta">${E(facLbl(u))}${u.pts!=null?" · "+u.pts+" pts":""}</p>`;
+  h+=`<div class="sg">${["M","E","SV","PV","CD","CO"].map(k=>`<div class="sx"><i>${k}</i><b>${E(statOf(p,k)||"–")}</b></div>`).join("")}</div>`;
+  const w=[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))];if(w.length)h+=`<div class="bib-meta">${w.map(x=>E(x.name)+" ("+E(x.range)+" · A "+E(x.a)+" · "+E(x.hit)+" · F "+E(x.f)+" · PA "+E(x.pa)+" · D "+E(x.d)+")").join("<br>")}</div>`;
+  h+=`<h4>Capacités</h4>`+(u.ab||[]).map(a=>`<div class="bib-row"><b>${trField(key,a.n,1)}</b>${trField(key,a.d,0)}</div>`).join("")||"<p class=\"bib-meta\">Aucune capacité.</p>";
+  h+=`<h4>Mots-clés</h4><p>${(u.kw||[]).map(k=>E(tKW(k).t)).join(", ")}</p>`}
+ else if(it.kind==="str"){const x=D.str[+it.id];if(!x)return"";const ph=tPhase(x.ph||"");
+  h+=`<h4 style="margin-top:0">${trField(key,x.n,1)} <span class="bib-st">${x.cp!=null?x.cp+" PC":""}</span></h4><p class="bib-meta">${E(x.det||x.f||"")} · Phase : ${E(ph.t)}${x.t?" · "+E(x.t):""}</p>`;
+  [["when","Quand"],["tg","Cible"],["fx","Effet"],["rs","Restrictions"]].forEach(([k,l])=>{if(x[k])h+=`<p><b>${l} :</b></p>`+trField(key,x[k],0)})}
+ else if(it.kind==="enh"){const x=D.enh[+it.id];if(!x)return"";h+=`<h4 style="margin-top:0">${trField(key,x.n,1)}</h4><p class="bib-meta">${E(x.det||"")}${x.pts!=null?" · "+x.pts+" pts":""}</p>`+trField(key,x.d,0)}
+ else if(it.kind==="det"){const x=D.dets[+it.id];if(!x)return"";h+=`<h4 style="margin-top:0">${trField(key,x.n,1)}</h4><p class="bib-meta">${E(x.f||"")}${x.pts!=null?" · "+x.pts+" point(s) de détachement":""}</p>`;
+  if(x.ab)h+=`<div class="bib-row"><b>${trField(key,x.ab.name,1)}</b><div class="bib-meta">(règle du détachement)</div>${trField(key,x.ab.description,0)}</div>`;(x.abx||[]).forEach(y=>{h+=`<div class="bib-row"><b>${trField(key,y.name,1)}</b>${trField(key,y.description,0)}</div>`})}
+ else if(it.kind==="rules"){const x=D.rules[+it.id];if(!x)return"";h+=`<h4 style="margin-top:0">${trField(key,x.n,1)}</h4>`+trField(key,x.d,0)}
+ return h+`<div class="row" style="gap:6px;margin-top:10px"><button type="button" class="b p" data-trn="save" data-k="${E(key)}">✔ Enregistrer</button><span class="bib-meta" style="align-self:center">La traduction s'applique partout où ce texte apparaît.</span></div>`}
+function trSection(){return`<h3 style="margin:14px 0 6px;font-size:14px;opacity:.7">🌐 Traduction</h3><details class="card" id="nwtr"><summary style="font-size:14px">Ouvrir : tout ce qui n'est pas encore traduit</summary><div id="nwtrc" style="margin-top:8px"></div></details>`}
+function trRender(){const c=document.getElementById("nwtrc");if(!c)return;const all=trItems();if(all===null){c.innerHTML=`<p class="bib-meta">Analyse des traductions en cours…</p>`;setTimeout(trRender,700);return}
+ const q=nk(TRN.q),cnt={};all.forEach(x=>cnt[x.kind]=(cnt[x.kind]||0)+1);
+ const L=all.filter(x=>x.kind===TRN.kind&&(!q||nk(x.n+" "+x.sub+" "+tName(x.n).t).includes(q))).sort((a,b)=>a.n.localeCompare(b.n));
+ c.innerHTML=`<p class="bib-meta">${all.length} élément${all.length>1?"s":""} avec du texte non traduit. Ouvre un tiroir, modifie, enregistre : le texte est remplacé partout.</p><div class="bib-chips" style="flex-wrap:wrap">${Object.keys(trKindLab).map(k=>`<button class="${TRN.kind===k?"on":""}" data-trn="kind" data-v="${k}">${trKindLab[k]} (${cnt[k]||0})</button>`).join("")}</div><input id="trnq" placeholder="Rechercher…" value="${E(TRN.q)}" style="width:100%;margin:8px 0" autocomplete="off">
+ ${L.slice(0,TRN.more).map(it=>{const key=it.kind+":"+it.id;return`<details class="bib-nw" data-trk="${E(key)}" ${TRN.open[key]?"open":""}><summary><b>${E(tName(it.n).t)}</b> <span class="bib-meta">${E(it.sub)}</span></summary><div class="trb" ${TRN.open[key]?"":'data-empty="1"'}>${TRN.open[key]?trBody(it):""}</div></details>`}).join("")||`<p class="bib-meta">✅ Rien à traduire dans cette catégorie.</p>`}
+ ${L.length>TRN.more?`<button class="b" data-trn="more" style="width:100%">Voir plus (${L.length-TRN.more})</button>`:""}`}
+document.addEventListener("toggle",e=>{const d=e.target;if(!d)return;if(d.id==="nwtr"&&d.open){trRender();return}
+ if(d.dataset&&d.dataset.trk){const key=d.dataset.trk;TRN.open[key]=d.open;if(d.open){const b=d.querySelector(".trb");if(b&&b.dataset.empty){const it=(TRN.items||[]).find(x=>x.kind+":"+x.id===key);if(it){b.innerHTML=trBody(it);delete b.dataset.empty}}}}},true);
+document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trnq"){TRN.q=t.value;TRN.more=25;clearTimeout(TRN.t);TRN.t=setTimeout(()=>{trRender();const i=document.getElementById("trnq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},300)}});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-trn]");if(!b)return;e.preventDefault();e.stopPropagation();const a=b.dataset.trn;
+ if(a==="kind"){TRN.kind=b.dataset.v;TRN.more=25;trRender();return}
+ if(a==="more"){TRN.more+=25;trRender();return}
+ if(a==="save"){const key=b.dataset.k,det=b.closest("details"),f=TRN.fields[key]||[];let n=0;
+  det.querySelectorAll("[data-trfi]").forEach(t=>{const fd=f[+t.dataset.trfi];if(!fd)return;const v=t.value.trim();if(!v)return;const cur=fd.name?tName(fd.en):trDesc(fd.en);if(cur.st==="ok"&&nk(cur.t)===nk(v)&&cur.src==="user"||cur.st==="ok"&&nk(cur.t)===nk(v))return;
+   const k=hh(fd.en);TXM[k]={en:fd.en,name:fd.name};storeTr(k,v);n++});
+  TRN.ver++;try{toast(n?n+" traduction"+(n>1?"s":"")+" enregistrée"+(n>1?"s":"")+" ✓ (appliquée partout)":"Rien à enregistrer")}catch(_){}
+  try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(()=>{const d2=document.getElementById("nwtr");if(d2){d2.open=true;trRender()}},50)}
+},true);
 window.XV=window.XV||{};XV.news=function(){try{if(!D.ready&&!D.err)init();return nwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 /* ----- lancement : mise à jour automatique puis fenêtre de résumé ----- */
 setTimeout(async()=>{try{const lb=LB();await init();
