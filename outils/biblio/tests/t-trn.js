@@ -14,9 +14,10 @@ const t2=await ev(()=>{const d=document.querySelector('#nwtrc details.bib-nw');r
 ok('tiroir ouvert : fiche d\'unité (caractéristiques + champs modifiables)',t2.sg&&t2.ta>=1,t2);
 // modifier le nom + enregistrer
 const before=await ev(()=>{const d=document.querySelector('#nwtrc details.bib-nw');const en=d.querySelector('textarea')?TRNEN():null;return 1}).catch(()=>1);
-const r=await ev(()=>{const d=document.querySelector('#nwtrc details.bib-nw');const key=d.dataset.trk;const u=BIB.D.byId[key.split(':')[1]];const ta=d.querySelector('textarea');ta.value='Nom français de test';d.querySelector('[data-trn="save"]').click();return{n:u.n,id:u.id}});await wait(600);
+const r=await ev(()=>{const d=document.querySelector('#nwtrc details.bib-nw');const key=d.dataset.trk;const u=BIB.D.byId[key.split(':')[1]];const ta=d.querySelector('textarea');ta.value='Nom français de test';d.querySelector('[data-trn="save"]').click();return{n:u.n,id:u.id,key}});await wait(600);
 ok('enregistrement : nom traduit partout',await ev(n=>BIB.tName(n).t==='Nom français de test'&&BIB.tName(n).st==='ok',r.n),r);
 ok('le menu reste ouvert après l\'enregistrement',await ev(()=>!!document.getElementById('nwtrc')),1);
+ok('après enregistrement : la fiche est retirée des traductions à faire et fermée',await ev(k=>{const el=document.querySelector('#nwtrc details[data-trk="'+k+'"]');return !el},r.key),r.key);
 // vérifier ailleurs : bibliothèque
 await ev(()=>{tab='bib';draw()});await wait(300);
 await ev(n=>{const i=document.getElementById('bibq');i.value=n;i.dispatchEvent(new Event('input',{bubbles:true}))},'Nom français de test');await wait(600);

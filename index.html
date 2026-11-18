@@ -8578,7 +8578,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 document.addEventListener("input",e=>{const t=e.target;if(t&&t.id==="trwq"){TRW.q=t.value;clearTimeout(TRW.t);TRW.t=setTimeout(()=>{try{draw();const i=document.getElementById("trwq");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}catch(_){}},350)}});
 
 /* ===== Nouveautés › Traduction : tout ce qui n'est pas encore traduit, en tiroirs qui reprennent l'aspect de l'appli ===== */
-const TRN={kind:"units",q:"",more:25,ver:0,key:"",items:[],open:{},fields:{}};
+const TRN={done:{},kind:"units",q:"",more:25,ver:0,key:"",items:[],open:{},fields:{}};
 const trUn=t=>t.st!=="ok"&&(!t.prop||nk(t.prop)===nk(t.t));
 function trCur(t,en){return t.st==="ok"?t.t:(t.prop&&nk(t.prop)!==nk(en)?t.prop:"")}
 function trItems(){if(!D.ready||!KPREADY){if(D.ready&&!KP)buildKP();return null}
@@ -8588,7 +8588,7 @@ function trItems(){if(!D.ready||!KPREADY){if(D.ready&&!KP)buildKP();return null}
  D.enh.forEach((x,i)=>{if(trUn(tName(x.n))||trUn(trDesc(x.d)))o.push({kind:"enh",id:String(i),n:x.n,sub:x.det||""})});
  D.dets.forEach((x,i)=>{let a=trUn(tName(x.n));if(x.ab&&trUn(trDesc(x.ab.description)))a=true;(x.abx||[]).forEach(y=>{if(trUn(trDesc(y.description)))a=true});if(a)o.push({kind:"det",id:String(i),n:x.n,sub:x.f||""})});
  (D.rules||[]).forEach((x,i)=>{if(trUn(tName(x.n))||trUn(trDesc(x.d)))o.push({kind:"rules",id:String(i),n:x.n,sub:""})});
- TRN.key=key;TRN.items=o;return o}
+ TRN.key=key;TRN.items=o.filter(x=>!TRN.done[x.kind+":"+x.id]);return TRN.items}
 const trKindLab={units:"Fiches d'unités",str:"Stratagèmes",enh:"Améliorations",det:"Détachements",rules:"Règles"};
 /* un champ éditable : le texte français prérempli, l'original en dessous */
 function trField(key,en,isName,rows){en=String(en||"");if(!en.trim())return"";const f=TRN.fields[key]=TRN.fields[key]||[],i=f.length;f.push({en,name:!!isName});
@@ -8627,7 +8627,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  if(a==="save"){const key=b.dataset.k,det=b.closest("details"),f=TRN.fields[key]||[];let n=0;
   det.querySelectorAll("[data-trfi]").forEach(t=>{const fd=f[+t.dataset.trfi];if(!fd)return;const v=t.value.trim();if(!v)return;const cur=fd.name?tName(fd.en):trDesc(fd.en);if(cur.st==="ok"&&nk(cur.t)===nk(v)&&cur.src==="user"||cur.st==="ok"&&nk(cur.t)===nk(v))return;
    const k=hh(fd.en);TXM[k]={en:fd.en,name:fd.name};storeTr(k,v);n++});
-  TRN.ver++;try{toast(n?n+" traduction"+(n>1?"s":"")+" enregistrée"+(n>1?"s":"")+" ✓ (appliquée partout)":"Rien à enregistrer")}catch(_){}
+  if(n){TRN.done[key]=1;TRN.open[key]=false}TRN.ver++;try{toast(n?n+" traduction"+(n>1?"s":"")+" enregistrée"+(n>1?"s":"")+" ✓ (appliquée partout)":"Rien à enregistrer")}catch(_){}
   try{window.BIBTRW&&0}catch(_){}try{draw()}catch(_){}setTimeout(trRender,50)}
 },true);
 window.XV=window.XV||{};XV.news=function(){try{if(!D.ready&&!D.err)init();return nwView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
