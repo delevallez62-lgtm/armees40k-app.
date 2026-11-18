@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:37,d:"2026-11-18",t:"Points par nombre de figurines vérifiés automatiquement",s:"Chaque fiche de la bibliothèque affiche maintenant ses points selon le nombre de figurines (et selon le numéro de l'unité dans l'armée). La mise à jour quotidienne depuis Wahapedia contrôle ces points contre le fichier de Wahapedia avant de publier : en cas d'écart, rien n'est publié."},
  {id:36,d:"2026-11-17",t:"Menu Lore personnel",s:"Un espace Lore entièrement personnalisable et vierge : Histoire en tiroirs et chapitres (textes et images), Personnages, Organisations, Couleurs et Héraldique. Tout est modifiable, réorganisable, et reste sur ton appareil."},
  {id:35,d:"2026-11-17",t:"Lanceur de dés : aptitude Torrent",s:"Après le premier jet (toucher), un bouton « 🌊 Torrent » dans les capacités de l'arme fait réussir tous les dés : tu valides et tu passes directement à la blessure. Les touches automatiques ne comptent pas comme critiques. Tu peux le désactiver pour revenir aux vrais jets."},
  {id:34,d:"2026-11-17",t:"Mise à jour des noms français sur tous les appareils",s:"Correction : les nouveaux noms français (Sororitas et autres) étaient bien dans la bibliothèque mais certains appareils gardaient l'ancienne copie. La bibliothèque se recharge maintenant dès que des noms ou traductions changent."},

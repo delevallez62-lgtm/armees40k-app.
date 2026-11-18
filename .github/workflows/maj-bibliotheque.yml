@@ -43,6 +43,8 @@ jobs:
         run: python3 outils/biblio/build-lexicon.py data/biblio
       - name: Contrôler avant publication
         run: python3 outils/biblio/check-maj.py data/biblio /tmp/ancien-manifest.json
+      - name: Vérifier les points par nombre de figurines (comparaison avec Wahapedia)
+        run: if [ "$WP_OK" = 1 ]; then python3 outils/biblio/audit-points.py /tmp/wp11 data/biblio; fi
       - name: Publier s'il y a du nouveau
         run: |
           if git diff --quiet -- data/biblio && [ -z "$(git ls-files --others --exclude-standard data/biblio)" ]; then echo "inchangée"; exit 0; fi
