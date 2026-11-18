@@ -25,8 +25,8 @@ ok('catalogue visuel (cartes)',cat.n>10,cat);
 // 3) présente dans les deux : une seule carte « Terminators », avec 📦 et 📚
 await ev(()=>{const q=document.getElementById('bldq');q.value='termin';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
 const term=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')));
-ok('doublons : une seule carte pour l\'unité dans les deux sources',term.filter(t=>/^🛡 \| Terminators/.test(t)).length===1&&!term.some(t=>/^🛡 \| Terminator Squad/.test(t)),term.slice(0,4));
-ok('carte : nom, effectif, coût, catégorie, provenances',/Terminators.*5 figurines.*pts.*📦.*📚|Terminators[\s\S]*📦[\s\S]*📚/.test(term.find(t=>/Terminators/.test(t))||''));
+ok('doublons : une seule carte pour l\'unité dans les deux sources',term.filter(t=>/^🛡 \| Terminators \|/.test(t)).length===1&&!term.some(t=>/^🛡 \| Terminator Squad/.test(t)),term.slice(0,4));
+ok('carte : nom, effectif, coût, catégorie, provenances',/Terminators.*5 figurines.*pts.*📦.*📚|Terminators[\s\S]*📦[\s\S]*📚/.test(term.find(t=>/Terminators/.test(t)&&/📦/.test(t))||''));
 // filtres
 await click('[data-bld="src"][data-v="coll"]');
 ok('filtre « Ma collection »',(await ev(()=>document.querySelectorAll('#bldm .bld-c').length))<=3);
@@ -42,8 +42,8 @@ await click('[data-bld="ok"]');
 ok('collection seule : coût saisi pris en compte',/120 \/ 2 000 points/.test(await html()),await ev(()=>0));
 // 2) unité uniquement dans la bibliothèque (Intercessor Squad)
 await click('[data-bld="add"]');await ev(()=>{const q=document.getElementById('bldq');q.value='intercessor squad';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
-const ic=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')).slice(0,3));ok('bibliothèque seule affichée (nom anglais)',ic.some(x=>/Intercessor Squad/.test(x)),ic);
-await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Intercessor Squad/.test(x.innerText)).click()});await p.waitForTimeout(300);
+const ic=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')).slice(0,3));ok('bibliothèque seule affichée (nom anglais)',ic.some(x=>/Intercessor Squad|Escouade d'Intercessors/.test(x)),ic);
+await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Intercessor Squad|Intercessors/i.test(x.innerText)).click()});await p.waitForTimeout(300);
 t=await html();
 // 4) plusieurs tailles
 const sizes=await ev(()=>[...document.querySelectorAll('#bldm [data-bld="size"]')].map(x=>x.innerText.replace(/\s+/g,' ')));ok('plusieurs tailles autorisées (lues dans le barème)',sizes.length>=2&&sizes.every(s=>/pts/.test(s)),sizes);
@@ -53,7 +53,7 @@ await click('[data-bld="ok"]');
 const R1=await ev(()=>BLDCALC(BLDL()).total);ok('total = 120 + 170',R1===290,R1);
 // 5/6) plusieurs équipements, gratuits : Terminators
 await click('[data-bld="add"]');await ev(()=>{const q=document.getElementById('bldq');q.value='terminators';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
-await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Terminators/.test(x.innerText)).click()});await p.waitForTimeout(300);
+await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Terminators/.test(x.innerText)&&/📦/.test(x.innerText)).click()});await p.waitForTimeout(300);
 t=await html();
 ok('armes : compteurs par arme, pas de lignes répétées',(await ev(()=>document.querySelectorAll('#bldm .bld-w').length))>=3);
 // 9 x Épée... 1 x Marteau - Sergent  (taille 10, 9 épées + 1 marteau)
@@ -106,7 +106,7 @@ await ev(()=>document.querySelector('#bldm [data-bld="detpick"]').click());await
 ok('détachement choisi',/⚔ /.test(await html()));
 // optimisation sur un personnage : on ajoute un capitaine seul
 await click('[data-bld="add"]');await ev(()=>{const q=document.getElementById('bldq');q.value='captain in terminator';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
-await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Captain In Terminator/i.test(x.innerText)).click()});await p.waitForTimeout(300);
+await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Captain In Terminator|Capitaine en Terminator|Capitaine .*Terminator/i.test(x.innerText)).click()});await p.waitForTimeout(300);
 const enhs=await ev(()=>[...document.querySelectorAll('#bldm [data-bld="enh"][data-v]')].filter(x=>x.dataset.v).map(x=>x.dataset.v));ok('optimisations du détachement proposées',enhs.length>0,enhs.length);
 const before=await ev(()=>document.querySelector('#bldm .bld-bar b').innerText);
 if(enhs.length){await ev(()=>[...document.querySelectorAll('#bldm [data-bld="enh"][data-v]')].find(x=>x.dataset.v).click());await p.waitForTimeout(200)}
