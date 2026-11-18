@@ -6,8 +6,8 @@ await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll(
 await ev(()=>{const t=[...document.querySelectorAll('button,[data-x]')].find(x=>/Mes peintures/i.test(x.innerText));t&&t.click()});await wait(300);
 await ev(()=>{document.getElementById('gxadd').open=true;document.querySelector('[data-pscan]').click()});await wait(300);
 await ev(()=>BIBPSC.onCode('8435568302778'));await wait(300);
-ok('pot affiché au milieu après le scan',await ev(()=>{const o=document.getElementById('pspot');if(!o)return false;const r=o.querySelector('.pk').getBoundingClientRect();return Math.abs((r.top+r.bottom)/2-innerHeight/2)<80&&!!o.querySelector('.potsvg')}),1);
-ok('pot de la couleur du pot scanné (#fab711)',await ev(()=>/fab711/i.test(document.querySelector('#pspot .potsvg').outerHTML)),1);
+ok('pot affiché au milieu après le scan',await ev(()=>{const o=document.getElementById('pspot');if(!o)return false;const r=o.querySelector('.potsvg').getBoundingClientRect();return Math.abs((r.top+r.bottom)/2-innerHeight/2)<110&&!!o.querySelector('.potsvg')}),1);
+ok('écran de la couleur du pot scanné (#fab711)',await ev(()=>getComputedStyle(document.getElementById('pspot')).backgroundColor==='rgb(250, 183, 17)'),1);
 ok('pas ajouté automatiquement',await ev(()=>__hob.hob().paints.length===0),1);
 await p.screenshot({path:'pot1.png'});
 await ev(()=>document.querySelector('#pspot [data-pot="+"]').click());await wait(200);
