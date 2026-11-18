@@ -43,6 +43,15 @@ if os.path.exists(pf):
                         if cf!='confirmed':prod_q[p['id']]=1
     print('codes-barres ajoutés depuis les produits :',cnt,'(dont à confirmer :',len(prod_q),')')
 brands=sorted({p['brand'] for p in P['paints']});bi={b:i for i,b in enumerate(brands)}
+# Complément : codes relevés sur des pages produit (fichier data/biblio/ak-ean.json), rapprochés par référence ; codes déjà pris ignorés.
+xf=os.path.join(out,'ak-ean.json')
+if os.path.exists(xf):
+    XC=json.load(open(xf,encoding='utf8')).get('codes',{});taken={c for v in ean.values() for c in v};nx=0
+    for p in P['paints']:
+        k=re.sub(r'[\s-]','',(p.get('productCode') or '').upper())
+        if p['id'] not in ean and k in XC and XC[k] not in taken:
+            ean[p['id']]=[XC[k]];taken.add(XC[k]);nx+=1
+    print('codes-barres ajoutés depuis ak-ean.json :',nx)
 rows=[]
 for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['name'])):
     hx=(p.get('hex') or '').lower();hx=hx if re.match(r'^#[0-9a-f]{6}$',hx) else ''

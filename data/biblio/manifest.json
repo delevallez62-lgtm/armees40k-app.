@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+pa8dcdd9+wp2026-11-12+fr14614.b79b4b",
+ "version": "11e-2026-11-12-7cb6104+pae76fdd+wp2026-11-12+fr14614.b79b4b",
  "generated": "2026-11-18",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -424,11 +424,11 @@
   {
    "id": "paints",
    "file": "paints.json",
-   "sha1": "8dcdd96943c4e872d8be26fe57198069c471cf51",
-   "bytes": 899676,
+   "sha1": "e76fdd05ec5051033917b25537a5f67ee9e131e2",
+   "bytes": 905132,
    "counts": {
     "paints": 8338,
-    "barcodes": 4316,
+    "barcodes": 4564,
     "brands": 21
    }
   }

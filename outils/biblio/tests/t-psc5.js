@@ -6,7 +6,7 @@ await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll(
 await ev(()=>{const t=[...document.querySelectorAll('button,[data-x]')].find(x=>/Mes peintures/i.test(x.innerText));t&&t.click()});await wait(300);
 await ev(()=>{document.getElementById('gxadd').open=true;document.querySelector('[data-pscan]').click()});await wait(300);
 // EAN valide fictif (test uniquement)
-const code=await ev(()=>{let d='843556831104';let s=0;for(let i=0;i<12;i++)s+=(+d[i])*(i%2?3:1);return d+((10-s%10)%10)});
+const code=await ev(()=>{let d='999000000001';let s=0;for(let i=0;i<12;i++)s+=(+d[i])*(i%2?3:1);return d+((10-s%10)%10)});
 await ev(c=>BIBPSC.onCode(c),code);await wait(300);
 ok('code inconnu : message vers la recherche',await ev(()=>/Cherche ta peinture/.test(document.getElementById('psc').innerText)),1);
 await ev(()=>{const i=document.querySelector('#psc input[type=search],#psc input[data-psq],#psc input#psq');if(i){i.value='AK11044';i.dispatchEvent(new Event('input',{bubbles:true}))}});await wait(400);
