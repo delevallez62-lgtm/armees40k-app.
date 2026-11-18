@@ -17,7 +17,7 @@ ok('Histoire vide en consultation : invitation à modifier',/Modifier/.test(awai
 await click('[data-lo="mode"]');
 await click('[data-lo="dadd"]');await fill({t:'Origines'});await click('[data-lm="ok"]');
 await click('[data-lo="dadd"]');await fill({t:'Guerres'});await click('[data-lm="ok"]');
-ok('2 tiroirs créés, fermés par défaut',await ev(()=>document.querySelectorAll('details.lo-dr').length===2&&[...document.querySelectorAll('details.lo-dr')].every(d=>!d.open)),1);
+ok('2 tiroirs créés : seul le dernier est ouvert',await ev(()=>{const a=[...document.querySelectorAll('details.lo-dr')];return a.length===2&&!a[0].open&&a[1].open}),1);
 await ev(()=>{document.querySelector('details.lo-dr').open=true});await click('[data-lo="cadd"]');await fill({t:'Chapitre 1'});await click('[data-lm="ok"]');
 await ev(()=>{document.querySelectorAll('details.lo-dr')[0].open=true});
 await click('[data-lo="badd"][data-k="p"]');await fill({x:'Premier paragraphe\nsur deux lignes'});await click('[data-lm="ok"]');
