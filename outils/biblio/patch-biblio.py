@@ -24,7 +24,7 @@ emb={'manifest':man,'chunks':{}}
 for c in man['chunks']:
     raw=open(os.path.join(datadir,c['file']),'rb').read()
     emb['chunks'][c['id']]=base64.b64encode(gzip.compress(raw,9,mtime=0)).decode()
-J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
+J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__PSCAN__*/',open(d+'/paintscan.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
 assert '</script>' not in J
 rep('(e.u.name+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)','(e.u.name+" "+(window.BIBAL?BIBAL(e.u.ref):"")+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)',2)
 rep('p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n if(!p.me)','p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n {const L0=S.lists.find(l=>l.id===p.l);if(L0&&L0.mission){p.m1="";p.i1=L0.mid||""}}\n if(!p.me)')
@@ -40,6 +40,8 @@ rep('b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");','b[2].textCo
 rep('else if(D.act==="rr")tx=`<b>Relance.</b>','else if(D.st===0&&D.dice.every(d=>d.au))tx="<b>Torrent.</b> Toutes les touches réussissent automatiquement : valide pour passer à la blessure.";\n    else if(D.act==="rr")tx=`<b>Relance.</b>')
 rep('else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}','else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}\n  else if(z==="xt"){torrent()}')
 rep('["coll","Collection","coll"],["ana","Centre de commandement","ana"],["learn","Apprendre à jouer","learn"]','["coll","Collection","coll"],["lore","Lore","lore"],["ana","Centre de commandement","ana"],["learn","Apprendre à jouer","learn"]')
+rep('<button class="b" data-camgo="1">🎥 Lire un pot</button>','<button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-camgo="1">🎥 Lire un pot</button>')
+rep('<button class="b p" data-camgo="1">🎥 Lire un pot avec la caméra</button>','<button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-camgo="1">🎥 Lire un pot avec la caméra</button>')
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))

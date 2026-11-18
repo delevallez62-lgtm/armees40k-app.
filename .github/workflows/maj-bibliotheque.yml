@@ -40,6 +40,18 @@ jobs:
           cp data/biblio/manifest.json /tmp/ancien-manifest.json
           python3 outils/biblio/build-biblio.py /tmp/oracle/src/data data/biblio "$OCOMMIT" "$ODATE"
           if [ "$WP_OK" = 1 ]; then python3 outils/biblio/build-wahapedia.py /tmp/wp11 data/biblio; fi
+      - name: Catalogue de peintures et codes-barres (WarHub, licence MIT)
+        run: |
+          mkdir -p /tmp/wh; ok=1
+          for f in paints barcodes; do
+            got=0
+            for i in 1 2 3 4; do
+              if curl -fsS -m 120 -L -o "/tmp/wh/$f.json" "https://warhub.github.io/warhub-catalog/$f.json"; then got=1; break; fi
+              sleep 8
+            done
+            [ "$got" = 1 ] || ok=0
+          done
+          if [ "$ok" = 1 ]; then python3 outils/biblio/build-paints.py /tmp/wh data/biblio || echo "Catalogue de peintures ignoré cette fois (données incomplètes) : on garde l'ancien"; else echo "Catalogue de peintures indisponible : on garde l'ancien"; fi
       - name: Lexique appris (traduction apprenante)
         run: python3 outils/biblio/build-lexicon.py data/biblio
       - name: Contrôler avant publication

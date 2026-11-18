@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+wp2026-11-12+fr14614.b79b4b",
+ "version": "11e-2026-11-12-7cb6104+paabe1f3+wp2026-11-12+fr14614.b79b4b",
  "generated": "2026-11-18",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -21,6 +21,11 @@
    "source": "Wahapedia, export de données 11e (barème de points par unité)",
    "published": "2026-11-12 23:45:38",
    "synchronised": "2026-11-17"
+  },
+  "paints": {
+   "source": "WarHub/warhub-catalog (MIT)",
+   "version": "2026.11.18",
+   "synchronised": "2026-11-18"
   }
  },
  "notice": "Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.",
@@ -414,6 +419,17 @@
    "bytes": 98412,
    "counts": {
     "words": 3329
+   }
+  },
+  {
+   "id": "paints",
+   "file": "paints.json",
+   "sha1": "abe1f303a5d34ccb0eef33057a470c2a398b6af7",
+   "bytes": 889034,
+   "counts": {
+    "paints": 8314,
+    "barcodes": 3966,
+    "brands": 21
    }
   }
  ]

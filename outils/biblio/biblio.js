@@ -36,6 +36,7 @@ function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D
  Object.entries(D.chunks).forEach(([id,c])=>{
   if(id==="fr"){D.fr=c.tr||{};D.frN=Object.keys(D.fr).length;return}
   if(id==="lex"){D.lexB=c.words||{};return}
+  if(id==="paints"){D.paintsDB=c;return}
   const g=id.replace(/^wp-/,"");
   if(c.frules&&c.frules.length)D.frules[g]=c.frules;
   (c.units||[]).forEach(u=>{u._c=g;u.src=u.src||"bsdata";D.units.push(u);D.byId[u.id]=u});
@@ -388,7 +389,7 @@ function menu(){css();const lb=LB(),o=box("bibm");o.innerHTML=`<div class="bib-o
  <p class="bib-meta">La bibliothèque est stockée à part de tes données personnelles : une erreur d'import ne peut pas abîmer ta collection.</p></div></div>`}
 function licModal(){css();const o=box("bibm"),mn=D.man||{};o.innerHTML=`<div class="bib-ov" data-bib="bg"><div class="bib-pn"><div class="bib-top"><h2>Sources et licences</h2><button class="b" data-bib="x">✕</button></div>
  <p>Ces données sont <b>communautaires et non officielles</b>. Warhammer 40,000, ses règles et ses fiches sont la propriété de Games Workshop ; HAMMER n'est ni affilié ni approuvé par GW.</p>
- <ul><li>Fiches, détachements, améliorations, règles partagées : projet communautaire <b>BSData/wh40k-11e</b>, récupérées via le dépôt <b>gregario/warhammer-oracle</b> (licence MIT pour son code). La licence propre à BSData n'a pas pu être vérifiée depuis ici.</li><li>Stratagèmes : saisis dans <b>warhammer-oracle</b> d'après les Faction Packs publiés.</li><li>Traductions : seul le vocabulaire français officiel retrouvé dans les règles de base, les fiches françaises et l'encyclopédie de l'appli est marqué « confirmé ». Le reste reste en anglais.</li></ul>
+ <ul><li>Fiches, détachements, améliorations, règles partagées : projet communautaire <b>BSData/wh40k-11e</b>, récupérées via le dépôt <b>gregario/warhammer-oracle</b> (licence MIT pour son code). La licence propre à BSData n'a pas pu être vérifiée depuis ici.</li><li>Catalogue de peintures et codes-barres : projet communautaire <b>WarHub/warhub-catalog</b> (licence MIT, github.com/WarHub/warhub-catalog).</li><li>Stratagèmes : saisis dans <b>warhammer-oracle</b> d'après les Faction Packs publiés.</li><li>Traductions : seul le vocabulaire français officiel retrouvé dans les règles de base, les fiches françaises et l'encyclopédie de l'appli est marqué « confirmé ». Le reste reste en anglais.</li></ul>
  <p class="bib-meta">Version ${E(mn.version||"")} · ${E((mn.source&&mn.source.oracle&&mn.source.oracle.commit)||"")} · usage personnel pendant le jeu.</p></div></div>`}
 /* ---------- actions ---------- */
 function msg(t){const b=document.getElementById("bibmsg");if(b)b.textContent=t}
@@ -653,4 +654,5 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /*__BLD__*/
 /*__UNI__*/
 /*__LORE__*/
+/*__PSCAN__*/
 })();

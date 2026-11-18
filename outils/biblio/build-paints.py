@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+"""Catalogue de peintures (marque, nom, teinte, type, codes-barres) pour la lecture de pots par code-barres.
+Source : WarHub/warhub-catalog (licence MIT) — https://warhub.github.io/warhub-catalog/ (paints.json + barcodes.json).
+Usage : build-paints.py <dossier avec paints.json et barcodes.json> <data/biblio>
+Ajoute/actualise le fragment `paints` et la version (+paXXXXXX) du manifeste ; ne modifie rien d'autre."""
+import sys,json,os,hashlib,re,datetime
+src,out=sys.argv[1],sys.argv[2]
+P=json.load(open(os.path.join(src,'paints.json'),encoding='utf8'))
+B=json.load(open(os.path.join(src,'barcodes.json'),encoding='utf8'))['barcodes']
+ean={}
+for code,recs in B.items():
+    for r in recs:
+        if r.get('catalog')=='paint':ean.setdefault(r['id'],[]).append(code)
+brands=sorted({p['brand'] for p in P['paints']});bi={b:i for i,b in enumerate(brands)}
+rows=[]
+for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['name'])):
+    hx=(p.get('hex') or '').lower();hx=hx if re.match(r'^#[0-9a-f]{6}$',hx) else ''
+    if not hx and p['id'] not in ean:continue
+    r={'b':bi[p['brand']],'n':p['name'],'h':hx}
+    if p.get('type'):r['t']=p['type']
+    if p.get('range'):r['r']=p['range']
+    if p.get('finish') and p['finish']!='Matte':r['f']=p['finish']
+    if p.get('volumeMl'):r['v']=p['volumeMl']
+    if p.get('productCode'):r['c']=p['productCode']
+    if p['id'] in ean:r['e']=sorted(set(ean[p['id']]))
+    if p.get('status') and p['status']!='current':r['s']=p['status']
+    rows.append(r)
+n_ean=sum(len(r.get('e',[])) for r in rows)
+if len(rows)<5000 or n_ean<3000:sys.exit(f"Catalogue de peintures incomplet ({len(rows)} peintures, {n_ean} codes) : mise à jour refusée")
+body={'schema':1,'id':'paints','source':'WarHub/warhub-catalog (MIT) — catalogue de peintures et codes-barres','catalogVersion':P.get('version'),'brands':brands,'paints':rows}
+raw=json.dumps(body,ensure_ascii=False,separators=(',',':'))
+mp=os.path.join(out,'manifest.json');man=json.load(open(mp,encoding='utf8'))
+fp=os.path.join(out,'paints.json');old=open(fp,encoding='utf8').read() if os.path.exists(fp) else ''
+if old==raw and any(c['id']=='paints' for c in man['chunks']):print('inchangée (peintures)');sys.exit(0)
+open(fp,'w',encoding='utf8').write(raw)
+h=hashlib.sha1(raw.encode()).hexdigest()
+man['chunks']=[c for c in man['chunks'] if c['id']!='paints']
+man['chunks'].append({'id':'paints','file':'paints.json','sha1':h,'bytes':len(raw.encode()),'counts':{'paints':len(rows),'barcodes':n_ean,'brands':len(brands)}})
+v=re.sub(r'\+pa[0-9a-f]+','',man['version']);tag='+pa'+h[:6]
+v=v.replace('+wp',tag+'+wp',1) if '+wp' in v else (v.replace('+fr',tag+'+fr',1) if '+fr' in v else v+tag)
+man['version']=v;man['source']['paints']={'source':'WarHub/warhub-catalog (MIT)','version':P.get('version'),'synchronised':datetime.date.today().isoformat()}
+open(mp,'w',encoding='utf8').write(json.dumps(man,ensure_ascii=False,indent=1))
+print(f"peintures : {len(rows)} ({n_ean} codes-barres, {len(brands)} marques) · version {v}")
