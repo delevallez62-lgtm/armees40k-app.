@@ -1,0 +1,6 @@
+Simulation d'une mise à jour Wahapedia sans IA (reproduit ce que fait GitHub Actions chaque nuit) :
+1. télécharger les CSV de Wahapedia (wh40k11ed/*.csv) dans un dossier, y modifier des données (points, textes, nouvelle unité) ;
+2. python3 outils/biblio/build-biblio.py <oracle>/src/data <copie de data/biblio> <commit> <date>
+3. python3 outils/biblio/build-wahapedia.py <csv modifiés> <copie de data/biblio>
+4. python3 outils/biblio/build-lexicon.py <copie> ; check-maj.py <copie> <ancien manifest> ; audit-points.py <csv> <copie>
+5. servir la copie en HTTP, régler la source de l'appli dessus, lancer BIB.checkUpdate(true) puis vérifier avec t-sim.js

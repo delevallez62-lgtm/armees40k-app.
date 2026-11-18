@@ -1,0 +1,31 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);
+const pre=await ev(async()=>{await BIB.init();window.__majPop=1;const D=BIB.D;const nw=D.units.find(x=>x.n==='Necron Warriors');
+ S.coll.nw={ref:'nw',name:'Mes Guerriers perso',stats:{M:'5',E:'4',SV:'4+',PV:'1',CD:'7+',CO:'2'},weapons:[],equip:'',apt:'',text:[],kw:'',fkw:'',pts:85,nb:10,subs:[],notes:'NOTE PERSO À CONSERVER'};
+ S.lib.links.nw={id:nw.id,h:nw.h,v:D.man.version,at:1,prof:0,applied:[],stale:false,st:'manual'};
+ const L={id:'L1',name:'Ma liste Nécrons',units:[{ref:'nw',size:10,pts:85,subs:[],cfg:{lib:nw.id,size:10,wg:{},enh:null}}],dets:[],strats:[],bld:{fac:'necrons',facN:'Nécrons',limit:2000,fmt:'',pv:'old',tot:0,dets:[]}};
+ S.lists=[L];S.cur='L1';const c=BLDCALC(L);L.bld.tot=c.total;save();
+ S.lib.src='http://localhost:8767/';S.lib.last=null;
+ return{total:c.total,ver:D.man.version,units:D.units.length,nwPts:D.units.find(x=>x.n==='Necron Warriors').wp.pc.tiers[0].sz.map(z=>z.n+':'+z.pts).join(',')}});
+console.log('AVANT',JSON.stringify(pre));
+const res=await ev(async()=>{const r=await BIB.checkUpdate(true);return{state:r.state,from:r.news&&r.news.from,to:r.news&&r.news.to,add:r.news&&r.news.items.add.map(x=>x.t+' '+x.n),chg:r.news&&r.news.items.chg.map(x=>x.t+' '+x.n),created:r.news&&r.news.created,prop:r.news&&r.news.prop,err:r.err||null}});
+console.log('MAJ',JSON.stringify(res).slice(0,900));
+await p.waitForTimeout(1500);
+const post=await ev(async()=>{const D=BIB.D;const L=S.lists[0];const nwu=D.units.find(x=>x.n==='Necron Warriors');return{ver:D.man.version,units:D.units.length,newUnit:!!D.units.find(x=>x.n==='Sim Test Warriors'),newUnitPc:(D.units.find(x=>x.n==='Sim Test Warriors')||{wp:{pc:null}}).wp.pc&&D.units.find(x=>x.n==='Sim Test Warriors').wp.pc.tiers[0].sz.map(z=>z.n+':'+z.pts).join(','),nwPts:nwu.wp.pc.tiers[0].sz.map(z=>z.n+':'+z.pts).join(','),
+ total:BLDCALC(L).total,log:(L.bld.log||[]).map(x=>({o:x.o,n:x.n,ch:x.ch})),sheetNew:Object.values(S.coll).filter(m=>/Sim Test/.test(m.name)).map(m=>({name:m.name,pts:m.pts,w:(m.weapons||[]).length,link:!!(S.lib.links[m.ref])})),
+ personal:S.coll.nw.notes==='NOTE PERSO À CONSERVER'&&S.coll.nw.name==='Mes Guerriers perso',name:BIB.tName('Necron Warriors'),todo:BIBTRW.n(),strat:D.str.some(s=>/sim nouveau/i.test(s.n)),enh:D.enh.some(e=>/Sim Nouvelle/.test(e.n))}});
+console.log('APRES',JSON.stringify(post));
+ok('version mise à jour automatiquement',/wp2026-11-25/.test(post.ver),post.ver);
+ok('nouvelle unité de Wahapedia présente avec ses points par effectif',post.newUnit&&post.newUnitPc==='5:70,10:130',post.newUnitPc);
+ok('points modifiés pris en compte (Necron Warriors 10 fig. : 95, 20 fig. : 210)',post.nwPts==='10:95,20:210',post.nwPts);
+ok('liste d\'armée : total recalculé (85 → 95)',post.total===pre.total+10,[pre.total,post.total]);
+ok('journal « Mise à jour des points » avec l\'écart',post.log.length>0&&post.log[0].o===pre.total&&post.log[0].n===post.total,post.log);
+ok('fiche créée automatiquement pour la nouvelle unité (liée)',post.sheetNew.length===1&&post.sheetNew[0].link&&post.sheetNew[0].w>0,post.sheetNew);
+ok('données personnelles intactes (nom, notes)',post.personal,1);
+ok('nom français confirmé conservé',post.name.t==='Guerriers Nécrons'&&post.name.st==='ok',post.name);
+ok('nouveau stratagème et nouvelle amélioration importés',post.strat&&post.enh,[post.strat,post.enh]);
+ok('textes nouveaux/modifiés non traduits signalés dans « À traduire »',post.todo>=1,post.todo);
+ok('résumé des nouveautés : ajouts et modifications listés',res.add&&res.add.some(x=>/Sim Test/.test(x))&&res.chg&&res.chg.some(x=>/Necron Warriors/.test(x)),res);
+await b.close()})();
