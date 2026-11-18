@@ -1,0 +1,12 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);const wait=t=>p.waitForTimeout(t);
+await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll('#encov,.bib-ov').forEach(e=>e.remove());tab='paint';draw()});await wait(400);
+await ev(()=>{const t=[...document.querySelectorAll('button,[data-x]')].find(x=>/Mes peintures/i.test(x.innerText));t&&t.click()});await wait(300);
+await ev(()=>{document.getElementById('gxadd').open=true;document.querySelector('[data-pscan]').click()});await wait(300);
+await ev(()=>BIBPSC.onCode('8435568302778'));await wait(300);
+const t=await ev(()=>document.getElementById('psc').innerText);
+ok('AK11044 Yellow reconnu par son code-barres',/Yellow/.test(t)&&/AK/.test(t),t.slice(0,300));
+ok('ajouté automatiquement',await ev(()=>__hob.hob().paints.some(x=>x.ean==='8435568302778'&&/Yellow/.test(x.n)&&/AK/.test(x.b))),1);
+await b.close()})();

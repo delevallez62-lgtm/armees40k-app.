@@ -11,6 +11,37 @@ ean={}
 for code,recs in B.items():
     for r in recs:
         if r.get('catalog')=='paint':ean.setdefault(r['id'],[]).append(code)
+# Complément : codes-barres des pots listés comme « produits » (ex. AK Interactive), rapprochés par référence (AK11044, RC015…).
+# Seuls les rapprochements sûrs sont gardés : code EAN-13 valide, référence retrouvée dans le produit, une seule correspondance.
+prod_q={}
+pf=os.path.join(src,'products.json')
+if os.path.exists(pf):
+    def ok13(e):return len(e)==13 and e.isdigit() and (10-sum(int(c)*(3 if i%2 else 1) for i,c in enumerate(e[:12]))%10)%10==int(e[12])
+    MAN={'ak-interactive':('AK Interactive','AK Real Color','AMMO by Mig Jimenez')}
+    try:
+        PR=json.load(open(pf,encoding='utf8'))['products']
+    except Exception:
+        PR=[]
+    byc={}
+    for x in PR:
+        m=x.get('manufacturer')
+        if m not in MAN or x.get('category')!='paint' or not ok13(str(x.get('ean') or '')):continue
+        txt=' '.join(str(x.get(k) or '') for k in('productCode','url','imageUrl','id')).upper().replace('-',' ')
+        for c in {re.sub(r'\s','',c) for c in re.findall(r'(?<![A-Z0-9])(?:AK|RC)\s?\d{2,5}',txt)}:
+            byc.setdefault((m,c),{})[x['ean']]=x.get('eanConfidence')
+    taken={c for v in ean.values() for c in v}
+    cnt=0
+    for p in P['paints']:
+        if p['id'] in ean:continue
+        for m,bl in MAN.items():
+            if p['brand'] in bl:
+                k=(m,re.sub(r'[\s-]','',(p.get('productCode') or '').upper()));d=byc.get(k)
+                if d and len(d)==1:
+                    e,cf=next(iter(d.items()))
+                    if e not in taken:
+                        ean[p['id']]=[e];taken.add(e);cnt+=1
+                        if cf!='confirmed':prod_q[p['id']]=1
+    print('codes-barres ajoutés depuis les produits :',cnt,'(dont à confirmer :',len(prod_q),')')
 brands=sorted({p['brand'] for p in P['paints']});bi={b:i for i,b in enumerate(brands)}
 rows=[]
 for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['name'])):
@@ -23,6 +54,7 @@ for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['nam
     if p.get('volumeMl'):r['v']=p['volumeMl']
     if p.get('productCode'):r['c']=p['productCode']
     if p['id'] in ean:r['e']=sorted(set(ean[p['id']]))
+    if p['id'] in prod_q:r['q']=1
     if p.get('status') and p['status']!='current':r['s']=p['status']
     rows.append(r)
 n_ean=sum(len(r.get('e',[])) for r in rows)

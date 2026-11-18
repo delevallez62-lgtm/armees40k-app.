@@ -51,6 +51,7 @@ jobs:
             done
             [ "$got" = 1 ] || ok=0
           done
+          curl -fsS -m 180 -L -o /tmp/wh/products.json "https://warhub.github.io/warhub-catalog/products.json" || rm -f /tmp/wh/products.json
           if [ "$ok" = 1 ]; then python3 outils/biblio/build-paints.py /tmp/wh data/biblio || echo "Catalogue de peintures ignoré cette fois (données incomplètes) : on garde l'ancien"; else echo "Catalogue de peintures indisponible : on garde l'ancien"; fi
       - name: Lexique appris (traduction apprenante)
         run: python3 outils/biblio/build-lexicon.py data/biblio
