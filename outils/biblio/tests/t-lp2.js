@@ -1,0 +1,14 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);const wait=t=>p.waitForTimeout(t);
+await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll('#encov,.bib-ov').forEach(e=>e.remove());
+ const lu=BIB.D.units.find(x=>x.n==='Intercessor Squad');const st={M:'6"',E:'4',SV:'3+',PV:'2',CD:'6+',CO:'2'};
+ S.coll={};S.lists=[{id:'l1',name:'Armée constructeur',bld:{},dets:[],strats:[],units:[{name:'Intercessor Squad',ref:'rx',size:5,pts:85,stats:st,weapons:[],subs:[],cfg:{lib:lu.id,size:5,wg:{},wq:{},wn:{},subs:[]}}]}];S.cur='l1';tab='units';draw()});await wait(400);
+await p.fill('[data-blp=size][data-i="0"]','10');await p.press('[data-blp=size][data-i="0"]','Enter');await wait(400);
+ok('effectif 10 : points recalculés d\'après le barème (170)',await ev(()=>S.lists[0].units[0].pts===170&&document.querySelector('[data-blp=pts]').value==='170'),await ev(()=>[S.lists[0].units[0].pts,S.lists[0].units[0].size]));
+await p.fill('[data-blp=pts][data-i="0"]','200');await p.press('[data-blp=pts][data-i="0"]','Enter');await wait(400);
+ok('points modifiés à la main : gardés',await ev(()=>S.lists[0].units[0].pts===200&&BLDCALC(S.lists[0]).total===200),await ev(()=>BLDCALC(S.lists[0]).total));
+await ev(()=>{BLDSYNC()});await wait(200);
+ok('une mise à jour des points ne les écrase pas',await ev(()=>S.lists[0].units[0].pts===200),1);
+await b.close()})();

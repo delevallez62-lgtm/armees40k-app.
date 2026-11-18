@@ -40,6 +40,11 @@ rep('b[2].textContent="💥 Dévastatrices : "+(D.xd?"oui":"non");','b[2].textCo
 rep('else if(D.act==="rr")tx=`<b>Relance.</b>','else if(D.st===0&&D.dice.every(d=>d.au))tx="<b>Torrent.</b> Toutes les touches réussissent automatiquement : valide pour passer à la blessure.";\n    else if(D.act==="rr")tx=`<b>Relance.</b>')
 rep('else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}','else if(z==="xd"){D.xd=!D.xd;save();stats();play("click")}\n  else if(z==="xt"){torrent()}')
 rep('["coll","Collection","coll"],["ana","Centre de commandement","ana"],["learn","Apprendre à jouer","learn"]','["coll","Collection","coll"],["lore","Lore","lore"],["ana","Centre de commandement","ana"],["learn","Apprendre à jouer","learn"]')
+# Listes d'armée : figurines et points toujours visibles ; modification à la volée dans la liste
+rep('<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""}${lpts(l)?" · "+lpts(l)+" pts":""} · ${l.dets.length} détachement(s)</div>','${window.BIBLP?BIBLP.badges(l):""}<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""} · ${l.dets.length} détachement(s)</div>')
+rep('<span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?','<span class="mu">${window.BIBLP?" · "+BIBLP.txt(L):(lpts(L)?" · "+lpts(L)+" pts":"")}${L.mission?')
+rep('</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}','</span>${window.BIBLP?BIBLP.card(u,i):""}</div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}')
+
 # Pots de peinture : fiche avec pot (quantité + / −) et état du pot ; libellés dans la liste
 rep('<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque','${window.BIBPOT?BIBPOT.sheet(p,cur.isNew):""}<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque')
 rep('<label>Stock<select data-f="s"><option value="ok"${p.s==="ok"?" selected":""}>En stock</option><option value="bas"${p.s==="bas"?" selected":""}>Presque vide</option><option value="achat"${p.s==="achat"?" selected":""}>À racheter</option></select></label>\n','')

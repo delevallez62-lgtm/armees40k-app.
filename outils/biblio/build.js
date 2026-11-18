@@ -24,7 +24,7 @@ function costOf(u,size,copy){if(!u)return{pts:null,note:"Coût à vérifier"};co
 function calc(L){const lines=[],seen={};let total=0,unk=0;const bump=id=>seen[id]=(seen[id]||0)+1;
  const add=(ln)=>{lines.push(ln);if(ln.pts==null)unk++;else total+=ln.pts};
  (L.units||[]).forEach((u,i)=>{const c=u.cfg,lu=c&&c.lib&&D.byId[c.lib];
-  if(!lu){add({i,k:"u",name:u.name,sz:u.size,pts:+u.pts||0,note:"coût saisi à la main"});(u.subs||[]).forEach((s,j)=>add({i,j,k:"l",name:(s.label||"Meneur")+" : "+s.name,pts:+((S.coll[s.ref]||{}).pts??s.pts)||0,note:"coût saisi à la main"}));return}
+  if(!lu||u.pm){add({i,k:"u",name:u.name,sz:u.size,pts:+u.pts||0,note:u.pm?"coût modifié à la main":"coût saisi à la main"});(u.subs||[]).forEach((s,j)=>add({i,j,k:"l",name:(s.label||"Meneur")+" : "+s.name,pts:+((S.coll[s.ref]||{}).pts??s.pts)||0,note:"coût saisi à la main"}));return}
   const copy=bump(lu.id),cs=costOf(lu,c.size,copy);
   add({i,k:"u",name:u.name,sz:c.size,pts:cs.pts,note:cs.note||("barème "+cs.src+(cs.tier?" · exemplaire "+cs.tier:"")),lib:lu.id});
   const pc=pcOf(lu);((pc&&pc.wg)||[]).forEach(w=>{const q=(c.wg||{})[w.n]||0;if(q)add({i,k:"w",name:q+" × "+w.n,pts:q*w.pts,note:w.pts+" pts pièce"})});
@@ -34,7 +34,7 @@ function calc(L){const lines=[],seen={};let total=0,unk=0;const bump=id=>seen[id
    if(sc.enh&&sc.enh.id){const e=D.enh.find(x=>x.id===sc.enh.id);add({i,j,k:"e",name:"Optimisation : "+(e?tName(e.n).t:sc.enh.name),pts:e&&e.pts!=null?+e.pts:null,note:e&&e.pts!=null?"":"Coût à vérifier"})}})});
  return{lines,total,unk}}
 /* écrit les coûts dans les champs classiques (points d'unité) pour que le reste de l'appli reste cohérent */
-function applyPts(L){try{const R=calc(L);(L.units||[]).forEach((u,i)=>{if(!u.cfg)return;const mine=R.lines.filter(l=>l.i===i&&l.j==null&&l.pts!=null);u.pts=mine.reduce((a,l)=>a+l.pts,0);u.size=u.cfg.size;
+function applyPts(L){try{const R=calc(L);(L.units||[]).forEach((u,i)=>{if(!u.cfg||u.pm)return;const mine=R.lines.filter(l=>l.i===i&&l.j==null&&l.pts!=null);u.pts=mine.reduce((a,l)=>a+l.pts,0);u.size=u.cfg.size;
   (u.subs||[]).forEach((s,j)=>{if(!s.cfg)return;const sl=R.lines.filter(l=>l.i===i&&l.j===j&&l.pts!=null);s.pts=sl.reduce((a,l)=>a+l.pts,0)})});return R}catch(_){return calc(L)}}
 /* mise à jour du barème : recalcul, différences conservées, effectifs et équipements intacts */
 function syncPts(L){const b=L.bld;if(!b)return;const R=calc(L),old=b.tot==null?R.total:b.tot,ver=ptsVer();
@@ -348,3 +348,27 @@ window.BLDSYNC=()=>{try{(S.lists||[]).forEach(l=>{if(l.bld)syncPts(l)});save()}c
 window.BLDCALC=calc;window.BLDCOST=costOf;
 window.BLDL=curL;window.BLDSTATE=BLD;window.BLDRELINK=relinked;
 window.BLDMAIN=mainNames;
+/* ----- listes d'armée : figurines + points toujours visibles, modifiables dans la liste ----- */
+const lpm=u=>Math.max(0,Math.round(+u.size||+((S.coll[u.ref]||{}).nb)||1));
+const lpU=u=>+u.pts||0;
+const lpS=s=>+((S.coll[s.ref]||{}).pts??s.pts)||0;
+const lpFig=l=>(l.units||[]).reduce((a,u)=>a+lpm(u)+(u.subs||[]).reduce((b,s)=>b+(+((S.coll[s.ref]||{}).nb)||1),0),0);
+const lpSum=l=>(l.units||[]).reduce((a,u)=>a+lpU(u)+(u.subs||[]).reduce((b,s)=>b+lpS(s),0),0);
+const lpOv=v=>v!==undefined&&v!==null&&v!=="";
+const lpTot=l=>lpOv(l.ovP)?+l.ovP||0:(l.pedit||!(+l.total>0))?lpSum(l):(+l.total);
+const lpFg=l=>lpOv(l.ovF)?+l.ovF||0:lpFig(l);
+const lpN=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\u202f");
+window.BIBLP={fig:lpFg,pts:lpTot,
+ txt:l=>lpFg(l)+" figurine"+(lpFg(l)>1?"s":"")+" · "+lpN(lpTot(l))+" pts",
+ badges:l=>`<div class="blp-b"><span>🧍 <b>${lpFg(l)}</b> figurine${lpFg(l)>1?"s":""}</span><span>⭐ <b>${lpN(lpTot(l))}</b> pts</span></div>`,
+ card:(u,i)=>{const sub=(u.subs||[]).reduce((a,s)=>a+lpS(s),0);return`<span class="blp-s"><label>Fig.<input type="number" inputmode="numeric" min="1" step="1" data-blp="size" data-i="${i}" value="${lpm(u)}" aria-label="Nombre de figurines"></label><label>Pts<input type="number" inputmode="numeric" min="0" step="5" data-blp="pts" data-i="${i}" value="${lpU(u)}" aria-label="Points de l'unité"></label>${sub?`<small>+${sub} pts meneur/appui</small>`:""}</span>`}};
+(function(){const c=document.createElement("style");c.id="blpcss";c.textContent=`.blp-b{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.blp-b span{background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:4px 12px;font-size:15px}.blp-b b{font-size:17px}
+.blp-s{margin-left:auto;margin-top:22px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none;padding-right:34px}.blp-s label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu,#9a9a9a)}.blp-s input{width:68px;min-height:36px;text-align:center;font-size:16px;padding:2px 4px}.blp-s small{font-size:11px;color:var(--mu,#9a9a9a)}`;document.head.appendChild(c)})();
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest(".blp-s")){e.stopPropagation()}},true);
+document.addEventListener("keydown",e=>{if(e.target&&e.target.dataset&&e.target.dataset.blp&&e.key==="Enter"){e.preventDefault();e.target.blur()}},true);
+document.addEventListener("change",e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.blp)return;e.stopImmediatePropagation();e.stopPropagation();
+ const L=(S.lists||[]).find(l=>l.id===S.cur),u=L&&L.units[+t.dataset.i];if(!u)return;let v=Math.round(+t.value);if(!isFinite(v)||v<0)v=0;
+ if(t.dataset.blp==="pts"){u.pts=v;u.pm=1;L.pedit=1}
+ else{if(v<1)v=1;u.size=v;if(u.cfg){u.cfg.size=v;if(!u.pm){try{applyPts(L)}catch(_){}}}L.pedit=1}
+ try{if(L.bld)L.bld.tot=calc(L).total}catch(_){}
+ save();try{draw()}catch(_){}},true);
