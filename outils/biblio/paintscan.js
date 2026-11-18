@@ -78,7 +78,7 @@ function psOnCode(raw,cam){const code=psNorm(raw);if(code.length!==13||!psCheck(
  else{PS.card=psRow(p,code,`<button class="b p" data-psc="addc" data-code="${psE(code)}">Ajouter</button>`);psSay("✅ Reconnu : "+psE(p.n))}
  psDraw();return true}
 async function psStart(){psCss();if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){psSay("⚠ Caméra non disponible ici : utilise « Photo du code-barres » ou saisis le code.");psDraw();return}
- try{PS.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});PS.mode="cam";psSay("Place le code-barres dans le cadre…");psDraw();psLoop()}catch(e){psSay("⚠ Caméra refusée ou indisponible : utilise « Photo du code-barres » ou saisis le code.");psDraw()}}
+ try{PS.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});PS.mode="cam";psSay("Place le code-barres dans le cadre…");psDraw();psLoop()}catch(e){const n=e&&e.name||"";psSay("⚠ "+(n==="NotAllowedError"||n==="SecurityError"?"Caméra bloquée (autorisation refusée ou page intégrée). Dans l'appli Android, installe la version 2.1 puis autorise la caméra. En attendant : ":n==="NotFoundError"?"Aucune caméra trouvée. ":"Caméra indisponible. ")+"touche « 🖼 Photo du code-barres » : elle ouvre l'appareil photo du téléphone.");psDraw()}}
 function psStop(){PS.mode="idle";cancelAnimationFrame(PS.raf);clearTimeout(PS.tm);if(PS.stream){PS.stream.getTracks().forEach(t=>t.stop());PS.stream=null}}
 let PSBD=null;
 function psLoop(){let busy=false;const cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});

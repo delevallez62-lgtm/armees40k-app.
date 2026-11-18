@@ -1,6 +1,9 @@
 package com.armees40k.app;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.webkit.PermissionRequest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +43,8 @@ import java.util.Map;
 public class MainActivity extends Activity {
     private static final String HOST = "app.armees40k.local";
     private static final String START = "https://" + HOST + "/index.html";
-    private static final int REQ_FILE = 1, REQ_SAVE = 2;
+    private static final int REQ_FILE = 1, REQ_SAVE = 2, REQ_CAM = 3;
+    private PermissionRequest camReq;
     /** Adresse de mise à jour par défaut (modifiable dans l'app). */
     private static final String DEFAULT_UPDATE_URL = "https://raw.githubusercontent.com/delevallez62-lgtm/armees40k-app./main/index.html";
     /** Ta page sur Claude : toujours la dernière version, données synchronisées avec ton compte. */
@@ -117,6 +121,26 @@ public class MainActivity extends Activity {
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(final PermissionRequest r) {
+                runOnUiThread(() -> {
+                    boolean video = false;
+                    for (String x : r.getResources()) if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(x)) video = true;
+                    String h = r.getOrigin() == null || r.getOrigin().getHost() == null ? "" : r.getOrigin().getHost();
+                    if (!video || !(HOST.equals(h) || isClaude(h))) { r.deny(); return; }
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        r.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                    } else {
+                        if (camReq != null) camReq.deny();
+                        camReq = r;
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_CAM);
+                    }
+                });
+            }
+
+            @Override
+            public void onPermissionRequestCanceled(PermissionRequest r) { if (camReq == r) camReq = null; }
+
             @Override
             public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
                 if (fileCb != null) fileCb.onReceiveValue(null);
@@ -279,6 +303,18 @@ public class MainActivity extends Activity {
     }
 
     private void toast(String m) { Toast.makeText(this, m, Toast.LENGTH_LONG).show(); }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        if (req == REQ_CAM) {
+            PermissionRequest r = camReq;
+            camReq = null;
+            if (r != null) {
+                if (res.length > 0 && res[0] == PackageManager.PERMISSION_GRANTED) r.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                else { r.deny(); toast("Caméra refusée : autorise-la dans Réglages Android > Applications > Mes armées 40k > Autorisations"); }
+            }
+        } else super.onRequestPermissionsResult(req, perms, res);
+    }
 
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
