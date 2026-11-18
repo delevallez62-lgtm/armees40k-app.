@@ -8318,11 +8318,31 @@ window.BIBMERGE={
     const ov=(m.weapons||[]).filter(w=>sg.has(wSig(w))).length;return same&&ov>=1&&ov>=Math.ceil(sg.size/2)});
    if(m){used.add(m.ref);out.push({p,m})}});
   return out},
- ask(r,items,o,go){try{const pairs=this.cands(r.units);if(!pairs.length)return false;
+ /* import : une unité importée très proche d'une fiche existante (collection ou bibliothèque) sauf par le nom → on propose de renommer */
+ rcands(units){const out=[];if(!D.ready)return out;const coll=Object.values(S.coll||{}).filter(m=>!(m.mrg&&S.coll[m.mrg])),used=new Set(),usedU=new Set();
+  const st=x=>["M","E","SV","PV","CD","CO"].map(k=>String(((x||{})[k])==null?"":(x||{})[k]).replace(/[^0-9a-zA-Z]/g,"").toLowerCase()).join("|");
+  const ov=(A,B)=>{const a=new Set(A.map(wSig)),b=new Set(B.map(wSig));if(!a.size||!b.size)return 0;let i=0;a.forEach(w=>{if(b.has(w))i++});return i/Math.max(a.size,b.size)};
+  (units||[]).forEach(p=>{const key=nnm(p.name);if(!key||coll.some(m=>nnm(m.name)===key))return;const ps=st(p.stats),pw=p.weapons||[];if(!pw.length||ps==="|||||")return;
+   let best=null;coll.forEach(m=>{if(used.has(m.ref)||nnm(m.name)===key)return;if(st(m.stats)!==ps)return;const o=ov(pw,m.weapons||[]);if(o>=.75&&(!best||o>best.o))best={m,o}});
+   if(best){used.add(best.m.ref);out.push({p,m:best.m,src:"collection"});return}
+   const cand=D.units.filter(u=>{if(usedU.has(u.id)||nnm(u.n)===key||nnm(frName(u.n))===key)return false;if(!(u.pr||[]).some(pf=>st({M:statOf(pf,"M"),E:statOf(pf,"E"),SV:statOf(pf,"SV"),PV:statOf(pf,"PV"),CD:statOf(pf,"CD"),CO:statOf(pf,"CO")})===ps))return false;
+    return ov(pw,[...(u.rw||[]).map(x=>wToApp(x,false)),...(u.mw||[]).map(x=>wToApp(x,true))])>=.75});
+   if(cand.length&&new Set(cand.map(u=>nk(u.n))).size===1){const u=cand[0];if(coll.some(m=>{const lk=LB().links[m.ref];return lk&&lk.id===u.id}))return;usedU.add(u.id);out.push({p,u,src:"bibliothèque"})}});
+  return out},
+ rask(r,items,o,go){try{const list=this.rcands(r.units);if(!list.length)return false;const acc=[],self=this;
+  const fin=()=>{const o2=Object.assign({},o,{_ren:acc.filter(x=>x.m),_lren:acc.filter(x=>x.u)});acc.filter(x=>x.m).forEach(x=>{const m=x.m;m.old=Array.isArray(m.old)?m.old:[];m.old.push(m.name);m.name=x.p.name;delete AM[m.ref]});
+   acc.filter(x=>x.u).forEach(x=>{LB().tr["n:"+nk(x.u.n)]={fr:x.p.name,st:"ok",src:"import",at:Date.now()}});if(acc.length)sv();
+   if(!self.ask0(r,items,o2,go))go(r,items,Object.assign({},o2,{bm:1}))};
+  const next=i=>{if(i>=list.length){fin();return}const x=list[i];
+   ask({t:"Même unité ?",p:"« "+x.p.name+" » (importée) ressemble beaucoup à « "+(x.m?x.m.name:frName(x.u.n))+" » ("+x.src+") : mêmes caractéristiques et mêmes armes, seul le nom diffère. Si c'est bien la même unité, le nom existant sera remplacé par « "+x.p.name+" » partout dans l'appli.",ok:"Oui, c'est la même",alt:"Non, garder séparées",altcb:()=>next(i+1)},()=>{acc.push(x);next(i+1)})};
+  next(0);return true}catch(e){return false}},
+ ask(r,items,o,go){if(this.rask(r,items,o,go))return true;return this.ask0(r,items,o,go)},
+ ask0(r,items,o,go){try{const pairs=this.cands(r.units);if(!pairs.length)return false;
   ask({t:"Fusionner avec la bibliothèque ?",p:"Ces unités importées correspondent à des fiches créées depuis la bibliothèque. En fusionnant, tes textes français sont toujours gardés ; seuls les éléments qui manquent (armes, aptitudes, mots-clés) sont ajoutés à la fiche de collection.",items:pairs.map(x=>x.p.name+" ↔ "+x.m.name+" (bibliothèque)"),ok:"Fusionner",alt:"Garder séparées",altcb:()=>{pairs.forEach(x=>{if(nnm(x.m.name)===nnm(x.p.name))x.m.name=x.m.name+" (bibliothèque)"});go(r,items,Object.assign({},o,{bm:1}))}},
    ()=>{pairs.forEach(x=>this.prep(x));go(r,items,Object.assign({},o,{bm:1,_pairs:pairs}))});return true}catch(e){return false}},
  prep(x){const m=x.m,p=x.p;m.name=p.name;m.weapons=(m.weapons||[]).filter(w=>!(p.weapons||[]).some(y=>wSig(y)===wSig(w)||nk(y.name)===nk(w.name)||wLike(w,y)))},
- post(o){try{const pairs=o&&o._pairs;if(!pairs)return;pairs.forEach(x=>{const m=S.coll[x.m.ref];const u=m&&libUnitOf(m);if(!m||!u)return;
+ post(o){try{(o&&o._lren||[]).forEach(x=>{const m=Object.values(S.coll).find(y=>nnm(y.name)===nnm(x.p.name));if(!m||LB().links[m.ref])return;LB().links[m.ref]={id:x.u.id,h:x.u.h,v:D.man.version,at:Date.now(),prof:0,applied:[],stale:false,st:"manual",src:"import"};try{snapEq(m,x.u,x.u.wp||{})}catch(_){}delete AM[m.ref]});if(o&&o._lren&&o._lren.length)sv()}catch(_){}
+  try{const pairs=o&&o._pairs;if(!pairs)return;pairs.forEach(x=>{const m=S.coll[x.m.ref];const u=m&&libUnitOf(m);if(!m||!u)return;
    const pi=(LB().links[m.ref]||{}).prof||0,pf=profOf(u,pi);m.stats=m.stats||{};["M","E","SV","PV","CD","CO"].forEach(k=>{if(!String(m.stats[k]||"").trim()){const v=statOf(pf,k);if(v)m.stats[k]=v}});
    const have=new Set(String(m.apt||"").split(",").map(t=>nk(t)).filter(Boolean)),apt=String(m.apt||"").split(",").map(t=>t.trim()).filter(Boolean);m.text=Array.isArray(m.text)?m.text:[];
    const wd=t=>new Set(nk(t).split(" ").filter(w=>w.length>3)),jac=(a,b)=>{let i=0;a.forEach(w=>{if(b.has(w))i++});const n=a.size+b.size-i;return n?i/n:0};const tl=m.text.map(wd);
@@ -8371,6 +8391,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:40,d:"2026-11-18",t:"Import : même unité sous un autre nom ?",s:"Quand tu importes une unité (texte ou PDF) très proche d'une fiche de ta collection ou de la bibliothèque (mêmes caractéristiques et armes) mais avec un autre nom, l'appli te demande s'il s'agit de la même unité. Si tu confirmes, le nom existant est remplacé par celui de l'import partout, sans doublon."},
  {id:39,d:"2026-11-18",t:"Deuxième passe de traduction des noms",s:"441 noms de capacités, stratagèmes, améliorations, détachements et règles de faction traduits en plus (propositions à vérifier). Les noms de personnages, de lieux, de clans, le jargon ork et les noms d'équipements propres restent en anglais ; tu peux les corriger dans Nouveautés › Traduction."},
  {id:38,d:"2026-11-18",t:"Nouveautés › Traduction",s:"Un menu discret en bas de l'onglet Nouveautés rassemble tout ce qui n'est pas encore traduit, en tiroirs fermés qui reprennent l'aspect de l'appli (fiche d'unité, stratagème, amélioration, détachement, règle). Tu modifies, tu enregistres : la traduction est appliquée partout où ce texte apparaît."},
  {id:37,d:"2026-11-18",t:"Points par nombre de figurines vérifiés automatiquement",s:"Chaque fiche de la bibliothèque affiche maintenant ses points selon le nombre de figurines (et selon le numéro de l'unité dans l'armée). La mise à jour quotidienne depuis Wahapedia contrôle ces points contre le fichier de Wahapedia avant de publier : en cas d'écart, rien n'est publié."},
