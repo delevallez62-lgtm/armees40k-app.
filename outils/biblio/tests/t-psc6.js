@@ -6,7 +6,8 @@ await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll(
 await ev(()=>{const t=[...document.querySelectorAll('button,[data-x]')].find(x=>/Mes peintures/i.test(x.innerText));t&&t.click()});await wait(300);
 await ev(()=>{document.getElementById('gxadd').open=true;document.querySelector('[data-pscan]').click()});await wait(300);
 await ev(()=>BIBPSC.onCode('8435568302778'));await wait(300);
-const t=await ev(()=>document.getElementById('psc').innerText);
+const t=await ev(()=>document.getElementById('pspot').innerText);
 ok('AK11044 Yellow reconnu par son code-barres',/Yellow/.test(t)&&/AK/.test(t),t.slice(0,300));
-ok('ajouté automatiquement',await ev(()=>__hob.hob().paints.some(x=>x.ean==='8435568302778'&&/Yellow/.test(x.n)&&/AK/.test(x.b))),1);
+await ev(()=>document.querySelector('#pspot [data-pot="+"]').click());await wait(200);
+ok('ajouté avec +',await ev(()=>__hob.hob().paints.some(x=>x.ean==='8435568302778'&&/Yellow/.test(x.n)&&/AK/.test(x.b))),1);
 await b.close()})();

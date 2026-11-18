@@ -1,6 +1,6 @@
 /* ===== Peinture : lecture d'un pot par son code-barres (reconnaissance automatique : marque, nom, teinte, type) ===== */
 /* Données : catalogue de peintures embarqué dans la bibliothèque (WarHub/warhub-catalog, licence MIT) → fonctionne hors ligne. */
-const PS={db:null,eanMap:null,sess:[],auto:true,stream:null,raf:0,last:{code:"",t:0},card:null,q:"",mode:"idle"};
+const PS={db:null,eanMap:null,sess:[],auto:false,stream:null,raf:0,last:{code:"",t:0},card:null,q:"",mode:"idle"};
 const PSBR={"citadel colour":"Citadel","army painter":"The Army Painter","monument (pro acryl)":"Pro Acryl","kimera kolors":"Kimera","scale75":"Scale75","vallejo":"Vallejo","ak interactive":"AK Interactive","ak real color":"AK Interactive","green stuff world":"Green Stuff World","tamiya":"Tamiya"};
 const psBrand=b=>PSBR[String(b||"").toLowerCase()]||String(b||"");
 function psType(p){const t=String(p.t||"").toLowerCase(),r=String(p.r||"").toLowerCase(),n=String(p.n||"").toLowerCase();
@@ -44,6 +44,45 @@ function psDecodeDeep(src){// src : canvas
  const W0=src.width,H0=src.height,scales=[1,.5,.75,1.5,2,.35];const old=PSTOL;
  try{for(const tol of [1.1,2.2]){PSTOL=tol;for(const sc of scales){const w=Math.round(W0*sc),h=Math.round(H0*sc);if(w<240||w>3200||h<60)continue;const cv=document.createElement("canvas");cv.width=w;cv.height=h;const cx=cv.getContext("2d",{willReadFrequently:true});cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality="high";cx.drawImage(src,0,0,w,h);const G=psGray(cv);
    let c=psScanGray(G,false)||psScanGray(G,true);if(c)return c}}}finally{PSTOL=old}return null}
+
+/* ----- pot de peinture : image, quantité (+ / −), état ----- */
+function potSvg(c,sz,st){c=/^#[0-9a-fA-F]{6}$/.test(c||"")?c:"#7a5b22";const empty=st==="vide",buy=st==="achat";
+ return`<svg class="potsvg" viewBox="0 0 100 124" width="${sz}" height="${Math.round(sz*1.24)}" role="img" aria-label="Pot de peinture"><ellipse cx="50" cy="118" rx="38" ry="5" fill="#000" opacity=".28"/>
+ <rect x="29" y="5" width="42" height="15" rx="4" fill="#2a2a2e"/><rect x="29" y="5" width="42" height="4" rx="2" fill="#fff" opacity=".18"/><rect x="33" y="20" width="34" height="7" fill="#17171a"/>
+ <rect x="13" y="26" width="74" height="88" rx="15" fill="${empty?"#cfd2cf":c}" ${empty?'fill-opacity=".22"':""} stroke="${buy?"#ffb347":"#0009"}" stroke-width="${buy?3:2}" ${buy?'stroke-dasharray="6 4"':""}/>
+ <rect x="13" y="60" width="74" height="28" fill="#fff" opacity="${empty?".3":".9"}"/><rect x="21" y="68" width="40" height="5" rx="2" fill="#222" opacity=".55"/><rect x="21" y="77" width="26" height="4" rx="2" fill="#222" opacity=".35"/>
+ <rect x="19" y="32" width="8" height="74" rx="4" fill="#fff" opacity=".22"/></svg>`}
+function psFindOwn(d,code){const h=window.__hob.hob(),k=s=>nk(String(s||""));return h.paints.find(x=>code&&x.ean&&psNorm(x.ean)===psNorm(code))||h.paints.find(x=>k(x.b)===k(d.b)&&k(x.n)===k(d.n))||null}
+function psRemovePaint(id){const H=window.__hob,h=H.hob();h.paints=h.paints.filter(x=>x.id!==id);Object.values(h.sch||{}).forEach(s=>(s.steps||[]).forEach(x=>{if(x.p===id)x.p=""}));PS.sess=PS.sess.filter(x=>x.id!==id);try{H.commit()}catch(_){}}
+function psShowPot(p,code,own){const d=p?psDisp(p):{n:own.n,b:own.b||"",c:own.c,t:own.t||"",rg:own.rg||"",sku:own.sku||"",ean:own.ean||""};PS.pot={p,code,d,own:own||null};psPotRender()}
+function psPotRender(){const P=PS.pot;if(!P)return;let o=document.getElementById("pspot");if(!o){o=document.createElement("div");o.id="pspot";document.body.appendChild(o)}
+ const ex=P.own&&window.__hob.hob().paints.includes(P.own)?P.own:psFindOwn(P.d,P.code),q=ex?(ex.q||1):0;P.ex=ex;
+ o.innerHTML=`<div class="pk"><button class="pkx" data-pot="x" aria-label="Fermer">✕</button><div class="pkm">${potSvg(P.d.c,150,ex&&ex.s)}<div class="pkc"><button class="pkb" data-pot="+" aria-label="Ajouter à ma liste">＋</button><b class="pkq">${q}</b><button class="pkb" data-pot="-" aria-label="Retirer de ma liste" ${q?"":"disabled"}>−</button></div></div>
+ <div class="pkn"><b>${psE(P.d.n)}</b><br><span class="mu">${psE(P.d.b)}${P.d.rg&&nk(P.d.rg)!==nk(P.d.t)?" · "+psE(P.d.rg):""}${P.d.t?" · "+psE(P.d.t):""}${P.d.sku?" · réf. "+psE(P.d.sku):""}</span></div>
+ <div class="mu pkt">${q?(q>1?"Tu en as "+q+" dans ta liste":"Dans ta liste"):"Pas encore dans ta liste : appuie sur ＋"}</div><button class="b p" data-pot="x" style="margin-top:8px;min-width:120px">OK</button></div>`}
+function psPotClose(){const o=document.getElementById("pspot");if(o)o.remove();PS.pot=null;PS.last={code:"",t:Date.now()}}
+function psPotStep(dir){const P=PS.pot;if(!P)return;const H=window.__hob;let ex=P.ex||psFindOwn(P.d,P.code);
+ if(dir>0){if(!ex){if(P.p){const a=psAdd(P.p,P.code);ex=a&&a.p;if(ex&&!a.dup)PS.sess.unshift({p:P.p,code:P.code,id:ex.id})}}else ex.q=(ex.q||1)+1;if(ex&&!ex.q)ex.q=1;try{H.commit()}catch(_){}try{toast("Ajouté à ma liste ✓")}catch(_){}}
+ else if(ex){const q=ex.q||1;if(q<=1)psRemovePaint(ex.id);else{ex.q=q-1;try{H.commit()}catch(_){}}try{toast("Retiré de ma liste")}catch(_){}}
+ PS.pot.own=PS.pot.own&&H.hob().paints.includes(PS.pot.own)?PS.pot.own:null;psPotRender();try{const L=document.querySelector("#psc");if(L)psDraw()}catch(_){}}
+/* fiche d'une peinture de la liste : même schéma en plus petit + état du pot */
+const PST=[["ok","Plein"],["vide","Vide"],["achat","À acheter"]];
+function potSheet(p,isNew){const q=p.q||1,st=p.s||"ok";return`<div class="potsh" data-pid="${psE(p.id)}"><div class="pkm" style="gap:10px">${potSvg(p.c,82,st)}${isNew?"":`<div class="pkc sm"><button type="button" class="pkb" data-pq="1" aria-label="Ajouter un pot">＋</button><b class="pkq">${q}</b><button type="button" class="pkb" data-pq="-1" aria-label="Retirer un pot" ${q<=1?"disabled":""}>−</button></div>`}</div>
+ <div class="mu" style="margin:6px 0 2px">État du pot</div><div class="pkst">${PST.map(x=>`<button type="button" class="b${st===x[0]?" p":""}" data-pst="${x[0]}">${x[1]}</button>`).join("")}</div><input type="hidden" data-f="s" value="${psE(st)}"></div>`}
+function potSheetUpdate(box,p){const q=p.q||1,st=p.s||"ok";const sv=box.querySelector(".potsvg");if(sv){const t=document.createElement("div");t.innerHTML=potSvg(p.c,82,st);sv.replaceWith(t.firstChild)}
+ const qe=box.querySelector(".pkq");if(qe)qe.textContent=q;const m=box.querySelector('[data-pq="-1"]');if(m)m.disabled=q<=1;box.querySelectorAll("[data-pst]").forEach(b=>b.classList.toggle("p",b.dataset.pst===st));const hf=box.querySelector('input[data-f="s"]');if(hf)hf.value=st}
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-pot],[data-pq],[data-pst]");if(!t)return;
+ if(t.dataset.pot!==undefined){e.preventDefault();e.stopPropagation();const a=t.dataset.pot;if(a==="x")psPotClose();else if(!t.disabled)psPotStep(a==="+"?1:-1);return}
+ const box=t.closest(".potsh");if(!box)return;e.preventDefault();e.stopPropagation();const H=window.__hob,id=box.dataset.pid,p=H.hob().paints.find(x=>x.id===id);
+ if(t.dataset.pq!==undefined){if(!p)return;p.q=Math.max(1,(p.q||1)+(+t.dataset.pq));try{H.commit()}catch(_){}potSheetUpdate(box,p)}
+ else{const v=t.dataset.pst;if(p){p.s=v;try{H.commit()}catch(_){}potSheetUpdate(box,p)}else{const hf=box.querySelector('input[data-f="s"]');hf.value=v;box.querySelectorAll("[data-pst]").forEach(b=>b.classList.toggle("p",b.dataset.pst===v));const sv=box.querySelector(".potsvg");if(sv){const tt=document.createElement("div");tt.innerHTML=potSvg((document.querySelector('#gxo [data-f="c"]')||{}).value,82,v);sv.replaceWith(tt.firstChild)}}}},true);
+(function(){const s=document.createElement("style");s.id="potcss";s.textContent=`#pspot{position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}#pspot .pk{position:relative;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:20px;padding:18px 16px 14px;width:min(340px,100%);text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#pspot .pkx{position:absolute;right:8px;top:8px;border:0;background:transparent;color:var(--tx);font-size:20px;min-width:40px;min-height:40px}
+.pkm{display:flex;align-items:center;justify-content:center;gap:18px}.pkc{display:flex;flex-direction:column;align-items:center;gap:8px}.pkq{font-size:26px;min-width:34px}.pkc.sm .pkq{font-size:20px}
+.pkb{width:52px;height:52px;border-radius:50%;border:2px solid var(--ac,#c9a227);background:var(--bg);color:var(--tx);font-size:28px;line-height:1;padding:0}.pkc.sm .pkb{width:42px;height:42px;font-size:22px}.pkb:disabled{opacity:.35}
+.pkn{margin-top:10px}.pkt{margin-top:6px;min-height:20px}.potsh{margin:8px 0 12px;text-align:center}.pkst{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.pkst .b{min-height:40px}
+.stk.vide{background:#5a2323;color:#ffd0d0}`;document.head.appendChild(s)})();
+window.BIBPOT={svg:potSvg,sheet:potSheet};
 /* ----- interface ----- */
 function psCss(){if(document.getElementById("pscss"))return;const s=document.createElement("style");s.id="pscss";s.textContent=`#psc{position:fixed;inset:0;z-index:95;background:rgba(5,6,5,.92);display:flex;align-items:flex-end;justify-content:center}
 #psc .pp{background:var(--card);color:var(--tx);width:min(560px,100%);max-height:96vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
@@ -59,7 +98,6 @@ function psDraw(){const o=document.getElementById("psc");if(!o)return;const db=p
  else h+=`<p class="mu" style="margin:6px 0">${db.paints.length} peintures · ${PS.eanMap.size} codes-barres · fonctionne hors ligne.</p>
   <div class="vw" ${cam?"":"hidden"}><video id="psv" playsinline muted></video><div class="rt"></div></div>
   <div class="ct"><button class="b p" data-psc="${cam?"stop":"start"}">${cam?"⏹ Arrêter la caméra":"📷 Activer la caméra"}</button><label class="b" style="display:inline-flex;align-items:center;cursor:pointer">🖼 Photo du code-barres<input type="file" accept="image/*" capture="environment" data-psf="1" style="display:none"></label></div>
-  <label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" data-psc="auto" ${PS.auto?"checked":""}> Ajouter automatiquement les pots reconnus à mes peintures</label>
   <div style="display:flex;gap:6px"><input type="text" id="psman" inputmode="numeric" placeholder="Saisir le code-barres (13 chiffres)" autocomplete="off"><button class="b" data-psc="man">OK</button></div>
   <div id="psmsg" class="mu" style="min-height:22px;margin:6px 0">${PS.msg||""}</div>${PS.card||""}
   <h4 style="margin:12px 0 4px">Chercher dans le catalogue</h4><input type="search" id="psq" placeholder="Nom, marque, référence…" value="${psE(PS.q)}" autocomplete="off"><div id="psres">${psSearchHtml()}</div>
@@ -72,11 +110,9 @@ function psSearchHtml(){const db=psData(),q=nk(PS.q||"");if(!db||q.length<2)retu
 function psSay(m){PS.msg=m;const e=document.getElementById("psmsg");if(e)e.innerHTML=m}
 function psOnCode(raw,cam){const code=psNorm(raw);if(code.length!==13||!psCheck(code)){psSay("⚠ Code illisible ou invalide : "+psE(raw));return false}
  const now=Date.now();if(cam&&PS.last.code===code&&now-PS.last.t<3000)return true;PS.last={code,t:now};
- const r=psLookup(code);if(r.own&&!r.cat){PS.card=`<div class="rs"><span class="sw" style="background:${psE(r.own.c||"#888")}"></span><span style="flex:1"><b>${psE(r.own.n)}</b><br><span class="mu">Déjà dans ta collection · ${psE(r.own.b||"")}</span></span></div>`;psSay("✅ Déjà dans ta collection");psDraw();return true}
+ const r=psLookup(code);if(r.own&&!r.cat){psShowPot(null,code,r.own);return true}
  if(!r.cat){PS.pend=code;PS.card=`<div class="rs" style="display:block"><b>Code ${psE(code)} inconnu du catalogue</b><p class="mu"><b>Cherche ta peinture dans le catalogue</b> (champ de recherche plus bas : nom ou référence, ex. « AK11044 » ou « yellow ») puis touche ＋ : le code sera associé et reconnu automatiquement la prochaine fois. Sinon, remplis ci-dessous.</p><input type="text" id="psun" placeholder="Nom de la peinture"><input type="text" id="psub" placeholder="Marque" value="Citadel"><label>Couleur <input type="color" id="psuc" value="#7a5b22"></label><div class="ct"><button class="b p" data-psc="addun" data-code="${psE(code)}">Ajouter</button></div></div>`;psSay("❓ Pot non trouvé dans le catalogue");psDraw();return true}
- const p=r.cat;if(PS.auto){const a=psAdd(p,code);if(a){if(!a.dup)PS.sess.unshift({p,code,id:a.p.id});psSay(a.dup?"✔ Déjà dans ta collection : "+psE(p.n):"✅ Ajouté : "+psE(p.n)+(p.q?" <span class=\"mu\">(code non confirmé : vérifie la couleur)</span>":""));PS.card=psRow(p,code);try{toast(a.dup?"Déjà dans ta collection":"Peinture ajoutée ✓")}catch(_){}}}
- else{PS.card=psRow(p,code,`<button class="b p" data-psc="addc" data-code="${psE(code)}">Ajouter</button>`);psSay("✅ Reconnu : "+psE(p.n)+(p.q?" <span class=\"mu\">(code non confirmé)</span>":""))}
- psDraw();return true}
+ psShowPot(r.cat,code);return true}
 async function psStart(){psCss();if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){psSay("⚠ Caméra non disponible ici : utilise « Photo du code-barres » ou saisis le code.");psDraw();return}
  try{PS.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});PS.mode="cam";psSay("Place le code-barres dans le cadre…");psDraw();psLoop()}catch(e){const n=e&&e.name||"";psSay("⚠ "+(n==="NotAllowedError"||n==="SecurityError"?"Caméra bloquée (autorisation refusée ou page intégrée). Dans l'appli Android, installe la version 2.1 puis autorise la caméra. En attendant : ":n==="NotFoundError"?"Aucune caméra trouvée. ":"Caméra indisponible. ")+"touche « 🖼 Photo du code-barres » : elle ouvre l'appareil photo du téléphone.");psDraw()}}
 function psStop(){PS.mode="idle";cancelAnimationFrame(PS.raf);clearTimeout(PS.tm);if(PS.stream){PS.stream.getTracks().forEach(t=>t.stop());PS.stream=null}}
@@ -100,8 +136,8 @@ document.addEventListener("click",e=>{const o=e.target.closest&&e.target.closest
  if(a==="close")psClose();else if(a==="start")psStart();else if(a==="stop"){psStop();psDraw()}
  else if(a==="auto"){PS.auto=b.checked}
  else if(a==="man"){const i=document.getElementById("psman");psOnCode(i&&i.value)}
- else if(a==="addc"){const r=psLookup(b.dataset.code);if(r.cat){const x=psAdd(r.cat,r.code);if(x&&!x.dup)PS.sess.unshift({p:r.cat,code:r.code,id:x.p.id});PS.card="";psSay(x&&x.dup?"Déjà dans ta collection":"✅ Ajouté");psDraw()}}
- else if(a==="addp"){const p=psData().paints[+b.dataset.i];const cd=PS.pend||(p.e||[])[0]||"";const x=psAdd(p,cd);if(x&&!x.dup)PS.sess.unshift({p,code:cd,id:x.p.id});psSay((PS.pend?"🔗 Code "+psE(PS.pend)+" associé à ":x&&x.dup?"Déjà dans ta collection : ":"✅ Ajouté : ")+psE(p.n));if(PS.pend){PS.card="";PS.pend=""}psDraw()}
+ else if(a==="addc"){const r=psLookup(b.dataset.code);if(r.cat){const x=psAdd(r.cat,r.code);if(x&&!x.dup)PS.sess.unshift({p:r.cat,code:r.code,id:x.p.id});PS.card="";psDraw();psShowPot(r.cat,r.code)}}
+ else if(a==="addp"){const p=psData().paints[+b.dataset.i];const cd=PS.pend||(p.e||[])[0]||"";const x=psAdd(p,cd);if(x&&!x.dup)PS.sess.unshift({p,code:cd,id:x.p.id});psSay((PS.pend?"🔗 Code "+psE(PS.pend)+" associé à ":x&&x.dup?"Déjà dans ta collection : ":"✅ Ajouté : ")+psE(p.n));if(PS.pend){PS.card=""}PS.pend="";psDraw();psShowPot(p,cd)}
  else if(a==="addun"){PS.pend="";const n=(document.getElementById("psun")||{}).value,br=(document.getElementById("psub")||{}).value,c=(document.getElementById("psuc")||{}).value;if(!String(n||"").trim()){psSay("Donne un nom à la peinture");return}
   const H=window.__hob,h=H.hob(),np={id:"p"+Date.now().toString(36),n:n.trim(),b:(br||"").trim(),rg:"",sku:"",ean:b.dataset.code,t:"Base",c:c||"#7a5b22",s:"ok"};h.paints.push(np);try{H.commit()}catch(_){}PS.card="";PS.sess.unshift({p:{n:np.n,b:0,h:np.c,_user:1},code:np.ean,id:np.id,user:np});psSay("✅ Ajouté et mémorisé pour ce code-barres");psDraw()}
  else if(a==="undo"){const x=PS.sess[+b.dataset.i];if(x){const H=window.__hob,h=H.hob();h.paints=h.paints.filter(p=>p.id!==x.id);try{H.commit()}catch(_){}PS.sess.splice(+b.dataset.i,1);psDraw()}}

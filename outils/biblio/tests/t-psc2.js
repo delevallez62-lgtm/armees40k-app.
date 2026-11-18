@@ -8,7 +8,7 @@ await ev(()=>{const t=[...document.querySelectorAll('button,[data-x]')].find(x=>
 await ev(()=>document.querySelector('[data-pscan]').click());await p.waitForTimeout(300);
 await ev(()=>{window.BarcodeDetector=undefined;try{delete window.BarcodeDetector}catch(_){}});
 await ev(()=>document.querySelector('[data-psc="start"]').click());
-let found=false;for(let i=0;i<20&&!found;i++){await p.waitForTimeout(500);found=await ev(()=>__hob.hob().paints.some(x=>x.ean==='5011921183340'))}
-ok('caméra (flux vidéo simulé) : code lu et pot ajouté automatiquement',found,await ev(()=>document.getElementById('psmsg')&&document.getElementById('psmsg').innerText));
+let found=false;for(let i=0;i<20&&!found;i++){await p.waitForTimeout(500);found=await ev(()=>!!document.getElementById('pspot')&&/Administratum Grey/.test(document.getElementById('pspot').innerText))}
+ok('caméra (flux vidéo simulé) : code lu et pot affiché',found,await ev(()=>document.getElementById('psmsg')&&document.getElementById('psmsg').innerText));
 await ev(()=>{const c=document.querySelector('[data-psc="stop"]');c&&c.click()});
 await b.close()})();

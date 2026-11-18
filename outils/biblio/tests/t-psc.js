@@ -16,29 +16,30 @@ const bt=await ev(()=>!!document.querySelector('[data-pscan]'));
 ok('bouton « Scanner un code-barres » dans l\'onglet Peinture',bt,await ev(()=>document.body.innerText.slice(0,200)));
 await ev(()=>document.querySelector('[data-pscan]').click());await wait(400);
 ok('fenêtre de scan ouverte',await ev(()=>!!document.getElementById('psc')&&/Scanner un pot/.test(document.getElementById('psc').innerText)),1);
-// reconnaissance + ajout automatique
+// reconnaissance : le pot s'affiche ; + l'ajoute
 const n0=await ev(()=>__hob.hob().paints.length);
+const PL=async()=>{await ev(()=>{const b=document.querySelector('#pspot [data-pot="+"]');b&&b.click()});await wait(200);await ev(()=>{const x=document.querySelector('#pspot [data-pot="x"]');x&&x.click()});await wait(100)};
 await ev(()=>BIBPSC.onCode('5011921183340'));await wait(300);
+ok('code reconnu : le pot s\'affiche, pas encore ajouté',await ev(n=>!!document.getElementById('pspot')&&/Administratum Grey/.test(document.getElementById('pspot').innerText)&&__hob.hob().paints.length===n,n0),1);
+await PL();
 const a=await ev(()=>{const h=__hob.hob();const p=h.paints.find(x=>x.ean==='5011921183340');return {n:h.paints.length,p:p&&{n:p.n,b:p.b,t:p.t,c:p.c,rg:p.rg}}});
 ok('code reconnu : nom, marque, teinte et type',a.p&&a.p.n==='Administratum Grey'&&a.p.b==='Citadel'&&a.p.c==='#8f9690'&&a.p.t==='Air',a);
-ok('ajouté automatiquement à « Mes peintures »',a.n===n0+1,a);
+ok('ajouté avec « + » à « Mes peintures »',a.n===n0+1,a);
 // même pot (ancien code-barres) : pas de doublon
-await ev(()=>{BIBPSC.onCode('5011921199815')});await wait(200);
+await ev(()=>{BIBPSC.onCode('5011921199815')});await wait(200);await PL();
 ok('autre code-barres du même pot : pas de doublon',await ev(()=>__hob.hob().paints.filter(x=>x.n==='Administratum Grey').length===1),1);
-// mode manuel (sans auto)
-await ev(()=>{document.querySelector('[data-psc="auto"]').click()});
+// saisie manuelle
 await ev(()=>{document.getElementById('psman').value='5011921182848';document.querySelector('[data-psc="man"]').click()});await wait(300);
-ok('sans ajout automatique : carte du pot reconnu + bouton Ajouter',await ev(()=>/Abaddon Black/.test(document.getElementById('psc').innerText)&&!!document.querySelector('[data-psc="addc"]')),1);
-await ev(()=>document.querySelector('[data-psc="addc"]').click());await wait(300);
-ok('ajout manuel confirmé',await ev(()=>__hob.hob().paints.some(x=>x.n==='Abaddon Black')),1);
+ok('saisie manuelle : pot reconnu affiché',await ev(()=>/Abaddon Black/.test(document.getElementById('pspot').innerText)),1);
+await PL();
+ok('ajout confirmé',await ev(()=>__hob.hob().paints.some(x=>x.n==='Abaddon Black')),1);
 // code inconnu : saisie perso mémorisée
 await ev(()=>BIBPSC.onCode('4006381333931'));await wait(200);
 ok('code inconnu : formulaire pour l\'ajouter soi-même',await ev(()=>!!document.getElementById('psun')),await ev(()=>document.getElementById('psmsg').innerText));
 await ev(()=>{document.getElementById('psun').value='Ma peinture perso';document.querySelector('[data-psc="addun"]').click()});await wait(300);
-await ev(()=>{document.querySelector('[data-psc="auto"]').click()});
 await ev(()=>BIBPSC.onCode('4006381333931'));await wait(300);
-ok('code mémorisé : reconnu comme déjà dans la collection',await ev(()=>/Déjà dans ta collection/.test(document.getElementById('psc').innerText)),1);
-// code invalide
+ok('code mémorisé : reconnu comme déjà dans la collection',await ev(()=>/Dans ta liste/.test(document.getElementById('pspot').innerText)),1);
+await ev(()=>{const x=document.querySelector('#pspot [data-pot="x"]');x&&x.click()});
 await ev(()=>BIBPSC.onCode('1234567890123'));await wait(200);
 ok('code invalide refusé',await ev(()=>/illisible|invalide/.test(document.getElementById('psmsg').innerText)),1);
 // recherche catalogue

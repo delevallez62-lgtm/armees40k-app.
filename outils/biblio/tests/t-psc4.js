@@ -19,9 +19,9 @@ for(const [f,l] of [['shot1.jpg','capture d\'écran (code-barres petit au milieu
 // via le champ « Photo du code-barres » avec la capture
 await ev(()=>{document.getElementById('psc').remove()});await ev(()=>{document.querySelector('[data-pscan]').click()});
 await p.setInputFiles('[data-psf]','shot1.jpg');await wait(2500);
-ok('photo/capture déposée dans la fenêtre : pot reconnu et ajouté',await ev(()=>__hob.hob().paints.some(x=>x.ean==='5011921183340')),await ev(()=>document.getElementById('psmsg').innerText));
+ok('photo/capture déposée dans la fenêtre : pot reconnu et affiché',await ev(()=>!!document.getElementById('pspot')&&/Administratum Grey/.test(document.getElementById('pspot').innerText)),await ev(()=>document.getElementById('psmsg').innerText));
 // import depuis une capture : le code-barres de la capture est lu d'abord (hors ligne)
 await ev(()=>{document.getElementById('psc')&&document.getElementById('psc').remove();const h=__hob.hob();h.paints=h.paints.filter(x=>x.ean!=='5011921183340');document.getElementById('gxadd').open=true;document.querySelector('[data-x="ocr"]').click()});await wait(500);
 await p.setInputFiles('#gocrf','shot1.jpg');await wait(3000);
-ok('« Depuis une capture » : le code-barres de la capture est reconnu sans internet',await ev(()=>!!document.getElementById('psc')&&__hob.hob().paints.some(x=>x.ean==='5011921183340')),await ev(()=>document.body.innerText.slice(0,150)));
+ok('« Depuis une capture » : le code-barres de la capture est reconnu sans internet',await ev(()=>!!document.getElementById('pspot')&&/Administratum Grey/.test(document.getElementById('pspot').innerText)),await ev(()=>document.body.innerText.slice(0,150)));
 await b.close()})();

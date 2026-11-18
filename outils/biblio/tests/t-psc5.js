@@ -15,5 +15,5 @@ ok('recherche par référence AK11044 trouve Yellow',/Yellow/.test(html),html.sl
 await ev(()=>{const x=[...document.querySelectorAll('#psc [data-psc="addp"]')][0];x&&x.click()});await wait(300);
 ok('code associé à la peinture ajoutée',await ev(c=>__hob.hob().paints.some(x=>x.ean===c&&/Yellow/.test(x.n)),code),await ev(()=>document.getElementById('psmsg').innerText));
 await ev(c=>BIBPSC.onCode(c),code);await wait(300);
-ok('re-scan : reconnu dans la collection',await ev(()=>/Déjà dans ta collection/.test(document.getElementById('psc').innerText)),1);
+ok('re-scan : reconnu, déjà dans la liste',await ev(()=>/Dans ta liste|Tu en as/.test(document.getElementById('pspot').innerText)),1);
 await b.close()})();
