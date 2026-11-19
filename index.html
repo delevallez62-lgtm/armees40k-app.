@@ -9058,9 +9058,25 @@ function lckParseOpts(lib){const o=((lib&&lib.wp&&lib.wp.opt)||[]),rules=[],unk=
    if(!to.length)unk.push(s);else rules.push({kind:"add",k:cap,per:null,from:"",to,alts,txt:first,add:1,grp})}
   else unk.push(s)});
  return{rules,unk}}
-/* nom de base d'une arme : sans profil (« - frag », « (Supercharge) »), en minuscules sans accents */
-const lckBase=n=>nk(String(n||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]);
-function lckWkeys(en){const a=String(en||"");const s=new Set([lckBase(a)]);try{s.add(lckBase(frName(a.replace(/^➤\s*/,"")))) }catch(_){}return s}
+/* ----- noms d'armes dans les deux langues -----
+   Index « nom (anglais, français officiel, proposé, glossaire, ancien nom, nom saisi par l'utilisateur) → nom anglais canonique ».
+   Une arme est ainsi reconnue qu'elle soit écrite en anglais ou en français, dans la liste comme dans le texte des options. */
+const lckRaw=n=>nk(String(n||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]);
+const lckStem=b=>b.split(" ").map(w=>w.length>3&&/[sx]$/.test(w)?w.slice(0,-1):w).filter(w=>!/^(?:de|du|des|la|le|les|d|l|a|au|aux|et|the|of)$/.test(w)).join(" ");
+let LCKI=null,LCKV="";
+function lckIdx(){let n=0;try{n=Object.keys(LB().tr||{}).length}catch(_){}const ver=((D.man&&D.man.version)||"")+"|"+n+"|"+((D.units||[]).length);if(LCKI&&LCKV===ver)return LCKI;const m=new Map(),bad=new Set();
+ const put=(v,c)=>{v=lckStem(lckRaw(v));if(!v||!c)return;if(m.has(v)&&m.get(v)!==c)bad.add(v);else m.set(v,c)};
+ const seen=new Set();let LBt=null;try{LBt=LB().tr||{}}catch(_){LBt={}}
+ (D.units||[]).forEach(u=>[...(u.rw||[]),...(u.mw||[])].forEach(w=>{const en=String(w.n||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0].trim();if(!en||seen.has(en))return;seen.add(en);
+  const c=lckStem(lckRaw(en));if(!c)return;put(en,c);
+  try{put(frName(en),c)}catch(_){}
+  try{const r=tName(en);put(r.t,c);if(r.prop)put(r.prop,c)}catch(_){}
+  try{const ov=D.fr[hh(en)];if(ov){if(ov.fr)put(ov.fr,c);(Array.isArray(ov.alt)?ov.alt:ov.alt?[ov.alt]:[]).forEach(a=>put(typeof a==="string"?a:a&&a.fr,c))}}catch(_){}
+  try{const t=LBt["n:"+nk(en)];if(t&&t.fr)put(t.fr,c)}catch(_){}
+  try{const g=typeof WN!=="undefined"&&WN[en.toLowerCase()];if(g)put(g,c)}catch(_){}}));
+ bad.forEach(v=>m.delete(v));LCKI=m;LCKV=ver;return m}
+const lckBase=n=>{const b=lckStem(lckRaw(n));const x=lckIdx().get(b);return x||b};
+function lckWkeys(en){return new Set([lckBase(en)])}
 function lckEquip(u,lib){/* effectifs d'armes choisis, profils d'une même arme regroupés (maximum, pas somme) */
  const c=u.cfg||{},raw={};let src="txt";
  if(c.wq){src="cfg";Object.keys(c.wq).forEach(k=>{if(c.wq[k]>0)raw[k]=c.wq[k]})}
@@ -9070,7 +9086,7 @@ function lckEquipCheck(u,lib,size,out){
  const {rules,unk}=lckParseOpts(lib),eq=lckEquip(u,lib),nm=lckName(lib);
  const pc=pcOf(lib),paid=((pc&&pc.wg)||[]);
  /* équipements payants */
- const wg=(u.cfg&&u.cfg.wg)||{};Object.keys(wg).forEach(k=>{const q=wg[k];if(!q)return;const p=paid.find(x=>nk(x.n)===nk(k));
+ const wg=(u.cfg&&u.cfg.wg)||{};Object.keys(wg).forEach(k=>{const q=wg[k];if(!q)return;const p=paid.find(x=>nk(x.n)===nk(k)||lckBase(x.n)===lckBase(k));
   if(!p)out.push({lv:"bad",t:nm+" : « "+k+" » n'est pas un équipement payant de cette fiche"});
   else if(q>size)out.push({lv:"bad",t:nm+" : "+q+" × "+k+" pour "+size+" figurine"+(size>1?"s":"")+" (trop)"});
   else out.push({lv:"ok",t:nm+" : "+q+" × "+k+" (+"+(q*p.pts)+" pts) — équipement payant autorisé"})});

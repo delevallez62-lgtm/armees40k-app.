@@ -26,8 +26,8 @@ const MODE=process.argv[3]||'';const r=await p.evaluate(async(MODE)=>{await BIB.
    const u={name:lu.n,ref:'rf'+lu.id.slice(0,5),size,pts:0,stats:st,weapons:[],subs:[],cfg:{lib:lu.id,size,wq,wn:{},wg:{},subs:[]}};
    const L={id:'f',name:'F',dets:[],strats:[],bld:{limit:2000,facN:'x',dets:[{id:det.id,name:det.n,en:det.n}]},units:[u]};S.lists=[L];
    try{const res=BIBLCK.run(L);const eq=res.sec.find(s=>s.id==='eq').items;stat.runs++;
-    const bad=eq.filter(i=>i.lv==='bad'),warn=eq.filter(i=>i.lv==='warn');if(MODE==='over'&&(bad.length||warn.length))stat.overDetected++;if(bad.length){stat.bad++;if(fails.length<12)fails.push({u:lu.n,size,wq,bad:bad.map(i=>i.t)})}if(warn.length)stat.warn++;
+    const bad=eq.filter(i=>i.lv==='bad'),warn=eq.filter(i=>i.lv==='warn');if(MODE==='over'){if(bad.length||warn.length)stat.overDetected++;else{window.__miss=window.__miss||[];if(window.__miss.length<8)window.__miss.push({miss:lu.n,size,wq,items:eq.map(i=>i.lv+' '+(i.t||i.nodet))})}}if(bad.length){stat.bad++;if(fails.length<12)fails.push({u:lu.n,size,wq,bad:bad.map(i=>i.t)})}if(warn.length)stat.warn++;
    }catch(e){stat.crash++;if(fails.length<12)fails.push({u:lu.n,err:String(e)})}
   }}}
- return{stat,fails}},MODE);
+ return{stat,fails:window.__miss||[]}},MODE);
 console.log(JSON.stringify(r,null,1).slice(0,5000));await b.close()})();
