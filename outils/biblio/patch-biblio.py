@@ -24,7 +24,7 @@ emb={'manifest':man,'chunks':{}}
 for c in man['chunks']:
     raw=open(os.path.join(datadir,c['file']),'rb').read()
     emb['chunks'][c['id']]=base64.b64encode(gzip.compress(raw,9,mtime=0)).decode()
-J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__PSCAN__*/',open(d+'/paintscan.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
+J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__LCHK__*/',open(d+'/listcheck.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__PSCAN__*/',open(d+'/paintscan.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
 assert '</script>' not in J
 rep('(e.u.name+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)','(e.u.name+" "+(window.BIBAL?BIBAL(e.u.ref):"")+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)',2)
 rep('p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n if(!p.me)','p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n {const L0=S.lists.find(l=>l.id===p.l);if(L0&&L0.mission){p.m1="";p.i1=L0.mid||""}}\n if(!p.me)')
@@ -44,6 +44,10 @@ rep('["coll","Collection","coll"],["ana","Centre de commandement","ana"],["learn
 rep('<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""}${lpts(l)?" · "+lpts(l)+" pts":""} · ${l.dets.length} détachement(s)</div>','${window.BIBLP?BIBLP.badges(l):""}<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""} · ${l.dets.length} détachement(s)</div>')
 rep('<span class="mu">${lpts(L)?" · "+lpts(L)+" pts":""}${L.mission?','<span class="mu">${window.BIBLP?" · "+BIBLP.txt(L):(lpts(L)?" · "+lpts(L)+" pts":"")}${L.mission?')
 rep('</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}','</span>${window.BIBLP?BIBLP.card(u,i):""}</div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}')
+
+# Vérification de liste : boutons
+rep('<button class="b" data-act="open" data-id="${l.id}">Gérer</button>','<button class="b" data-chk="${l.id}">✅ Vérifier</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button>')
+rep('<span><button class="b" data-act="ledit">Modifier la liste</button>','<span><button class="b p" data-chk="${L.id}">✅ Vérifier la liste</button> <button class="b" data-act="ledit">Modifier la liste</button>')
 
 # Pots de peinture : fiche avec pot (quantité + / −) et état du pot ; libellés dans la liste
 rep('<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque','${window.BIBPOT?BIBPOT.sheet(p,cur.isNew):""}<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque')

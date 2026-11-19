@@ -1,0 +1,23 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);const wait=t=>p.waitForTimeout(t);
+const r=await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll('#encov,.bib-ov').forEach(e=>e.remove());
+ const D=BIB.D;const f=n=>D.units.find(x=>x.n===n);const ts=f('Terminator Squad'),cap=f('Captain in Terminator Armour'),ic=f('Intercessor Squad');
+ const st={M:'6"',E:'4',SV:'3+',PV:'2',CD:'6+',CO:'2'};
+ const det=D.dets.find(x=>/Angelic Inheritors|Assault Brethren/.test(x.n))||D.dets[0];
+ const enh=D.enh.find(x=>x.det===det.n)||D.enh[0];
+ const mk=(lu,size,extra)=>Object.assign({name:lu.n,ref:'r'+lu.id.slice(0,4),size,pts:0,stats:st,weapons:[],subs:[],cfg:{lib:lu.id,size,wq:{},wn:{},wg:{},subs:[]}},extra||{});
+ const u1=mk(ts,10,{});u1.cfg.wq={'Cyclone Missile Launcher':3,'Assault Cannon':1};u1.cfg.wg={'Cyclone Missile Launcher':3};
+ const u2=mk(cap,1,{});u2.cfg.enh={id:enh.id,name:enh.n};
+ const u3=mk(cap,1,{});u3.cfg.enh={id:enh.id,name:enh.n};
+ const us=[u1,u2,u3,mk(ic,5),mk(ic,5),mk(ic,5),mk(ic,5),mk(ic,5),mk(ic,5),mk(ic,5)];
+ S.coll={};S.lists=[{id:'lc',name:'Liste à tester',dets:[],strats:[],bld:{limit:2000,facN:'Space Marines',dets:[{id:det.id,name:det.n,en:det.n}]},units:us}];S.cur='lc';
+ try{BLDSYNC()}catch(e){}
+ const res=BIBLCK.run(S.lists[0]);return {det:det.n,dp:det.pts,enh:enh.n,counts:res.counts,sec:res.sec.map(s=>({t:s.t,items:s.items.map(i=>i.lv+' '+i.t)}))}});
+console.log(JSON.stringify(r,null,1).slice(0,5500));
+await ev(()=>{tab='lists';draw()});await wait(300);
+await ev(()=>document.querySelector('[data-chk="lc"]').click());await wait(300);
+ok('rapport ouvert',await ev(()=>!!document.querySelector('#lchk .pp')&&/Vérifier la liste/.test(document.getElementById('lchk').innerText)),1);
+await p.screenshot({path:'chk1.png'});
+await b.close()})();

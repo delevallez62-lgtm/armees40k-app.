@@ -652,6 +652,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 // vérification automatique, au plus 1 fois par jour, silencieuse
 /*__MAJ__*/
 /*__BLD__*/
+/*__LCHK__*/
 /*__UNI__*/
 /*__LORE__*/
 /*__PSCAN__*/

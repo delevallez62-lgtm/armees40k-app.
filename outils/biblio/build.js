@@ -227,6 +227,7 @@ ${st==="3"?` <div class="card"><b>Unités</b> <span class="bib-meta">${(L.units|
 
  <button class="b p bld-nx" data-bld="step" data-s="4">Suivant : vérifier →</button>${ruleBlock(L)}`:""}
 ${st==="4"?`<div class="card bld-rcp">${recapHtml(L,true)}</div>
+ <button class="b bld-save" data-chk="${L.id}" style="margin-bottom:8px">✅ Vérification complète (règles V11)</button>
  <button class="b p bld-save" data-bld="savelist">💾 Enregistrer la liste</button>
 `:""}
  <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""} · synchronisé le ${E(m.sync||"—")}${!m.chk||Date.now()-m.chk>7*864e5?" · ⚠ aucune vérification récente":""}</p>`}
