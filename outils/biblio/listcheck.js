@@ -25,7 +25,7 @@ function lckParseOpts(lib){const o=((lib&&lib.wp&&lib.wp.opt)||[]),rules=[],unk=
   const inl=first.indexOf(":")>=0?first.slice(first.indexOf(":")+1).trim():"";
   const altsFrom=tail=>{const x=(tail&&tail.trim())||"";if(x&&!/following/i.test(x)){return /\bor\b|,/.test(x)&&!/\band\b/.test(x)?lckAlts("\n• "+x.replace(/,\s*(?:or\s+)?|\s+or\s+/g,"\n• ")):lckAlts(x)}if(inl)return lckAlts(inl.replace(/,\s*(?:and\s+|or\s+)?/g,"\n• ").replace(/^/,"\n• "));return lckAlts(rest)};
   const mk=(kind,k,per,from,tail,extra)=>{const alts=altsFrom(tail),to=alts.flat();if(!to.length){unk.push(s);return}rules.push(Object.assign({kind,k,per,from:String(from||"").replace(/^\d+\s*/,"").trim(),to,alts,txt:first},extra||{}))};
-  if(/^None\.?$/i.test(first)||/^A model can only take/i.test(first)||/^\*+\s*A model can only/i.test(first))return;
+  if(/^None\.?$/i.test(first)||/^\s*\*/.test(first)||/^A model can only/i.test(first)||/ is equipped with:/i.test(first))return;
   if(m=/^(?:Any number of|All) (?:(.+?) )?models?(?: in this unit)? can each have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("any",null,null,m[2],m[3]);
   else if(m=/^For every (\d+) models? in this unit, (?:up to )?(\d+|one|two|three|four) (.+?) models? can (?:each )?have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("per",num(m[2])||1,+m[1],m[4],m[5]);
   else if(m=/^For every (\d+) models? in this unit, (?:up to )?(\d+|one|two|three|four) (.+?) models? can (?:each )?take (.+?)(?:\.|:)?$/i.exec(first))mk("per",num(m[2])||1,+m[1],"",m[4]);
@@ -38,9 +38,37 @@ function lckParseOpts(lib){const o=((lib&&lib.wp&&lib.wp.opt)||[]),rules=[],unk=
    const body=t[1];const grp=/of the following/i.test(body);let cap=1;const u=/^up to (\d+|one|two|three|four)\b/i.exec(body);if(u)cap=num(u[1])||1;else if(/^(\d+|one|two|three|four)\b/i.test(body)&&!grp)cap=num(/^(\w+)/.exec(body)[1])||1;
    if(grp&&/two of the following/i.test(body))cap=2;
    const tail=grp?"following":body.replace(/^(?:up to )?(?:\d+|one|two|three|four|an?)\s+/i,"");const alts=grp?lckAlts(rest):lckAlts(tail),to=alts.flat();
-   if(!to.length)unk.push(s);else rules.push({kind:"add",k:cap,per:null,from:"",to,alts,txt:first,add:1,grp})}
-  else unk.push(s)});
+   if(!to.length){const g=lckGeneral(first,rest,inl);if(g)rules.push(g);else unk.push(s)}else rules.push({kind:"add",k:cap,per:null,from:"",to,alts,txt:first,add:1,grp})}
+  else{const g=lckGeneral(first,rest,inl);if(g)rules.push(g);else unk.push(s)}});
  return{rules,unk}}
+/* analyse générale d'une phrase d'option : portée (« pour chaque 5 figurines », « jusqu'à 2 », « n'importe quel nombre », sujet au singulier) + armes obtenues */
+function lckGeneral(first,rest,inl){let cond=null;const cm=/^if this unit contains (only )?(\d+)( or (more|fewer))? models?,\s*(.+)$/i.exec(String(first||"").trim());
+ if(cm){cond={n:+cm[2],m:cm[4]?cm[4].toLowerCase():"eq"};first=cm[5]}
+ const r=lckGeneral1(first,rest,inl);if(r&&cond)r.cond=cond;return r}
+function lckGeneral1(first,rest,inl){const f=String(first||"").replace(/\*+/g,"").replace(/\s+/g," ").trim();if(!f||/^(?:that|this) (?:model(?:’|')s [^.]*|weapon) cannot\b|^you (?:cannot|can select)|^a model can only|^if this unit contains|^for every \d+ models? in this unit:?$/i.test(f))return null;
+ const W={one:1,two:2,three:3,four:4,five:5,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6};const nm=x=>W[String(x||"").toLowerCase()]||null;
+ let tail=null,add=false,m;
+ if((m=/\bor can replace\b/i.exec(f))){const e=/can be equipped with (.+?) or can replace/i.exec(f);if(e){tail=e[1];add=true}}
+ else if((m=/\breplaced? (?:with|by) (.+)$/i.exec(f))||(m=/\breplace\b[^,]*?\bwith (.+)$/i.exec(f)))tail=m[1];
+ else if((m=/\bcan be equipped (?:with )?(.+)$/i.exec(f))){tail=m[1];add=true}
+ else if((m=/\bcan (?:also )?(?:take|have) (?:up to )?(.+)$/i.exec(f))&&!/\bhave (?:their|its)\b/i.test(f)){tail=m[1];add=true}
+ if(tail==null)return null;
+ tail=tail.replace(/\.$/,"").trim();
+ const per=/for (?:every|each) (\d+) models?/i.exec(f);
+ const anyN=/\bany numbers? of\b|\ball models\b|\bany number\b/i.test(f)&&!/up to/i.test(f);
+ let k=null,firm=false;
+ const up=/up to (\d+|one|two|three|four|five)\b/i.exec(f);
+ if(anyN){k=null;firm=true}
+ else if(up){k=nm(up[1]);firm=!!k}
+ else{const body=per?f.slice(per.index+per[0].length).replace(/^[^,]*,\s*/,""):f;const ld=/^(\d+|one|two|three|four|five)\b/i.exec(body.trim());
+  if(ld){k=nm(ld[1]);firm=!!k}else if(/^(?:the|this|that|one)\b/i.test(body.trim())){k=1;firm=true}else{k=1;firm=false}}
+ let alts;const tx=tail;
+ if(/following/i.test(tx)||!tx){alts=inl?lckAlts(inl.replace(/\(duplicates[^)]*\)/ig,"").replace(/,\s*(?:and\s+|or\s+)?/g,"\n• ").replace(/^/,"\n• ")):lckAlts(rest)}
+ else if(/ and /i.test(tx)&&!/ or /i.test(tx))alts=lckAlts(tx);
+ else alts=lckAlts("\n• "+tx.replace(/,\s*(?:or\s+)?|\s+or\s+/g,"\n• "));
+ const to=alts.flat();if(!to.length)return null;
+ const kind=per?"per":anyN?"any":(add?"add":"fix");
+ return{kind,k:per?(k||1):(anyN?null:(k||1)),per:per?+per[1]:null,from:"",to,alts,txt:first,add:add?1:0,soft:!firm}}
 /* ----- noms d'armes dans les deux langues -----
    Index « nom (anglais, français officiel, proposé, glossaire, ancien nom, nom saisi par l'utilisateur) → nom anglais canonique ».
    Une arme est ainsi reconnue qu'elle soit écrite en anglais ou en français, dans la liste comme dans le texte des options. */
@@ -80,8 +108,8 @@ function lckEquipCheck(u,lib,size,out){
  /* règles → composantes connexes (règles partageant une arme de remplacement) : capacité = somme des plafonds */
  const nl=t=>!(loadout&&loadout.includes(nk(t)));
  const R=[];rules.forEach(r=>{const alts=(r.alts||r.to.map(t=>[t])).map(a=>a.filter(nl).map(lckBase)).filter(a=>a.length);if(!alts.length)return;
-  const lim=r.kind==="per"?Math.floor(size/r.per)*r.k:(r.kind==="fix"||r.kind==="add")?r.k:size;R.push({r,alts,own:new Set(alts.flat()),lim})});
- const comp=[];R.forEach(x=>{const hit=comp.filter(c=>[...x.own].some(w=>c.w.has(w)));const m={w:new Set(x.own),lim:x.lim,rs:[x],alts:[...x.alts]};hit.forEach(c=>{c.w.forEach(w=>m.w.add(w));m.lim+=c.lim;m.rs.push(...c.rs);m.alts.push(...c.alts);comp.splice(comp.indexOf(c),1)});comp.push(m)});
+  let lim=r.kind==="per"?Math.floor(size/r.per)*r.k:(r.kind==="fix"||r.kind==="add")?r.k:size;if(r.cond){const q=r.cond;const okc=q.m==="more"?size>=q.n:q.m==="fewer"?size<=q.n:size===q.n;if(!okc)lim=0}R.push({r,alts,own:new Set(alts.flat()),lim,soft:!!r.soft})});
+ const comp=[];R.forEach(x=>{const hit=comp.filter(c=>[...x.own].some(w=>c.w.has(w)));const m={w:new Set(x.own),lim:x.lim,rs:[x],alts:[...x.alts],soft:x.soft};hit.forEach(c=>{c.w.forEach(w=>m.w.add(w));m.lim+=c.lim;m.soft=m.soft||c.soft;m.rs.push(...c.rs);m.alts.push(...c.alts);comp.splice(comp.indexOf(c),1)});comp.push(m)});
  let issues=0;
  comp.forEach(c=>{/* un remplacement peut donner plusieurs armes à la fois (« 1 X et 1 Y ») : on compte des figurines, pas des armes.
    Minorant du nombre de figurines concernées : somme, par groupe d'alternatives partageant une arme, du plus grand effectif d'une arme du groupe */
@@ -90,7 +118,7 @@ function lckEquipCheck(u,lib,size,out){
   let n=0;grp.forEach(g=>{let m=0;g.forEach(w=>{m=Math.max(m,cnt(w))});n+=m});
   const used=[];sel.forEach(k=>{if(c.w.has(lckBase(k)))used.push(eq.g[k].n+" × "+eq.g[k].name)});
   const cite=unk.some(x=>{const z=nk(x);return [...c.w].some(w=>w&&z.includes(w))});
-  if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",u:nm,t:(c.lim?"Trop d'armes de remplacement : "+n+" (maximum "+c.lim+")":"Armes de remplacement non permises à "+size+" figurine"+(size>1?"s":"")),d:used.join(" + ")+(c.rs[0].r.kind==="per"?" · Règle : "+c.rs[0].r.k+" pour "+c.rs[0].r.per+" figurines":"")+(cite?" · À vérifier sur la fiche":"")})}});
+  if(n>c.lim){issues++;out.push({lv:cite||c.soft?"warn":"bad",u:nm,t:(c.lim?"Trop d'armes de remplacement : "+n+" (maximum "+c.lim+")":"Armes de remplacement non permises à "+size+" figurine"+(size>1?"s":"")),d:used.join(" + ")+(c.rs[0].r.kind==="per"?" · Règle : "+c.rs[0].r.k+" pour "+c.rs[0].r.per+" figurines":"")+(cite?" · À vérifier sur la fiche":"")})}});
  /* armes dont le nom n'est reconnu ni dans la fiche ni dans ses options : information seulement (nom personnalisé ou traduit autrement) */
  const inR=new Set();R.forEach(x=>x.own.forEach(w=>inR.add(w)));rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
  /* arme de la fiche, mais ni dans l'équipement de base ni dans une option : impossible si toutes les options ont été analysées */
@@ -266,8 +294,15 @@ function lckCfgTry(L,c,e,patch){if(!L||!c||!e||!e.lib)return[];
  return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.k))}
 function lckCfgTryFull(L,c,e,c2){if(!L||!c||!e||!e.lib)return[];const others=(L.units||[]).filter((u,i)=>i!==c.idx);
  const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.k));return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.k))}
+/* armes dont l'autorisation figure dans une option que je n'ai pas pu lire : à confirmer par l'utilisateur */
+function lckUnverif(e,names){const lib=e&&e.lib;if(!lib)return[];const P=lckParseOpts(lib);
+ const loadout=nk(String((lib.wp&&lib.wp.loadout)||"")),z=P.unk.map(nk).join(" "),inR=new Set();P.rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
+ const GEN=new Set(["weapon","weapons","heavy","light","master","crafted","special","issue","twin","combat","close","model","models","each","every","with","equipped"]);
+ const pool=nk(String((lib.wp&&lib.wp.loadout)||"")+" "+((lib.wp&&lib.wp.opt)||[]).join(" ")).split(" ");
+ const near=w=>nk(w).split(" ").filter(x=>x.length>=4&&!GEN.has(x)).some(t=>pool.some(p=>p.length>=4&&(p.includes(t)||t.includes(p))));
+ return names.filter(n=>{const b=lckBase(n);if(!b||inR.has(b)||loadout.includes(b))return false;const cited=!!z&&z.includes(b);return cited||!near(b)})}
 function lckPop(o){lckCss();let p=document.getElementById("lckpop");if(p)p.remove();p=document.createElement("div");p.id="lckpop";
  p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li><b>${E(x.t||x)}</b>${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
  document.body.appendChild(p);p.addEventListener("click",ev=>{const b=ev.target.closest("[data-lckp]");if(!b)return;ev.preventDefault();ev.stopPropagation();p.remove();if(o.cb)o.cb(b.dataset.lckp)},true)}
 (function(){const c=document.createElement("style");c.id="lckpopcss";c.textContent=`#lckpop{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}#lckpop .pk{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:16px;width:min(420px,100%);max-height:86vh;overflow:auto}#lckpop h3{margin:0}#lckpop ul{padding-left:18px;margin:8px 0}#lckpop li{margin:6px 0;line-height:1.35}#lckpop small{display:block;color:var(--mu)}#lckpop .ct{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#lckpop .ct .b{flex:1;min-height:44px}`;document.head.appendChild(c)})();
-window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,cfgTryFull:lckCfgTryFull,pop:lckPop};
+window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,cfgTryFull:lckCfgTryFull,unverif:lckUnverif,pop:lckPop};

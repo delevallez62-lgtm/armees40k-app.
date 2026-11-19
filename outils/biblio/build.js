@@ -321,7 +321,9 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
    const cur=Math.max(0,...names.map(n=>c.wq[n]||0)),nv=Math.max(0,Math.min(c.size,cur+(+b.dataset.d)));
    const c2=JSON.parse(JSON.stringify(c));names.forEach(n=>{if(nv)c2.wq[n]=nv;else delete c2.wq[n]});
    if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,e,c2);if(pr.length){BIBLCK.pop({t:"« "+k+" » impossible",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
-   names.forEach(n=>{if(nv)c.wq[n]=nv;else{delete c.wq[n];delete c.wn[n]}});render();return}
+   const apply=()=>{names.forEach(n=>{if(nv)c.wq[n]=nv;else{delete c.wq[n];delete c.wn[n]}});render()};
+   if(+b.dataset.d>0&&window.BIBLCK){const uv=BIBLCK.unverif(e,names);if(uv.length&&!c.uvok){c.uvok={}}if(uv.length&&!(c.uvok||{})[k]){BIBLCK.pop({t:"À vérifier sur la fiche",p:"« "+k+" » : je ne peux pas confirmer automatiquement que "+nv+" soit permis pour "+c.size+" figurine"+(c.size>1?"s":"")+".",items:[],buttons:[{k:"no",l:"Annuler"},{k:"yes",l:"C'est permis",cls:"p"}],cb:x=>{if(x==="yes"){c.uvok=c.uvok||{};c.uvok[k]=1;apply()}}});return}}
+   apply();return}
   if(a==="wg"){const k=b.dataset.k,nv=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));
    const c2=JSON.parse(JSON.stringify(c));if(nv)c2.wg[k]=nv;else delete c2.wg[k];
    if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,entryOf(c.key),c2);if(pr.length){BIBLCK.pop({t:"« "+k+" » impossible",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}

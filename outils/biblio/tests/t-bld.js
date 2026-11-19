@@ -60,6 +60,7 @@ ok('armes : compteurs par arme, pas de lignes répétées',(await ev(()=>documen
 await click('[data-bld="size"][data-v="10"]');for(const k of ['Fusil tempête','Épée énergétique'])for(let i=0;i<10;i++)await ev(kk=>{const e=document.querySelector('#bldm [data-bld="wq"][data-k="'+kk+'"][data-d="-1"]');if(e)e.click()},k);
 for(let i=0;i<9;i++)await ev(()=>document.querySelector('#bldm [data-bld="wq"][data-k="Épée énergétique"][data-d="1"]').click());
 await ev(()=>document.querySelector('#bldm [data-bld="wq"][data-k="Marteau tonnerre"][data-d="1"]').click());await p.waitForTimeout(150);
+await ev(()=>{const y=document.querySelector('#lckpop [data-lckp="yes"]');if(y)y.click()});await p.waitForTimeout(150);
 await ev(()=>{const i=document.querySelector('#bldm [data-bldn="Marteau tonnerre"]');i.value='Sergent';i.dispatchEvent(new Event('input',{bubbles:true}))});
 // 7) équipement payant : Cyclone (barème Wahapedia)
 const wg=await ev(()=>[...document.querySelectorAll('#bldm [data-bld="wg"]')].map(x=>x.dataset.k));ok('équipement payant lu dans le barème',wg.includes('Cyclone Missile Launcher'),wg);

@@ -13,7 +13,7 @@ const MODE=process.argv[3]||'';const r=await p.evaluate(async(MODE)=>{await BIB.
   // composantes
   const lo=String(lu.wp.loadout||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');const rules=R.rules.map(r=>({r,own:r.to.filter(t=>!lo.includes(String(t).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim())).map(base)})).filter(x=>x.own.length);
   for(const size of sizes){for(let rep=0;rep<3;rep++){
-   const cap=r=>r.r.kind==='per'?Math.floor(size/r.r.per)*r.r.k:(r.r.kind==='fix'||r.r.kind==='add')?r.r.k:size;
+   const cap=r=>{let l=r.r.kind==='per'?Math.floor(size/r.r.per)*r.r.k:(r.r.kind==='fix'||r.r.kind==='add')?r.r.k:size;const q=r.r.cond;if(q){const okc=q.m==='more'?size>=q.n:q.m==='fewer'?size<=q.n:size===q.n;if(!okc)l=0}return l};
    // capacité par composante
    const comps=[];rules.forEach(x=>{const hit=comps.filter(c=>x.own.some(w=>c.w.has(w)));const m={w:new Set(x.own),cap:cap(x),used:0};hit.forEach(c=>{c.w.forEach(w=>m.w.add(w));m.cap+=c.cap;comps.splice(comps.indexOf(c),1)});comps.push(m)});
    const loadout=String(lu.wp.loadout||'').toLowerCase().replace(/[^a-z0-9]+/g,' ');
