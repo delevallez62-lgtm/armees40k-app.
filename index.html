@@ -8391,6 +8391,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:45,d:"2026-11-19",t:"Constructeur : options d'arme contrôlées",s:"Dans la configuration d'une unité, une arme ou un équipement qui dépasse les options de la fiche (ex. 2 armes spéciales pour 5 figurines) est refusé avec l'explication. En touchant « Ajouter à l'armée », si l'unité n'est pas conforme (équipement, exemplaires, limite de points…), une fenêtre indique pourquoi et propose de modifier ou d'ajouter quand même."},
  {id:44,d:"2026-11-19",t:"Vérifier ma liste (règles V11)",s:"Le bouton ✅ Vérifier contrôle une liste d'armée : détail des points (barème officiel), points de détachement, nombre d'optimisations, optimisation au bon endroit (détachement choisi, personnage, pas de héros épique, une par unité), limite d'exemplaires, seigneur de guerre, effectifs, rattachements, équipements et options de la fiche. Il rappelle aussi ce qu'il faut pour un tournoi et copie la liste au format de soumission."},
  {id:43,d:"2026-11-18",t:"Listes d'armée : figurines et points",s:"Chaque liste affiche toujours son nombre de figurines et ses points. Dans une liste, chaque fiche montre sur le côté son effectif et ses points, modifiables à volonté (le total se met à jour). Pour une armée du constructeur, changer l'effectif recalcule les points d'après le barème ; un coût saisi à la main est conservé."},
  {id:42,d:"2026-11-18",t:"Peinture : pot en image, quantité et état",s:"Quand un pot est scanné, son image (de la couleur du pot) apparaît au milieu de l'écran avec ＋ et − : ＋ l'ajoute à ta liste, − le retire. En ouvrant une peinture de ta liste tu retrouves le même schéma en plus petit pour gérer plusieurs pots, et en dessous l'état du pot : Plein (par défaut), Vide ou À acheter (écrit « Vide » ou « Achat à prévoir » dans la liste)."},
@@ -8948,13 +8949,17 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(c){
   if(a==="size"){const o=c.size;c.size=+b.dataset.v;Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
   if(a==="sz"){const o=c.size;c.size=Math.max(1,Math.min(40,c.size+(+b.dataset.d)));Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
-  if(a==="wq"){const k=b.dataset.k;c.wq[k]=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
-  if(a==="wg"){const k=b.dataset.k;c.wg[k]=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));if(!c.wg[k])delete c.wg[k];render();return}
+  if(a==="wq"){const k=b.dataset.k,nv=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wq:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Option d'arme impossible",p:"« "+k+" » ne peut pas être ajoutée pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.wq[k]=nv;if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
+  if(a==="wg"){const k=b.dataset.k,nv=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wg:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Équipement impossible",p:"« "+k+" » ne peut pas être ajouté pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.wg[k]=nv;if(!c.wg[k])delete c.wg[k];render();return}
   if(a==="enh"){const v=b.dataset.v;c.enh=v?{id:v,name:(D.enh.find(x=>x.id===v)||{}).n||""}:null;render();return}
   if(a==="ldr"){BLD.ldrKind=b.dataset.kind||"Meneur";BLD.lq="";BLD.scr="ldr";render();return}
   if(a==="ldrx"){const K=b.dataset.kind||"Meneur";c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K);render();return}
   if(a==="ldrpick"){ldrPick(b.dataset.k);return}
-  if(a==="ok"){commitCfg();return}
+  if(a==="ok"){if(window.BIBLCK){const pr=BIBLCK.cfgProblems(L,c,entryOf(c.key));if(pr.length){const ed=c.idx!=null;BIBLCK.pop({t:"Cette unité n'est pas conforme",p:"Règles V11 et options de la fiche :",items:pr,buttons:[{k:"edit",l:"Modifier l'unité",cls:"p"},{k:"add",l:ed?"Enregistrer quand même":"Ajouter quand même"}],cb:x=>{if(x==="add")commitCfg()}});return}}commitCfg();return}
  }
  if(a==="det"){BLD.scr="det";BLD.dq="";render();return}
  if(a==="detpick"){detPick(b.dataset.id);return}
@@ -9110,6 +9115,14 @@ function lckEquipCheck(u,lib,size,out){
   if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",t:nm+" : au moins "+n+" figurine"+(n>1?"s":"")+" avec une arme de remplacement ("+used.join(", ")+") alors que les options analysées de la fiche n'en autorisent que "+c.lim+" pour "+size+" figurine"+(size>1?"s":"")+(cite?" (une option non analysée automatiquement mentionne cette arme : relis la fiche)":""),d:c.rs.map(x=>"Fiche : "+x.r.txt).join(" · ")})}});
  /* armes dont le nom n'est reconnu ni dans la fiche ni dans ses options : information seulement (nom personnalisé ou traduit autrement) */
  const inR=new Set();R.forEach(x=>x.own.forEach(w=>inR.add(w)));rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
+ /* arme de la fiche, mais ni dans l'équipement de base ni dans une option : impossible si toutes les options ont été analysées */
+ const loadStem=lckStem(loadout);
+ const GEN=new Set(["weapon","weapons","heavy","light","master","crafted","special","issue","twin","combat","close","model","models","each","every","with","equipped"]);
+ const toks=t=>nk(t).split(" ").filter(w=>w.length>=4&&!GEN.has(w));
+ const pool=nk(String((lib.wp&&lib.wp.loadout)||"")+" "+((lib.wp&&lib.wp.opt)||[]).join(" "));
+ const poolT=pool.split(" ");
+ const near=w=>toks(w).some(t=>poolT.some(p=>p.length>=4&&(p.includes(t)||t.includes(p))));
+ if(!unk.length)sel.forEach(k=>{const b=lckBase(k);if(known.has(b)&&!inR.has(b)&&!(loadout&&(loadout.includes(b)||loadStem.includes(b)))&&!near(k)&&!near(b)){out.push({lv:"warn",t:nm+" : « "+eq.g[k].name+" » n'apparaît ni dans l'équipement de base ni dans les options de cette fiche (à vérifier : certaines fiches omettent des armes)",d:"Équipement de base : "+String((lib.wp&&lib.wp.loadout)||"").replace(/\*\*/g,"").replace(/\n+/g," ")})}});
  const unr=sel.filter(k=>{const b=lckBase(k);return !(known.has(b)||inR.has(b)||(loadout&&loadout.includes(b)))}).map(k=>eq.g[k].name);
  if(unr.length)out.push({lv:"info",t:nm+" : arme"+(unr.length>1?"s":"")+" non reconnue"+(unr.length>1?"s":"")+" dans la fiche officielle (nom personnalisé ?) : "+unr.join(", ")});
  if(!issues)out.push({lv:"ok",t:nm+" : équipement conforme aux options de la fiche"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement)":"")});
@@ -9260,7 +9273,24 @@ document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest
  if(a==="size"){L.chk=L.chk||{};L.chk.size=t.dataset.v;save();lckDraw()}
  else if(a==="copy"){const tx=lckText(L);const done=()=>{try{toast("Liste copiée ✓")}catch(_){}};try{navigator.clipboard.writeText(tx).then(done,()=>{window.prompt("Copie la liste :",tx)})}catch(_){window.prompt("Copie la liste :",tx)}}},true);
 document.addEventListener("change",e=>{const t=e.target;if(!t||t.dataset.lck!=="wl")return;const L=(S.lists||[]).find(l=>l.id===LCK.id);if(!L)return;L.chk=L.chk||{};L.chk.warlord=t.value===""?null:t.value;save();lckDraw()},true);
-window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts};
+/* ----- contrôle d'une configuration d'unité dans le constructeur : blocage d'une option invalide, confirmation à l'ajout ----- */
+const lckNorm=t=>String(t).replace(/\s*\(×\d+\)\s*$/,"");
+function lckTmpUnit(e,cfg){return{name:e.name,ref:(e.coll&&e.coll.ref)||"t"+(e.lib?e.lib.id.slice(0,6):"x"),size:cfg.size,pts:0,subs:JSON.parse(JSON.stringify(cfg.subs||[])),cfg:{lib:e.lib?e.lib.id:null,size:cfg.size,wq:cfg.wq||{},wn:cfg.wn||{},wg:cfg.wg||{},enh:cfg.enh||null,manual:+cfg.manual||0}}}
+function lckBadOf(L,units){const L2=Object.assign({},L,{units});const r=lckRun(L2);const o=[];r.sec.forEach(s=>s.items.forEach(i=>{if(i.lv==="bad")o.push({t:lckNorm(i.t),d:i.d})}));return o}
+/* erreurs apportées par cette unité : liste sans elle ↔ liste avec elle */
+function lckCfgProblems(L,c,e){if(!L||!c||!e||!e.lib)return[];
+ const others=(L.units||[]).filter((u,i)=>i!==c.idx);const before=new Set(lckBadOf(L,others).map(x=>x.t));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c)]).filter(x=>!before.has(x.t))}
+/* un changement de configuration crée-t-il de nouvelles erreurs ? */
+function lckCfgTry(L,c,e,patch){if(!L||!c||!e||!e.lib)return[];
+ const others=(L.units||[]).filter((u,i)=>i!==c.idx);const c2=JSON.parse(JSON.stringify(c));Object.keys(patch).forEach(k=>{c2[k]=Object.assign({},c2[k],patch[k]);Object.keys(c2[k]).forEach(x=>{if(!c2[k][x])delete c2[k][x]})});
+ const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.t));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.t))}
+function lckPop(o){lckCss();let p=document.getElementById("lckpop");if(p)p.remove();p=document.createElement("div");p.id="lckpop";
+ p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li>${E(x.t||x)}${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
+ document.body.appendChild(p);p.addEventListener("click",ev=>{const b=ev.target.closest("[data-lckp]");if(!b)return;ev.preventDefault();ev.stopPropagation();p.remove();if(o.cb)o.cb(b.dataset.lckp)},true)}
+(function(){const c=document.createElement("style");c.id="lckpopcss";c.textContent=`#lckpop{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}#lckpop .pk{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:16px;width:min(420px,100%);max-height:86vh;overflow:auto}#lckpop h3{margin:0}#lckpop ul{padding-left:18px;margin:8px 0}#lckpop li{margin:6px 0;line-height:1.35}#lckpop small{display:block;color:var(--mu)}#lckpop .ct{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#lckpop .ct .b{flex:1;min-height:44px}`;document.head.appendChild(c)})();
+window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,pop:lckPop};
 
 /* ===== Unification des fiches : noms français, rapprochements fiables, vue anglaise en consultation ===== */
 /* Règles : jamais de nom inventé ; un nom n'est « confirmé » que s'il vient de toi (collection, correction) ; rien n'est fusionné quand c'est incertain ; les données personnelles ne sont jamais modifiées. */

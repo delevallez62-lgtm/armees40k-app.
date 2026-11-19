@@ -307,13 +307,17 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(c){
   if(a==="size"){const o=c.size;c.size=+b.dataset.v;Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
   if(a==="sz"){const o=c.size;c.size=Math.max(1,Math.min(40,c.size+(+b.dataset.d)));Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
-  if(a==="wq"){const k=b.dataset.k;c.wq[k]=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
-  if(a==="wg"){const k=b.dataset.k;c.wg[k]=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));if(!c.wg[k])delete c.wg[k];render();return}
+  if(a==="wq"){const k=b.dataset.k,nv=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wq:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Option d'arme impossible",p:"« "+k+" » ne peut pas être ajoutée pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.wq[k]=nv;if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
+  if(a==="wg"){const k=b.dataset.k,nv=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wg:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Équipement impossible",p:"« "+k+" » ne peut pas être ajouté pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.wg[k]=nv;if(!c.wg[k])delete c.wg[k];render();return}
   if(a==="enh"){const v=b.dataset.v;c.enh=v?{id:v,name:(D.enh.find(x=>x.id===v)||{}).n||""}:null;render();return}
   if(a==="ldr"){BLD.ldrKind=b.dataset.kind||"Meneur";BLD.lq="";BLD.scr="ldr";render();return}
   if(a==="ldrx"){const K=b.dataset.kind||"Meneur";c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K);render();return}
   if(a==="ldrpick"){ldrPick(b.dataset.k);return}
-  if(a==="ok"){commitCfg();return}
+  if(a==="ok"){if(window.BIBLCK){const pr=BIBLCK.cfgProblems(L,c,entryOf(c.key));if(pr.length){const ed=c.idx!=null;BIBLCK.pop({t:"Cette unité n'est pas conforme",p:"Règles V11 et options de la fiche :",items:pr,buttons:[{k:"edit",l:"Modifier l'unité",cls:"p"},{k:"add",l:ed?"Enregistrer quand même":"Ajouter quand même"}],cb:x=>{if(x==="add")commitCfg()}});return}}commitCfg();return}
  }
  if(a==="det"){BLD.scr="det";BLD.dq="";render();return}
  if(a==="detpick"){detPick(b.dataset.id);return}

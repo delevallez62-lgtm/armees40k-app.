@@ -93,6 +93,14 @@ function lckEquipCheck(u,lib,size,out){
   if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",t:nm+" : au moins "+n+" figurine"+(n>1?"s":"")+" avec une arme de remplacement ("+used.join(", ")+") alors que les options analysées de la fiche n'en autorisent que "+c.lim+" pour "+size+" figurine"+(size>1?"s":"")+(cite?" (une option non analysée automatiquement mentionne cette arme : relis la fiche)":""),d:c.rs.map(x=>"Fiche : "+x.r.txt).join(" · ")})}});
  /* armes dont le nom n'est reconnu ni dans la fiche ni dans ses options : information seulement (nom personnalisé ou traduit autrement) */
  const inR=new Set();R.forEach(x=>x.own.forEach(w=>inR.add(w)));rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
+ /* arme de la fiche, mais ni dans l'équipement de base ni dans une option : impossible si toutes les options ont été analysées */
+ const loadStem=lckStem(loadout);
+ const GEN=new Set(["weapon","weapons","heavy","light","master","crafted","special","issue","twin","combat","close","model","models","each","every","with","equipped"]);
+ const toks=t=>nk(t).split(" ").filter(w=>w.length>=4&&!GEN.has(w));
+ const pool=nk(String((lib.wp&&lib.wp.loadout)||"")+" "+((lib.wp&&lib.wp.opt)||[]).join(" "));
+ const poolT=pool.split(" ");
+ const near=w=>toks(w).some(t=>poolT.some(p=>p.length>=4&&(p.includes(t)||t.includes(p))));
+ if(!unk.length)sel.forEach(k=>{const b=lckBase(k);if(known.has(b)&&!inR.has(b)&&!(loadout&&(loadout.includes(b)||loadStem.includes(b)))&&!near(k)&&!near(b)){out.push({lv:"warn",t:nm+" : « "+eq.g[k].name+" » n'apparaît ni dans l'équipement de base ni dans les options de cette fiche (à vérifier : certaines fiches omettent des armes)",d:"Équipement de base : "+String((lib.wp&&lib.wp.loadout)||"").replace(/\*\*/g,"").replace(/\n+/g," ")})}});
  const unr=sel.filter(k=>{const b=lckBase(k);return !(known.has(b)||inR.has(b)||(loadout&&loadout.includes(b)))}).map(k=>eq.g[k].name);
  if(unr.length)out.push({lv:"info",t:nm+" : arme"+(unr.length>1?"s":"")+" non reconnue"+(unr.length>1?"s":"")+" dans la fiche officielle (nom personnalisé ?) : "+unr.join(", ")});
  if(!issues)out.push({lv:"ok",t:nm+" : équipement conforme aux options de la fiche"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement)":"")});
@@ -243,4 +251,21 @@ document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest
  if(a==="size"){L.chk=L.chk||{};L.chk.size=t.dataset.v;save();lckDraw()}
  else if(a==="copy"){const tx=lckText(L);const done=()=>{try{toast("Liste copiée ✓")}catch(_){}};try{navigator.clipboard.writeText(tx).then(done,()=>{window.prompt("Copie la liste :",tx)})}catch(_){window.prompt("Copie la liste :",tx)}}},true);
 document.addEventListener("change",e=>{const t=e.target;if(!t||t.dataset.lck!=="wl")return;const L=(S.lists||[]).find(l=>l.id===LCK.id);if(!L)return;L.chk=L.chk||{};L.chk.warlord=t.value===""?null:t.value;save();lckDraw()},true);
-window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts};
+/* ----- contrôle d'une configuration d'unité dans le constructeur : blocage d'une option invalide, confirmation à l'ajout ----- */
+const lckNorm=t=>String(t).replace(/\s*\(×\d+\)\s*$/,"");
+function lckTmpUnit(e,cfg){return{name:e.name,ref:(e.coll&&e.coll.ref)||"t"+(e.lib?e.lib.id.slice(0,6):"x"),size:cfg.size,pts:0,subs:JSON.parse(JSON.stringify(cfg.subs||[])),cfg:{lib:e.lib?e.lib.id:null,size:cfg.size,wq:cfg.wq||{},wn:cfg.wn||{},wg:cfg.wg||{},enh:cfg.enh||null,manual:+cfg.manual||0}}}
+function lckBadOf(L,units){const L2=Object.assign({},L,{units});const r=lckRun(L2);const o=[];r.sec.forEach(s=>s.items.forEach(i=>{if(i.lv==="bad")o.push({t:lckNorm(i.t),d:i.d})}));return o}
+/* erreurs apportées par cette unité : liste sans elle ↔ liste avec elle */
+function lckCfgProblems(L,c,e){if(!L||!c||!e||!e.lib)return[];
+ const others=(L.units||[]).filter((u,i)=>i!==c.idx);const before=new Set(lckBadOf(L,others).map(x=>x.t));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c)]).filter(x=>!before.has(x.t))}
+/* un changement de configuration crée-t-il de nouvelles erreurs ? */
+function lckCfgTry(L,c,e,patch){if(!L||!c||!e||!e.lib)return[];
+ const others=(L.units||[]).filter((u,i)=>i!==c.idx);const c2=JSON.parse(JSON.stringify(c));Object.keys(patch).forEach(k=>{c2[k]=Object.assign({},c2[k],patch[k]);Object.keys(c2[k]).forEach(x=>{if(!c2[k][x])delete c2[k][x]})});
+ const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.t));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.t))}
+function lckPop(o){lckCss();let p=document.getElementById("lckpop");if(p)p.remove();p=document.createElement("div");p.id="lckpop";
+ p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li>${E(x.t||x)}${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
+ document.body.appendChild(p);p.addEventListener("click",ev=>{const b=ev.target.closest("[data-lckp]");if(!b)return;ev.preventDefault();ev.stopPropagation();p.remove();if(o.cb)o.cb(b.dataset.lckp)},true)}
+(function(){const c=document.createElement("style");c.id="lckpopcss";c.textContent=`#lckpop{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}#lckpop .pk{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:16px;width:min(420px,100%);max-height:86vh;overflow:auto}#lckpop h3{margin:0}#lckpop ul{padding-left:18px;margin:8px 0}#lckpop li{margin:6px 0;line-height:1.35}#lckpop small{display:block;color:var(--mu)}#lckpop .ct{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#lckpop .ct .b{flex:1;min-height:44px}`;document.head.appendChild(c)})();
+window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,pop:lckPop};
