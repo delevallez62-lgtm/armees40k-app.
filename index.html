@@ -1433,7 +1433,7 @@ function pstView(L){if(!L)return pNone();return pSearch(L,`<div class="pph">${PH
 function draw(){{const GM=["play","pst","bat"];if(S.pm&&!S.lists.some(l=>l.id===S.pm))S.pm=null;if(!S.pm)S.mg=false;if(S.pm&&!S.mg){S.cur=S.pm;if(!GM.includes(tab)&&tab!=="enc")tab="play"}else if(GM.includes(tab))tab="lists"}refreshVar();pushSubs();if(ded==null&&sed==null)libSync(cl());if(tab!=="dets")ded=null;if(tab!=="strats")sed=null;if(tab!=="units")led=false;const L=cl();{const b=$("#sb");b.style.cssText=S.sban?`height:170px;background:url(${S.sban}) ${bp("s")}/cover`:"display:none";$("#dsb").style.display=$("#fsb").style.display=S.sban?"":"none"}$("#cl").textContent=L&&["units","dets","strats","opti","play","pst"].includes(tab)?L.name:"";
  const tabs=[["lists","Mes listes"],["coll","Collection"],...(L?[["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"]]:[]),["imp","Importer"]];
  $("#nav").innerHTML=tab==="play"||tab==="pst"||(tab==="enc"&&S.pm&&!S.mg)?miniBar():tab==="bat"?(window.chrPill?`<div class="mzb">${window.chrPill()}</div>`:""):(["units","dets","strats","opti"].includes(tab)?[["lists","← Mes listes"],["units","Unités"],["dets","Règles de détachement"],["strats","Stratagèmes"],["opti","Optimisations"],["enc","📖 Règles"]]:[["home","Accueil"],["lists","Mes armées"],["coll","Collection"],["paint","Peinture & Hobby"],["mis","Missions & Layout"],["ana","Centre de commandement"],["learn","Apprendre à jouer"],["enc","Règles V11"],["imp","Importer"]]).map(([k,n])=>`<button data-tab="${k}" class="${k===tab?"on":""}">${n}</button>`).join("");let h="";
- if(tab==="lists")h=`<div class="card row" style="justify-content:space-between"><b>${S.lists.length} liste(s)</b><span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button></span></div>`+(S.lists.length?`<div class="grid">${S.lists.map(l=>`<div class="card"><b style="font-size:17px">${esc(l.name)}</b>${window.BIBLP?BIBLP.badges(l):""}<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""} · ${l.dets.length} détachement(s)</div>${l.mission?`<div class="mu">${esc(misTag(l.mission,l.game))}</div>`:""}<p>${l.id===S.cur?'<span class="mu">● Liste ouverte</span>':""}</p><button class="b p" data-act="gstart" data-id="${l.id}">▶ Jouer</button> <button class="b" data-chk="${l.id}">✅ Vérifier</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button> <button class="b" data-act="ren" data-id="${l.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${l.id}">Supprimer</button></div>`).join("")}</div>`:"<p>Aucune liste pour l’instant. Crée-en une avec « + Nouvelle liste » ou importe ton armée.</p>");
+ if(tab==="lists")h=`<div class="card row" style="justify-content:space-between"><b>${S.lists.length} liste(s)</b><span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button> <button class="b" data-xfo="r">📥 Recevoir une liste</button></span></div>`+(S.lists.length?`<div class="grid">${S.lists.map(l=>`<div class="card"><b style="font-size:17px">${esc(l.name)}</b>${window.BIBLP?BIBLP.badges(l):""}<div class="mu">${lcount(l)} unité${lcount(l)>1?"s":""} · ${l.dets.length} détachement(s)</div>${l.mission?`<div class="mu">${esc(misTag(l.mission,l.game))}</div>`:""}<p>${l.id===S.cur?'<span class="mu">● Liste ouverte</span>':""}</p><button class="b p" data-act="gstart" data-id="${l.id}">▶ Jouer</button> <button class="b" data-chk="${l.id}">✅ Vérifier</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button> <button class="b" data-xfo="s" data-id="${l.id}">⇄ Envoyer</button> <button class="b" data-act="ren" data-id="${l.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${l.id}">Supprimer</button>${l.recv?`<div class="mu" style="margin-top:6px">📥 Liste reçue le ${new Date(l.recv.at).toLocaleDateString("fr-FR")}</div>`:""}</div>`).join("")}</div>`:"<p>Aucune liste pour l’instant. Crée-en une avec « + Nouvelle liste » ou importe ton armée.</p>");
  else if(tab==="play")h=playView(L);else if(tab==="pst")h=pstView(L);else if(tab==="coll")h=collView();else if(tab==="bat")h=batView2();else if(window.XV&&XV[tab])h=XV[tab]();else if(tab==="gm")h=gmView();else if(tab==="enc")h=window.encView?window.encView():"";else if(tab==="units"){h=`<div class="card row" style="justify-content:space-between"><span><b>${lcount(L)} unité${lcount(L)>1?"s":""}</b><span class="mu">${window.BIBLP?" · "+BIBLP.txt(L):(lpts(L)?" · "+lpts(L)+" pts":"")}${L.mission?" · "+esc(misTag(L.mission,L.game)):""}</span></span><span><button class="b p" data-chk="${L.id}">✅ Vérifier la liste</button> <button class="b" data-act="ledit">Modifier la liste</button> <button class="b" data-act="ren" data-id="${L.id}">Renommer</button> <button class="b x" data-act="dlist" data-id="${L.id}">Supprimer la liste</button> <button class="b p" data-act="npick">+ Ajouter une figurine</button> <button class="b" data-act="nunit">Fiche vide</button></span></div>${led?ledForm(L):""}<div class="grid">${L.units.map((u,i)=>`<div class="card hv${S.coll[u.ref]&&S.coll[u.ref].var?" v":""}" data-act="view" data-i="${i}">${S.coll[u.ref]&&S.coll[u.ref].var?'<span class="vr">Variante d’arme</span>':""}<button class="xx" data-act="xunit" data-i="${i}" title="Retirer de la liste">✕</button><div class="row">${pimg(u)}<span><b class="cap">${esc(u.name)}</b>${u.qty>1?` <span class="mu">×${u.qty}</span>`:""}${S.coll[u.ref]&&S.coll[u.ref].var?' <span class="mu">· variante d’arme</span>':""}${mlead(u).length?'<span class="led">Unité menée</span>':""}${mlead(u).map(s=>`<br><span class="mu">${S.imgs[s.ref]?`<img src="${S.imgs[s.ref]}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;vertical-align:middle;margin-right:4px" alt="">`:""}+ ${esc(cap(s.name))}</span>`).join("")}</span>${window.BIBLP?BIBLP.card(u,i):""}</div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])}</b></span>`).join("")}</div></div>`).join("")}</div>`}
  else if(tab==="dets")h=detView(L);else if(tab==="dets0")h=L.dets.map(d=>`<div class="card"><b class="cap" style="font-size:17px">${esc(d.name)}</b> <span class="mu">${d.cost?d.cost+" pt(s)":""}</span><p class="pre">${esc(d.rule)}</p><button class="b" data-act="goto" data-d="${esc(d.name)}">Voir ses stratagèmes</button></div>`).join("")||"<p>Aucun détachement détecté.</p>";
  else if(tab==="strats")h=stView(L);else if(tab==="opti")h=optiView2(L);else if(tab==="strats0"){const g={};L.strats.forEach(s=>(g[s.det]=g[s.det]||[]).push(s));
@@ -8385,7 +8385,7 @@ window.BIBPK=function(pk){try{
 /* ---------- intégration ---------- */
 window.XV=window.XV||{};XV.bib=function(){try{if(!D.ready&&!D.err)init();return libView()}catch(e){return`<div class="card"><b>Erreur</b><p class="mu">${E(e&&e.message)}</p></div>`}};
 const h0=window.XV.home;if(typeof h0==="function")window.XV.home=function(){let b="";try{const un=LB().news.filter(n=>!n.seen);if(un.length){css();const n=un[0];b=`<div class="bib-ban" data-bib="news">🆕 <b>Bibliothèque V11 mise à jour</b> · ${n.items.add.length} nouveauté(s), ${n.items.chg.length} modifiée(s)<br><span class="bib-meta">Touche pour voir le détail</span></div>`}}catch(_){}return b+h0.apply(this,arguments)};
-window.BIBAUTO=autoMatch;window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
+window.BIBAUTO=autoMatch;window.BIBXF={init:()=>init(),D:()=>D,mk:createFromLib,match:autoMatch,LB:()=>LB(),tName:typeof tName==="function"?tName:null,trDesc:typeof trDesc==="function"?trDesc:null,stripMd:typeof stripMd==="function"?stripMd:null};window.BIBCLS=ref=>{try{const l=LB().links[ref];return l?(l.stale?" old":" on"):""}catch(_){return""}};
 window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:s=>{const T=tk(s,ETK),set=new Set(T),sc=new Map();set.forEach(w=>{const l=KP.inv[w];if(l&&l.length<=400)l.forEach(id=>sc.set(id,(sc.get(id)||0)+1))});return [...sc.entries()].sort((a,b)=>b[1]-a[1]).slice(0,4).map(([id])=>{const c=KP.arr[id];let i=0;c.set.forEach(w=>{if(set.has(w))i++});return [Math.round(100*i/(c.set.size+set.size-i)),c.en,c.fr]})},kpInfo:()=>({ready:KPREADY,n:KP&&KP.arr.length,sample:KP&&KP.arr.slice(0,2).map(x=>[x.en,x.fr])}),autoTr,learnPair,wLike,trDesc,learnAb,sents,init,D,tWK,tKW,tAB,tName,tPhase,suggest,search,buildCmp,applyCmp,checkUpdate,verify,exportLib,importLib,sha1,LB,gunzip,wToApp,wSig,diffNews};
 // vérification automatique, au plus 1 fois par jour, silencieuse
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
@@ -9636,4 +9636,256 @@ window.BIBPSC={decodeDeep:psDecodeDeep,fromCanvas:psReadCanvas,open:psOpen,onCod
 })();
 
 </script>
+</body></html>
+<script>
+/* QR code minimal (niveau L, modes alphanumérique et octets, versions 1-40) — d'après l'algorithme de référence de Nayuki (MIT) */
+const QRE=(()=>{
+const ECC=[-1,7,10,15,20,26,18,20,24,30,18,20,24,26,30,22,24,28,30,28,28,28,28,30,30,26,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30];
+const NB=[-1,1,1,1,1,1,2,2,2,2,4,4,4,4,4,6,6,6,6,7,8,8,9,9,10,12,12,12,13,14,15,16,17,18,19,19,20,21,22,24,25];
+const AL="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
+const raw=v=>{let r=(16*v+128)*v+64;if(v>=2){const n=Math.floor(v/7)+2;r-=(25*n-10)*n-55;if(v>=7)r-=36}return r};
+const dataCw=v=>Math.floor(raw(v)/8)-ECC[v]*NB[v];
+const mul=(x,y)=>{let z=0;for(let i=7;i>=0;i--){z=(z<<1)^((z>>>7)*0x11D);z^=((y>>>i)&1)*x}return z&255};
+const div=d=>{const r=new Array(d).fill(0);r[d-1]=1;let root=1;for(let i=0;i<d;i++){for(let j=0;j<d;j++){r[j]=mul(r[j],root);if(j+1<d)r[j]^=r[j+1]}root=mul(root,2)}return r};
+const rem=(data,dv)=>{const r=new Array(dv.length).fill(0);for(const b of data){const f=b^r.shift();r.push(0);dv.forEach((c,i)=>r[i]^=mul(c,f))}return r};
+function encode(text){
+ const alnum=[...text].every(c=>AL.includes(c));
+ const bytes=alnum?null:Array.from(new TextEncoder().encode(text));
+ const n=alnum?text.length:bytes.length;
+ const ccb=v=>alnum?(v<10?9:v<27?11:13):(v<10?8:16);
+ const need=v=>4+ccb(v)+(alnum?Math.floor(n/2)*11+(n%2)*6:n*8);
+ let v=1;while(v<=40&&need(v)>dataCw(v)*8)v++;if(v>40)throw new Error("trop long");
+ const bb=[],put=(val,len)=>{for(let i=len-1;i>=0;i--)bb.push((val>>>i)&1)};
+ put(alnum?2:4,4);put(n,ccb(v));
+ if(alnum){for(let i=0;i+1<n;i+=2)put(AL.indexOf(text[i])*45+AL.indexOf(text[i+1]),11);if(n%2)put(AL.indexOf(text[n-1]),6)}else bytes.forEach(b=>put(b,8));
+ const cap=dataCw(v)*8;put(0,Math.min(4,cap-bb.length));put(0,(8-bb.length%8)%8);
+ for(let p=0xEC;bb.length<cap;p^=0xEC^0x11)put(p,8);
+ const dat=[];for(let i=0;i<bb.length;i+=8){let x=0;for(let j=0;j<8;j++)x=(x<<1)|bb[i+j];dat.push(x)}
+ /* blocs + correction */
+ const nb=NB[v],el=ECC[v],rc=Math.floor(raw(v)/8),ns=nb-rc%nb,sl=Math.floor(rc/nb),dv=div(el),blocks=[];
+ for(let i=0,k=0;i<nb;i++){const d=dat.slice(k,k+sl-el+(i<ns?0:1));k+=d.length;const e=rem(d,dv);if(i<ns)d.push(0);blocks.push(d.concat(e))}
+ const cw=[];for(let i=0;i<blocks[0].length;i++)blocks.forEach((b,j)=>{if(i!==sl-el||j>=ns)cw.push(b[i])});
+ /* matrice */
+ const size=v*4+17,M=[],F=[];for(let y=0;y<size;y++){M.push(new Array(size).fill(false));F.push(new Array(size).fill(false))}
+ const sf=(x,y,d)=>{M[y][x]=d;F[y][x]=true};
+ for(let i=0;i<size;i++){sf(6,i,i%2===0);sf(i,6,i%2===0)}
+ [[3,3],[size-4,3],[3,size-4]].forEach(([x,y])=>{for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){const d=Math.max(Math.abs(dx),Math.abs(dy)),xx=x+dx,yy=y+dy;if(xx>=0&&xx<size&&yy>=0&&yy<size)sf(xx,yy,d!==2&&d!==4)}});
+ const ap=[];if(v>1){const na=Math.floor(v/7)+2,st=v===32?26:Math.ceil((v*4+4)/(na*2-2))*2;ap.push(6);for(let p=size-7;ap.length<na;p-=st)ap.splice(1,0,p)}
+ ap.forEach((x,i)=>ap.forEach((y,j)=>{if(i===0&&j===0||i===0&&j===ap.length-1||i===ap.length-1&&j===0)return;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)sf(x+dx,y+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1)}));
+ const fmt=mask=>{const d=(1<<3)|mask;let r=d;for(let i=0;i<10;i++)r=(r<<1)^((r>>>9)*0x537);const b=((d<<10)|r)^0x5412,g=i=>((b>>>i)&1)!==0;
+  for(let i=0;i<=5;i++)sf(8,i,g(i));sf(8,7,g(6));sf(8,8,g(7));sf(7,8,g(8));for(let i=9;i<15;i++)sf(14-i,8,g(i));
+  for(let i=0;i<8;i++)sf(size-1-i,8,g(i));for(let i=8;i<15;i++)sf(8,size-15+i,g(i));sf(8,size-8,true)};
+ fmt(0);
+ if(v>=7){let r=v;for(let i=0;i<12;i++)r=(r<<1)^((r>>>11)*0x1F25);const b=(v<<12)|r;for(let i=0;i<18;i++){const bit=((b>>>i)&1)!==0,a=size-11+i%3,c=Math.floor(i/3);sf(a,c,bit);sf(c,a,bit)}}
+ let i=0;for(let right=size-1;right>=1;right-=2){if(right===6)right=5;for(let vt=0;vt<size;vt++)for(let j=0;j<2;j++){const x=right-j,up=((right+1)&2)===0,y=up?size-1-vt:vt;if(!F[y][x]&&i<cw.length*8){M[y][x]=((cw[i>>>3]>>>(7-(i&7)))&1)!==0;i++}}}
+ const MK=[(x,y)=>(x+y)%2===0,(x,y)=>y%2===0,(x,y)=>x%3===0,(x,y)=>(x+y)%3===0,(x,y)=>(Math.floor(x/3)+Math.floor(y/2))%2===0,(x,y)=>x*y%2+x*y%3===0,(x,y)=>(x*y%2+x*y%3)%2===0,(x,y)=>((x+y)%2+x*y%3)%2===0];
+ const ap2=m=>{for(let y=0;y<size;y++)for(let x=0;x<size;x++)if(!F[y][x]&&MK[m](x,y))M[y][x]=!M[y][x]};
+ const pen=()=>{let p=0,dark=0;for(let y=0;y<size;y++){let rx=1,ry=1;for(let x=0;x<size;x++){if(M[y][x])dark++;
+   if(x>0){if(M[y][x]===M[y][x-1]){rx++;if(rx===5)p+=3;else if(rx>5)p++}else rx=1;if(M[x][y]===M[x-1][y]){ry++;if(ry===5)p+=3;else if(ry>5)p++}else ry=1}
+   if(x>0&&y>0){const c=M[y][x];if(c===M[y][x-1]&&c===M[y-1][x]&&c===M[y-1][x-1])p+=3}}}
+  return p+Math.floor(Math.abs(dark*20-size*size*10)/(size*size))*10};
+ let best=0,bp=Infinity;for(let m=0;m<8;m++){ap2(m);fmt(m);const p=pen();if(p<bp){bp=p;best=m}ap2(m)}
+ ap2(best);fmt(best);return{size,M,v}}
+/* dessin dans un canvas (marge de 4 modules) */
+function draw(cv,text,px){const q=encode(text),n=q.size+8,s=Math.max(1,Math.floor(px/n));cv.width=cv.height=n*s;const c=cv.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,n*s,n*s);c.fillStyle="#000";for(let y=0;y<q.size;y++)for(let x=0;x<q.size;x++)if(q.M[y][x])c.fillRect((x+4)*s,(y+4)*s,s,s);return q}
+return{encode,draw,AL}})();
+
+
+/* ===== Échange de listes entre deux téléphones (QR face à face, message, fichier) ===== */
+(()=>{
+const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const B45=QRE.AL,CH=700,MARK="HMR1.";
+const X={v:null,list:null,frames:null,fi:0,timer:null,parts:null,stream:null,scanT:null,pv:null,code:"",busy:false};
+window.ANXF=X;
+/* ---------- encodage ---------- */
+async function zip(u8){if(typeof CompressionStream==="undefined"){const o=new Uint8Array(u8.length+1);o[0]=0;o.set(u8,1);return o}
+ const s=new Blob([u8]).stream().pipeThrough(new CompressionStream("deflate-raw")),z=new Uint8Array(await new Response(s).arrayBuffer()),o=new Uint8Array(z.length+1);o[0]=1;o.set(z,1);return o}
+async function unzip(u8){if(u8[0]===0)return u8.slice(1);if(typeof DecompressionStream==="undefined")throw new Error("Ce téléphone ne sait pas décompresser la liste");
+ const s=new Blob([u8.slice(1)]).stream().pipeThrough(new DecompressionStream("deflate-raw"));return new Uint8Array(await new Response(s).arrayBuffer())}
+const b45e=u=>{let o="";for(let i=0;i<u.length;i+=2){if(i+1<u.length){const n=u[i]*256+u[i+1];o+=B45[n%45]+B45[Math.floor(n/45)%45]+B45[Math.floor(n/2025)]}else{const n=u[i];o+=B45[n%45]+B45[Math.floor(n/45)]}}return o};
+const b45d=s=>{const o=[];for(let i=0;i<s.length;i+=3){const c=[...s.slice(i,i+3)].map(x=>B45.indexOf(x));if(c.some(x=>x<0))throw new Error("code abîmé");if(c.length===3){const n=c[0]+c[1]*45+c[2]*2025;o.push(n>>8,n&255)}else o.push(c[0]+c[1]*45)}return new Uint8Array(o)};
+const b64e=u=>{let s="";for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")};
+const b64d=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u};
+/* ---------- contenu transmis ---------- */
+const refsOf=L=>{const r=new Set();(L.units||[]).forEach(u=>{if(u.ref)r.add(u.ref);(u.subs||[]).forEach(s=>{if(s.ref)r.add(s.ref)})});return[...r]};
+function shrink(src,px){return new Promise(res=>{if(!src||!/^data:image|^blob:|^https?:/.test(src)){res(null);return}const im=new Image();im.onload=()=>{try{const k=Math.min(1,px/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.72))}catch(_){res(null)}};im.onerror=()=>res(null);im.src=src})}
+async function payload(L,photos){const list=clone(L);delete list.id;const sheets={};refsOf(L).forEach(r=>{if(S.coll&&S.coll[r])sheets[r]=clone(S.coll[r])});
+ const o={kind:"hammer-armee",v:1,at:Date.now(),list,sheets};
+ if(photos){o.imgs={};for(const r of refsOf(L)){const d=await shrink(S.imgs&&S.imgs[r],260);if(d)o.imgs[r]=d}}
+ return o}
+const lean=o=>{/* version QR : sans photos, fiches de collection seulement si elles diffèrent de la fiche de liste */
+ const p={kind:o.kind,v:1,at:o.at,list:o.list,sheets:{}};const u=[];(o.list.units||[]).forEach(x=>{u.push(x);(x.subs||[]).forEach(s=>u.push(s))});
+ Object.keys(o.sheets).forEach(r=>{const a=o.sheets[r],b=u.find(x=>x.ref===r);if(!b||["name","stats","weapons","apt","kw"].some(k=>JSON.stringify(a[k])!==JSON.stringify(b[k])))p.sheets[r]=a});return p};
+const enc8=o=>new TextEncoder().encode(JSON.stringify(o));
+async function toFrames(o){const z=await zip(enc8(lean(o))),t=b45e(z),n=Math.ceil(t.length/CH),id=B45.slice(10,36).split("").sort(()=>Math.random()-.5).slice(0,4).join("");
+ return Array.from({length:n},(_,i)=>"HM"+id+String(i+1).padStart(3,"0")+String(n).padStart(3,"0")+":"+t.slice(i*CH,(i+1)*CH))}
+async function toCode(o){return MARK+b64e(await zip(enc8(lean(o))))+".FIN"}
+const parseJSON=u=>{const o=JSON.parse(new TextDecoder().decode(u));if(!o||o.kind!=="hammer-armee"||!o.list)throw new Error("Ce n'est pas une liste HAMMER");return o};
+async function fromCode(txt){txt=String(txt||"").replace(/\s+/g,"");const i=txt.indexOf(MARK);if(i<0)throw new Error("Aucun code de liste trouvé dans ce texte");const m=/^[A-Za-z0-9_-]+/.exec(txt.slice(i+MARK.length));if(!m||txt.slice(i+MARK.length+m[0].length,i+MARK.length+m[0].length+4)!==".FIN")throw new Error("Message incomplet : la fin du code manque");return parseJSON(await unzip(b64d(m[0])))}
+/* ---------- QR unique : liste compacte, fiches reconstruites avec la bibliothèque du destinataire ---------- */
+const SK=["M","E","SV","PV","CD","CO"],st6=s=>SK.map(k=>(s||{})[k]==null?"":String(s[k])),un6=a=>{const o={};SK.forEach((k,i)=>o[k]=(a||[])[i]||"");return o};
+const cut=(t,n)=>{t=String(t||"");return t.length>n?t.slice(0,n):t};
+function compactOf(L,lvl){lvl=lvl||0;const one=(u,sub)=>{const o={n:u.name,p:parseInt(u.pts,10)||0,e:u.equip||"",s:st6(u.stats),w:(u.weapons||[]).map(w=>[w.name||"",w.range||"",w.a||"",w.hit||"",w.f||"",w.pa||"",w.d||"",w.caps||""]),a:u.apt||""};if(!sub){o.z=u.size==null?null:u.size;o.q=parseInt(u.qty,10)||1}if((u.mdl||[]).length)o.x=u.mdl;else o.b=u.label||"";
+  if(u.opti)o.o=cut(u.opti,lvl>1?120:320);if(u.optc)o.c=u.optc;if(u.cfg)o.f={l:u.cfg.lib||null,z:u.cfg.size||null,w:u.cfg.wg||null,h:u.cfg.enh||null};if(!sub&&(u.subs||[]).length)o.u=u.subs.map(x=>one(x,true));return o};
+ return{k:"hc",v:1,n:L.name||"Liste",t:L.total||"",m:L.mission||"",g:L.game||"",d:(L.dets||[]).map(d=>[d.name||"",d.cost||"",lvl>1?"":cut(d.rule,400)]),s:(L.strats||[]).map(x=>lvl?[x.det||"",x.name||"",x.cp==null?"":x.cp]:[x.det||"",x.name||"",x.cp==null?"":x.cp,x.body||""]),u:(L.units||[]).map(u=>one(u,false))}}
+async function toQR(L){let t="";for(const lvl of [0,1,2]){t="HC1:"+b45e(await zip(enc8(compactOf(L,lvl))));if(t.length<=QRMAX)break}return t}
+const QRMAX=2950;
+const LIB=()=>window.BIBXF||null;
+async function libReady(){const b=LIB();if(!b)return null;try{await b.init();const D=b.D();return D&&D.ready?b:null}catch(_){return null}}
+const nkx=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+/* cherche la fiche : bibliothèque (id exact puis nom), sinon ma collection */
+function findSheet(b,o,k){let lib=null;if(b){const D=b.D();if(o.f&&o.f.l&&D.byId[o.f.l])lib=D.byId[o.f.l];if(!lib){try{const r=b.match({ref:"xfq"+k+"_"+nkx(o.n).slice(0,20),name:o.n,stats:un6(o.s),weapons:unW(o.w)});if(r&&r.u&&(r.level==="ok"||r.level==="likely"))lib=r.u}catch(_){}}}
+ if(lib)return{lib};const mine=Object.values(S.coll||{}).find(c=>nkx(c.name)===nkx(o.n));return mine?{mine}:{}}
+function planOf(o){return(async()=>{const b=await libReady();let k=0;const rows=[];o.u.forEach(u=>{rows.push({o:u,r:findSheet(b,u,k++)});(u.u||[]).forEach(x=>rows.push({o:x,r:findSheet(b,x,k++),sub:1}))});return{b,rows}})()}
+const unW=a=>(a||[]).map(x=>({name:x[0],range:x[1],a:x[2],hit:x[3],f:x[4],pa:x[5],d:x[6],caps:x[7]}));
+const eqNames=e=>String(e||"").split(",").map(x=>x.replace(/\(\d+\)\s*$/,"").trim()).filter(Boolean);
+function fitWeapons(ws,equip){const want=eqNames(equip).map(nkx);if(!want.length||!ws.length)return ws;const base=w=>nkx(String(w.name).split(" - ")[0]);
+ const keep=ws.filter(w=>want.includes(base(w))||want.includes(nkx(w.name)));const all=want.every(x=>ws.some(w=>base(w)===x||nkx(w.name)===x));return all&&keep.length?keep:ws}
+/* descriptions (aptitudes, mots-clés) : ma fiche du même nom, sinon la bibliothèque */
+function extras(b,r,cache){if(r.mine)return r.mine;if(!r.lib||!b)return null;if(cache[r.lib.id])return cache[r.lib.id];const lb=b.LB();let m=Object.values(S.coll).find(c=>lb.links[c.ref]&&lb.links[c.ref].id===r.lib.id);
+ if(!m){try{const t=b.mk(r.lib);m=clone(t);delete S.coll[t.ref];delete lb.links[t.ref]}catch(_){m=null}}return cache[r.lib.id]=m}
+function unitFrom(b,o,r,cache,sub,refs){const x=extras(b,r,cache)||{},k=nkx(o.n);
+ const u={name:o.n,stats:un6(o.s),weapons:unW(o.w),equip:o.e||"",apt:o.a||x.apt||"",kw:x.kw||"",fkw:x.fkw||"",text:clone(x.text||[]),xab:clone(x.xab||[]),mdl:clone(o.x||[]),pts:o.p||0};
+ if(!u.weapons.length&&x.weapons)u.weapons=fitWeapons(clone(x.weapons),o.e);
+ u.ref=refs[k]||(refs[k]=r.mine?r.mine.ref:"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,7));
+ if(o.o)u.opti=o.o;if(o.c!=null)u.optc=o.c;if(o.f)u.cfg={lib:o.f.l,size:o.f.z,wg:o.f.w,enh:o.f.h};
+ if(sub)u.label=o.b||"Meneur";else{u.size=o.z==null?null:o.z;u.qty=o.q||1;u.subs=[]}return u}
+function detsFrom(b,o){const dets=[],strats=[];
+ o.d.forEach(([n,cost,rule])=>{dets.push({name:n,cost,rule});let done=false;
+  if(!done){const e=(S.dlib||[]).find(x=>nkx(x.name)===nkx(n));if(e){(e.strats||[]).forEach(s=>strats.push({det:n,name:s.name,cp:s.cp,body:s.body}));done=true}}});
+ /* stratagèmes cités par l'expéditeur mais absents : nom seul */
+ o.s.forEach(([det,name,cp,body])=>{const h=strats.find(x=>nkx(x.name)===nkx(name));if(h){if(body)h.body=body}else strats.push({det,name,cp:cp===""?null:cp,body:body||""})});
+ return{dets,strats}}
+async function buildCompact(o){const P=await planOf(o),cache={},refs={};let k=0;const L={name:o.n,units:[],dets:[],strats:[]};if(o.t)L.total=o.t;if(o.m)L.mission=o.m;if(o.g)L.game=o.g;
+ o.u.forEach(u=>{const r=P.rows[k++].r,x=unitFrom(P.b,u,r,cache,false,refs);(u.u||[]).forEach(s=>{const rs=P.rows[k++].r;x.subs.push(unitFrom(P.b,s,rs,cache,true,refs))});L.units.push(x)});
+ const ds=detsFrom(P.b,o);L.dets=ds.dets;L.strats=ds.strats;return L}
+function previewC(o,P){const miss=P.rows.filter(x=>!x.r.lib&&!x.r.mine).map(x=>x.o.n);const p=o.u.reduce((a,u)=>a+(u.p||0)*(u.q||1)+(u.u||[]).reduce((b,s)=>b+(s.p||0),0),0);
+ return`<div class="xf-pv"><b class="xf-big">${E(o.n)}</b><div class="mu">${o.u.length+o.u.reduce((a,u)=>a+(u.u||[]).length,0)} unité(s)${p?" · "+p+" pts":""}${o.d.length?" · "+E(o.d.map(d=>d[0]).join(", ")):""}</div>
+ <ul class="xf-ul">${o.u.map(u=>{const row=P.rows.find(x=>x.o===u);const ok=row&&(row.r.lib||row.r.mine);return`<li>${ok?"":"⚠ "}<b class="cap">${E(u.n)}</b>${(u.q||1)>1?" ×"+u.q:""}${(u.u||[]).map(s=>` <span class="mu">+ ${E(s.n)}</span>`).join("")}</li>`}).join("")}</ul>
+ <div class="mu">Profils, armes, points et équipements exacts de ton adversaire.${miss.length?"":" Textes des aptitudes ajoutés depuis ta collection ou ta bibliothèque V11."}</div>${miss.length?`<div class="xf-say">Textes d'aptitudes non trouvés pour : ${E(miss.join(", "))}. Les noms d'aptitudes sont là, pas leur description.</div>`:""}${o.s.length&&!o.s.some(x=>x[3])&&!o.d.some(d=>(S.dlib||[]).some(x=>nkx(x.name)===nkx(d[0])))?`<div class="xf-say">Stratagèmes : noms et coûts seulement. Pour les textes complets, demande la liste <b>par message</b>.</div>`:""}</div>`}
+
+/* ---------- ajout dans mes listes ---------- */
+const SHK=["name","stats","weapons","equip","apt","kw","fkw","text","xab","mdl"];
+const same=(a,b)=>a&&b&&["name","stats","weapons","apt"].every(k=>JSON.stringify(a[k])===JSON.stringify(b[k]));
+function addList(o){const L=clone(o.list),map={},nid=()=>"r"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+ const all=[];(L.units||[]).forEach(u=>{all.push(u);(u.subs||[]).forEach(s=>all.push(s))});
+ all.forEach(u=>{if(!u.ref){u.ref=nid();return}if(map[u.ref]){u.ref=map[u.ref];return}const mine=S.coll[u.ref],theirs=(o.sheets||{})[u.ref]||u;if(mine&&!same(mine,theirs)){map[u.ref]=nid();u.ref=map[u.ref]}else map[u.ref]=u.ref});
+ const back={};Object.keys(map).forEach(k=>back[map[k]]=k);
+ all.forEach(u=>{const im0=o.imgs&&o.imgs[back[u.ref]];if(im0&&S.imgs&&!S.imgs[u.ref])S.imgs[u.ref]=im0;if(S.coll[u.ref])return;const src=(o.sheets||{})[back[u.ref]]||u,c={ref:u.ref,pts:src.pts||u.pts||0};SHK.forEach(k=>{if(src[k]!==undefined)c[k]=clone(src[k])});S.coll[u.ref]=c});
+ return finish(L,o.at)}
+function finish(L,at){L.id="l"+Date.now().toString(36);L.recv={at:Date.now(),sent:at||null};
+ const base=L.name||"Liste reçue";let nm=base,k=2;while(S.lists.some(x=>x.name===nm))nm=base+" ("+(k++)+")";L.name=nm;
+ L.units=L.units||[];L.dets=L.dets||[];L.strats=L.strats||[];
+ S.lists.push(L);save();return L}
+/* ---------- aperçu ---------- */
+const facOf=L=>{const c={};(L.units||[]).forEach(u=>{const f=String(u.fkw||"").split(",")[0].trim();if(f)c[f]=(c[f]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
+const ptsOf=L=>(L.units||[]).reduce((a,u)=>a+(parseInt(u.pts,10)||0)*(parseInt(u.qty,10)||1)+(u.subs||[]).reduce((b,s)=>b+(parseInt(s.pts,10)||0),0),0);
+const nU=L=>(L.units||[]).reduce((a,u)=>a+(parseInt(u.qty,10)||1)+(u.subs||[]).length,0);
+function preview(o){const L=o.list,p=ptsOf(L),f=facOf(L),nimg=o.imgs?Object.keys(o.imgs).length:0;
+ return`<div class="xf-pv"><b class="xf-big">${E(L.name||"Liste")}</b><div class="mu">${f?E(f)+" · ":""}${nU(L)} unité(s)${p?" · "+p+" pts":""}${(L.dets||[]).length?" · "+E(L.dets.map(d=>d.name).join(", ")):""}</div>
+ <ul class="xf-ul">${(L.units||[]).map(u=>`<li><b class="cap">${E(u.name)}</b>${(parseInt(u.qty,10)||1)>1?" ×"+u.qty:""}${(u.subs||[]).map(s=>` <span class="mu">+ ${E(s.name)}</span>`).join("")}</li>`).join("")}</ul>
+ ${nimg?`<div class="mu">📷 ${nimg} photo(s) incluse(s)</div>`:""}</div>`}
+/* ---------- interface ---------- */
+const css=`<style id="xfcss">
+#xfov .ov{z-index:130}
+.xf-p{width:min(520px,100%)}.xf-t{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}.xf-t b{font-size:19px}
+.xf-ch{display:grid;gap:8px;margin:10px 0}.xf-o{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;text-align:left;width:100%;border:2px solid var(--bd);background:var(--card);color:var(--tx);border-radius:14px;padding:12px;font:inherit;cursor:pointer;min-height:64px}.xf-o i{font-style:normal;font-size:26px;text-align:center}.xf-o b{display:block;font-size:15.5px}.xf-o small{display:block;color:var(--mu);font-size:12.5px;line-height:1.35;margin-top:2px}.xf-o:active{border-color:var(--ac)}
+.xf-qr{display:flex;flex-direction:column;align-items:center;gap:8px}.xf-qr canvas{width:min(92vw,400px);height:auto;image-rendering:pixelated;border-radius:10px;background:#fff}
+.xf-pg{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;max-width:400px}.xf-pg i{width:12px;height:12px;border-radius:3px;background:var(--bd)}.xf-pg i.on{background:var(--ac)}
+.xf-vid{position:relative;width:100%;max-width:420px;margin:0 auto;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:3/4}.xf-vid video{width:100%;height:100%;object-fit:cover;display:block}.xf-vid::after{content:"";position:absolute;inset:12%;border:3px solid rgba(255,255,255,.85);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+.xf-say{margin:8px 0;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:14px;line-height:1.4}.xf-say.err{border-left:4px solid #d64541}.xf-say.ok{border-left:4px solid var(--ac)}
+.xf-pv{border:1px solid var(--bd);border-radius:14px;padding:12px;margin:8px 0;background:var(--bg)}.xf-big{font-size:18px}.xf-ul{margin:8px 0 4px;padding-left:18px;font-size:14px}.xf-ul li{margin:2px 0}
+.xf-ta{width:100%;min-height:120px;font-size:14px}.xf-row{display:flex;gap:8px;flex-wrap:wrap}.xf-row .b{flex:1;min-height:48px;font-size:15px}
+.xf-step{display:grid;grid-template-columns:26px 1fr;gap:6px;font-size:14px;line-height:1.4;margin:4px 0}.xf-step span:first-child{width:24px;height:24px;border-radius:50%;background:var(--ac);color:#fff;font-weight:800;display:grid;place-items:center;font-size:13px}
+.xf-btn{white-space:nowrap}
+</style>`;
+let root=null;
+function close(){stopAnim();stopCam();X.v=null;X.pv=null;X.parts=null;if(root){root.remove();root=null}}
+function show(h){if(!document.getElementById("xfcss"))document.head.insertAdjacentHTML("beforeend",css);if(!root){root=document.createElement("div");root.id="xfov";document.body.appendChild(root)}
+ root.innerHTML=`<div class="ov" data-xf="bg"><div class="pn xf-p"><div class="xf-t"><b>${X.v&&X.v.startsWith("s")?"⇄ Envoyer une liste":"📥 Recevoir une liste"}</b><button class="b cx" data-xf="x" aria-label="Fermer">✕</button></div>${h}</div></div>`}
+const say=(t,k)=>`<div class="xf-say ${k||""}">${t}</div>`;
+function render(){const L=X.list;
+ if(X.v==="s"){show(`<p class="mu" style="margin:0">Liste : <b style="color:var(--tx)">${E(L.name)}</b> · ${nU(L)} unité(s)</p>
+  <div class="xf-ch"><button class="xf-o" data-xf="sqr"><i>▦</i><span><b>Face à face (QR)</b><small>Un seul QR que ton adversaire scanne avec son appli. Toute l'armée : profils, armes, points, personnages. Sans les photos.</small></span></button>
+  <button class="xf-o" data-xf="smsg"><i>💬</i><span><b>Par message</b><small>Un code à envoyer par WhatsApp, SMS, Messenger… Il le colle dans son appli. Sans les photos.</small></span></button>
+  <button class="xf-o" data-xf="sfile"><i>📎</i><span><b>Par fichier</b><small>Un fichier à envoyer ou à garder, photos des unités comprises.</small></span></button></div>`);return}
+ if(X.v==="sqr"){const big=X.qr.length>QRMAX;show(big?`${say("Cette liste est trop longue pour tenir dans un seul QR lisible. Envoie-la <b>par message</b> ou <b>par fichier</b>.","err")}<div class="xf-row"><button class="b" data-xf="smsg">💬 Par message</button><button class="b" data-xf="sfile">📎 Par fichier</button></div>`:`<div class="xf-qr"><canvas id="xfcv"></canvas><div class="mu">Un seul QR pour toute l'armée</div></div>
+  ${say(`<div class="xf-step"><span>1</span><span>Ton adversaire ouvre <b>Listes › 📥 Recevoir une liste › Scanner le QR</b>.</span></div><div class="xf-step"><span>2</span><span>Il vise ton écran. Monte la luminosité de ton écran.</span></div><div class="xf-step"><span>3</span><span>Profils, armes et points arrivent tels quels ; son appli ajoute les textes d'aptitudes depuis sa bibliothèque.</span></div>`)}`);if(!big){const c=document.getElementById("xfcv");if(c)QRE.draw(c,X.qr,Math.min(900,Math.round(Math.min(innerWidth*.92,400)*2.2)))}return}
+ if(X.v==="smsg"){show(`${say("Envoie ce message à ton adversaire. Il l'ouvre dans <b>Listes › 📥 Recevoir une liste › Coller un code</b>.")}<textarea class="xf-ta" id="xfcode" readonly>${E(msgText())}</textarea>
+  <div class="xf-row"><button class="b p" data-xf="share">↗ Partager</button><button class="b" data-xf="copy">⧉ Copier</button></div><div class="mu" style="margin-top:6px">${X.code.length.toLocaleString("fr-FR")} caractères.</div>`);return}
+ if(X.v==="r"){show(`<div class="xf-ch"><button class="xf-o" data-xf="rqr"><i>📷</i><span><b>Scanner le QR</b><small>Vise l'écran de ton adversaire quand il a choisi « Face à face ».</small></span></button>
+  <button class="xf-o" data-xf="rmsg"><i>💬</i><span><b>Coller un code</b><small>Colle le message reçu (tout le message, ça marche).</small></span></button>
+  <label class="xf-o" style="margin:0"><i>📎</i><span><b>Ouvrir un fichier</b><small>Le fichier .json reçu ou une armée enregistrée.</small></span><input type="file" id="xffile" accept=".json,application/json,text/plain" hidden></label></div>`);return}
+ if(X.v==="rqr"){const n=X.parts?X.parts.n:0,got=X.parts?Object.keys(X.parts.d).length:0;show(`<div class="xf-vid"><video id="xfvid" playsinline muted autoplay></video></div>
+  <label class="b" style="display:block;text-align:center;margin-top:8px;min-height:46px;line-height:32px">📸 Ça ne lit pas ? Prends une photo du QR<input type="file" id="xfshot" accept="image/*" capture="environment" hidden></label><div class="xf-qr" style="margin-top:8px"><div class="xf-pg" id="xfpg">${n?Array.from({length:n},(_,i)=>`<i class="${X.parts.d[i]!=null?"on":""}"></i>`).join(""):""}</div><div class="mu" id="xfn">${n?got+" / "+n+" parties lues":"Vise le QR de ton adversaire…"}</div></div><div id="xfmsg"></div>`);startCam();return}
+ if(X.v==="rmsg"){show(`<textarea class="xf-ta" id="xfin" placeholder="Colle ici le message reçu"></textarea><div class="xf-row" style="margin-top:8px"><button class="b" data-xf="paste">📋 Coller</button><button class="b p" data-xf="rdec">Lire la liste</button></div><div id="xfmsg"></div>`);return}
+ if(X.v==="pv"){show(`${X.pv.k==="hc"?previewC(X.pv,X.pc):preview(X.pv)}<div class="xf-row"><button class="b" data-xf="r">Annuler</button><button class="b p" data-xf="add">✓ Ajouter à mes listes</button></div>`);return}}
+const msgText=()=>`Ma liste d'armée « ${X.list.name} » pour Mes armées 40k.\nDans l'appli : Listes › 📥 Recevoir une liste › Coller un code, puis colle tout ce message.\n\n${X.code}`;
+/* ---------- QR animé ---------- */
+let SPD=350;
+function stopAnim(){clearInterval(X.timer);X.timer=null}
+function startAnim(){stopAnim();const cv=document.getElementById("xfcv");if(!cv||!X.frames)return;X.fi=0;const step=()=>{const c=document.getElementById("xfcv");if(!c){stopAnim();return}QRE.draw(c,X.frames[X.fi],Math.min(800,Math.round(Math.min(innerWidth*.92,400)*2)));document.querySelectorAll("#xfpg i").forEach((x,i)=>x.classList.toggle("on",i===X.fi));X.fi=(X.fi+1)%X.frames.length};step();if(X.frames.length>1)X.timer=setInterval(step,SPD)}
+/* ---------- lecture caméra ---------- */
+let DET=null,JSQR=null;
+function loadJsQR(){if(window.jsQR)return Promise.resolve(window.jsQR);if(JSQR)return JSQR;JSQR=new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";s.onload=()=>window.jsQR?res(window.jsQR):rej(new Error("lecteur QR indisponible"));s.onerror=()=>{JSQR=null;rej(new Error("lecteur QR indisponible (réseau)"))};document.head.appendChild(s)});return JSQR}
+async function detector(){if(DET)return DET;try{if("BarcodeDetector"in window){const f=await BarcodeDetector.getSupportedFormats();if(f.includes("qr_code")){const d=new BarcodeDetector({formats:["qr_code"]});DET=async src=>{const r=await d.detect(src);return r.map(x=>x.rawValue)};return DET}}}catch(_){}
+ const jq=await loadJsQR();const c=document.createElement("canvas"),g=c.getContext("2d",{willReadFrequently:true});DET=async v=>{const w=v.videoWidth,h=v.videoHeight;if(!w)return[];const k=Math.min(1,1280/Math.max(w,h));c.width=Math.round(w*k);c.height=Math.round(h*k);g.drawImage(v,0,0,c.width,c.height);const r=jq(g.getImageData(0,0,c.width,c.height).data,c.width,c.height,{inversionAttempts:"dontInvert"});return r?[r.data]:[]};return DET}
+function stopCam(){clearTimeout(X.scanT);X.scanT=null;if(X.stream){X.stream.getTracks().forEach(t=>t.stop());X.stream=null}}
+function camMsg(t,k){const m=document.getElementById("xfmsg");if(m)m.innerHTML=say(t,k)}
+async function startCam(){if(X.stream){const v=document.getElementById("xfvid");if(v&&v.srcObject!==X.stream){v.srcObject=X.stream;v.play().catch(()=>{})}return}
+ try{if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error("nocam");X.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:1280}},audio:false})}
+ catch(e){camMsg("Caméra indisponible ici. Demande à ton adversaire d'envoyer sa liste <b>par message</b> ou <b>par fichier</b>.","err");return}
+ const v=document.getElementById("xfvid");if(!v){stopCam();return}v.srcObject=X.stream;try{await v.play()}catch(_){}
+ let det;try{det=await detector()}catch(e){camMsg("Lecteur de QR indisponible ("+E(e.message)+"). Utilise l'envoi par message.","err");return}
+ const loop=async()=>{if(X.v!=="rqr"||!X.stream)return;const vv=document.getElementById("xfvid");try{if(vv&&vv.readyState>=2){const r=await det(vv);for(const t of r)if(await gotFrame(t))return}}catch(_){}X.scanT=setTimeout(loop,90)};loop()}
+/* une partie lue ; renvoie true quand la liste est complète */
+async function gotFrame(t){if(/^HC1:/.test(String(t||""))){if(X.pending)return false;X.pending=true;try{const o=JSON.parse(new TextDecoder().decode(await unzip(b45d(String(t).slice(4)))));if(!o||o.k!=="hc")throw new Error("QR inconnu");stopCam();camMsg("Lecture de la liste…","ok");const P=await planOf(o);X.pv=o;X.pc=P;X.v="pv";render();return true}catch(e){camMsg("QR illisible ("+E(e.message)+"), vise à nouveau.","err");return false}finally{X.pending=false}}
+ const m=/^HM([A-Z]{4})(\d{3})(\d{3}):(.*)$/s.exec(String(t||""));if(!m)return false;const id=m[1],i=+m[2]-1,n=+m[3];
+ if(!X.parts||X.parts.id!==id)X.parts={id,n,d:{}};if(X.parts.d[i]==null){X.parts.d[i]=m[4];try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}}
+ const got=Object.keys(X.parts.d).length;const pg=document.getElementById("xfpg");if(pg){if(pg.children.length!==n)pg.innerHTML=Array.from({length:n},()=>"<i></i>").join("");[...pg.children].forEach((x,k)=>x.classList.toggle("on",X.parts.d[k]!=null))}
+ const nn=document.getElementById("xfn");if(nn)nn.textContent=got+" / "+n+" parties lues";
+ if(got<n)return false;
+ try{const txt=Array.from({length:n},(_,k)=>X.parts.d[k]).join("");X.pv=parseJSON(await unzip(b45d(txt)));stopCam();X.v="pv";render();return true}
+ catch(e){X.parts=null;camMsg("Lecture ratée ("+E(e.message)+"), on recommence.","err");return false}}
+/* ---------- actions ---------- */
+async function dlFile(o){const name=(X.list.name||"liste").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-")+".json",txt=JSON.stringify(o);
+ try{const f=new File([txt],name,{type:"application/json"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:X.list.name});toast("Fichier partagé");return}}catch(e){if(e&&e.name==="AbortError")return}
+ let d=null;try{d=window.claude&&window.claude.use?await window.claude.use("downloads"):null}catch(_){}
+ if(d){try{await d.save({filename:name,data:txt});toast("Fichier enregistré");return}catch(_){}}
+ try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);toast("Fichier enregistré")}catch(_){toast("Enregistrement impossible ici")}}
+async function act(k,b){
+ if(k==="x"||k==="bg"){close();return}
+ if(k==="r"){X.v="r";X.pv=null;X.parts=null;stopCam();render();return}
+ if(X.busy)return;X.busy=true;
+ try{
+ if(k==="sqr"){X.qr=await toQR(X.list);X.v="sqr";render()}
+ else if(k==="smsg"){const o=await payload(X.list,false);X.code=await toCode(o);X.v="smsg";render()}
+ else if(k==="sfile"){toast("Préparation du fichier…");const o=await payload(X.list,true);await dlFile(o)}
+ else if(k==="spd"){SPD=Math.max(150,Math.min(1200,SPD+(+b.dataset.v<0?150:-100)));startAnim();toast(Math.round(1000/SPD*10)/10+" image(s) par seconde")}
+ else if(k==="share"){const t=msgText();try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==="AbortError")return}await copy(t)}
+ else if(k==="copy")await copy(msgText());
+ else if(k==="rqr"){X.v="rqr";X.parts=null;render()}
+ else if(k==="rmsg"){X.v="rmsg";render()}
+ else if(k==="paste"){try{const t=await navigator.clipboard.readText();const ta=document.getElementById("xfin");if(ta)ta.value=t}catch(_){toast("Appuie longuement dans la case puis « Coller »")}}
+ else if(k==="rdec"){const ta=document.getElementById("xfin");try{X.pv=await fromCode(ta?ta.value:"");X.v="pv";render()}catch(e){const m=document.getElementById("xfmsg");if(m)m.innerHTML=say(E(e.message)+". Vérifie que tout le message a été collé.","err")}}
+ else if(k==="add"){const L=X.pv.k==="hc"?addList({kind:"hammer-armee",list:await buildCompact(X.pv),sheets:{},at:null}):addList(X.pv);close();toast("« "+L.name+" » ajoutée à tes listes");try{tab="lists";draw()}catch(_){}}
+ }finally{X.busy=false}}
+async function copy(t){try{await navigator.clipboard.writeText(t);toast("Copié : colle-le dans ta messagerie");return}catch(_){}
+ const ta=document.getElementById("xfcode");if(ta){ta.focus();ta.select();try{document.execCommand("copy");toast("Copié");return}catch(_){}}toast("Sélectionne le texte et copie-le")}
+document.addEventListener("click",e=>{const t=e.target;
+ const op=t.closest&&t.closest("[data-xfo]");if(op){e.preventDefault();e.stopPropagation();const v=op.dataset.xfo;if(v==="r"){X.list=null;X.v="r"}else{const L=S.lists.find(l=>l.id===op.dataset.id);if(!L)return;X.list=L;X.v="s"}render();return}
+ const b=t.closest&&t.closest("[data-xf]");if(!b||!root||!root.contains(b))return;if(b.dataset.xf==="bg"&&t!==b)return;e.preventDefault();act(b.dataset.xf,b)},true);
+document.addEventListener("change",async e=>{const t=e.target;if(t.id!=="xffile"||!t.files||!t.files[0])return;try{const txt=await t.files[0].text();let o;try{o=parseJSON(new TextEncoder().encode(txt))}catch(_){o=await fromCode(txt)}X.pv=o;X.v="pv";render()}catch(err){toast(err.message||"Fichier illisible")}t.value=""});
+async function readShot(file){camMsg("Lecture de la photo…","ok");try{const bmp=await createImageBitmap(file);let found=null;
+ if("BarcodeDetector"in window){try{const r=await new BarcodeDetector({formats:["qr_code"]}).detect(bmp);if(r[0])found=r[0].rawValue}catch(_){}}
+ if(!found){const jq=await loadJsQR();for(const mx of [1800,1300,950,2400]){const k=Math.min(1,mx/Math.max(bmp.width,bmp.height)),c=document.createElement("canvas");c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);const g=c.getContext("2d");g.drawImage(bmp,0,0,c.width,c.height);const r=jq(g.getImageData(0,0,c.width,c.height).data,c.width,c.height,{inversionAttempts:"attemptBoth"});if(r){found=r.data;break}}}
+ if(!found){camMsg("Aucun QR lisible sur la photo. Approche-toi pour que le QR remplisse la photo, sans reflet.","err");return}
+ if(!(await gotFrame(found)))camMsg("Ce QR n'est pas une liste Mes armées 40k.","err")}catch(e){camMsg("Photo illisible ("+E(e.message||e)+").","err")}}
+document.addEventListener("change",e=>{const t=e.target;if(t.id==="xfshot"&&t.files&&t.files[0]){readShot(t.files[0]);t.value=""}});
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&X.v==="rqr")stopCam();else if(!document.hidden&&X.v==="rqr")startCam()});
+window.XFER={open:(id)=>{const L=S.lists.find(l=>l.id===id);if(L){X.list=L;X.v="s";render()}},receive:()=>{X.v="r";render()},_toFrames:toFrames,_toQR:toQR,_compactOf:compactOf,_payload:payload,_gotFrame:gotFrame,_toCode:toCode,_addList:addList,_close:close};
+})();
+
+</script>
+</body></html>
 </body></html>
