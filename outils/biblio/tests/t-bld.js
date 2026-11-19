@@ -127,7 +127,7 @@ await ev(()=>{const id=S.lists[S.lists.length-1].id;[...document.querySelectorAl
 const reopen=await ev(()=>({n:BLDL().units.length,det:!!BLDL().bld.det,cfg:BLDL().units.map(u=>u.cfg&&u.cfg.size)}));ok('réouverture : choix conservés',reopen.n>=3&&reopen.det,reopen);
 const imp=await ev(txt=>{const L=BLD_IMPORT?0:0;return 0},json).catch(()=>0);
 // 10) récapitulatif + vérifications
-await click('[data-bld="step"][data-s="4"]');const rc=await html();ok('récapitulatif (unités, équipements, détail des points, vérifications)',/Détail des points/.test(rc)&&/Vérifications/.test(rc)&&/Barème :/.test(rc));
+await click('[data-bld="step"][data-s="4"]');const rc=await html();ok('récapitulatif (unités, verdict de vérification, détail sur demande)',/Liste conforme|erreur|à vérifier/.test(rc)&&/Voir le détail de la vérification/.test(rc)&&/Barème/.test(rc));
 ok('barème : source, publication, synchro',/Wahapedia/.test(rc)&&/publié le/.test(rc)&&/synchronisé le/.test(rc));
 // 13) hors ligne
 await ctx.setOffline(true);await ev(()=>{BLDSTATE.scr='edit';draw()});await p.waitForTimeout(200);

@@ -17,7 +17,7 @@ await plus('canon d.assaut|assault cannon');
 ok('1er canon d\'assaut accepté',!(await pop())&&await ev(()=>Object.keys(BLDSTATE.cfg.wq).some(k=>/canon d.assaut|assault cannon/i.test(k))),await pop());
 await plus('lance-flammes lourd|heavy flamer');
 const m1=await pop();
-ok('2e arme spéciale (1 pour 5 figurines) : bloquée avec explication',/impossible/i.test(m1||'')&&/pas|n'en autorisent/i.test(m1||''),m1);
+ok('2e arme spéciale (1 pour 5 figurines) : bloquée avec explication',/impossible/i.test(m1||'')&&/maximum 1/i.test(m1||''),m1);
 ok('la 2e arme n\'est pas ajoutée',await ev(()=>!Object.keys(BLDSTATE.cfg.wq).some(k=>/lance-flammes lourd|heavy flamer/i.test(k))),1);
 await p.screenshot({path:'blk1.png'});
 await ev(()=>document.querySelector('#lckpop [data-lckp="ok"]').click());await wait(200);
@@ -25,19 +25,26 @@ await ev(()=>document.querySelector('#lckpop [data-lckp="ok"]').click());await w
 await click('[data-bld="size"][data-v="10"]');await wait(150);
 await plus('lance-flammes lourd|heavy flamer');
 ok('à 10 figurines : 2e arme acceptée',!(await pop())&&await ev(()=>Object.keys(BLDSTATE.cfg.wq).some(k=>/lance-flammes lourd|heavy flamer/i.test(k))),await pop());
-// repasser à 5 figurines : configuration non conforme → popup à l'ajout
-await click('[data-bld="size"][data-v="5"]');await wait(150);
-await ev(()=>{const k=Object.keys(BLDSTATE.cfg.wq);});
-await click('[data-bld="ok"]');
+// retour à 5 figurines : refusé (l'équipement choisi ne serait plus permis)
+await click('[data-bld="size"][data-v="5"]');await wait(200);
+const m1b=await pop();
+ok('réduire l\'effectif en rendant l\'unité hors règles : bloqué',/Effectif impossible/.test(m1b||''),m1b);
+await ev(()=>document.querySelector('#lckpop [data-lckp="ok"]').click());await wait(150);
+ok('l\'effectif reste à 10',await ev(()=>BLDSTATE.cfg.size===10),1);
+await click('[data-bld="ok"]');await wait(300);
+ok('unité conforme (10 figurines, 2 armes spéciales) : ajoutée sans popup',!(await pop())&&await ev(()=>S.lists[0].units.length===1),await pop());
+for(let i=0;i<2;i++){await open('terminator','^Escouade de Terminators$',5);await click('[data-bld="ok"]');await wait(300)}
+ok('3 exemplaires acceptés',await ev(()=>S.lists[0].units.length===3),1);
+await open('terminator','^Escouade de Terminators$',5);await click('[data-bld="ok"]');await wait(300);
 const m2=await pop();
-ok('ajout d\'une unité non conforme : popup avec la raison et le choix',/pas conforme/i.test(m2||'')&&/Modifier/.test(m2||'')&&/Ajouter quand même/.test(m2||''),m2);
+ok('4e exemplaire : popup court avec la raison et le choix',/Unité non conforme/.test(m2||'')&&/Trop d'exemplaires : 4 \(maximum 3\)/.test(m2||'')&&/Modifier/.test(m2||'')&&/Ajouter quand même/.test(m2||''),m2);
 await p.screenshot({path:'blk2.png'});
-ok('l\'unité n\'est pas encore ajoutée',await ev(()=>S.lists[0].units.length===0),1);
+ok('la 4e n\'est pas encore ajoutée',await ev(()=>S.lists[0].units.length===3),1);
 await ev(()=>document.querySelector('#lckpop [data-lckp="edit"]').click());await wait(250);
-ok('« Modifier » : retour à la configuration, rien ajouté',await ev(()=>S.lists[0].units.length===0&&!!BLDSTATE.cfg),1);
+ok('« Modifier » : retour à la configuration',await ev(()=>S.lists[0].units.length===3&&!!BLDSTATE.cfg),1);
 await click('[data-bld="ok"]');await ev(()=>document.querySelector('#lckpop [data-lckp="add"]').click());await wait(350);
-ok('« Ajouter quand même » : unité ajoutée',await ev(()=>S.lists[0].units.length===1),1);
+ok('« Ajouter quand même » : unité ajoutée',await ev(()=>S.lists[0].units.length===4),1);
 // unité conforme : pas de popup
 await open('intercessor','Intercessor',5);await click('[data-bld="ok"]');await wait(300);
-ok('unité conforme : ajoutée sans popup',!(await pop())&&await ev(()=>S.lists[0].units.length===2),await pop());
+ok('unité conforme (autre fiche) : ajoutée sans popup',!(await pop())&&await ev(()=>S.lists[0].units.length===5),await pop());
 await b.close()})();

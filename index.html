@@ -8391,6 +8391,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:46,d:"2026-11-20",t:"Constructeur : armes regroupées, blocages et messages courts",s:"Les armes dont le nom ne diffère que par un suffixe (« - Standard », « (Supercharge) », profils d'une arme combinée ou d'un poing tronçonneur) forment une seule ligne : un compteur ajoute tous les profils. Tout changement qui rend l'unité hors règles (arme, équipement, effectif, optimisation) est refusé avec une raison courte ; à l'ajout, une fenêtre propose Modifier ou Ajouter quand même. Le récapitulatif et le rapport de vérification sont simplifiés : verdict, erreurs, puis détails repliés."},
  {id:45,d:"2026-11-19",t:"Constructeur : options d'arme contrôlées",s:"Dans la configuration d'une unité, une arme ou un équipement qui dépasse les options de la fiche (ex. 2 armes spéciales pour 5 figurines) est refusé avec l'explication. En touchant « Ajouter à l'armée », si l'unité n'est pas conforme (équipement, exemplaires, limite de points…), une fenêtre indique pourquoi et propose de modifier ou d'ajouter quand même."},
  {id:44,d:"2026-11-19",t:"Vérifier ma liste (règles V11)",s:"Le bouton ✅ Vérifier contrôle une liste d'armée : détail des points (barème officiel), points de détachement, nombre d'optimisations, optimisation au bon endroit (détachement choisi, personnage, pas de héros épique, une par unité), limite d'exemplaires, seigneur de guerre, effectifs, rattachements, équipements et options de la fiche. Il rappelle aussi ce qu'il faut pour un tournoi et copie la liste au format de soumission."},
  {id:43,d:"2026-11-18",t:"Listes d'armée : figurines et points",s:"Chaque liste affiche toujours son nombre de figurines et ses points. Dans une liste, chaque fiche montre sur le côté son effectif et ses points, modifiables à volonté (le total se met à jour). Pour une armée du constructeur, changer l'effectif recalcule les points d'après le barème ; un coût saisi à la main est conservé."},
@@ -8686,7 +8687,10 @@ function syncPts(L){const b=L.bld;if(!b)return;const R=calc(L),old=b.tot==null?R
 /* ----- accès aux listes ----- */
 const curL=()=>(S.lists||[]).find(l=>l.id===BLD.id)||null;
 const imgOf=m=>(m&&S.imgs&&S.imgs[m.ref])||"";
-const eqLines=(c,weapons)=>{const o=[];Object.keys(c.wq||{}).forEach(n=>{const q=c.wq[n];if(q>0){const w=(c.wn||{})[n];o.push(q+" × "+n+(w?" — "+w:""))}});return o};
+/* profils d'une même arme (« - Standard », « – frag », « (Supercharge) ») : une seule arme */
+const wgk=n=>String(n||"").replace(/^➤\s*/,"").replace(/\s*\(.*?\)\s*$/,"").split(/\s+[-–]\s+/)[0].trim();
+const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgk(w.name));if(!m.has(k))m.set(k,{key:k,name:wgk(w.name),ws:[]});m.get(k).ws.push(w)});return[...m.values()]};
+const eqLines=(c,weapons)=>{const g=new Map();Object.keys(c.wq||{}).forEach(n=>{const q=c.wq[n];if(q>0){const k=nk(wgk(n));const x=g.get(k)||{name:wgk(n),q:0,w:""};x.q=Math.max(x.q,q);x.w=x.w||(c.wn||{})[n]||"";g.set(k,x)}});return[...g.values()].map(x=>x.q+" × "+x.name+(x.w?" — "+x.w:""))};
 const sizeTxt=(u,copy)=>{const s=sizesOf(u,copy||1);return s.length?s[0].n+" figurine"+(s[0].n>1?"s":""):""};
 const costTxt=(u,copy)=>{const s=sizesOf(u,copy||1);if(!s.length)return"Coût à vérifier";const c=costOf(u,s[0].n,copy||1);return c.pts==null?"Coût à vérifier":(s.length>1?"dès ":"")+c.pts+" pts"};
 /* ----- catalogue : une seule carte par unité (collection ET bibliothèque reliées par leurs liens validés) ----- */
@@ -8714,6 +8718,8 @@ function weaponsOf(e){if(e.coll&&(e.coll.weapons||[]).length)return e.coll.weapo
  if(e.lib)return[...(e.lib.rw||[]).map(w=>Object.assign(wToApp(w,false),{name:frName(String(w.n).replace(/^➤\s*/,"")),en:w.n})),...(e.lib.mw||[]).map(w=>Object.assign(wToApp(w,true),{name:frName(String(w.n).replace(/^➤\s*/,"")),en:w.n}))];return[]}
 function defaultWeapons(e,c){const W=weaponsOf(e),nz=t=>nk(String(t||"").replace(/^➤\s*/,"")),eq=[];
  String((e.coll&&e.coll.equip)||"").split(/,(?![^()]*\))/).forEach(x=>{x=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").trim();if(x)eq.push([nz(x),c.size])});
+ /* fiche créée automatiquement depuis la bibliothèque : son « équipement » liste toutes les armes de la fiche, ce n'est pas un choix : aucune arme par défaut */
+ if(e.lib&&e.coll&&eq.length>=Math.max(3,W.length-1))eq.length=0;
  if(!eq.length&&e.lib&&e.lib.wp&&e.lib.wp.loadout){const re=/\*\*(?:Every|Each)\s+([^*]*?)\s+(?:is|are)\s+equipped\s+with:\*\*\s*([^\n]+)/gi;let m;const t=String(e.lib.wp.loadout);while((m=re.exec(t))){const all=/^(model|figurine)s?$/i.test(m[1].trim())||!/nob|sergeant|boss|champion|leader|captain|lieutenant/i.test(m[1]);m[2].split(/;/).forEach(x=>{x=x.replace(/\.$/,"").replace(/^\d+\s+/,"").trim();if(x)eq.push([nz(x),all?c.size:1])})}}
  W.forEach(w=>{const a=nz(w.name),b=nz(w.en||"");const h=eq.find(([n])=>a===n||a.indexOf(n+" - ")===0||b===n||b.indexOf(n+" - ")===0||(n&&b&&(b.indexOf(n)===0)));if(h)c.wq[w.name]=Math.max(c.wq[w.name]||0,h[1])})}
 function copyIdx(L,c){const e=entryOf(c.key);if(!e||!e.lib)return 1;let n=0;(L.units||[]).forEach((u,i)=>{if(c.idx!=null&&i>=c.idx)return;if(u.cfg&&u.cfg.lib===e.lib.id)n++;(u.subs||[]).forEach(s=>{if(s.cfg&&s.cfg.lib===e.lib.id)n++})});return n+1}
@@ -8737,7 +8743,8 @@ function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";
  else h+=`<div class="row" style="gap:8px;align-items:center">${stepper("sz","sz",c.size,40)}<label style="flex:1">Coût (saisi à la main)<input id="bldman" inputmode="numeric" value="${E(c.manual||"")}"></label></div><p class="bib-meta">Aucun barème pour cette unité : le coût reste « à vérifier » tant que tu ne l'as pas saisi.</p>`;
  h+=`<h4>Armes <span class="bib-meta">(quantité par arme)</span></h4>`;
  if(!W.length)h+=`<p class="bib-meta">Aucune arme connue pour cette unité.</p>`;
- else h+=`<p class="bib-meta">Aucune ligne n'est répétée : un compteur par arme. Le porteur est facultatif (ex. Sergent).</p>`+W.map(w=>{const q=c.wq[w.name]||0;return`<div class="bld-w ${q?"on":""}"><div class="row" style="justify-content:space-between;gap:6px"><b>${E(w.name)}</b>${stepper("wq",w.name,q,c.size)}</div><div class="bib-meta">${E(w.range||"")}${/^\d/.test(w.range||"")?'"':""} · A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}</div>${q?`<input class="bldnote" data-bldn="${E(w.name)}" placeholder="Porteur (facultatif)" value="${E((c.wn||{})[w.name]||"")}">`:""}</div>`}).join("");
+ else h+=`<p class="bib-meta">Un compteur par arme (ses profils sont ajoutés ensemble). Porteur facultatif (ex. Sergent).</p>`+wgroups(W).map(g=>{const q=Math.max(0,...g.ws.map(w=>c.wq[w.name]||0)),st=w=>`${E(w.range||"")}${/^\d/.test(w.range||"")?'"':""} · A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}`;
+  return`<div class="bld-w ${q?"on":""}"><div class="row" style="justify-content:space-between;gap:6px"><b>${E(g.name)}</b>${stepper("wq",g.name,q,c.size)}</div>${g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<div class="bib-meta">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${st(w)}</div>`}).join("")}${q?`<input class="bldnote" data-bldn="${E(g.name)}" placeholder="Porteur (facultatif)" value="${E((c.wn||{})[g.ws[0].name]||"")}">`:""}</div>`}).join("");
  if(pc&&pc.wg&&pc.wg.length)h+=`<h4>Équipements payants</h4>${pc.wg.map(w=>`<div class="row" style="justify-content:space-between;gap:6px;margin:4px 0"><span><b>${E(w.n)}</b><div class="bib-meta">${w.pts} pts pièce</div></span>${stepper("wg",w.n,(c.wg||{})[w.n]||0,null)}</div>`).join("")}<p class="bib-meta">Les autres armes et équipements sont inclus dans le coût de l'unité : aucun point en plus.</p>`;
  const eq=lib&&lib.wp&&((lib.wp.opt||[]).length||lib.wp.loadout);if(eq)h+=`<details class="bib-nw"><summary><b>Options et restrictions d'équipement</b> <span class="bib-meta">À vérifier à la main</span></summary>${lib.wp.loadout?`<p>${frItem(lib.wp.loadout,"équipement de base").html}</p>`:""}<ul style="padding-left:18px">${(lib.wp.opt||[]).map(o=>`<li>${frItem(o,"option d'équipement").html}</li>`).join("")}</ul></details>`;
  if(lib&&isChar(lib)){const det=detsOf(L).length,list=enhFor(L),used=new Set(L.units.filter((u,i)=>i!==c.idx&&u.cfg&&u.cfg.enh).map(u=>u.cfg.enh.id));
@@ -8805,19 +8812,21 @@ function unitText(u,i,R){const c=u.cfg||{},ln=R.lines.filter(l=>l.i===i&&l.j==nu
 function recapText(L){const R=calc(L),b=L.bld||{},m=ptsMeta(),o=[L.name,[b.facN,detsOf(L).map(d=>d.name).join(" + "),b.fmt].filter(Boolean).join(" · "),"Points : "+(R.unk?"≥ ":"")+fmt(R.total)+(b.limit?" / "+fmt(b.limit):"")+" pts"+(R.unk?" ("+R.unk+" coût à vérifier)":""),""];
  (L.units||[]).forEach((u,i)=>{unitText(u,i,R).forEach(x=>o.push(x));o.push("")});o.push("Barème : "+m.src+(m.pub?" · publié "+String(m.pub).slice(0,10):"")+(m.sync?" · synchronisé "+m.sync:""));return o.join("\n")}
 function recapHtml(L,forPrint){const R=calc(L),b=L.bld||{},m=ptsMeta(),ck=checks(L),old=m.chk&&Date.now()-m.chk>7*864e5;
- const row=(u,i)=>{const t=unitText(u,i,R);return`<div class="bld-rc"><b>${E(t[0])}</b>${t.slice(1).map(x=>`<div class="bib-meta">${E(x.trim())}</div>`).join("")}</div>`};
+ const row=(u,i)=>{const t=unitText(u,i,R),eq=t.slice(1).map(x=>x.trim().replace(/^[•\-]\s*/,"")).filter(Boolean);return`<div class="bld-rc"><b>${E(t[0])}</b>${eq.length?`<div class="bib-meta">${E(eq.join(" · "))}</div>`:""}</div>`};
+ const rc=window.BIBLCK?BIBLCK.run(L):null,bad=rc?rc.sec.flatMap(s=>s.items.filter(x=>x.lv==="bad")):[],warn=rc?rc.sec.flatMap(s=>s.items.filter(x=>x.lv==="warn")):[];
+ const verdict=rc?`<div class="bld-vd ${bad.length?"bad":warn.length?"warn":"ok"}">${bad.length?"❌ "+bad.length+" erreur"+(bad.length>1?"s":""):warn.length?"⚠️ "+warn.length+" à vérifier":"✅ Liste conforme"}</div>${bad.concat(warn).slice(0,5).map(x=>`<div class="bld-ck ${x.lv}">${x.lv==="bad"?"❌":"⚠️"} ${E((x.u?x.u+" — ":"")+x.t)}</div>`).join("")}${forPrint==="print"?"":`<button class="b" data-chk="${L.id}" style="margin:6px 0 10px">Voir le détail de la vérification</button>`}`:"";
  return`<div class="bib-top"><h2>${E(L.name)}</h2>${forPrint?"":`<button class="b" data-bld="back">← Retour</button>`}</div><p class="bib-meta">${E([b.facN,detsOf(L).map(d=>d.name).join(" + "),b.fmt].filter(Boolean).join(" · "))}</p>
  <div class="bld-tot"><b>${R.unk?"≥ ":""}${fmt(R.total)}${b.limit?" / "+fmt(b.limit):""} pts</b>${R.unk?`<span class="bib-meta"> · ${R.unk} coût à vérifier</span>`:""}</div>
+ ${verdict}
  ${(L.units||[]).map(row).join("")||'<p class="bib-meta">Aucune unité.</p>'}
- <h4>Détail des points</h4><table style="width:100%;font-size:13px">${R.lines.map(l=>`<tr><td>${E(l.name)}${l.sz?" ("+l.sz+")":""}<div class="bib-meta">${E(l.note||"")}</div></td><td style="text-align:right">${l.pts==null?"à vérifier":l.pts+" pts"}</td></tr>`).join("")}<tr><td><b>Total</b></td><td style="text-align:right"><b>${R.unk?"≥ ":""}${R.total} pts</b></td></tr></table>
- <h4>Vérifications</h4>${ck.map(x=>`<div class="bld-ck ${x.lv}">${x.lv==="ok"?"✓":x.lv==="bad"?"⛔":x.lv==="warn"?"⚠":"ℹ"} ${E(x.t)}</div>`).join("")}
- <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""}${m.ver?" · version "+E(m.ver):""}${m.sync?" · synchronisé le "+E(m.sync):""}.${old||!m.chk?" ⚠ Aucune vérification récente de mise à jour : les points peuvent ne plus être à jour.":" Dernière vérification : "+E(fmtD(m.chk))+"."}</p>`}
+ ${forPrint==="print"?`<h4>Détail des points</h4><table style="width:100%;font-size:13px">${R.lines.map(l=>`<tr><td>${E(l.name)}${l.sz?" ("+l.sz+")":""}</td><td style="text-align:right">${l.pts==null?"à vérifier":l.pts+" pts"}</td></tr>`).join("")}<tr><td><b>Total</b></td><td style="text-align:right"><b>${R.total} pts</b></td></tr></table>`:""}
+ <p class="bib-meta">Barème ${E(m.src)}${m.pub?" · "+E(String(m.pub).slice(0,10)):""}${old||!m.chk?" · ⚠ mise à jour non vérifiée récemment":""}</p>`}
 /* ----- export / import ----- */
 function exportJson(L){const sheets={};(L.units||[]).forEach(u=>{[u].concat(u.subs||[]).forEach(x=>{if(x.ref&&S.coll[x.ref])sheets[x.ref]=clone(S.coll[x.ref])})});return JSON.stringify({kind:"hammer-armee",v:1,at:Date.now(),pts:ptsMeta(),list:clone(L),sheets})}
 function importJson(txt){let o;try{o=JSON.parse(txt)}catch(_){throw new Error("Fichier illisible")}if(!o||o.kind!=="hammer-armee"||!o.list)throw new Error("Ce n'est pas une armée HAMMER");
  const L=o.list;L.id="l"+Date.now();L.name=(L.name||"Armée")+(S.lists.some(x=>x.name===L.name)?" (importée)":"");Object.keys(o.sheets||{}).forEach(r=>{if(!S.coll[r])S.coll[r]=o.sheets[r]});S.lists.push(L);save();return L}
 function dl2(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:type||"application/json"}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
-function printList(L){let p=document.getElementById("bldprint");if(!p){p=document.createElement("div");p.id="bldprint";document.body.appendChild(p)}p.innerHTML=recapHtml(L,true);p.style.display="block";setTimeout(()=>{try{window.print()}catch(_){}setTimeout(()=>{p.style.display="none"},400)},50)}
+function printList(L){let p=document.getElementById("bldprint");if(!p){p=document.createElement("div");p.id="bldprint";document.body.appendChild(p)}p.innerHTML=recapHtml(L,"print");p.style.display="block";setTimeout(()=>{try{window.print()}catch(_){}setTimeout(()=>{p.style.display="none"},400)},50)}
 /* ----- vues principales ----- */
 function homeHtml(){const lists=S.lists||[];
  return`<div class="card"><b style="font-size:18px">🛠 Créer une armée</b>
@@ -8947,19 +8956,26 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="edit"){const u=L.units[+b.dataset.i];if(u)openCfg(u.cfg&&u.cfg.lib?"u:"+u.cfg.lib:"c:"+u.ref,+b.dataset.i);return}
  if(a==="del"){const i=+b.dataset.i,u=L.units[i];if(!u)return;ask({t:"Retirer « "+u.name+" » de l'armée ?",p:"Sa fiche de collection n'est pas supprimée.",ok:"Retirer",dg:1},()=>{L.units.splice(i,1);syncPts(L);applyPts(L);save();rd()});return}
  if(c){
-  if(a==="size"){const o=c.size;c.size=+b.dataset.v;Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
-  if(a==="sz"){const o=c.size;c.size=Math.max(1,Math.min(40,c.size+(+b.dataset.d)));Object.keys(c.wq).forEach(k=>{if(c.wq[k]===o)c.wq[k]=c.size});clampQ(c);render();return}
-  if(a==="wq"){const k=b.dataset.k,nv=Math.max(0,Math.min(c.size,(c.wq[k]||0)+(+b.dataset.d)));
-   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wq:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Option d'arme impossible",p:"« "+k+" » ne peut pas être ajoutée pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
-   c.wq[k]=nv;if(!c.wq[k]){delete c.wq[k];delete c.wn[k]}render();return}
+  if(a==="size"||a==="sz"){const o=c.size,n=a==="size"?+b.dataset.v:Math.max(1,Math.min(40,c.size+(+b.dataset.d)));
+   const c2=JSON.parse(JSON.stringify(c));c2.size=n;Object.keys(c2.wq).forEach(k=>{if(c2.wq[k]===o)c2.wq[k]=n});clampQ(c2);
+   if(n!==o&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,entryOf(c.key),c2);if(pr.length){BIBLCK.pop({t:"Effectif impossible ("+n+")",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.size=n;c.wq=c2.wq;c.wg=c2.wg||c.wg;render();return}
+  if(a==="wq"){const k=b.dataset.k,e=entryOf(c.key),g=e&&wgroups(weaponsOf(e)).find(x=>x.name===k),names=g?g.ws.map(w=>w.name):[k];
+   const cur=Math.max(0,...names.map(n=>c.wq[n]||0)),nv=Math.max(0,Math.min(c.size,cur+(+b.dataset.d)));
+   const c2=JSON.parse(JSON.stringify(c));names.forEach(n=>{if(nv)c2.wq[n]=nv;else delete c2.wq[n]});
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,e,c2);if(pr.length){BIBLCK.pop({t:"« "+k+" » impossible",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   names.forEach(n=>{if(nv)c.wq[n]=nv;else{delete c.wq[n];delete c.wn[n]}});render();return}
   if(a==="wg"){const k=b.dataset.k,nv=Math.max(0,(c.wg[k]||0)+(+b.dataset.d));
-   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTry(L,c,entryOf(c.key),{wg:{[k]:nv}});if(pr.length){BIBLCK.pop({t:"Équipement impossible",p:"« "+k+" » ne peut pas être ajouté pour "+c.size+" figurine"+(c.size>1?"s":"")+" :",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
-   c.wg[k]=nv;if(!c.wg[k])delete c.wg[k];render();return}
-  if(a==="enh"){const v=b.dataset.v;c.enh=v?{id:v,name:(D.enh.find(x=>x.id===v)||{}).n||""}:null;render();return}
+   const c2=JSON.parse(JSON.stringify(c));if(nv)c2.wg[k]=nv;else delete c2.wg[k];
+   if(+b.dataset.d>0&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,entryOf(c.key),c2);if(pr.length){BIBLCK.pop({t:"« "+k+" » impossible",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.wg=c2.wg;render();return}
+  if(a==="enh"){const v=b.dataset.v,ne=v?{id:v,name:(D.enh.find(x=>x.id===v)||{}).n||""}:null;
+   if(ne&&window.BIBLCK){const c2=JSON.parse(JSON.stringify(c));c2.enh=ne;const pr=BIBLCK.cfgTryFull(L,c,entryOf(c.key),c2);if(pr.length){BIBLCK.pop({t:"Optimisation impossible",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
+   c.enh=ne;render();return}
   if(a==="ldr"){BLD.ldrKind=b.dataset.kind||"Meneur";BLD.lq="";BLD.scr="ldr";render();return}
   if(a==="ldrx"){const K=b.dataset.kind||"Meneur";c.subs=(c.subs||[]).filter(x=>(x.label||"Meneur")!==K);render();return}
   if(a==="ldrpick"){ldrPick(b.dataset.k);return}
-  if(a==="ok"){if(window.BIBLCK){const pr=BIBLCK.cfgProblems(L,c,entryOf(c.key));if(pr.length){const ed=c.idx!=null;BIBLCK.pop({t:"Cette unité n'est pas conforme",p:"Règles V11 et options de la fiche :",items:pr,buttons:[{k:"edit",l:"Modifier l'unité",cls:"p"},{k:"add",l:ed?"Enregistrer quand même":"Ajouter quand même"}],cb:x=>{if(x==="add")commitCfg()}});return}}commitCfg();return}
+  if(a==="ok"){if(window.BIBLCK){const pr=BIBLCK.cfgProblems(L,c,entryOf(c.key));if(pr.length){const ed=c.idx!=null;BIBLCK.pop({t:"Unité non conforme",p:(entryOf(c.key)||{}).name,items:pr,buttons:[{k:"edit",l:"Modifier l'unité",cls:"p"},{k:"add",l:ed?"Enregistrer quand même":"Ajouter quand même"}],cb:x=>{if(x==="add")commitCfg()}});return}}commitCfg();return}
  }
  if(a==="det"){BLD.scr="det";BLD.dq="";render();return}
  if(a==="detpick"){detPick(b.dataset.id);return}
@@ -8980,7 +8996,7 @@ document.addEventListener("input",e=>{const t=e.target;if(!t)return;
  else if(t.id==="bldlq"){BLD.lq=t.value;render()}
  else if(t.id==="bldd"){BLD.dq=t.value;render()}
  else if(t.id==="bldman"&&BLD.cfg){BLD.cfg.manual=parseInt(t.value,10)||0}
- else if(t.dataset&&t.dataset.bldn&&BLD.cfg){BLD.cfg.wn[t.dataset.bldn]=t.value}},true);
+ else if(t.dataset&&t.dataset.bldn&&BLD.cfg){const e=entryOf(BLD.cfg.key),g=e&&wgroups(weaponsOf(e)).find(x=>x.name===t.dataset.bldn);(g?g.ws.map(w=>w.name):[t.dataset.bldn]).forEach(n=>{BLD.cfg.wn[n]=t.value})}},true);
 document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const L=curL();
  if(t.dataset&&t.dataset.bldfr!=null){const LL=(S.lists||[]).find(l=>l.id===S.cur)||L;if(LL){const it=frItems(LL),cur=Array.isArray(LL.frsel)?LL.frsel.slice():frSel(LL,it).filter(x=>!mainOf(LL,it).includes(x)).map(x=>x.n),n=t.dataset.bldfr,i=cur.indexOf(n);if(t.checked&&i<0)cur.push(n);if(!t.checked&&i>=0)cur.splice(i,1);LL.frsel=cur;BLD.fro=true;save();try{draw()}catch(_){}render()}return}
  if(t.id==="bldf"){BLD.fac=t.value;render()}else if(t.id==="bldr"){BLD.role=t.value;render()}
@@ -9011,6 +9027,7 @@ window.BIBLP={fig:lpFg,pts:lpTot,
  card:(u,i)=>{const sub=(u.subs||[]).reduce((a,s)=>a+lpS(s),0);return`<span class="blp-s"><label>Fig.<input type="number" inputmode="numeric" min="1" step="1" data-blp="size" data-i="${i}" value="${lpm(u)}" aria-label="Nombre de figurines"></label><label>Pts<input type="number" inputmode="numeric" min="0" step="5" data-blp="pts" data-i="${i}" value="${lpU(u)}" aria-label="Points de l'unité"></label>${sub?`<small>+${sub} pts meneur/appui</small>`:""}</span>`}};
 (function(){const c=document.createElement("style");c.id="blpcss";c.textContent=`.blp-b{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.blp-b span{background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:4px 12px;font-size:15px}.blp-b b{font-size:17px}
 .blp-s{margin-left:auto;margin-top:22px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none;padding-right:34px}.blp-s label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu,#9a9a9a)}.blp-s input{width:68px;min-height:36px;text-align:center;font-size:16px;padding:2px 4px}.blp-s small{font-size:11px;color:var(--mu,#9a9a9a)}`;document.head.appendChild(c)})();
+(function(){const c=document.createElement("style");c.id="bldvdcss";c.textContent=`.bld-vd{font-weight:800;font-size:16px;padding:8px 12px;border-radius:12px;margin:8px 0}.bld-vd.ok{background:#17402c;color:#b9f1d2}.bld-vd.warn{background:#5a4416;color:#ffe3a6}.bld-vd.bad{background:#5a2323;color:#ffd0d0}`;document.head.appendChild(c)})();
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest(".blp-s")){e.stopPropagation()}},true);
 document.addEventListener("keydown",e=>{if(e.target&&e.target.dataset&&e.target.dataset.blp&&e.key==="Enter"){e.preventDefault();e.target.blur()}},true);
 document.addEventListener("change",e=>{const t=e.target;if(!t||!t.dataset||!t.dataset.blp)return;e.stopImmediatePropagation();e.stopPropagation();
@@ -9092,9 +9109,9 @@ function lckEquipCheck(u,lib,size,out){
  const pc=pcOf(lib),paid=((pc&&pc.wg)||[]);
  /* équipements payants */
  const wg=(u.cfg&&u.cfg.wg)||{};Object.keys(wg).forEach(k=>{const q=wg[k];if(!q)return;const p=paid.find(x=>nk(x.n)===nk(k)||lckBase(x.n)===lckBase(k));
-  if(!p)out.push({lv:"bad",t:nm+" : « "+k+" » n'est pas un équipement payant de cette fiche"});
-  else if(q>size)out.push({lv:"bad",t:nm+" : "+q+" × "+k+" pour "+size+" figurine"+(size>1?"s":"")+" (trop)"});
-  else out.push({lv:"ok",t:nm+" : "+q+" × "+k+" (+"+(q*p.pts)+" pts) — équipement payant autorisé"})});
+  if(!p)out.push({lv:"bad",u:nm,t:k+" : équipement non prévu pour cette unité"});
+  else if(q>size)out.push({lv:"bad",u:nm,t:k+" : "+q+" pour "+size+" figurine"+(size>1?"s":""),d:"Maximum : 1 par figurine"});
+  else out.push({lv:"ok",u:nm,t:k+" ×"+q+" (+"+(q*p.pts)+" pts)"})});
  const sel=Object.keys(eq.g);
  if(!sel.length){if(rules.length||unk.length)out.push({lv:"info",nodet:nm});return}
  const known=new Set();[...(lib.rw||[]),...(lib.mw||[])].forEach(w=>lckWkeys(w.n).forEach(x=>known.add(x)));
@@ -9112,7 +9129,7 @@ function lckEquipCheck(u,lib,size,out){
   let n=0;grp.forEach(g=>{let m=0;g.forEach(w=>{m=Math.max(m,cnt(w))});n+=m});
   const used=[];sel.forEach(k=>{if(c.w.has(lckBase(k)))used.push(eq.g[k].n+" × "+eq.g[k].name)});
   const cite=unk.some(x=>{const z=nk(x);return [...c.w].some(w=>w&&z.includes(w))});
-  if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",t:nm+" : au moins "+n+" figurine"+(n>1?"s":"")+" avec une arme de remplacement ("+used.join(", ")+") alors que les options analysées de la fiche n'en autorisent que "+c.lim+" pour "+size+" figurine"+(size>1?"s":"")+(cite?" (une option non analysée automatiquement mentionne cette arme : relis la fiche)":""),d:c.rs.map(x=>"Fiche : "+x.r.txt).join(" · ")})}});
+  if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",u:nm,t:(c.lim?"Trop d'armes de remplacement : "+n+" (maximum "+c.lim+")":"Armes de remplacement non permises à "+size+" figurine"+(size>1?"s":"")),d:used.join(" + ")+(c.rs[0].r.kind==="per"?" · Règle : "+c.rs[0].r.k+" pour "+c.rs[0].r.per+" figurines":"")+(cite?" · À vérifier sur la fiche":"")})}});
  /* armes dont le nom n'est reconnu ni dans la fiche ni dans ses options : information seulement (nom personnalisé ou traduit autrement) */
  const inR=new Set();R.forEach(x=>x.own.forEach(w=>inR.add(w)));rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
  /* arme de la fiche, mais ni dans l'équipement de base ni dans une option : impossible si toutes les options ont été analysées */
@@ -9122,11 +9139,11 @@ function lckEquipCheck(u,lib,size,out){
  const pool=nk(String((lib.wp&&lib.wp.loadout)||"")+" "+((lib.wp&&lib.wp.opt)||[]).join(" "));
  const poolT=pool.split(" ");
  const near=w=>toks(w).some(t=>poolT.some(p=>p.length>=4&&(p.includes(t)||t.includes(p))));
- if(!unk.length)sel.forEach(k=>{const b=lckBase(k);if(known.has(b)&&!inR.has(b)&&!(loadout&&(loadout.includes(b)||loadStem.includes(b)))&&!near(k)&&!near(b)){out.push({lv:"warn",t:nm+" : « "+eq.g[k].name+" » n'apparaît ni dans l'équipement de base ni dans les options de cette fiche (à vérifier : certaines fiches omettent des armes)",d:"Équipement de base : "+String((lib.wp&&lib.wp.loadout)||"").replace(/\*\*/g,"").replace(/\n+/g," ")})}});
+ if(!unk.length)sel.forEach(k=>{const b=lckBase(k);if(known.has(b)&&!inR.has(b)&&!(loadout&&(loadout.includes(b)||loadStem.includes(b)))&&!near(k)&&!near(b)){out.push({lv:"warn",u:nm,t:eq.g[k].name+" : absente de la fiche officielle",d:"À vérifier : certaines fiches omettent des armes"})}});
  const unr=sel.filter(k=>{const b=lckBase(k);return !(known.has(b)||inR.has(b)||(loadout&&loadout.includes(b)))}).map(k=>eq.g[k].name);
- if(unr.length)out.push({lv:"info",t:nm+" : arme"+(unr.length>1?"s":"")+" non reconnue"+(unr.length>1?"s":"")+" dans la fiche officielle (nom personnalisé ?) : "+unr.join(", ")});
- if(!issues)out.push({lv:"ok",t:nm+" : équipement conforme aux options de la fiche"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement)":"")});
- else if(unk.length)out.push({lv:"info",t:nm+" : "+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement : relis la fiche"})}
+ if(unr.length)out.push({lv:"info",u:nm,t:"Nom d'arme non reconnu : "+unr.join(", ")});
+ if(!issues)out.push({lv:"ok",u:nm,t:"Équipement conforme"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" à relire sur la fiche)":"")});
+ else if(unk.length)out.push({lv:"info",u:nm,t:unk.length+" option"+(unk.length>1?"s":"")+" non analysable"+(unk.length>1?"s":"")+" : relis la fiche"})}
 /* ----- restrictions d'une optimisation (texte : « X model only ») ----- */
 function lckEnhRestrict(e,bearer){const m=/^\s*([^.:]+?)\s+(?:model|unit)s?\s+only\b/i.exec(String(e.d||"").replace(/\*\*/g,""));if(!m)return null;
  const alts=m[1].split(/\s*(?:\/|,|\bor\b)\s*/i).map(x=>nk(x)).filter(Boolean);if(!alts.length)return null;
@@ -9141,7 +9158,7 @@ function lckRun(L){const out=[],sec=[];const size=lckSize(L),S0=LSZ[size],lim=lc
  /* 1. points */
  const P=[];const total=R.total;
  if(R.unk)P.push({lv:"warn",t:R.unk+" coût"+(R.unk>1?"s":"")+" non déterminé"+(R.unk>1?"s":"")+" : le total n'est pas exact"});
- if(total>lim)P.push({lv:"bad",t:"Limite dépassée : "+fmt(total)+" / "+fmt(lim)+" pts (+"+fmt(total-lim)+")"});
+ if(total>lim)P.push({lv:"bad",t:"Limite de points dépassée",d:fmt(total)+" / "+fmt(lim)+" pts (+"+fmt(total-lim)+")"});
  else P.push({lv:"ok",t:"Total "+fmt(total)+" / "+fmt(lim)+" pts"+(lim-total>0?" ("+fmt(lim-total)+" pts restants)":" (limite exacte)")});
  if(!units.length)P.push({lv:"info",t:"La liste est vide"});
  /* détail des points + comparaison au barème */
@@ -9163,42 +9180,42 @@ function lckRun(L){const out=[],sec=[];const size=lckSize(L),S0=LSZ[size],lim=lc
  const ds=detsOf(L);const dpMx=S0.dp,dp=dpUsed(L);
  if(!ds.length)C.push({lv:"warn",t:"Aucun détachement choisi"});
  else{const lone3=size==="inc"&&ds.length===1&&dp===3;
-  if(dp>dpMx&&!lone3)C.push({lv:"bad",t:"Points de détachement dépassés : "+dp+" / "+dpMx});else C.push({lv:"ok",t:"Points de détachement : "+dp+" / "+dpMx+(lone3?" (un détachement à 3 DP seul est permis en Incursion)":"")});
+  if(dp>dpMx&&!lone3)C.push({lv:"bad",t:"Points de détachement dépassés",d:dp+" utilisés pour "+dpMx+" permis"});else C.push({lv:"ok",t:"Points de détachement : "+dp+" / "+dpMx+(lone3?" (un détachement à 3 DP seul est permis en Incursion)":"")});
   const ids=ds.map(d=>d.id);if(new Set(ids).size!==ids.length)C.push({lv:"bad",t:"Le même détachement est choisi plusieurs fois"});
   ds.forEach(d=>{if(d.dp==null)C.push({lv:"info",t:"Détachement « "+d.name+" » : coût en points de détachement inconnu"})})}
  /* exemplaires */
  const cnt=new Map();ent.forEach(e=>{if(!e.lib)return;cnt.set(e.lib.id,{lib:e.lib,n:((cnt.get(e.lib.id)||{}).n||0)+1})});
  let dupBad=false;cnt.forEach(({lib,n})=>{const role=lckRole(lib);let max=S0.unit;if(role==="Ligne"||role==="Transports assignés")max=S0.unit*2;if(lckIsEpic(lib))max=1;
-  if(n>max){dupBad=true;C.push({lv:"bad",t:lckName(lib)+" : "+n+" exemplaires, maximum "+max+(lckIsEpic(lib)?" (Héros épique : un seul)":role==="Ligne"||role==="Transports assignés"?" (Ligne / Transport assigné : double)":"")})}});
+  if(n>max){dupBad=true;C.push({lv:"bad",u:lckName(lib),t:"Trop d'exemplaires : "+n+" (maximum "+max+")",d:lckIsEpic(lib)?"Héros épique : un seul":role==="Ligne"||role==="Transports assignés"?"Ligne / Transport : "+max+" au maximum":S0.n+" : "+max+" par fiche"})}});
  if(cnt.size&&!dupBad)C.push({lv:"ok",t:"Limite d'exemplaires respectée"});
  /* optimisations */
  const enhs=[];ent.forEach(e=>{const c=e.u.cfg;if(c&&c.enh&&c.enh.id){const x=D.enh.find(z=>z.id===c.enh.id);enhs.push({e,x,id:c.enh.id,name:c.enh.name||(x&&x.n)||"?"})}});
- if(enhs.length>S0.enh)C.push({lv:"bad",t:enhs.length+" optimisations, maximum "+S0.enh+" en "+S0.n});else C.push({lv:enhs.length?"ok":"info",t:enhs.length+" / "+S0.enh+" optimisation"+(S0.enh>1?"s":"")});
- const seen={};enhs.forEach(h=>seen[h.id]=(seen[h.id]||0)+1);Object.keys(seen).forEach(k=>{if(seen[k]>1){const h=enhs.find(z=>z.id===k);C.push({lv:"bad",t:"« "+tName(h.name).t+" » est prise "+seen[k]+" fois (une seule fois par armée)"})}});
+ if(enhs.length>S0.enh)C.push({lv:"bad",t:"Trop d'optimisations : "+enhs.length+" (maximum "+S0.enh+")"});else C.push({lv:enhs.length?"ok":"info",t:enhs.length+" / "+S0.enh+" optimisation"+(S0.enh>1?"s":"")});
+ const seen={};enhs.forEach(h=>seen[h.id]=(seen[h.id]||0)+1);Object.keys(seen).forEach(k=>{if(seen[k]>1){const h=enhs.find(z=>z.id===k);C.push({lv:"bad",t:"Optimisation prise "+seen[k]+" fois",d:tName(h.name).t+" : une seule fois par armée"})}});
  const dets=detsOf(L);
  enhs.forEach(h=>{const lib=h.e.lib,who=h.e.u.name,nm=tName(h.name).t;
   if(!h.x){C.push({lv:"warn",t:"Optimisation « "+nm+" » introuvable dans la bibliothèque"});return}
-  if(lib&&lckIsEpic(lib))C.push({lv:"bad",t:"« "+nm+" » sur "+who+" : un Héros épique ne peut pas recevoir d'optimisation"});
-  else if(lib&&!lckIsChar(lib)&&!/\bUpgrade\b/i.test(String(h.x.d||"")))C.push({lv:"bad",t:"« "+nm+" » sur "+who+" : seules les unités PERSONNAGE peuvent recevoir une optimisation"});
-  else if(!lib)C.push({lv:"info",t:"« "+nm+" » sur "+who+" : unité non liée à la bibliothèque, éligibilité non vérifiable"});
-  else C.push({lv:"ok",t:"« "+nm+" » sur "+who+" : porteur valide"});
-  if(dets.length&&!dets.some(d=>nk(h.x.det||"")===nk(d.en||d.name)))C.push({lv:"bad",t:"« "+nm+" » appartient au détachement « "+(h.x.det||"?")+" », qui n'est pas choisi dans cette liste"});
-  if(lib){const r=lckEnhRestrict(h.x,lib);if(r&&!r.ok)C.push({lv:"warn",t:"« "+nm+" » : réservée aux « "+r.txt+" », ce que "+who+" ne semble pas être"})}
-  if(h.x.pts==null)C.push({lv:"warn",t:"« "+nm+" » : coût en points non renseigné"})});
+  if(lib&&lckIsEpic(lib))C.push({lv:"bad",u:who,t:"Optimisation interdite : Héros épique",d:nm});
+  else if(lib&&!lckIsChar(lib)&&!/\bUpgrade\b/i.test(String(h.x.d||"")))C.push({lv:"bad",u:who,t:"Optimisation réservée aux PERSONNAGES",d:nm});
+  else if(!lib)C.push({lv:"info",u:who,t:"Optimisation non vérifiable (unité non liée)",d:nm});
+  else C.push({lv:"ok",u:who,t:"Optimisation valide",d:nm});
+  if(dets.length&&!dets.some(d=>nk(h.x.det||"")===nk(d.en||d.name)))C.push({lv:"bad",u:who,t:"Optimisation d'un détachement non choisi",d:nm+" → "+(h.x.det||"?")});
+  if(lib){const r=lckEnhRestrict(h.x,lib);if(r&&!r.ok)C.push({lv:"warn",u:who,t:"Optimisation réservée : "+r.txt,d:nm})}
+  if(h.x.pts==null)C.push({lv:"warn",u:who,t:"Coût de l'optimisation inconnu",d:nm})});
  /* une seule optimisation par unité (y compris unité rattachée) */
- units.forEach((u,i)=>{const n=enhs.filter(h=>h.e.i===i).length;if(n>1)C.push({lv:"bad",t:u.name+" : "+n+" optimisations dans la même unité (une seule permise, rattachés compris)"})});
+ units.forEach((u,i)=>{const n=enhs.filter(h=>h.e.i===i).length;if(n>1)C.push({lv:"bad",u:u.name,t:"Deux optimisations dans la même unité",d:"Une seule permise, meneur et appui compris"})});
  /* faction */
  const fac=b.facN||(L.facN)||"";if(fac){const bad=ent.filter(e=>e.lib&&Array.isArray(e.lib.f)&&e.lib.f.length&&!e.lib.f.some(f=>nk(f)===nk(fac)));
   if(bad.length)C.push({lv:"warn",t:bad.length+" unité"+(bad.length>1?"s":"")+" hors de la faction « "+fac+" » : "+bad.slice(0,4).map(e=>e.u.name).join(", ")+(bad.length>4?"…":"")+" (alliés : vérifie qu'ils sont permis)"});else if(ent.some(e=>e.lib))C.push({lv:"ok",t:"Toutes les unités appartiennent à la faction « "+fac+" »"})}
  /* effectifs et rattachements */
  units.forEach((u,i)=>{const lib=lckLib(u);if(!lib)return;const c=u.cfg,sz=sizesOf(lib,1);const n=(c&&c.size)||+u.size;
-  if(n&&sz.length&&!sz.some(s=>n>=s.n&&n<=s.m))C.push({lv:"bad",t:u.name+" : effectif "+n+" non prévu (autorisé : "+sz.map(s=>s.n===s.m?s.n:s.n+"–"+s.m).join(", ")+")"});
-  if(lckIsSup(lib))C.push({lv:"bad",t:u.name+" : unité d'appui seule dans la liste : un appui doit être rattaché à une unité de protection"});
+  if(n&&sz.length&&!sz.some(s=>n>=s.n&&n<=s.m))C.push({lv:"bad",u:u.name,t:"Effectif non prévu : "+n,d:"Autorisé : "+sz.map(s=>s.n===s.m?s.n:s.n+"–"+s.m).join(", ")});
+  if(lckIsSup(lib))C.push({lv:"bad",u:u.name,t:"Appui sans unité de protection",d:"Un appui doit être rattaché"});
   (u.subs||[]).forEach(s=>{const sl=lckLib(s);if(!sl)return;const cm=compat(lib,sl,s.label);
    if(cm.s!=="ok")C.push({lv:"warn",t:(s.label||"Meneur")+" « "+s.name+" » avec "+u.name+" : association non confirmée par les fiches"});else C.push({lv:"ok",t:(s.label||"Meneur")+" « "+s.name+" » peut rejoindre "+u.name})})});
  /* seigneur de guerre */
  const chars=ent.filter(e=>e.lib&&lckIsChar(e.lib));const wl=L.chk&&L.chk.warlord!=null?L.chk.warlord:null;
- if(!chars.length)C.push({lv:"bad",t:"Aucune unité PERSONNAGE : impossible de désigner un seigneur de guerre"});
+ if(!chars.length)C.push({lv:"bad",t:"Aucun PERSONNAGE",d:"Impossible de désigner un seigneur de guerre"});
  else if(wl==null||!chars.some(e=>e.i+"."+(e.j==null?"":e.j)===wl))C.push({lv:"warn",t:"Seigneur de guerre non désigné (choisis-le ci-dessous : un PERSONNAGE de ta faction)",wl:1});
  else{const e=chars.find(z=>z.i+"."+(z.j==null?"":z.j)===wl);C.push({lv:"ok",t:"Seigneur de guerre : "+e.u.name,wl:1})}
  C.push({lv:"info",t:"Réserves : au plus la moitié des unités ET la moitié des points peuvent commencer en réserve (Chapter Approved)"});
@@ -9210,16 +9227,13 @@ function lckRun(L){const out=[],sec=[];const size=lckSize(L),S0=LSZ[size],lim=lc
  sec.push({id:"eq",t:"🔧 Équipements et options",items:Q});
  /* 4. préparation tournoi */
  const T=[];
- T.push({lv:size==="sf"&&lim===2000?"ok":"warn",t:size==="sf"&&lim===2000?"Format standard de tournoi : Strike Force, 2 000 points":"Les tournois officiels se jouent en général en Strike Force à 2 000 points (le Chapter Approved Tournament Companion suppose ce format)"});
+ T.push({lv:size==="sf"&&lim===2000?"ok":"info",t:size==="sf"&&lim===2000?"Format tournoi standard (Strike Force 2 000 pts)":"Tournois : en général Strike Force, 2 000 pts"});
  let paint=null;try{const H=window.__hob&&window.__hob.hob();if(H){const refs=units.map(u=>u.ref).filter(Boolean);if(refs.length){const done=refs.filter(r=>(H.sch[r]||{}).st==="fini").length;paint={done,all:refs.length}}}}catch(_){}
- if(paint)T.push({lv:paint.done===paint.all?"ok":"info",t:"Peinture : "+paint.done+" / "+paint.all+" unités marquées « terminées » dans ton suivi. Armée « Battle Ready » (entièrement peinte, socles soignés) = 10 PV bonus en mission Chapter Approved"});
- else T.push({lv:"info",t:"Peinture : une armée entièrement peinte « Battle Ready » rapporte 10 PV en mission Chapter Approved"});
- T.push({lv:"info",t:"Liste de l'armée : à présenter à l'adversaire avant la bataille (règle de base 25.01) ; pour un tournoi, à envoyer à l'organisateur avant la date limite"});
- T.push({lv:"info",t:"Rattachements (meneur / appui + unité de protection) : à noter par écrit avant la bataille, ils sont figés ensuite"});
- T.push({lv:"info",t:"Équipement des figurines conforme à la liste (WYSIWYG) : exigé par la plupart des événements (ex. WTC 2026 : armées entièrement peintes et WYSIWYG, 2 000 pts, unités Légendes interdites, Forge World permis)"});
- T.push({lv:"info",t:"Vérifie le pack de ton événement : certains imposent la liste en anglais, une limite de Forge World, ou des restrictions d'alliés en plus des règles de base"});
+ T.push({lv:paint&&paint.done===paint.all?"ok":"info",t:paint?"Peinture : "+paint.done+"/"+paint.all+" unités terminées":"Armée peinte « Battle Ready » : +10 PV",d:paint?"Entièrement peinte avec socles = +10 PV":""});
+ T.push({lv:"info",t:"À préparer",d:"Liste montrée à l'adversaire · rattachements notés avant la partie · figurines conformes à la liste (WYSIWYG)"});
+ T.push({lv:"info",t:"Selon l'événement",d:"Liste en anglais, Forge World, alliés : voir le pack du tournoi"});
  sec.push({id:"tour",t:"🏆 Préparation tournoi",items:T});
- sec.forEach(s=>{const m=new Map();s.items.forEach(i=>{const k=i.lv+"|"+i.t;if(m.has(k))m.get(k).n++;else m.set(k,Object.assign({n:1},i))});s.items=[...m.values()].map(i=>{if(i.n>1)i.t+=" (×"+i.n+")";return i})});
+ sec.forEach(s=>{const m=new Map();s.items.forEach(i=>{const k=i.lv+"|"+(i.u||"")+"|"+i.t;if(m.has(k))m.get(k).n++;else m.set(k,Object.assign({n:1},i))});s.items=[...m.values()].map(i=>{if(i.n>1)i.t+=" (×"+i.n+")";return i})});
  const cnts={bad:0,warn:0,ok:0,info:0};sec.forEach(s=>s.items.forEach(i=>cnts[i.lv]=(cnts[i.lv]||0)+1));
  return{sec,counts:cnts,size,lim,total}}
 /* ----- liste au format « soumission » ----- */
@@ -9245,22 +9259,25 @@ function lckCss(){if(document.getElementById("lckcss"))return;const s=document.c
 #lchk .it{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--bd);font-size:14px;line-height:1.35}#lchk .it i{font-style:normal;flex:none;width:20px}
 #lchk .it.bad{color:#ff9d9d}#lchk .it.warn{color:#ffd37a}#lchk .it.ok{color:#9be6bd}#lchk .it.info{color:var(--mu)}#lchk .it small{display:block;color:var(--mu)}
 #lchk table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0}#lchk td,#lchk th{padding:4px 3px;border-bottom:1px solid var(--bd);text-align:right}#lchk td:first-child,#lchk th:first-child{text-align:left}
-#lchk .ct{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}#lchk select{width:100%;margin:4px 0}#lchk .src{font-size:12px;color:var(--mu);margin-top:8px}#lchk .src a{color:var(--ac)}`;document.head.appendChild(s)}
+#lchk .vd{font-size:18px;font-weight:800;padding:10px 12px;border-radius:12px;margin:10px 0}#lchk .vd.ok{background:#17402c;color:#b9f1d2}#lchk .vd.warn{background:#5a4416;color:#ffe3a6}#lchk .vd.bad{background:#5a2323;color:#ffd0d0}#lchk h4{margin:12px 0 2px}#lchk .ct{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}#lchk select{width:100%;margin:4px 0}#lchk .src{font-size:12px;color:var(--mu);margin-top:8px}#lchk .src a{color:var(--ac)}`;document.head.appendChild(s)}
 const lckIc={bad:"❌",warn:"⚠️",ok:"✅",info:"ℹ️"};
-function lckHtml(L){const r=lckRun(L);const S0=LSZ[r.size];
- let h=`<div class="pp"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>✅ Vérifier la liste</h3><button class="b" data-lck="close" aria-label="Fermer">✕</button></div>
- <div class="mu" style="margin-top:4px"><b>${E(L.name)}</b></div>
- <div class="ct">${Object.keys(LSZ).map(k=>`<button class="b${r.size===k?" p":""}" data-lck="size" data-v="${k}">${LSZ[k].n} · ${fmt(LSZ[k].pts)} pts</button>`).join("")}</div>
- <div class="sm"><span class="${r.counts.bad?"bad":"ok"}">❌ ${r.counts.bad} erreur${r.counts.bad>1?"s":""}</span><span class="${r.counts.warn?"warn":"ok"}">⚠️ ${r.counts.warn} à vérifier</span><span class="ok">✅ ${r.counts.ok} conforme${r.counts.ok>1?"s":""}</span></div>
- <p class="mu" style="margin:0 0 6px">${r.counts.bad?"La liste n'est pas valide pour un tournoi tant qu'il reste des erreurs.":r.counts.warn?"Aucune erreur certaine, mais des points sont à confirmer.":"Aucune erreur détectée par les règles vérifiables automatiquement."}</p>`;
- r.sec.forEach(s=>{const bad=s.items.some(x=>x.lv==="bad"),warn=s.items.some(x=>x.lv==="warn");
-  h+=`<details ${bad||warn?"open":""}><summary>${s.t} <span class="mu">${bad?"❌":warn?"⚠️":"✅"}</span></summary>`;
-  if(s.warlord&&s.warlord.length)h+=`<label class="mu">Seigneur de guerre<select data-lck="wl"><option value="">— à choisir —</option>${s.warlord.map(w=>`<option value="${E(w.v)}"${w.sel?" selected":""}>${E(w.n)}</option>`).join("")}</select></label>`;
-  s.items.forEach(x=>{h+=`<div class="it ${x.lv}"><i>${lckIc[x.lv]||""}</i><span>${E(x.t)}${x.d?`<small>${E(x.d)}</small>`:""}</span></div>`});
-  if(s.table&&s.table.length)h+=`<div class="w"><table><tr><th>Unité</th><th>Fig.</th><th>Base</th><th>Barème</th><th>Équip.</th><th>Optim.</th><th>Meneur</th><th>Total</th></tr>${s.table.map(t=>`<tr><td>${E(t.n)}</td><td>${t.sz}</td><td>${t.base}</td><td>${t.ref==null?"—":t.ref}</td><td>${t.eq||"·"}</td><td>${t.en||"·"}</td><td>${t.sub||"·"}</td><td><b>${t.tot}</b></td></tr>`).join("")}<tr><td colspan="7"><b>Total</b></td><td><b>${fmt(r.total)}</b></td></tr></table></div>`;
-  h+=`</details>`});
- h+=`<div class="ct"><button class="b p" data-lck="copy">📋 Copier la liste (format tournoi)</button></div>
- <div class="src">Sources : <a href="https://wahapedia.ru/wh40k11ed/the-rules/core-rules/" target="_blank" rel="noopener">règles de base 11e, « Muster Armies »</a> · <a href="https://wahapedia.ru/wh40k11ed/the-rules/chapter-approved-2025-26/" target="_blank" rel="noopener">Chapter Approved Tournament Companion</a>. Les règles propres à un événement (peinture, WYSIWYG, Forge World, alliés, langue) varient : vérifie le pack de ton tournoi.</div></div>`;
+function lckHtml(L){const r=lckRun(L),S0=LSZ[r.size];const all=[];r.sec.forEach(s=>s.items.forEach(x=>all.push(Object.assign({sec:s.id},x))));
+ const bad=all.filter(x=>x.lv==="bad"),warn=all.filter(x=>x.lv==="warn"),okk=all.filter(x=>x.lv==="ok"),info=all.filter(x=>x.lv==="info"&&x.sec!=="tour");
+ const it=x=>`<div class="it ${x.lv}"><i>${lckIc[x.lv]||""}</i><span><b>${x.u?E(x.u)+" — ":""}${E(x.t)}</b>${x.d?`<small>${E(x.d)}</small>`:""}</span></div>`;
+ const comp=r.sec.find(s=>s.id==="comp"),pts=r.sec.find(s=>s.id==="pts"),tour=r.sec.find(s=>s.id==="tour");
+ let h=`<div class="pp"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>Vérifier la liste</h3><button class="b" data-lck="close" aria-label="Fermer">✕</button></div>
+ <div class="mu" style="margin-top:2px"><b>${E(L.name)}</b> · ${fmt(r.total)} / ${fmt(r.lim)} pts</div>
+ <div class="ct">${Object.keys(LSZ).map(k=>`<button class="b${r.size===k?" p":""}" data-lck="size" data-v="${k}">${LSZ[k].n} ${fmt(LSZ[k].pts)}</button>`).join("")}</div>
+ <div class="mu" style="font-size:12px">${S0.dp} points de détachement · ${S0.enh} optimisations · ${S0.unit} exemplaires par fiche (×2 Ligne/Transport, 1 Héros épique)</div>
+ <div class="vd ${bad.length?"bad":warn.length?"warn":"ok"}">${bad.length?"❌ "+bad.length+" erreur"+(bad.length>1?"s":"")+" à corriger":warn.length?"⚠️ Aucune erreur · "+warn.length+" point"+(warn.length>1?"s":"")+" à vérifier":"✅ Liste conforme"}</div>`;
+ if(bad.length)h+=`<h4>À corriger</h4>`+bad.map(it).join("");
+ if(warn.length)h+=`<h4>À vérifier</h4>`+warn.map(it).join("");
+ if(comp&&comp.warlord&&comp.warlord.length)h+=`<label class="mu" style="display:block;margin-top:10px">Seigneur de guerre<select data-lck="wl"><option value="">— à choisir —</option>${comp.warlord.map(w=>`<option value="${E(w.v)}"${w.sel?" selected":""}>${E(w.n)}</option>`).join("")}</select></label>`;
+ h+=`<details><summary>💰 Détail des points</summary><div class="w"><table><tr><th>Unité</th><th>Fig.</th><th>Base</th><th>Équip.</th><th>Optim.</th><th>Meneur</th><th>Total</th></tr>${(pts.table||[]).map(t=>`<tr><td>${E(t.n)}</td><td>${t.sz}</td><td>${t.base}</td><td>${t.eq||"·"}</td><td>${t.en||"·"}</td><td>${t.sub||"·"}</td><td><b>${t.tot}</b></td></tr>`).join("")}<tr><td colspan="6"><b>Total</b></td><td><b>${fmt(r.total)}</b></td></tr></table></div></details>`;
+ if(okk.length)h+=`<details><summary>✅ Conforme (${okk.length})</summary>${okk.map(it).join("")}</details>`;
+ if(info.length)h+=`<details><summary>ℹ️ Infos (${info.length})</summary>${info.map(it).join("")}</details>`;
+ if(tour)h+=`<details><summary>🏆 Tournoi</summary>${tour.items.map(it).join("")}<div class="src"><a href="https://wahapedia.ru/wh40k11ed/the-rules/core-rules/" target="_blank" rel="noopener">Règles de base 11e</a> · <a href="https://wahapedia.ru/wh40k11ed/the-rules/chapter-approved-2025-26/" target="_blank" rel="noopener">Chapter Approved</a></div></details>`;
+ h+=`<div class="ct"><button class="b p" data-lck="copy" style="flex:1">📋 Copier la liste</button></div></div>`;
  return h}
 function lckDraw(){const L=(S.lists||[]).find(l=>l.id===LCK.id);const o=document.getElementById("lchk");if(!L||!o)return;const sc=o.querySelector(".pp");const y=sc?sc.scrollTop:0;const op=[...o.querySelectorAll("details")].map(d=>d.open);o.innerHTML=lckHtml(L);
  const ds=[...o.querySelectorAll("details")];if(op.length===ds.length)ds.forEach((d,i)=>d.open=op[i]);const n=o.querySelector(".pp");if(n)n.scrollTop=y}
@@ -9276,21 +9293,23 @@ document.addEventListener("change",e=>{const t=e.target;if(!t||t.dataset.lck!=="
 /* ----- contrôle d'une configuration d'unité dans le constructeur : blocage d'une option invalide, confirmation à l'ajout ----- */
 const lckNorm=t=>String(t).replace(/\s*\(×\d+\)\s*$/,"");
 function lckTmpUnit(e,cfg){return{name:e.name,ref:(e.coll&&e.coll.ref)||"t"+(e.lib?e.lib.id.slice(0,6):"x"),size:cfg.size,pts:0,subs:JSON.parse(JSON.stringify(cfg.subs||[])),cfg:{lib:e.lib?e.lib.id:null,size:cfg.size,wq:cfg.wq||{},wn:cfg.wn||{},wg:cfg.wg||{},enh:cfg.enh||null,manual:+cfg.manual||0}}}
-function lckBadOf(L,units){const L2=Object.assign({},L,{units});const r=lckRun(L2);const o=[];r.sec.forEach(s=>s.items.forEach(i=>{if(i.lv==="bad")o.push({t:lckNorm(i.t),d:i.d})}));return o}
+function lckBadOf(L,units){const L2=Object.assign({},L,{units});const r=lckRun(L2);const o=[];r.sec.forEach(s=>s.items.forEach(i=>{if(i.lv==="bad")o.push({t:lckNorm(i.t),d:i.d,k:(i.u||"")+"|"+lckNorm(i.t)})}));return o}
 /* erreurs apportées par cette unité : liste sans elle ↔ liste avec elle */
 function lckCfgProblems(L,c,e){if(!L||!c||!e||!e.lib)return[];
- const others=(L.units||[]).filter((u,i)=>i!==c.idx);const before=new Set(lckBadOf(L,others).map(x=>x.t));
- return lckBadOf(L,[...others,lckTmpUnit(e,c)]).filter(x=>!before.has(x.t))}
+ const others=(L.units||[]).filter((u,i)=>i!==c.idx);const before=new Set(lckBadOf(L,others).map(x=>x.k));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c)]).filter(x=>!before.has(x.k))}
 /* un changement de configuration crée-t-il de nouvelles erreurs ? */
 function lckCfgTry(L,c,e,patch){if(!L||!c||!e||!e.lib)return[];
  const others=(L.units||[]).filter((u,i)=>i!==c.idx);const c2=JSON.parse(JSON.stringify(c));Object.keys(patch).forEach(k=>{c2[k]=Object.assign({},c2[k],patch[k]);Object.keys(c2[k]).forEach(x=>{if(!c2[k][x])delete c2[k][x]})});
- const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.t));
- return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.t))}
+ const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.k));
+ return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.k))}
+function lckCfgTryFull(L,c,e,c2){if(!L||!c||!e||!e.lib)return[];const others=(L.units||[]).filter((u,i)=>i!==c.idx);
+ const before=new Set(lckBadOf(L,[...others,lckTmpUnit(e,c)]).map(x=>x.k));return lckBadOf(L,[...others,lckTmpUnit(e,c2)]).filter(x=>!before.has(x.k))}
 function lckPop(o){lckCss();let p=document.getElementById("lckpop");if(p)p.remove();p=document.createElement("div");p.id="lckpop";
- p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li>${E(x.t||x)}${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
+ p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li><b>${E(x.t||x)}</b>${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
  document.body.appendChild(p);p.addEventListener("click",ev=>{const b=ev.target.closest("[data-lckp]");if(!b)return;ev.preventDefault();ev.stopPropagation();p.remove();if(o.cb)o.cb(b.dataset.lckp)},true)}
 (function(){const c=document.createElement("style");c.id="lckpopcss";c.textContent=`#lckpop{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}#lckpop .pk{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:16px;width:min(420px,100%);max-height:86vh;overflow:auto}#lckpop h3{margin:0}#lckpop ul{padding-left:18px;margin:8px 0}#lckpop li{margin:6px 0;line-height:1.35}#lckpop small{display:block;color:var(--mu)}#lckpop .ct{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#lckpop .ct .b{flex:1;min-height:44px}`;document.head.appendChild(c)})();
-window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,pop:lckPop};
+window.BIBLCK={run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,cfgTryFull:lckCfgTryFull,pop:lckPop};
 
 /* ===== Unification des fiches : noms français, rapprochements fiables, vue anglaise en consultation ===== */
 /* Règles : jamais de nom inventé ; un nom n'est « confirmé » que s'il vient de toi (collection, correction) ; rien n'est fusionné quand c'est incertain ; les données personnelles ne sont jamais modifiées. */
