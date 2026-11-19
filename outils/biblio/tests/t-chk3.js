@@ -41,7 +41,7 @@ ok('optimisation d\'un autre détachement : erreur',has('wrongdet',/^bad .*n'est
 ok('5 optimisations : maximum 4',has('manyenh',/^bad .*maximum 4/),R.manyenh);
 ok('optimisation sur non-personnage : erreur',has('nochar',/^bad .*seules les unités PERSONNAGE/),R.nochar);
 ok('points de détachement dépassés',has('dp',/^bad Points de détachement dépassés/),R.dp);
-ok('trop d\'armes de remplacement',has('equip',/^bad .*armes de remplacement/),R.equip);
+ok('trop d\'armes de remplacement',has('equip',/^bad .*avec une arme de remplacement/),R.equip);
 ok('équipement payant en trop',has('wg',/^bad .*trop/),R.wg);
 ok('liste importée : points ≠ barème signalés',has('imp',/^warn .*barème officiel donne/),R.imp);
 ok('appui seul : erreur',R.sup?has('sup',/^bad .*appui seule|^bad .*unité d'appui/):true,R.supName);

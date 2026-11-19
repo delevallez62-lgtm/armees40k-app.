@@ -9033,45 +9033,71 @@ const lckIsSup=u=>!!u&&(u.kw||[]).some(k=>/^support$/i.test(k));
 const lckName=u=>{try{return tName(u.n).t}catch(_){return u.n}};
 const lckPts=n=>n==null?"?":fmt(n);
 /* ----- analyse des options d'équipement (texte officiel de la fiche) ----- */
-function lckItems(t){t=String(t||"").replace(/\*\*/g,"");const it=[];const b=t.split(/\n\s*[•■]\s*/).slice(1);const src=b.length?b:[t];
- src.forEach(x=>{x=x.replace(/\(.*?\)/g,"").replace(/\.$/,"").trim();x.split(/\s+and\s+/i).forEach(y=>{y=y.replace(/^\d+\s*[x×]?\s*/i,"").replace(/^(?:one|an?)\s+/i,"").trim();if(y)it.push(y)})});return it}
+function lckAlts(t){t=String(t||"").replace(/\*\*/g,"");const b=t.split(/\n\s*[•■]\s*/).slice(1);const src=b.length?b:[t];const alts=[];
+ src.forEach(x=>{x=x.replace(/\(.*?\)/g,"").replace(/\.$/,"").trim();const a=[];x.split(/\s+and\s+/i).forEach(y=>{y=y.replace(/^\d+\s*[x×]?\s*/i,"").replace(/^(?:one|an?)\s+/i,"").trim();if(y)a.push(y)});if(a.length)alts.push(a)});return alts}
+const lckItems=t=>lckAlts(t).flat();
 function lckParseOpts(lib){const o=((lib&&lib.wp&&lib.wp.opt)||[]),rules=[],unk=[];
- o.forEach(s=>{s=String(s||"").trim();if(!s)return;const first=s.split("\n")[0],rest=s.slice(first.length);let m;
-  const mk=(kind,k,per,from,tail)=>{const to=lckItems(tail&&tail.trim()?tail:rest);if(!to.length){unk.push(s);return}rules.push({kind,k,per,from:String(from||"").replace(/^\d+\s*/,"").trim(),to,txt:first})};
-  if(m=/^Any number of (.+?) models? can each have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first)){const tail=/following/i.test(m[3])?"":m[3];mk("any",null,null,m[2],tail)}
-  else if(m=/^For every (\d+) models? in this unit, (\d+|one|1) (.+?) models? can have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first)){const tail=/following/i.test(m[5])?"":m[5];mk("per",/^\d+$/.test(m[2])?+m[2]:1,+m[1],m[4],tail)}
-  else if(m=/^(?:The|This|That) (.+?) (?:can|may) have (?:their|its|his|her) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first)){const tail=/following/i.test(m[3])?"":m[3];mk("fix",1,null,m[2],tail)}
-  else if(m=/^This model(?:’|')s (.+?) can be replaced with (.+?)(?:\.|:)?$/i.exec(first)){const tail=/following/i.test(m[2])?"":m[2];mk("fix",1,null,m[1],tail)}
-  else if(m=/^(\d+|One|Up to \d+) (.+?) models? can have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first)){const n=/\d+/.exec(m[1]);const tail=/following/i.test(m[4])?"":m[4];mk("fix",n?+n[0]:1,null,m[3],tail)}
+ const num=x=>{x=String(x||"").toLowerCase();const m={one:1,two:2,three:3,four:4}[x];return m||(/^\d+$/.test(x)?+x:null)};
+ o.forEach(s=>{s=String(s||"").trim();if(!s)return;const first=s.split("\n")[0].replace(/\*\*/g,""),rest=s.slice(first.length);let m,t;
+  const inl=first.indexOf(":")>=0?first.slice(first.indexOf(":")+1).trim():"";
+  const altsFrom=tail=>{const x=(tail&&tail.trim())||"";if(x&&!/following/i.test(x)){return /\bor\b|,/.test(x)&&!/\band\b/.test(x)?lckAlts("\n• "+x.replace(/,\s*(?:or\s+)?|\s+or\s+/g,"\n• ")):lckAlts(x)}if(inl)return lckAlts(inl.replace(/,\s*(?:and\s+|or\s+)?/g,"\n• ").replace(/^/,"\n• "));return lckAlts(rest)};
+  const mk=(kind,k,per,from,tail,extra)=>{const alts=altsFrom(tail),to=alts.flat();if(!to.length){unk.push(s);return}rules.push(Object.assign({kind,k,per,from:String(from||"").replace(/^\d+\s*/,"").trim(),to,alts,txt:first},extra||{}))};
+  if(/^None\.?$/i.test(first)||/^A model can only take/i.test(first)||/^\*+\s*A model can only/i.test(first))return;
+  if(m=/^(?:Any number of|All) (?:(.+?) )?models?(?: in this unit)? can each have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("any",null,null,m[2],m[3]);
+  else if(m=/^For every (\d+) models? in this unit, (?:up to )?(\d+|one|two|three|four) (.+?) models? can (?:each )?have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("per",num(m[2])||1,+m[1],m[4],m[5]);
+  else if(m=/^For every (\d+) models? in this unit, (?:up to )?(\d+|one|two|three|four) (.+?) models? can (?:each )?take (.+?)(?:\.|:)?$/i.exec(first))mk("per",num(m[2])||1,+m[1],"",m[4]);
+  else if(m=/^(?:The|This|That) (.+?) (?:can|may) have (?:their|its|his|her) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("fix",1,null,m[2],m[3]);
+  else if(m=/^This model(?:’|')s (.+?) can be replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("fix",1,null,m[1],m[2]);
+  else if((m=/^(?:The|That) [^.]*?(?:’|')s (.+?) can be replaced with (.+?)(?:\.|:)?$/i.exec(first))&&!/\bor\b.*\breplace/i.test(first))mk("fix",1,null,m[1],m[2]);
+  else if(m=/^(?:Up to )?(\d+|One|Two|Three|Four) (.+?) models? can (?:each )?have (?:their|its) (.+?) replaced with (.+?)(?:\.|:)?$/i.exec(first))mk("fix",num(m[1])||1,null,m[3],m[4]);
+  else if(m=/^Any number of models? can each be equipped with (.+?)(?:\.|:)?$/i.exec(first))mk("any",null,null,"",m[1],{add:1});
+  else if((t=/^(?:This model|That model|The [^.]*? model|One model|1 model|Up to (?:\d+|one|two|three) models?) can (?:also )?be equipped with (.+?)(?:\.|:)?$/i.exec(first))&&!/\bor can\b|\bor\b.*replace/i.test(first)){
+   const body=t[1];const grp=/of the following/i.test(body);let cap=1;const u=/^up to (\d+|one|two|three|four)\b/i.exec(body);if(u)cap=num(u[1])||1;else if(/^(\d+|one|two|three|four)\b/i.test(body)&&!grp)cap=num(/^(\w+)/.exec(body)[1])||1;
+   if(grp&&/two of the following/i.test(body))cap=2;
+   const tail=grp?"following":body.replace(/^(?:up to )?(?:\d+|one|two|three|four|an?)\s+/i,"");const alts=grp?lckAlts(rest):lckAlts(tail),to=alts.flat();
+   if(!to.length)unk.push(s);else rules.push({kind:"add",k:cap,per:null,from:"",to,alts,txt:first,add:1,grp})}
   else unk.push(s)});
  return{rules,unk}}
-/* noms d'armes : anglais de la fiche + nom affiché (français) */
-function lckWkeys(en){const a=String(en||"").replace(/^➤\s*/,"");const s=new Set([nk(a)]);try{s.add(nk(frName(a)))}catch(_){}return s}
-function lckEquip(u,lib){/* effectifs d'armes choisis : constructeur (cfg.wq) ou texte « N × arme » */
- const c=u.cfg||{},o={};if(c.wq){Object.keys(c.wq).forEach(k=>{if(c.wq[k]>0)o[k]=c.wq[k]});return{src:"cfg",q:o}}
- String(u.equip||"").split(/[;\n]+/).forEach(x=>{const m=/^\s*(\d+)\s*[x×]\s*(.+?)(?:\s+[—–-]\s+.*)?$/.exec(x);if(m)o[m[2].trim()]=(o[m[2].trim()]||0)+(+m[1])});return{src:"txt",q:o}}
+/* nom de base d'une arme : sans profil (« - frag », « (Supercharge) »), en minuscules sans accents */
+const lckBase=n=>nk(String(n||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]);
+function lckWkeys(en){const a=String(en||"");const s=new Set([lckBase(a)]);try{s.add(lckBase(frName(a.replace(/^➤\s*/,"")))) }catch(_){}return s}
+function lckEquip(u,lib){/* effectifs d'armes choisis, profils d'une même arme regroupés (maximum, pas somme) */
+ const c=u.cfg||{},raw={};let src="txt";
+ if(c.wq){src="cfg";Object.keys(c.wq).forEach(k=>{if(c.wq[k]>0)raw[k]=c.wq[k]})}
+ else String(u.equip||"").split(/[;\n]+/).forEach(x=>{const m=/^\s*(\d+)\s*[x×]\s*(.+?)(?:\s+[—–-]\s+.*)?$/.exec(x);if(m)raw[m[2].trim()]=(raw[m[2].trim()]||0)+(+m[1])});
+ const g={};Object.keys(raw).forEach(k=>{const b=lckBase(k);if(!g[b])g[b]={name:k,n:0};g[b].n=Math.max(g[b].n,raw[k])});return{src,g}}
 function lckEquipCheck(u,lib,size,out){
- const {rules,unk}=lckParseOpts(lib),eq=lckEquip(u,lib),sel=Object.keys(eq.q);const nm=lckName(lib);
+ const {rules,unk}=lckParseOpts(lib),eq=lckEquip(u,lib),nm=lckName(lib);
  const pc=pcOf(lib),paid=((pc&&pc.wg)||[]);
  /* équipements payants */
  const wg=(u.cfg&&u.cfg.wg)||{};Object.keys(wg).forEach(k=>{const q=wg[k];if(!q)return;const p=paid.find(x=>nk(x.n)===nk(k));
   if(!p)out.push({lv:"bad",t:nm+" : « "+k+" » n'est pas un équipement payant de cette fiche"});
   else if(q>size)out.push({lv:"bad",t:nm+" : "+q+" × "+k+" pour "+size+" figurine"+(size>1?"s":"")+" (trop)"});
   else out.push({lv:"ok",t:nm+" : "+q+" × "+k+" (+"+(q*p.pts)+" pts) — équipement payant autorisé"})});
+ const sel=Object.keys(eq.g);
  if(!sel.length){if(rules.length||unk.length)out.push({lv:"info",nodet:nm});return}
- /* toutes les armes connues de la fiche */
  const known=new Set();[...(lib.rw||[]),...(lib.mw||[])].forEach(w=>lckWkeys(w.n).forEach(x=>known.add(x)));
- const inRules=new Set();rules.forEach(r=>r.to.forEach(t=>lckWkeys(t).forEach(x=>inRules.add(x))));
  const loadout=nk(String((lib.wp&&lib.wp.loadout)||""));
+ /* règles → composantes connexes (règles partageant une arme de remplacement) : capacité = somme des plafonds */
+ const nl=t=>!(loadout&&loadout.includes(nk(t)));
+ const R=[];rules.forEach(r=>{const alts=(r.alts||r.to.map(t=>[t])).map(a=>a.filter(nl).map(lckBase)).filter(a=>a.length);if(!alts.length)return;
+  const lim=r.kind==="per"?Math.floor(size/r.per)*r.k:(r.kind==="fix"||r.kind==="add")?r.k:size;R.push({r,alts,own:new Set(alts.flat()),lim})});
+ const comp=[];R.forEach(x=>{const hit=comp.filter(c=>[...x.own].some(w=>c.w.has(w)));const m={w:new Set(x.own),lim:x.lim,rs:[x],alts:[...x.alts]};hit.forEach(c=>{c.w.forEach(w=>m.w.add(w));m.lim+=c.lim;m.rs.push(...c.rs);m.alts.push(...c.alts);comp.splice(comp.indexOf(c),1)});comp.push(m)});
  let issues=0;
- rules.forEach(r=>{const own=r.to.filter(t=>!(loadout&&loadout.includes(nk(t))));if(!own.length)return;const tos=own.map(t=>lckWkeys(t));let n=0;sel.forEach(k=>{if(tos.some(s=>s.has(nk(k))))n+=eq.q[k]});
-  const lim=r.kind==="per"?Math.floor(size/r.per)*r.k:r.kind==="fix"?r.k:size;
-  if(n>lim){issues++;out.push({lv:"bad",t:nm+" : "+n+" arme"+(n>1?"s":"")+" de remplacement ("+own.join(" / ")+") alors que la fiche n'en autorise que "+lim+(r.kind==="per"?" ("+r.k+" pour "+r.per+" figurines)":""),d:"Règle de la fiche : "+r.txt})}});
- sel.forEach(k=>{const kk=nk(k);const ok=known.has(kk)||inRules.has(kk)||(loadout&&loadout.includes(kk));
-  if(!ok){issues++;out.push({lv:"warn",t:nm+" : « "+k+" » ne figure pas dans les armes ni les options de la fiche officielle"})}
-});
- if(!issues)out.push({lv:"ok",t:nm+" : équipement conforme aux options de la fiche"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" non analysable"+(unk.length>1?"s":"")+" automatiquement)":"")});
- else if(unk.length)out.push({lv:"info",t:nm+" : "+unk.length+" option"+(unk.length>1?"s":"")+" non analysable"+(unk.length>1?"s":"")+" automatiquement : relis la fiche"})}
+ comp.forEach(c=>{/* un remplacement peut donner plusieurs armes à la fois (« 1 X et 1 Y ») : on compte des figurines, pas des armes.
+   Minorant du nombre de figurines concernées : somme, par groupe d'alternatives partageant une arme, du plus grand effectif d'une arme du groupe */
+  const grp=[];c.alts.forEach(a=>{const hit=grp.filter(g=>a.some(w=>g.has(w)));const m=new Set(a);hit.forEach(g=>{g.forEach(w=>m.add(w));grp.splice(grp.indexOf(g),1)});grp.push(m)});
+  const cnt=w=>{let n=0;sel.forEach(k=>{if(lckBase(k)===w)n=Math.max(n,eq.g[k].n)});return n};
+  let n=0;grp.forEach(g=>{let m=0;g.forEach(w=>{m=Math.max(m,cnt(w))});n+=m});
+  const used=[];sel.forEach(k=>{if(c.w.has(lckBase(k)))used.push(eq.g[k].n+" × "+eq.g[k].name)});
+  const cite=unk.some(x=>{const z=nk(x);return [...c.w].some(w=>w&&z.includes(w))});
+  if(n>c.lim){issues++;out.push({lv:cite?"warn":"bad",t:nm+" : au moins "+n+" figurine"+(n>1?"s":"")+" avec une arme de remplacement ("+used.join(", ")+") alors que les options analysées de la fiche n'en autorisent que "+c.lim+" pour "+size+" figurine"+(size>1?"s":"")+(cite?" (une option non analysée automatiquement mentionne cette arme : relis la fiche)":""),d:c.rs.map(x=>"Fiche : "+x.r.txt).join(" · ")})}});
+ /* armes dont le nom n'est reconnu ni dans la fiche ni dans ses options : information seulement (nom personnalisé ou traduit autrement) */
+ const inR=new Set();R.forEach(x=>x.own.forEach(w=>inR.add(w)));rules.forEach(r=>r.to.forEach(t=>inR.add(lckBase(t))));
+ const unr=sel.filter(k=>{const b=lckBase(k);return !(known.has(b)||inR.has(b)||(loadout&&loadout.includes(b)))}).map(k=>eq.g[k].name);
+ if(unr.length)out.push({lv:"info",t:nm+" : arme"+(unr.length>1?"s":"")+" non reconnue"+(unr.length>1?"s":"")+" dans la fiche officielle (nom personnalisé ?) : "+unr.join(", ")});
+ if(!issues)out.push({lv:"ok",t:nm+" : équipement conforme aux options de la fiche"+(unk.length?" ("+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement)":"")});
+ else if(unk.length)out.push({lv:"info",t:nm+" : "+unk.length+" option"+(unk.length>1?"s":"")+" non analysée"+(unk.length>1?"s":"")+" automatiquement : relis la fiche"})}
 /* ----- restrictions d'une optimisation (texte : « X model only ») ----- */
 function lckEnhRestrict(e,bearer){const m=/^\s*([^.:]+?)\s+(?:model|unit)s?\s+only\b/i.exec(String(e.d||"").replace(/\*\*/g,""));if(!m)return null;
  const alts=m[1].split(/\s*(?:\/|,|\bor\b)\s*/i).map(x=>nk(x)).filter(Boolean);if(!alts.length)return null;
