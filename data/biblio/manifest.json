@@ -2,8 +2,8 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+pae76fdd+wp2026-11-12+fr14614.b79b4b",
- "generated": "2026-11-18",
+ "version": "11e-2026-11-12-7cb6104+pae76fdd+wp2026-11-19+fr14614.b79b4b",
+ "generated": "2026-11-20",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
   "detachments": "BSData/wh40k-11e via warhammer-oracle",
@@ -15,12 +15,12 @@
   },
   "wahapedia": {
    "site": "wahapedia.ru (export de données, 11e édition)",
-   "last_update": "2026-11-12 23:45:38"
+   "last_update": "2026-11-19 18:08:15"
   },
   "points": {
    "source": "Wahapedia, export de données 11e (barème de points par unité)",
-   "published": "2026-11-12 23:45:38",
-   "synchronised": "2026-11-17"
+   "published": "2026-11-19 18:08:15",
+   "synchronised": "2026-11-20"
   },
   "paints": {
    "source": "WarHub/warhub-catalog (MIT)",
@@ -68,9 +68,29 @@
    }
   },
   {
+   "id": "fr",
+   "file": "fr.json",
+   "sha1": "b79b4bdd2e4a06e4ab3c50f63fd33e0e4df5cbd4",
+   "bytes": 2224941,
+   "counts": {
+    "translations": 14614
+   }
+  },
+  {
+   "id": "paints",
+   "file": "paints.json",
+   "sha1": "e76fdd05ec5051033917b25537a5f67ee9e131e2",
+   "bytes": 905132,
+   "counts": {
+    "paints": 8338,
+    "barcodes": 4564,
+    "brands": 21
+   }
+  },
+  {
    "id": "wp-adepta-sororitas",
    "file": "wp-adepta-sororitas.json",
-   "sha1": "ad84640f2b3809e39c4014a223178313f4fa4f35",
+   "sha1": "d3bf11bc2c03a33065c9228b47ec7b6548333546",
    "bytes": 223955,
    "counts": {
     "units": 38,
@@ -84,7 +104,7 @@
   {
    "id": "wp-adeptus-custodes",
    "file": "wp-adeptus-custodes.json",
-   "sha1": "dec29878cf774a3da4703741a4401edf29954991",
+   "sha1": "46d647b9704c74c47c769bb700ee62910dfe1f9b",
    "bytes": 202222,
    "counts": {
     "units": 36,
@@ -98,8 +118,8 @@
   {
    "id": "wp-adeptus-mechanicus",
    "file": "wp-adeptus-mechanicus.json",
-   "sha1": "c00410f80449d25781e94cd615d81f90912df975",
-   "bytes": 186674,
+   "sha1": "fa46649ed09a698d990a55b75df04d08ca27cd4d",
+   "bytes": 186678,
    "counts": {
     "units": 38,
     "ext": 0,
@@ -112,7 +132,7 @@
   {
    "id": "wp-adeptus-titanicus",
    "file": "wp-adeptus-titanicus.json",
-   "sha1": "07b5b5cc2099e04b184356c7afa19ef66882aeb7",
+   "sha1": "1915fe1be8d1228eefbe9167c0bf8a75692fa818",
    "bytes": 15714,
    "counts": {
     "units": 4,
@@ -126,7 +146,7 @@
   {
    "id": "wp-aeldari",
    "file": "wp-aeldari.json",
-   "sha1": "49820ad26e40e403ca3599e87bd55254b1980ce3",
+   "sha1": "85929f4c67975582fc4151b10ea636695b727add",
    "bytes": 546370,
    "counts": {
     "units": 99,
@@ -140,7 +160,7 @@
   {
    "id": "wp-astra-militarum",
    "file": "wp-astra-militarum.json",
-   "sha1": "9418ba889b26cad56216c512ab15189bfa2a9e8e",
+   "sha1": "88663351ca789212b8eba1d4a2932c3ba1e31e88",
    "bytes": 471999,
    "counts": {
     "units": 135,
@@ -154,7 +174,7 @@
   {
    "id": "wp-chaos-daemons",
    "file": "wp-chaos-daemons.json",
-   "sha1": "11d7f97b3e26735b87369764470701b484f0c102",
+   "sha1": "8dcd4b231eba5528b69171dc134bafcc55130fd1",
    "bytes": 445862,
    "counts": {
     "units": 101,
@@ -168,7 +188,7 @@
   {
    "id": "wp-chaos-knights",
    "file": "wp-chaos-knights.json",
-   "sha1": "c35804a696a0abe479a175d297c4548cc135e9b0",
+   "sha1": "c748829e2335ac5986c5687c862b853da782632b",
    "bytes": 177354,
    "counts": {
     "units": 37,
@@ -182,7 +202,7 @@
   {
    "id": "wp-chaos-space-marines",
    "file": "wp-chaos-space-marines.json",
-   "sha1": "8516cd42a8fd97f9409c8350fee63a42a5b1f9a9",
+   "sha1": "d00375fa520a6948ed31c3094d76d5656883690f",
    "bytes": 379387,
    "counts": {
     "units": 89,
@@ -196,7 +216,7 @@
   {
    "id": "wp-death-guard",
    "file": "wp-death-guard.json",
-   "sha1": "e5397cfc002e3e3fcd5aaa5def7285b0e17fa55e",
+   "sha1": "aaeb1a869143649d1dbef65374e95768b7c52be1",
    "bytes": 232702,
    "counts": {
     "units": 49,
@@ -210,7 +230,7 @@
   {
    "id": "wp-drukhari",
    "file": "wp-drukhari.json",
-   "sha1": "7dd5db479c75df747a0b256700516e6007e36a2a",
+   "sha1": "8a149d23a888440ae5fd3ef7ae3c20a4af5080ff",
    "bytes": 276477,
    "counts": {
     "units": 46,
@@ -224,7 +244,7 @@
   {
    "id": "wp-emperor-s-children",
    "file": "wp-emperor-s-children.json",
-   "sha1": "24790de2139233cd91c2ac9245f48af8c90d13ce",
+   "sha1": "7c367e79704896f9b373d20e8fcb8635951e009b",
    "bytes": 116003,
    "counts": {
     "units": 23,
@@ -238,7 +258,7 @@
   {
    "id": "wp-genestealer-cults",
    "file": "wp-genestealer-cults.json",
-   "sha1": "1681a0aea69b2620d22c85eaa89e83cf1f69d403",
+   "sha1": "794047a4702b15bc6a255356fb77b3dfe0a62d08",
    "bytes": 494623,
    "counts": {
     "units": 146,
@@ -252,7 +272,7 @@
   {
    "id": "wp-grey-knights",
    "file": "wp-grey-knights.json",
-   "sha1": "1119ef35e5c0c11f777463d28dee80c1b2e907f8",
+   "sha1": "439198c78d8618ca4e6232e89bb8d9b127ac8123",
    "bytes": 140777,
    "counts": {
     "units": 31,
@@ -266,8 +286,8 @@
   {
    "id": "wp-imperial-agents",
    "file": "wp-imperial-agents.json",
-   "sha1": "737df2a23cb70bbdee6be3113fa97c83773e62a2",
-   "bytes": 240481,
+   "sha1": "62b629cf2c32d02354219cfcf1315139866da3af",
+   "bytes": 240405,
    "counts": {
     "units": 46,
     "ext": 0,
@@ -280,7 +300,7 @@
   {
    "id": "wp-imperial-knights",
    "file": "wp-imperial-knights.json",
-   "sha1": "59b37afb1f13d1d27e4e2719adf3f196d4ec737a",
+   "sha1": "967a58f6d93f54f77ee32f5da76336f6d8c4400c",
    "bytes": 185994,
    "counts": {
     "units": 28,
@@ -294,7 +314,7 @@
   {
    "id": "wp-leagues-of-votann",
    "file": "wp-leagues-of-votann.json",
-   "sha1": "33730a6a753972145177d4b90be7c715d39baf89",
+   "sha1": "823b80f8f99201bbc98faa96c7e51bdaf08dc3a1",
    "bytes": 182796,
    "counts": {
     "units": 22,
@@ -308,7 +328,7 @@
   {
    "id": "wp-necrons",
    "file": "wp-necrons.json",
-   "sha1": "c4b261a872e4b92c9bf33f944214bf014bdf7e79",
+   "sha1": "981b4d6a59e873804d9ffa28b2c3696cd0a014f1",
    "bytes": 265244,
    "counts": {
     "units": 64,
@@ -322,7 +342,7 @@
   {
    "id": "wp-orks",
    "file": "wp-orks.json",
-   "sha1": "d8122a7dc43979e490322093199b5697674bef07",
+   "sha1": "2575bfc3a4da8e98ddf256fc0dd71f4a8e7d9a7e",
    "bytes": 54476,
    "counts": {
     "units": 0,
@@ -336,7 +356,7 @@
   {
    "id": "wp-space-marines",
    "file": "wp-space-marines.json",
-   "sha1": "3abd14b2713781002c35b3e68dfc39041d047567",
+   "sha1": "59ac72de22a9bb1010c9bd352328e3ad1c691b05",
    "bytes": 187880,
    "counts": {
     "units": 1,
@@ -350,7 +370,7 @@
   {
    "id": "wp-t-au-empire",
    "file": "wp-t-au-empire.json",
-   "sha1": "3b551e0f874b223225e6cb429e62e2f69bdb767d",
+   "sha1": "62032e9a76b089f4809b7a620b29f56d0391f87e",
    "bytes": 256245,
    "counts": {
     "units": 62,
@@ -364,8 +384,8 @@
   {
    "id": "wp-thousand-sons",
    "file": "wp-thousand-sons.json",
-   "sha1": "d745639b29e10a6e7b2483559f85c0bd4b32aa18",
-   "bytes": 178619,
+   "sha1": "bddf2a72d3bd769f3c5657b98c300e694eebe1df",
+   "bytes": 178549,
    "counts": {
     "units": 38,
     "ext": 0,
@@ -378,7 +398,7 @@
   {
    "id": "wp-tyranids",
    "file": "wp-tyranids.json",
-   "sha1": "484700773d9a95a6df7681d2202beb54ae89552e",
+   "sha1": "fd0dc27983c94da0ac9ca6459392e3ad4e08dc6d",
    "bytes": 202652,
    "counts": {
     "units": 57,
@@ -392,7 +412,7 @@
   {
    "id": "wp-world-eaters",
    "file": "wp-world-eaters.json",
-   "sha1": "a9d625ecc99e99d7b2af28e602d877e2f0377269",
+   "sha1": "adc5f1f2a4f58990fa6bfad0ffd738cde7f2bf76",
    "bytes": 191884,
    "counts": {
     "units": 36,
@@ -404,32 +424,12 @@
    }
   },
   {
-   "id": "fr",
-   "file": "fr.json",
-   "sha1": "b79b4bdd2e4a06e4ab3c50f63fd33e0e4df5cbd4",
-   "bytes": 2224941,
-   "counts": {
-    "translations": 14614
-   }
-  },
-  {
    "id": "lex",
    "file": "lex.json",
-   "sha1": "fbd6320b93ee5067a87e347824182671fced2d10",
+   "sha1": "9bef380a367922b682d1bc827a9b483d8d9b28a9",
    "bytes": 98412,
    "counts": {
     "words": 3329
-   }
-  },
-  {
-   "id": "paints",
-   "file": "paints.json",
-   "sha1": "e76fdd05ec5051033917b25537a5f67ee9e131e2",
-   "bytes": 905132,
-   "counts": {
-    "paints": 8338,
-    "barcodes": 4564,
-    "brands": 21
    }
   }
  ]
