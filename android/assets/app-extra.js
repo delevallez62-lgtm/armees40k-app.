@@ -20,7 +20,9 @@ function backup(){dlg('<h2 style="margin-bottom:6px">Sauvegarde</h2><p class="mu
   if(k==="i")picker(".json,application/json,text/plain,*/*",restore)})}
 function inf(){try{return JSON.parse(A.info())}catch(e){return{}}}
 function quick(silent){if(!A||!A.updateFromUrl){if(!silent)update();return}const url=localStorage.getItem(UK)||inf().url;if(!url){if(!silent)update();return}
- if(silent){window.a40kUpd=(ok,msg)=>{if(!ok)return;const t=document.createElement("div");t.textContent="✨ Nouvelle version installée";t.style.cssText="position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:80;background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:15px";document.body.appendChild(t);setTimeout(()=>location.reload(),1200)};A.updateFromUrl(url);return}
+ if(silent){window.a40kUpd=(ok,msg)=>{if(!ok)return;const t=document.createElement("div");t.textContent="✨ Nouvelle version installée";t.style.cssText="position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:80;background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:15px";document.body.appendChild(t);
+  /* recharge quand l'appli est au repos : pas pendant une saisie ni une fenêtre ouverte */
+  let n=0;const go=()=>{const busy=document.querySelector("input:focus,textarea:focus,select:focus,#lckpop,#lchk,#psc,#pspot,.bib-ov,.ov");if(busy&&n++<90){setTimeout(go,4000);return}location.reload()};setTimeout(go,1500)};A.updateFromUrl(url);return}
  let t=document.getElementById("a40kts");if(!t){t=document.createElement("div");t.id="a40kts";t.style.cssText="position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:80;background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90vw;text-align:center";document.body.appendChild(t)}
  t.textContent="⟳ Recherche de la dernière version…";clearTimeout(t._h);
  window.a40kUpd=(ok,msg)=>{t.textContent=msg;if(ok)setTimeout(()=>location.reload(),900);else t._h=setTimeout(()=>t.remove(),3500)};A.updateFromUrl(url)}
@@ -40,7 +42,22 @@ if(sy){sy.textContent="💾";sy.title="Sauvegarde";sy.style.opacity=".9";sy.oncl
  up.style.cssText="font-size:15px;font-weight:700;margin-left:6px;cursor:pointer;vertical-align:middle;padding:2px 6px;background:rgba(255,255,255,.18);border-radius:10px";
  up.onclick=()=>quick(false);let lp;up.addEventListener("touchstart",()=>{lp=setTimeout(()=>{lp=null;update()},650)},{passive:true});up.addEventListener("touchend",e=>{if(lp){clearTimeout(lp)}else e.preventDefault()});up.oncontextmenu=e=>{e.preventDefault();update()};sy.after(up)}
 window.a40kBackup=backup;
-/* Mise à jour manuelle uniquement : au clic sur ⟳ (aucune vérification automatique au lancement). */
+/* Mise à jour automatique : au lancement et à chaque retour dans l'appli (au plus toutes les 20 minutes), sans appui sur ⟳. */
+(function(){if(!A||!A.updateFromUrl)return;const AK="a40k_auto_chk";const chk=()=>{try{if(navigator.onLine===false)return;const last=+localStorage.getItem(AK)||0;if(Date.now()-last<20*60*1000)return;localStorage.setItem(AK,String(Date.now()));quick(true)}catch(e){}};
+ setTimeout(chk,3500);document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(chk,1500)});window.addEventListener("online",()=>setTimeout(chk,1500))})();
 window.a40kUpdate=update;
 })();
+/* Photos fournies avec l'application : importées une seule fois (sans écraser tes propres photos). */
+(async function(){try{const FL="a40k_photos_v1";if(localStorage.getItem(FL))return;
+ const r=await fetch("/photos-init.json");if(!r.ok)return;const o=await r.json(),ph=o&&o.photos;if(!ph)return;
+ let t=0;while((typeof S==="undefined"||typeof IDBON==="undefined"||!IDBON)&&t<60){await new Promise(x=>setTimeout(x,250));t++}
+ if(typeof S==="undefined")return;S.mimg=S.mimg&&typeof S.mimg==="object"?S.mimg:{};let n=0;
+ Object.keys(ph).forEach(k=>{if(typeof ph[k]==="string"&&ph[k].indexOf("data:image")===0&&S.mimg[k]===undefined){S.mimg[k]=ph[k];n++}});
+ try{save()}catch(e){}try{draw()}catch(e){}localStorage.setItem(FL,"1");
+ if(n){const d=document.createElement("div");d.textContent="🖼 "+n+" photos enregistrées sur ce téléphone";d.style.cssText="position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:80;background:#111;color:#fff;padding:10px 18px;border-radius:20px;font-size:15px";document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}
+}catch(e){}})();
+/* Téléchargements (exports de photos, etc.) : enregistrés sur le téléphone via l'application. */
+(function(){const A=window.Android;if(!A||!A.saveFile)return;const oc=HTMLAnchorElement.prototype.click;
+ HTMLAnchorElement.prototype.click=function(){const a=this;if(a.download&&/^blob:/.test(a.href||"")){fetch(a.href).then(r=>r.text()).then(t=>A.saveFile(a.download,t)).catch(()=>oc.call(a));return}return oc.call(a)}})();
+
 </script>

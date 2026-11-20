@@ -55,13 +55,12 @@ const R1=await ev(()=>BLDCALC(BLDL()).total);ok('total = 120 + 170',R1===290,R1)
 await click('[data-bld="add"]');await ev(()=>{const q=document.getElementById('bldq');q.value='terminators';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
 await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Terminators/.test(x.innerText)&&/📦/.test(x.innerText)).click()});await p.waitForTimeout(300);
 t=await html();
-ok('armes : compteurs par arme, pas de lignes répétées',(await ev(()=>document.querySelectorAll('#bldm .bld-w').length))>=3);
-// 9 x Épée... 1 x Marteau - Sergent  (taille 10, 9 épées + 1 marteau)
-await click('[data-bld="size"][data-v="10"]');for(const k of ['Fusil tempête','Épée énergétique'])for(let i=0;i<10;i++)await ev(kk=>{const e=document.querySelector('#bldm [data-bld="wq"][data-k="'+kk+'"][data-d="-1"]');if(e)e.click()},k);
-for(let i=0;i<9;i++)await ev(()=>document.querySelector('#bldm [data-bld="wq"][data-k="Épée énergétique"][data-d="1"]').click());
-await ev(()=>document.querySelector('#bldm [data-bld="wq"][data-k="Marteau tonnerre"][data-d="1"]').click());await p.waitForTimeout(150);
-await ev(()=>{const y=document.querySelector('#lckpop [data-lckp="yes"]');if(y)y.click()});await p.waitForTimeout(150);
-await ev(()=>{const i=document.querySelector('#bldm [data-bldn="Marteau tonnerre"]');i.value='Sergent';i.dispatchEvent(new Event('input',{bubbles:true}))});
+ok('équipement par figurine : liste des figurines affichée',(await ev(()=>document.querySelectorAll('#bldm .bld-fg').length))>=5);
+// taille 10 : sergent arme énergétique ; 9 poings tronçonneurs (« toutes »)
+await click('[data-bld="size"][data-v="10"]');
+await ev(()=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>/énergétique|power weapon/i.test(x.innerText)&&!x.disabled);e.click()});await p.waitForTimeout(200);
+await click('[data-bld="fig"][data-i="1"]');
+await ev(()=>{const e=document.querySelector('#bldm [data-bld="figall"]');e.click()});await p.waitForTimeout(250);
 // 7) équipement payant : Cyclone (barème Wahapedia)
 const wg=await ev(()=>[...document.querySelectorAll('#bldm [data-bld="wg"]')].map(x=>x.dataset.k));ok('équipement payant lu dans le barème',wg.includes('Cyclone Missile Launcher'),wg);
 await ev(()=>document.querySelector('#bldm [data-bld="wg"][data-d="1"]').click());await ev(()=>document.querySelector('#bldm [data-bld="wg"][data-d="1"]').click());await p.waitForTimeout(150);
@@ -69,7 +68,7 @@ const pvw=await ev(()=>document.querySelector('#bldm .bld-bar b').innerText);ok(
 if(0)console.log('DBG wq',JSON.stringify(await ev(()=>BLDSTATE.cfg.wq)),'rows',JSON.stringify(await ev(()=>[...document.querySelectorAll('#bldm .bld-w b')].map(x=>x.innerText))));
 await click('[data-bld="ok"]');
 const txt=await ev(()=>recap=document.body.innerText);
-ok('affichage compact 9 × / 1 ×',/9 × Épée énergétique/.test(txt)&&/1 × Marteau tonnerre — Sergent/.test(txt),(txt.split('\n').filter(x=>/ × /.test(x))));
+ok('affichage compact 9 × / 1 ×',/9 × (Poing tronçonneur|Chainfist)/i.test(txt)&&/1 × (Arme énergétique|Power weapon)/i.test(txt),(txt.split('\n').filter(x=>/ × /.test(x))));
 const calc=await ev(()=>BLDCALC(BLDL()));const tl=calc.lines.filter(l=>l.i===2);ok('lignes de coût de l\'unité',tl.length>=2&&tl.some(l=>/Cyclone/.test(l.name)&&l.pts===20),tl.map(l=>l.name+':'+l.pts));
 // 8) meneur
 await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldr"]');

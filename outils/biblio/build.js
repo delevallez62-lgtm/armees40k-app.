@@ -47,7 +47,26 @@ const imgOf=m=>(m&&S.imgs&&S.imgs[m.ref])||"";
 /* profils d'une même arme (« - Standard », « – frag », « (Supercharge) ») : une seule arme */
 const wgk=n=>String(n||"").replace(/^➤\s*/,"").replace(/\s*\(.*?\)\s*$/,"").split(/\s+[-–]\s+/)[0].trim();
 const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgk(w.name));if(!m.has(k))m.set(k,{key:k,name:wgk(w.name),ws:[]});m.get(k).ws.push(w)});return[...m.values()]};
-const eqLines=(c,weapons)=>{const g=new Map();Object.keys(c.wq||{}).forEach(n=>{const q=c.wq[n];if(q>0){const k=nk(wgk(n));const x=g.get(k)||{name:wgk(n),q:0,w:""};x.q=Math.max(x.q,q);x.w=x.w||(c.wn||{})[n]||"";g.set(k,x)}});return[...g.values()].map(x=>x.q+" × "+x.name+(x.w?" — "+x.w:""))};
+/* ----- équipement figurine par figurine (moteur EQE) ----- */
+const figMode=c=>!!(c&&c.figs);
+function figSync(c,e){const M=EQE.model(e.lib),v=EQE.validate(M,c.size,c.figs),tot=EQE.totals(v.final),wq={};
+ wgroups(weaponsOf(e)).forEach(g=>{const t=tot[lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
+function figInit(c,e){if(!e.lib||c.figs===null)return;let M;try{M=EQE.model(e.lib)}catch(_){return}if(!M||!M.usable||!EQE.counts(M,c.size))return;
+ if(!c.figs||c.figs.length!==c.size){if(c.figs){c.figs=EQE.resize(M,c.size,c.figs)||EQE.newFigs(M,c.size)}else{const had=c.idx!=null&&Object.keys(c.wq||{}).length;c.figs=had?EQE.fromCounts(M,c.size,c.wq):EQE.newFigs(M,c.size)}}
+ if(!c.figs)return;BLD.fig=0;figSync(c,e)}
+const typeLabel=n=>{let r;try{r=tName(n)}catch(_){r=null}if(r&&(r.st==="ok"||r.prop))return r.st==="ok"?r.t:r.prop;return String(n).replace(/\bSergeant\b/g,"Sergent").replace(/\bLeader\b/g,"Chef").replace(/\bVeterans?\b/g,"Vétéran").replace(/\bwith\b/g,"avec").replace(/\bJump Pack\b/g,"réacteur dorsal")};
+const figName=(M,figs,i)=>{const f=figs[i],t=M.types[f.t];const same=figs.filter(g=>g.t===f.t);if(same.length<2)return typeLabel(t.name);return typeLabel(t.name)+" "+(figs.slice(0,i+1).filter(g=>g.t===f.t).length)};
+const figSum=(M,final,i)=>final[i].map(x=>EQE.itemTxt(x.n)+(x.q>1?" ×"+x.q:"")).join(" · ");
+function figHtml(c,e,M){const v=EQE.validate(M,c.size,c.figs),sel=Math.min(BLD.fig||0,c.figs.length-1);
+ let h=`<h4>Équipement <span class="bib-meta">(figurine par figurine)</span></h4>`;
+ h+=v.errors.length?`<div class="bld-vd bad">❌ ${v.errors.length} erreur${v.errors.length>1?"s":""}</div>${v.errors.slice(0,4).map(x=>`<div class="bld-ck bad">❌ ${x.fig!=null?E(figName(M,c.figs,x.fig))+" — ":""}${E(x.msg)}</div>`).join("")}`:`<div class="bld-vd ok">✅ Équipement conforme</div>`;
+ if(!M.reliable)h+=`<details class="bib-nw"><summary><b>⚠ Validation partielle</b> <span class="bib-meta">${M.issues.length} point${M.issues.length>1?"s":""} non pris en charge</span></summary><ul style="padding-left:18px">${M.issues.slice(0,8).map(x=>`<li>${E(x)}</li>`).join("")}</ul><p class="bib-meta">Ces options ne sont pas proposées : relis la fiche pour les connaître.</p></details>`;
+ h+=`<div class="bld-fgl">${c.figs.map((f,i)=>`<button type="button" class="bld-fg${i===sel?" on":""}${Object.keys(f.c||{}).some(k=>(f.c[k]||[]).length)?" mod":""}" data-bld="fig" data-i="${i}"><b>${E(figName(M,c.figs,i))}</b><span>${E(figSum(M,v.final,i))}</span></button>`).join("")}</div>`;
+ const opts=EQE.options(M,c.size,c.figs,sel);
+ h+=`<div class="bld-fp"><div class="bib-meta" style="margin-bottom:4px">Options de « ${E(figName(M,c.figs,sel))} »</div>${opts.length?opts.map(o=>{const used=c.figs.filter(g=>((g.c||{})[o.rule.id]||[]).length).length;
+  return`<div class="bld-fo"><div class="bld-fh">${o.from?"Remplace : <b>"+E(o.from)+"</b>":"Ajoute"} <small>${used}/${o.cap} figurine${o.cap>1?"s":""} sur l'unité</small></div><div class="bld-fcs">${o.alts.map(a=>`<span class="bld-fcw"><button type="button" class="bld-fc${a.sel?" on":a.ok?"":" off"}" ${a.ok?"":"disabled"} data-bld="figo" data-r="${o.rule.id}" data-a="${a.ai}">${a.sel?"✓ ":""}${E(a.txt)}</button>${a.ok&&o.rule.kind==="any"?`<button type="button" class="bld-fa" data-bld="figall" data-r="${o.rule.id}" data-a="${a.ai}" title="Appliquer à toutes les figurines possibles">Toutes</button>`:""}${!a.ok&&a.why?`<small class="bld-why">${E(a.why)}</small>`:""}</span>`).join("")}</div></div>`}).join(""):`<p class="bib-meta">Aucune option pour cette figurine.</p>`}</div>`;
+ return h}
+const eqLines=(c,weapons)=>{if(c&&c.figs&&c.figEq)return c.figEq.slice();const g=new Map();Object.keys(c.wq||{}).forEach(n=>{const q=c.wq[n];if(q>0){const k=nk(wgk(n));const x=g.get(k)||{name:wgk(n),q:0,w:""};x.q=Math.max(x.q,q);x.w=x.w||(c.wn||{})[n]||"";g.set(k,x)}});return[...g.values()].map(x=>x.q+" × "+x.name+(x.w?" — "+x.w:""))};
 const sizeTxt=(u,copy)=>{const s=sizesOf(u,copy||1);return s.length?s[0].n+" figurine"+(s[0].n>1?"s":""):""};
 const costTxt=(u,copy)=>{const s=sizesOf(u,copy||1);if(!s.length)return"Coût à vérifier";const c=costOf(u,s[0].n,copy||1);return c.pts==null?"Coût à vérifier":(s.length>1?"dès ":"")+c.pts+" pts"};
 /* ----- catalogue : une seule carte par unité (collection ET bibliothèque reliées par leurs liens validés) ----- */
@@ -83,7 +102,7 @@ function copyIdx(L,c){const e=entryOf(c.key);if(!e||!e.lib)return 1;let n=0;(L.u
 function openCfg(key,idx){const L=curL(),e=entryOf(key);if(!L||!e)return;let c;
  if(idx!=null){const u=L.units[idx];c=JSON.parse(JSON.stringify(u.cfg||{}));c.key=key;c.idx=idx;c.size=c.size||u.size||1;c.wq=c.wq||{};c.wn=c.wn||{};c.wg=c.wg||{};c.subs=JSON.parse(JSON.stringify(u.subs||[]));c.manual=c.manual||u.pts||0}
  else{c={key,idx:null,wq:{},wn:{},wg:{},enh:null,subs:[],manual:(e.coll&&e.coll.pts)||0};const sz=e.lib?sizesOf(e.lib,copyIdx(L,{key,idx:null})):[];c.size=sz.length?sz[0].n:1;defaultWeapons(e,c)}
- BLD.cfg=c;BLD.scr="cfg";render()}
+ BLD.cfg=c;BLD.scr="cfg";figInit(c,e);render()}
 function preview(L,c,e){const lib=e&&e.lib,tmp={name:e.name,size:c.size,pts:+c.manual||0,cfg:{lib:lib?lib.id:null,size:c.size,wg:c.wg,enh:c.enh},subs:c.subs||[]},L2={units:c.idx!=null?L.units.map((u,i)=>i===c.idx?tmp:u):[...L.units,tmp]},R=calc(L2),i=c.idx!=null?c.idx:L2.units.length-1;
  const mine=R.lines.filter(l=>l.i===i);return{lines:mine,total:mine.reduce((a,l)=>a+(l.pts||0),0),unk:mine.filter(l=>l.pts==null).length}}
 const stepper=(a,k,v,mx)=>`<span class="bld-st"><button type="button" data-bld="${a}" data-k="${E(k)}" data-d="-1">−</button><b>${v}</b><button type="button" data-bld="${a}" data-k="${E(k)}" data-d="1" ${mx!=null&&v>=mx?"disabled":""}>+</button></span>`;
@@ -98,10 +117,13 @@ function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";
  h+=`<h4>Effectif <span class="bib-meta">(combien de figurines)</span></h4>`;
  if(sizes.length){h+=`<div class="row" style="gap:6px;flex-wrap:wrap">${sizes.map(s=>`<button type="button" class="b ${c.size===s.n?"p":""}" data-bld="size" data-v="${s.n}">${s.n} figurine${s.n>1?"s":""} · ${s.pts==null?"à vérifier":s.pts+" pts"}</button>`).join("")}</div><p class="bib-meta">Tailles et coûts lus dans le barème${pc?" Wahapedia 11e (exemplaire n°"+copy+" de cette unité)":" de la bibliothèque"}.</p>`}
  else h+=`<div class="row" style="gap:8px;align-items:center">${stepper("sz","sz",c.size,40)}<label style="flex:1">Coût (saisi à la main)<input id="bldman" inputmode="numeric" value="${E(c.manual||"")}"></label></div><p class="bib-meta">Aucun barème pour cette unité : le coût reste « à vérifier » tant que tu ne l'as pas saisi.</p>`;
+ const FM=figMode(c)&&e.lib?EQE.model(e.lib):null;
+ if(FM)h+=figHtml(c,e,FM);else{
  h+=`<h4>Armes <span class="bib-meta">(quantité par arme)</span></h4>`;
+ if(e.lib){let M0=null;try{M0=EQE.model(e.lib)}catch(_){}h+=`<p class="bib-meta" style="color:#ffd37a">⚠ Équipement non configurable figurine par figurine pour cette unité : contrôle par totaux${M0&&M0.issues.length?" ("+E(M0.issues[0])+")":""}.</p>`}
  if(!W.length)h+=`<p class="bib-meta">Aucune arme connue pour cette unité.</p>`;
  else h+=`<p class="bib-meta">Un compteur par arme (ses profils sont ajoutés ensemble). Porteur facultatif (ex. Sergent).</p>`+wgroups(W).map(g=>{const q=Math.max(0,...g.ws.map(w=>c.wq[w.name]||0)),st=w=>`${E(w.range||"")}${/^\d/.test(w.range||"")?'"':""} · A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}`;
-  return`<div class="bld-w ${q?"on":""}"><div class="row" style="justify-content:space-between;gap:6px"><b>${E(g.name)}</b>${stepper("wq",g.name,q,c.size)}</div>${g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<div class="bib-meta">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${st(w)}</div>`}).join("")}${q?`<input class="bldnote" data-bldn="${E(g.name)}" placeholder="Porteur (facultatif)" value="${E((c.wn||{})[g.ws[0].name]||"")}">`:""}</div>`}).join("");
+  return`<div class="bld-w ${q?"on":""}"><div class="row" style="justify-content:space-between;gap:6px"><b>${E(g.name)}</b>${stepper("wq",g.name,q,c.size)}</div>${g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<div class="bib-meta">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${st(w)}</div>`}).join("")}${q?`<input class="bldnote" data-bldn="${E(g.name)}" placeholder="Porteur (facultatif)" value="${E((c.wn||{})[g.ws[0].name]||"")}">`:""}</div>`}).join("");}
  if(pc&&pc.wg&&pc.wg.length)h+=`<h4>Équipements payants</h4>${pc.wg.map(w=>`<div class="row" style="justify-content:space-between;gap:6px;margin:4px 0"><span><b>${E(w.n)}</b><div class="bib-meta">${w.pts} pts pièce</div></span>${stepper("wg",w.n,(c.wg||{})[w.n]||0,null)}</div>`).join("")}<p class="bib-meta">Les autres armes et équipements sont inclus dans le coût de l'unité : aucun point en plus.</p>`;
  const eq=lib&&lib.wp&&((lib.wp.opt||[]).length||lib.wp.loadout);if(eq)h+=`<details class="bib-nw"><summary><b>Options et restrictions d'équipement</b> <span class="bib-meta">À vérifier à la main</span></summary>${lib.wp.loadout?`<p>${frItem(lib.wp.loadout,"équipement de base").html}</p>`:""}<ul style="padding-left:18px">${(lib.wp.opt||[]).map(o=>`<li>${frItem(o,"option d'équipement").html}</li>`).join("")}</ul></details>`;
  if(lib&&isChar(lib)){const det=detsOf(L).length,list=enhFor(L),used=new Set(L.units.filter((u,i)=>i!==c.idx&&u.cfg&&u.cfg.enh).map(u=>u.cfg.enh.id));
@@ -112,8 +134,8 @@ function ensureSheet(e){return e.coll||createFromLib(e.lib)}
 function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)return;const m=ensureSheet(e),W=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const old=c.idx!=null?L.units[c.idx]:null,n=old||{ref:m.ref,size:c.size,pts:0,subs:[],man:1};
  if(!old){SH.forEach(f=>{n[f]=clone(m[f])})}
- n.weapons=W;n.size=c.size;n.equip=eqLines(c).join(" ; ")||n.equip||"";n.subs=c.subs||[];
- n.cfg={lib:e.lib?e.lib.id:null,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,enh:c.enh||null,manual:+c.manual||0,eq:eqLines(c)};if(!e.lib)n.pts=+c.manual||0;
+ n.weapons=W.length||!(e.coll&&(e.coll.weapons||[]).length)?W:(n.weapons||[]);n.size=c.size;n.equip=eqLines(c).join(" ; ")||n.equip||"";n.subs=c.subs||[];
+ n.cfg={lib:e.lib?e.lib.id:null,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:c.enh||null,manual:+c.manual||0,eq:eqLines(c)};if(!e.lib)n.pts=+c.manual||0;
  if(!old)L.units.push(n);syncPts(L);applyPts(L);save();BLD.cfg=null;BLD.scr="edit";try{draw()}catch(_){}render()}
 /* ----- meneurs ----- */
 function ldrHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key),ul=e&&e.lib,q=nk(BLD.lq||""),K=BLD.ldrKind||"Meneur",isSup=x=>x&&(x.kw||[]).some(k=>/^support$/i.test(k));
@@ -314,9 +336,20 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="del"){const i=+b.dataset.i,u=L.units[i];if(!u)return;ask({t:"Retirer « "+u.name+" » de l'armée ?",p:"Sa fiche de collection n'est pas supprimée.",ok:"Retirer",dg:1},()=>{L.units.splice(i,1);syncPts(L);applyPts(L);save();rd()});return}
  if(c){
   if(a==="size"||a==="sz"){const o=c.size,n=a==="size"?+b.dataset.v:Math.max(1,Math.min(40,c.size+(+b.dataset.d)));
+   if(figMode(c)){const e0=entryOf(c.key),M0=EQE.model(e0.lib),nf=n===o?c.figs:EQE.resize(M0,n,c.figs);
+    if(!nf){BIBLCK.pop({t:"Effectif impossible ("+n+")",items:[{t:"Composition non prévue pour "+n+" figurines"}],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+    const v0=EQE.validate(M0,n,nf);if(v0.errors.length){BIBLCK.pop({t:"Effectif impossible ("+n+")",p:"L'équipement choisi ne serait plus permis. Modifie-le d'abord :",items:v0.errors.slice(0,4).map(x=>({t:(x.fig!=null?figName(M0,nf,x.fig)+" — ":"")+x.msg})),buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+    c.size=n;c.figs=nf;BLD.fig=0;figSync(c,e0);render();return}
    const c2=JSON.parse(JSON.stringify(c));c2.size=n;Object.keys(c2.wq).forEach(k=>{if(c2.wq[k]===o)c2.wq[k]=n});clampQ(c2);
    if(n!==o&&window.BIBLCK){const pr=BIBLCK.cfgTryFull(L,c,entryOf(c.key),c2);if(pr.length){BIBLCK.pop({t:"Effectif impossible ("+n+")",items:pr,buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}}
    c.size=n;c.wq=c2.wq;c.wg=c2.wg||c.wg;render();return}
+  if(a==="fig"){BLD.fig=+b.dataset.i;render();return}
+  if(a==="figo"||a==="figall"){const e=entryOf(c.key),M=EQE.model(e.lib),r=+b.dataset.r,ai=+b.dataset.a,idx=BLD.fig||0,nf=JSON.parse(JSON.stringify(c.figs));
+   const before=EQE.validate(M,c.size,c.figs).errors.length;
+   if(a==="figo"){const cur=((nf[idx].c||{})[r]||[]).includes(ai);nf[idx].c=nf[idx].c||{};nf[idx].c[r]=cur?[]:[ai]}
+   else{const R=M.rules[r];nf.forEach((f,j)=>{if(!R.types.includes(f.t)||((f.c||{})[r]||[]).includes(ai))return;const t=JSON.parse(JSON.stringify(nf));t[j].c=t[j].c||{};t[j].c[r]=[ai];if(EQE.validate(M,c.size,t).errors.length<=before){nf[j].c=nf[j].c||{};nf[j].c[r]=[ai]}})}
+   const v=EQE.validate(M,c.size,nf);if(v.errors.length>before){BIBLCK.pop({t:"Option impossible",items:v.errors.slice(0,3).map(x=>({t:x.msg})),buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+   c.figs=nf;figSync(c,e);render();return}
   if(a==="wq"){const k=b.dataset.k,e=entryOf(c.key),g=e&&wgroups(weaponsOf(e)).find(x=>x.name===k),names=g?g.ws.map(w=>w.name):[k];
    const cur=Math.max(0,...names.map(n=>c.wq[n]||0)),nv=Math.max(0,Math.min(c.size,cur+(+b.dataset.d)));
    const c2=JSON.parse(JSON.stringify(c));names.forEach(n=>{if(nv)c2.wq[n]=nv;else delete c2.wq[n]});
@@ -339,7 +372,10 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  if(a==="det"){BLD.scr="det";BLD.dq="";render();return}
  if(a==="detpick"){detPick(b.dataset.id);return}
  if(a==="detx"){const id=b.dataset.id;L.bld.dets=detsOf(L).filter(d=>d.id!==id).map(d=>({id:d.id,name:d.name,en:d.en}));detSync(L);save();rd();return}
- if(a==="savelist"){try{save()}catch(_){}try{toast("Liste « "+(L.name||"armée")+" » enregistrée ✓")}catch(_){}BLD.scr="home";BLD.id=null;rd();return}
+ if(a==="savelist"){const done=()=>{try{save()}catch(_){}try{toast("Liste « "+(L.name||"armée")+" » enregistrée ✓")}catch(_){}BLD.scr="home";BLD.id=null;rd()};
+   const bad=window.BIBLCK?BIBLCK.run(L).sec.flatMap(s=>s.items.filter(x=>x.lv==="bad")):[];
+   if(bad.length){BIBLCK.pop({t:"Liste non conforme",p:bad.length+" erreur"+(bad.length>1?"s":"")+" à corriger avant de valider :",items:bad.slice(0,6).map(x=>({t:(x.u?x.u+" — ":"")+x.t,d:x.d})),buttons:[{k:"fix",l:"Corriger",cls:"p"},{k:"save",l:"Enregistrer quand même"}],cb:x=>{if(x==="save")done()}});return}
+   done();return}
  if(a==="recap"){BLD.scr="recap";render();return}
  if(a==="print"){printList(L);return}
  if(a==="json"){dl2((L.name||"armee").replace(/[^\w-]+/g,"_")+".hammer.json",exportJson(L));return}
@@ -386,6 +422,9 @@ window.BIBLP={fig:lpFg,pts:lpTot,
  card:(u,i)=>{const sub=(u.subs||[]).reduce((a,s)=>a+lpS(s),0);return`<span class="blp-s"><label>Fig.<input type="number" inputmode="numeric" min="1" step="1" data-blp="size" data-i="${i}" value="${lpm(u)}" aria-label="Nombre de figurines"></label><label>Pts<input type="number" inputmode="numeric" min="0" step="5" data-blp="pts" data-i="${i}" value="${lpU(u)}" aria-label="Points de l'unité"></label>${sub?`<small>+${sub} pts meneur/appui</small>`:""}</span>`}};
 (function(){const c=document.createElement("style");c.id="blpcss";c.textContent=`.blp-b{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.blp-b span{background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:4px 12px;font-size:15px}.blp-b b{font-size:17px}
 .blp-s{margin-left:auto;margin-top:22px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none;padding-right:34px}.blp-s label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu,#9a9a9a)}.blp-s input{width:68px;min-height:36px;text-align:center;font-size:16px;padding:2px 4px}.blp-s small{font-size:11px;color:var(--mu,#9a9a9a)}`;document.head.appendChild(c)})();
+(function(){const c=document.createElement("style");c.id="bldfigcss";c.textContent=`.bld-fgl{display:grid;gap:6px;margin:8px 0}.bld-fg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:8px 10px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}.bld-fg span{font-size:12px;color:var(--mu)}.bld-fg.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}.bld-fg.mod b::after{content:" ✎";font-weight:400}
+.bld-fp{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:6px 0}.bld-fo{padding:6px 0;border-top:1px solid var(--bd)}.bld-fo:first-of-type{border-top:0}.bld-fh{font-size:13px;margin-bottom:4px}.bld-fh small{color:var(--mu);margin-left:6px}.bld-fcs{display:grid;gap:6px}.bld-fcw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.bld-fc{flex:1;min-width:0;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit;cursor:pointer}.bld-fc.on{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}.bld-fc.off{opacity:.45;cursor:not-allowed;text-decoration:line-through}.bld-fa{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 10px;font:inherit;font-size:12px}.bld-why{flex-basis:100%;color:#ffb3b3;font-size:12px}`;document.head.appendChild(c)})();
 (function(){const c=document.createElement("style");c.id="bldvdcss";c.textContent=`.bld-vd{font-weight:800;font-size:16px;padding:8px 12px;border-radius:12px;margin:8px 0}.bld-vd.ok{background:#17402c;color:#b9f1d2}.bld-vd.warn{background:#5a4416;color:#ffe3a6}.bld-vd.bad{background:#5a2323;color:#ffd0d0}`;document.head.appendChild(c)})();
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest(".blp-s")){e.stopPropagation()}},true);
 document.addEventListener("keydown",e=>{if(e.target&&e.target.dataset&&e.target.dataset.blp&&e.key==="Enter"){e.preventDefault();e.target.blur()}},true);
