@@ -47,6 +47,8 @@ const imgOf=m=>(m&&S.imgs&&S.imgs[m.ref])||"";
 /* profils d'une même arme (« - Standard », « – frag », « (Supercharge) ») : une seule arme */
 const wgk=n=>String(n||"").replace(/^➤\s*/,"").replace(/\s*\(.*?\)\s*$/,"").split(/\s+[-–]\s+/)[0].trim();
 const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgk(w.name));if(!m.has(k))m.set(k,{key:k,name:wgk(w.name),ws:[]});m.get(k).ws.push(w)});return[...m.values()]};
+/* « 9 × Épée ; 1 × Marteau — Sergent » ou « Fusil, Épée » -> totaux par arme */
+function eqFromText(t,size){const o={};String(t||"").split(/;|\n|,(?![^()]*\))/).forEach(x=>{x=x.trim();if(!x)return;const m=/^(\d+)\s*[x×]\s*(.+?)(?:\s+[—–-]\s+.*)?$/.exec(x);if(m){const k=m[2].trim();o[k]=Math.max(o[k]||0,+m[1])}else{const k=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").replace(/\s+[—–-]\s+.*$/,"").trim();if(k)o[k]=Math.max(o[k]||0,size||1)}});return o}
 /* ----- équipement figurine par figurine (moteur EQE) ----- */
 const figMode=c=>!!(c&&c.figs);
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.figd!==undefined)BLD.figOpen=d.open},true);
@@ -109,7 +111,7 @@ function defaultWeapons(e,c){const W=weaponsOf(e),nz=t=>nk(String(t||"").replace
  W.forEach(w=>{const a=nz(w.name),b=nz(w.en||"");const h=eq.find(([n])=>a===n||a.indexOf(n+" - ")===0||b===n||b.indexOf(n+" - ")===0||(n&&b&&(b.indexOf(n)===0)));if(h)c.wq[w.name]=Math.max(c.wq[w.name]||0,h[1])})}
 function copyIdx(L,c){const e=entryOf(c.key);if(!e||!e.lib)return 1;let n=0;(L.units||[]).forEach((u,i)=>{if(c.idx!=null&&i>=c.idx)return;if(u.cfg&&u.cfg.lib===e.lib.id)n++;(u.subs||[]).forEach(s=>{if(s.cfg&&s.cfg.lib===e.lib.id)n++})});return n+1}
 function openCfg(key,idx){const L=curL(),e=entryOf(key);if(!L||!e)return;let c;
- if(idx!=null){const u=L.units[idx];c=JSON.parse(JSON.stringify(u.cfg||{}));c.key=key;c.idx=idx;c.size=c.size||u.size||1;c.wq=c.wq||{};c.wn=c.wn||{};c.wg=c.wg||{};c.subs=JSON.parse(JSON.stringify(u.subs||[]));c.manual=c.manual||u.pts||0}
+ if(idx!=null){const u=L.units[idx];c=JSON.parse(JSON.stringify(u.cfg||{}));c.key=key;c.idx=idx;c.size=c.size||u.size||(e.lib&&sizesOf(e.lib,1)[0]&&sizesOf(e.lib,1)[0].n)||1;c.wq=c.wq||{};c.wn=c.wn||{};c.wg=c.wg||{};if(!u.cfg){c.fromImport=1;const eqw=eqFromText(u.equip,c.size);if(Object.keys(eqw).length)c.wq=eqw}c.subs=JSON.parse(JSON.stringify(u.subs||[]));c.manual=c.manual||u.pts||0}
  else{c={key,idx:null,wq:{},wn:{},wg:{},enh:null,subs:[],manual:(e.coll&&e.coll.pts)||0};const sz=e.lib?sizesOf(e.lib,copyIdx(L,{key,idx:null})):[];c.size=sz.length?sz[0].n:1;defaultWeapons(e,c)}
  BLD.cfg=c;BLD.scr="cfg";figInit(c,e);render()}
 function preview(L,c,e){const lib=e&&e.lib,tmp={name:e.name,size:c.size,pts:+c.manual||0,cfg:{lib:lib?lib.id:null,size:c.size,wg:c.wg,enh:c.enh},subs:c.subs||[]},L2={units:c.idx!=null?L.units.map((u,i)=>i===c.idx?tmp:u):[...L.units,tmp]},R=calc(L2),i=c.idx!=null?c.idx:L2.units.length-1;
@@ -143,7 +145,8 @@ function ensureSheet(e){return e.coll||createFromLib(e.lib)}
 function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)return;const m=ensureSheet(e),W=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const old=c.idx!=null?L.units[c.idx]:null,n=old||{ref:m.ref,size:c.size,pts:0,subs:[],man:1};
  if(!old){SH.forEach(f=>{n[f]=clone(m[f])})}
- n.weapons=W.length||!(e.coll&&(e.coll.weapons||[]).length)?W:(n.weapons||[]);n.size=c.size;n.equip=eqLines(c).join(" ; ")||n.equip||"";n.subs=c.subs||[];
+ const imp=old&&!old.cfg;if(imp&&!old.equipOld)old.equipOld=old.equip||"";
+ n.weapons=imp?(n.weapons||[]):(W.length||!(e.coll&&(e.coll.weapons||[]).length)?W:(n.weapons||[]));n.size=c.size;n.equip=eqLines(c).join(" ; ")||n.equip||"";n.subs=c.subs||[];if(imp)n.pm=1;
  n.cfg={lib:e.lib?e.lib.id:null,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:c.enh||null,manual:+c.manual||0,eq:eqLines(c)};if(!e.lib)n.pts=+c.manual||0;
  if(!old)L.units.push(n);syncPts(L);applyPts(L);save();BLD.cfg=null;BLD.scr="edit";try{draw()}catch(_){}render()}
 /* ----- meneurs ----- */
@@ -271,7 +274,8 @@ ${st==="4"?`<div class="card bld-rcp">${recapHtml(L,true)}</div>
 `:""}
  <p class="bib-meta">Barème : ${E(m.src)}${m.pub?" · publié le "+E(String(m.pub).slice(0,10)):""} · synchronisé le ${E(m.sync||"—")}${!m.chk||Date.now()-m.chk>7*864e5?" · ⚠ aucune vérification récente":""}</p>`}
 function sheetHtml(L){if(BLD.scr==="cat")return catHtml(L);if(BLD.scr==="cfg")return cfgHtml();if(BLD.scr==="ldr")return ldrHtml();if(BLD.scr==="det")return detHtml();if(BLD.scr==="recap")return recapHtml(L);return""}
-function render(){css();const L=curL(),ov=["cat","cfg","ldr","det","recap"].includes(BLD.scr)&&L,b=box("bldm");
+function tmpClean(){if(!BLD.tmp)return;const L=(S.lists||[]).find(l=>l.id===BLD.tmp);if(L&&L.bld&&!(L.bld.dets||[]).length&&!L.bld.fac&&!L.bld.limit)delete L.bld;BLD.tmp=null}
+function render(){css();const L=curL(),ov=["cat","cfg","ldr","det","recap"].includes(BLD.scr)&&L,b=box("bldm");if(!ov)tmpClean();
  if(!ov){b.innerHTML="";return}const old=b.querySelector(".bib-pn"),st=old?old.scrollTop:0,keep=document.activeElement&&document.activeElement.id;
  b.innerHTML=`<div class="bib-ov" data-bld="bg"><div class="bib-pn">${sheetHtml(L)}</div></div>`;const pn=b.querySelector(".bib-pn");if(pn)pn.scrollTop=st;if(keep){const f=document.getElementById(keep);if(f&&f.setSelectionRange){f.focus();try{f.setSelectionRange(f.value.length,f.value.length)}catch(_){}}}}
 /* ----- règle de faction + mission principale (Force Disposition) ----- */
@@ -423,6 +427,17 @@ document.addEventListener("change",async e=>{const t=e.target;if(!t)return;const
 /* points mis à jour avec la bibliothèque : recalcul de toutes les armées du constructeur */
 window.BLDSYNC=()=>{try{(S.lists||[]).forEach(l=>{if(l.bld)syncPts(l)});save()}catch(_){}};
 window.BLDCALC=calc;window.BLDCOST=costOf;
+/* ouvre le configurateur d'équipement (＋/−, règles de la fiche) sur une unité d'une liste existante */
+window.BLDEDIT=async(id,idx)=>{try{await init()}catch(_){}const L=(S.lists||[]).find(l=>l.id===id),u=L&&L.units[idx];if(!u)return;if(!L.bld){L.bld={};BLD.tmp=L.id}else BLD.tmp=null;BLD.id=id;
+ let key=u.cfg&&u.cfg.lib?"u:"+u.cfg.lib:null;if(!key){const en=catEntries().find(x=>(x.colls||[]).some(m=>m.ref===u.ref));key=en?en.key:"c:"+u.ref}
+ openCfg(key,idx)};
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-eqc],[data-eqf]");if(!t)return;e.preventDefault();e.stopPropagation();
+ if(t.dataset.eqc!==undefined){window.BLDEDIT(S.cur,+t.dataset.eqc);return}
+ try{const x=window.__EDX&&window.__EDX.get(),L0=(S.lists||[]).find(l=>l.id===S.cur),idx=x&&L0?L0.units.indexOf(x.ed):-1;if(idx<0)return;const id=S.cur;window.__EDX.close();try{draw()}catch(_){}window.BLDEDIT(id,idx)}catch(_){}},true);
+/* après l'import d'une unité (ou depuis « Choisir les armes ») : configurateur ＋/− si la fiche est liée à la bibliothèque */
+window.BLDEQASK=(ref,lead)=>{const L=(S.lists||[]).find(l=>l.id===S.cur);if(!L)return false;let idx=-1;(L.units||[]).forEach((u,i)=>{if(u.ref===ref)idx=i});if(idx<0)return false;const u=L.units[idx];const lib=BIBLCK.lib(u);if(!lib)return false;const M=EQE.model(lib);if(!M||!M.usable)return false;window.BLDEDIT(L.id,idx);return true};
+/* fiche d'une unité de liste : l'équipement se règle avec le configurateur (pas d'ajout/suppression d'arme à la main) */
+window.BIBEQLOCK=(p,b)=>{try{const x=window.__EDX&&window.__EDX.get();if(!x||x.ctx!=="list"||x.ed==null||b)return false;const u=x.ed;if(!u||u!==p)return false;const lib=BIBLCK.lib(u);if(!lib)return false;const M=EQE.model(lib);return !!(M&&M.usable)}catch(_){return false}};
 window.BLDL=curL;window.BLDSTATE=BLD;window.BLDRELINK=relinked;
 window.BLDMAIN=mainNames;
 /* ----- listes d'armée : figurines + points toujours visibles, modifiables dans la liste ----- */
@@ -438,9 +453,9 @@ const lpN=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\u202f");
 window.BIBLP={fig:lpFg,pts:lpTot,
  txt:l=>lpFg(l)+" figurine"+(lpFg(l)>1?"s":"")+" · "+lpN(lpTot(l))+" pts",
  badges:l=>`<div class="blp-b"><span>🧍 <b>${lpFg(l)}</b> figurine${lpFg(l)>1?"s":""}</span><span>⭐ <b>${lpN(lpTot(l))}</b> pts</span></div>`,
- card:(u,i)=>{const sub=(u.subs||[]).reduce((a,s)=>a+lpS(s),0);return`<span class="blp-s"><label>Fig.<input type="number" inputmode="numeric" min="1" step="1" data-blp="size" data-i="${i}" value="${lpm(u)}" aria-label="Nombre de figurines"></label><label>Pts<input type="number" inputmode="numeric" min="0" step="5" data-blp="pts" data-i="${i}" value="${lpU(u)}" aria-label="Points de l'unité"></label>${sub?`<small>+${sub} pts meneur/appui</small>`:""}</span>`}};
+ card:(u,i)=>{const sub=(u.subs||[]).reduce((a,s)=>a+lpS(s),0);return`<span class="blp-s"><label>Fig.<input type="number" inputmode="numeric" min="1" step="1" data-blp="size" data-i="${i}" value="${lpm(u)}" aria-label="Nombre de figurines"></label><label>Pts<input type="number" inputmode="numeric" min="0" step="5" data-blp="pts" data-i="${i}" value="${lpU(u)}" aria-label="Points de l'unité"></label>${sub?`<small>+${sub} pts meneur/appui</small>`:""}${(()=>{let st={s:"na",t:""};try{st=BIBLCK.unitStatus(u)}catch(_){}const ic={ok:"✅",bad:"❌",warn:"⚠️",na:"🔗"}[st.s];return`<button type="button" class="b blp-eq ${st.s}" data-eqc="${i}" title="${E(st.t)}">${ic} Équipement ＋/−</button>`})()}</span>`}};
 (function(){const c=document.createElement("style");c.id="blpcss";c.textContent=`.blp-b{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}.blp-b span{background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:4px 12px;font-size:15px}.blp-b b{font-size:17px}
-.blp-s{margin-left:auto;margin-top:22px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none;padding-right:34px}.blp-s label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu,#9a9a9a)}.blp-s input{width:68px;min-height:36px;text-align:center;font-size:16px;padding:2px 4px}.blp-s small{font-size:11px;color:var(--mu,#9a9a9a)}`;document.head.appendChild(c)})();
+.blp-s{margin-left:auto;margin-top:22px;display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none;padding-right:34px}.blp-s label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mu,#9a9a9a)}.blp-s input{width:68px;min-height:36px;text-align:center;font-size:16px;padding:2px 4px}.blp-s small{font-size:11px;color:var(--mu,#9a9a9a)}.blp-eq{font-size:12px;min-height:34px;padding:4px 8px;margin-top:2px}.blp-eq.bad{border-color:#d1503b}.blp-eq.warn{border-color:#d9a93a}`;document.head.appendChild(c)})();
 (function(){const c=document.createElement("style");c.id="bldfigcss";c.textContent=`.bld-pm{display:grid;gap:6px;margin:8px 0}.bld-pr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:12px;background:var(--card)}.bld-pl{flex:1;min-width:0;font-size:13.5px;line-height:1.3}.bld-pl small{display:block}.bld-pr .bld-st button:disabled{opacity:.3}
 .bld-fgl{display:grid;gap:6px;margin:8px 0}.bld-fg{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:8px 10px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}.bld-fg span{font-size:12px;color:var(--mu)}.bld-fg.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset}.bld-fg.mod b::after{content:" ✎";font-weight:400}
 .bld-fp{border:1px solid var(--bd);border-radius:12px;padding:8px 10px;margin:6px 0}.bld-fo{padding:6px 0;border-top:1px solid var(--bd)}.bld-fo:first-of-type{border-top:0}.bld-fh{font-size:13px;margin-bottom:4px}.bld-fh small{color:var(--mu);margin-left:6px}.bld-fcs{display:grid;gap:6px}.bld-fcw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}

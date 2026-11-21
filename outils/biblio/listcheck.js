@@ -138,6 +138,14 @@ function lckEnhRestrict(e,bearer){const m=/^\s*([^.:]+?)\s+(?:model|unit)s?\s+on
  const alts=m[1].split(/\s*(?:\/|,|\bor\b)\s*/i).map(x=>nk(x)).filter(Boolean);if(!alts.length)return null;
  const kw=lckKw(bearer),words=new Set([...kw].flatMap(k=>k.split(" ")));
  const ok=alts.some(a=>kw.has(a)||a.split(" ").every(w=>words.has(w)));return{ok,txt:m[1]}}
+/* contrôle d'équipement d'une entrée (unité ou meneur) : moteur figurine par figurine si disponible, sinon contrôle par totaux */
+function lckEqEntry(e,Q){if(!e.lib)return;const n=(e.u.cfg&&e.u.cfg.size)||+e.u.size||1;
+  try{const M=e.u.cfg&&e.u.cfg.figs?EQE.model(e.lib):null;
+   if(M&&EQE.compatible(M,n)&&e.u.cfg.figs.length===n){const v=EQE.validate(M,n,e.u.cfg.figs),nm=lckName(e.lib),fn=(i)=>{const f=e.u.cfg.figs[i],same=e.u.cfg.figs.filter(g=>g.t===f.t);return M.types[f.t].name+(same.length>1?" "+(e.u.cfg.figs.slice(0,i+1).filter(g=>g.t===f.t).length):"")};
+    v.errors.forEach(x=>Q.push({lv:"bad",u:nm,t:(x.fig!=null?fn(x.fig)+" : ":"")+x.msg,d:x.rule!=null?"Règle : "+M.rules[x.rule].txt.slice(0,120):""}));
+    if(!v.errors.length)Q.push({lv:"ok",u:nm,t:"Équipement conforme (figurine par figurine)"});
+    if(!M.reliable)Q.push({lv:"info",u:nm,t:"Validation partielle",d:M.issues.slice(0,2).join(" · ")});return}}catch(x){}
+  try{lckEquipCheck(e.u,e.lib,n,Q)}catch(x){}}
 /* ----- contrôle complet ----- */
 function lckRun(L){const out=[],sec=[];const size=lckSize(L),S0=LSZ[size],lim=lckLim(L,size),b=L.bld||{};
  const units=(L.units||[]),R=(()=>{try{return calc(L)}catch(_){return{lines:[],total:0,unk:0}}})();
@@ -210,13 +218,7 @@ function lckRun(L){const out=[],sec=[];const size=lckSize(L),S0=LSZ[size],lim=lc
  C.push({lv:"info",t:"Réserves : au plus la moitié des unités ET la moitié des points peuvent commencer en réserve (Chapter Approved)"});
  sec.push({id:"comp",t:"📋 Composition (règles V11)",items:C,warlord:chars.map(e=>({v:e.i+"."+(e.j==null?"":e.j),n:e.u.name,sel:wl===e.i+"."+(e.j==null?"":e.j)}))});
  /* 3. équipements */
- const Q=[];ent.forEach(e=>{if(!e.lib)return;const n=(e.u.cfg&&e.u.cfg.size)||+e.u.size||1;
-  try{const M=e.u.cfg&&e.u.cfg.figs?EQE.model(e.lib):null;
-   if(M&&EQE.compatible(M,n)&&e.u.cfg.figs.length===n){const v=EQE.validate(M,n,e.u.cfg.figs),nm=lckName(e.lib),fn=(i)=>{const f=e.u.cfg.figs[i],same=e.u.cfg.figs.filter(g=>g.t===f.t);return M.types[f.t].name+(same.length>1?" "+(e.u.cfg.figs.slice(0,i+1).filter(g=>g.t===f.t).length):"")};
-    v.errors.forEach(x=>Q.push({lv:"bad",u:nm,t:(x.fig!=null?fn(x.fig)+" : ":"")+x.msg,d:x.rule!=null?"Règle : "+M.rules[x.rule].txt.slice(0,120):""}));
-    if(!v.errors.length)Q.push({lv:"ok",u:nm,t:"Équipement conforme (figurine par figurine)"});
-    if(!M.reliable)Q.push({lv:"info",u:nm,t:"Validation partielle",d:M.issues.slice(0,2).join(" · ")});return}}catch(x){}
-  try{lckEquipCheck(e.u,e.lib,n,Q)}catch(x){}});
+ const Q=[];ent.forEach(e=>lckEqEntry(e,Q));
  {const nd=[...new Set(Q.filter(x=>x.nodet).map(x=>x.nodet))];for(let k=Q.length-1;k>=0;k--)if(Q[k].nodet)Q.splice(k,1);if(nd.length)Q.push({lv:"info",t:nd.length+" unité"+(nd.length>1?"s":"")+" sans équipement détaillé (options non vérifiables) : "+nd.slice(0,6).join(", ")+(nd.length>6?"…":"")+". Choisis leurs armes dans le constructeur pour les contrôler."})}
  if(!Q.length)Q.push({lv:"info",t:"Aucun équipement détaillé à vérifier (utilise le constructeur pour choisir les armes de chaque unité)"});
  sec.push({id:"eq",t:"🔧 Équipements et options",items:Q});
@@ -311,4 +313,13 @@ function lckPop(o){lckCss();let p=document.getElementById("lckpop");if(p)p.remov
  p.innerHTML=`<div class="pk"><h3>${E(o.t)}</h3>${o.p?`<p class="mu" style="margin:6px 0">${E(o.p)}</p>`:""}<ul>${(o.items||[]).map(x=>`<li><b>${E(x.t||x)}</b>${x.d?`<small>${E(x.d)}</small>`:""}</li>`).join("")}</ul><div class="ct">${(o.buttons||[]).map(b=>`<button class="b${b.cls?" "+b.cls:""}" data-lckp="${b.k}">${E(b.l)}</button>`).join("")}</div></div>`;
  document.body.appendChild(p);p.addEventListener("click",ev=>{const b=ev.target.closest("[data-lckp]");if(!b)return;ev.preventDefault();ev.stopPropagation();p.remove();if(o.cb)o.cb(b.dataset.lckp)},true)}
 (function(){const c=document.createElement("style");c.id="lckpopcss";c.textContent=`#lckpop{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}#lckpop .pk{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:16px;width:min(420px,100%);max-height:86vh;overflow:auto}#lckpop h3{margin:0}#lckpop ul{padding-left:18px;margin:8px 0}#lckpop li{margin:6px 0;line-height:1.35}#lckpop small{display:block;color:var(--mu)}#lckpop .ct{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#lckpop .ct .b{flex:1;min-height:44px}`;document.head.appendChild(c)})();
-window.BIBLCK={eqe:()=>EQE,run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,cfgTryFull:lckCfgTryFull,unverif:lckUnverif,pop:lckPop};
+/* statut d'équipement d'une unité de la liste : ok | bad | warn | na (fiche non liée / non vérifiable) */
+function lckUnitStatus(u){const lib=lckLib(u);if(!lib)return{s:"na",t:"Fiche non liée à la bibliothèque : équipement non vérifiable"};
+ const Q=[];lckEqEntry({u,lib},Q);const bad=Q.filter(x=>x.lv==="bad"),warn=Q.filter(x=>x.lv==="warn");
+ const has=u.cfg&&u.cfg.figs;
+ if(bad.length)return{s:"bad",t:bad[0].t};if(warn.length)return{s:"warn",t:warn[0].t};
+ const M=(()=>{try{return EQE.model(lib)}catch(_){return null}})();
+ if(has&&M&&M.reliable)return{s:"ok",t:"Équipement conforme"};
+ if(has)return{s:"ok",t:"Équipement conforme (validation partielle)"};
+ return{s:"warn",t:"Équipement non configuré : ouvre ⚙ pour le régler"}}
+window.BIBLCK={unitStatus:lckUnitStatus,lib:lckLib,eqe:()=>EQE,run:lckRun,text:lckText,open:lckOpen,parseOpts:lckParseOpts,cfgProblems:lckCfgProblems,cfgTry:lckCfgTry,cfgTryFull:lckCfgTryFull,unverif:lckUnverif,pop:lckPop};

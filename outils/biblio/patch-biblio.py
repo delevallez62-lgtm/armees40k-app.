@@ -49,6 +49,21 @@ rep('</span></div><div class="chips">${K.map(k=>`<span>${k} <b>${esc(u.stats[k])
 rep('<button class="b" data-act="open" data-id="${l.id}">Gérer</button>','<button class="b" data-chk="${l.id}">✅ Vérifier</button> <button class="b" data-act="open" data-id="${l.id}">Gérer</button>')
 rep('<span><button class="b" data-act="ledit">Modifier la liste</button>','<span><button class="b p" data-chk="${L.id}">✅ Vérifier la liste</button> <button class="b" data-act="ledit">Modifier la liste</button>')
 
+# Fiche d'une unité de liste : équipement réglé par le configurateur (＋/−) ; plus d'ajout/suppression d'arme à la main
+rep('<button class="b p" data-act="edt">Modifier</button> <button class="b" data-act="close">✕</button></span></div>${prof(u)}','<button class="b p" data-act="edt">Modifier</button>${ctx==="list"&&window.BIBEQLOCK&&BIBEQLOCK(u,"")?` <button class="b" data-eqf="1">⚙ Équipement</button>`:""} <button class="b" data-act="close">✕</button></span></div>${prof(u)}')
+rep('const pe=(p,b)=>`<div class="sg">','const eqLk=(p,b)=>!!(window.BIBEQLOCK&&window.BIBEQLOCK(p,b));const pe=(p,b)=>`<div class="sg">')
+rep('<button class="b x" data-act="delw" data-b="${b}" data-k="${k}">✕</button></div>`).join("")}</div><button class="b" data-act="addw" data-b="${b}">+ Arme</button>','${eqLk(p,b)?"":`<button class="b x" data-act="delw" data-b="${b}" data-k="${k}">✕</button>`}</div>`).join("")}</div>${eqLk(p,b)?`<p class="mu">🛡 L\'équipement de cette unité se règle avec les règles de la fiche : <button class="b p" data-eqf="1">⚙ Équipement ＋ / −</button></p>`:`<button class="b" data-act="addw" data-b="${b}">+ Arme</button>`}')
+rep('<label>Équipement${ei(b+"equip",p.equip)}</label>','${eqLk(p,b)?`<label>Équipement<div class="mu">${esc(p.equip||"—")}</div></label>`:`<label>Équipement${ei(b+"equip",p.equip)}</label>`}')
+
+rep('const blank=()=>({stats:Object.fromEntries(K.map(k=>[k,""])),weapons:[],','window.__EDX={get:()=>({ctx,ed,edit}),close:()=>{ed=null;edit=false}};const blank=()=>({stats:Object.fromEntries(K.map(k=>[k,""])),weapons:[],')
+# choix d'armes à l'import / dans la fiche : configurateur ＋/− quand la fiche est liée à la bibliothèque
+rep(''' ask:function(ref,lead){
+  const m=S.coll[ref];if(!m)return false;''',''' ask:function(ref,lead){
+  try{if(window.BLDEQASK&&window.BLDEQASK(ref,lead))return true}catch(_){}
+  const m=S.coll[ref];if(!m)return false;''')
+rep('''  try{if(ctx!=="list"||edit||!u||!S.coll[u.ref]||!(S.coll[u.ref].weapons||[]).length)return"";''','''  try{if(ctx==="list"&&!edit&&u&&window.BIBEQLOCK&&BIBEQLOCK(u,""))return'<div style="margin:8px 0"><button class="b p" data-eqf="1" style="width:100%;padding:10px">⚙ Équipement ＋ / −</button></div>';
+   if(ctx!=="list"||edit||!u||!S.coll[u.ref]||!(S.coll[u.ref].weapons||[]).length)return"";''')
+
 # Pots de peinture : fiche avec pot (quantité + / −) et état du pot ; libellés dans la liste
 rep('<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque','${window.BIBPOT?BIBPOT.sheet(p,cur.isNew):""}<label>Nom<input data-f="n" value="${e2(p.n)}" autofocus></label><label>Marque')
 rep('<label>Stock<select data-f="s"><option value="ok"${p.s==="ok"?" selected":""}>En stock</option><option value="bas"${p.s==="bas"?" selected":""}>Presque vide</option><option value="achat"${p.s==="achat"?" selected":""}>À racheter</option></select></label>\n','')
