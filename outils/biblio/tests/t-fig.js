@@ -8,7 +8,7 @@ await ev(()=>{document.getElementById('bldn').value='Sim';const f=document.getEl
 await click('[data-bld="create"]');await wait(300);
 async function open(q,match,size){await click('[data-bld="add"]');await ev(q=>{const i=document.getElementById('bldq');i.value=q;i.dispatchEvent(new Event('input',{bubbles:true}))},q);await wait(250);
  await ev(m=>{const c=[...document.querySelectorAll('#bldm .bld-c')].find(x=>new RegExp(m,'i').test(x.querySelector('b').innerText));c.click()},match);await wait(300);await click('[data-bld="size"][data-v="'+size+'"]');await wait(150)}
-const fig=async i=>{await click('[data-bld="fig"][data-i="'+i+'"]')};
+const fig=async i=>{await ev(()=>{BLDSTATE.figOpen=true});await click('[data-bld="fig"][data-i="'+i+'"]')};
 const chips=()=>ev(()=>[...document.querySelectorAll('#bldm .bld-fcw')].map(w=>({t:w.querySelector('.bld-fc').innerText.trim(),on:w.querySelector('.bld-fc').classList.contains('on'),off:w.querySelector('.bld-fc').disabled,why:(w.querySelector('.bld-why')||{}).innerText||''})));
 const pick=async re=>{await ev(re=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>new RegExp(re,'i').test(x.innerText)&&!x.disabled);if(!e)throw new Error('option absente '+re);e.click()},re);await wait(250)};
 const pop=()=>ev(()=>{const p=document.getElementById('lckpop');return p?p.innerText.replace(/\n+/g,' | '):null});

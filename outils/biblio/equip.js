@@ -78,11 +78,21 @@ const EQE=(()=>{
   const fs=fixed.reduce((a,t)=>a+t.min,0);
   if(flex.length===0)return fs===size?T.map(t=>({t:t.i,n:t.min})):null;
   if(flex.length===1){const n=size-fs;return n>=flex[0].min&&n<=flex[0].max?T.map(t=>({t:t.i,n:t.min===t.max?t.min:n})):null}
-  return null}
+  let rest=size-fs-flex.reduce((a,t)=>a+t.min,0);if(rest<0)return null;const add={};flex.slice().sort((x,y)=>y.max-x.max).forEach(t=>{const a=Math.min(rest,t.max-t.min);add[t.i]=a;rest-=a});if(rest>0)return null;
+  return T.map(t=>({t:t.i,n:t.min===t.max?t.min:t.min+add[t.i]}))}
+ const flexN=M=>M.types.filter(t=>t.min!==t.max).length;
+ const tally=figs=>{const g={};(figs||[]).forEach(f=>g[f.t]=(g[f.t]||0)+1);return g};
+ /* composition réellement choisie : chaque type dans ses bornes, total = effectif */
+ const compOk=(M,size,figs)=>{const g=tally(figs);let s=0;for(const t of M.types){const n=g[t.i]||0;if(n<t.min||n>t.max)return false;s+=n}return s===size}
+ /* +1 / −1 figurine d'un type variable (compensé sur un autre type variable) ; null si impossible */
+ function setCount(M,size,figs,ti,d){const g=tally(figs),T=M.types,fl=T.filter(t=>t.min!==t.max);if(fl.length<2)return null;
+  const other=fl.filter(t=>t.i!==ti).pop();if(!other)return null;const a=(g[ti]||0)+d,bb=(g[other.i]||0)-d,tt=T[ti];
+  if(a<tt.min||a>tt.max||bb<other.min||bb>other.max)return null;g[ti]=a;g[other.i]=bb;
+  const used={};const out=[];T.forEach(t=>{for(let k=0;k<g[t.i];k++){const src=(figs||[]).filter(f=>f.t===t.i)[k];out.push(src?{t:t.i,c:JSON.parse(JSON.stringify(src.c||{}))}:{t:t.i,c:{}})}});return out}
  const compatible=(M,size)=>!!M.usable&&!!counts(M,size);
  function newFigs(M,size){const c=counts(M,size);if(!c)return null;const f=[];c.forEach(x=>{for(let i=0;i<x.n;i++)f.push({t:x.t,c:{}})});return f}
  /* adapte les figurines à un nouvel effectif (conserve les choix des premières) */
- function resize(M,size,figs){const nf=newFigs(M,size);if(!nf)return null;const used={};(figs||[]).forEach(f=>{(used[f.t]=used[f.t]||[]).push(f)});const seen={};
+ function resize(M,size,figs){if(figs&&compOk(M,size,figs))return figs.map(f=>({t:f.t,c:JSON.parse(JSON.stringify(f.c||{}))}));const nf=newFigs(M,size);if(!nf)return null;const used={};(figs||[]).forEach(f=>{(used[f.t]=used[f.t]||[]).push(f)});const seen={};
   return nf.map(f=>{const a=used[f.t]||[];const i=seen[f.t]=(seen[f.t]||0);seen[f.t]++;return a[i]?{t:f.t,c:JSON.parse(JSON.stringify(a[i].c||{}))}:f})}
  const lim=(r,size)=>{let l=r.kind==="per"?Math.floor(size/r.per)*(r.k||1):r.kind==="any"?size:(r.k||1);if(r.cond){const q=r.cond;const ok=q.m==="more"?size>=q.n:q.m==="fewer"?size<=q.n:size===q.n;if(!ok)l=0}return l};
  const nameOf=a=>a.q>1?a.q+" × "+a.n:a.n;
@@ -101,9 +111,8 @@ const EQE=(()=>{
   return{items,err}}
  /* validation complète : erreurs précises (figurine, équipement, règle) */
  function validate(M,size,figs){const errors=[];if(!M||!M.usable)return{errors:[{msg:"équipement non vérifiable pour cette fiche"}],final:[]};
-  const c=counts(M,size);if(!c)return{errors:[{msg:"effectif "+size+" non prévu pour cette composition"}],final:[]};
-  const want={};c.forEach(x=>want[x.t]=x.n);const got={};(figs||[]).forEach(f=>got[f.t]=(got[f.t]||0)+1);
-  M.types.forEach(t=>{if((got[t.i]||0)!==(want[t.i]||0))errors.push({msg:"composition incohérente ("+t.name+")"})});
+  if(!counts(M,size))return{errors:[{msg:"effectif "+size+" non prévu pour cette composition"}],final:[]};
+  if(!compOk(M,size,figs))errors.push({msg:"composition incohérente pour "+size+" figurines"});
   const use={},final=[];
   (figs||[]).forEach((f,i)=>{const fi=figItems(M,f);final.push(fi.items);fi.err.forEach(e=>errors.push({fig:i,rule:e.rule,msg:e.msg}));
    Object.keys(f.c||{}).forEach(rid=>{if((f.c[rid]||[]).length>1)errors.push({fig:i,rule:+rid,msg:"Une seule option à la fois pour « "+((M.rules[+rid]||{from:[]}).from.map(itemTxt).join(" + ")||"cette option")+" »"})});
@@ -128,4 +137,4 @@ const EQE=(()=>{
      for(let j=0;j<figs.length&&n>0;j++){const f=figs[j];if(!r.types.includes(f.t)||(f.c[r.id]||[]).length)continue;
       const t=JSON.parse(JSON.stringify(figs));t[j].c[r.id]=[ai];const v=validate(M,size,t);if(!v.errors.length){figs[j].c[r.id]=[ai];n--}}})});
   return figs}
- return{model,counts,compatible,newFigs,resize,validate,options,totals,fromCounts,figItems,lim,itemTxt,altTxt}})();
+ return{model,counts,compatible,newFigs,resize,setCount,flexN,tally,validate,options,totals,fromCounts,figItems,lim,itemTxt,altTxt}})();
