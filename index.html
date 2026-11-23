@@ -7147,134 +7147,142 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 </script>
 <!-- ===== Tuto intégré à chaque onglet ===== -->
 <script>
-/* ===== HAMMER · Tuto intégré à chaque onglet (visuel, hors ligne) ===== */
+/* ===== HAMMER · Tuto de chaque menu : petit rond « ? » discret, ouvre un guide pas à pas (hors ligne) ===== */
 (()=>{
 if(typeof S==="undefined")return;
 const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-/* [icône, bouton tel qu'il apparaît (ou ""), titre, explication] */
+/* t = titre · s = à quoi sert ce menu · st = pas à pas (dans l'ordre) · it = chaque bouton/zone [icône, libellé du bouton, titre, explication] · tp = astuces */
 const H={
-home:["Accueil","Ton point de départ : tout est à un toucher.",[
- ["🏠","","Tuiles de sections","Chaque tuile ouvre une section : Mes armées, Collection, Peinture, Missions, Centre de commandement, Apprendre à jouer, Règles V11, Importer."],
- ["🎲","Reprendre la partie","Mode jeu","Lance ou reprend une partie : suivi des unités, stratagèmes, points et rounds."],
- ["⚡","Lancer de dés","Outils rapides","Raccourcis : lanceur de dés, nouvelle liste, mes peintures."],
- ["⚙","Personnaliser","Personnaliser","Adapte l'accueil à ta façon de jouer."],
- ["📰","","Actus & mises à jour","Les nouveautés de l'application et des règles."]],
- ["Le bouton rond 🎲 en bas est toujours là pour lancer des dés."]],
-lists:["Mes armées","Toutes tes listes d'armée au même endroit.",[
- ["➕","+ Nouvelle liste","Créer une liste","Ajoute une liste vide, ou importe-la depuis l'onglet Importer."],
- ["📷","📷","Photo de l'armée","Ajoute une photo qui s'affiche sur la carte de la liste."],
+home:{t:"Accueil",s:"Le point de départ : toutes les sections de l'application sont ici.",
+ st:["Touche une tuile (Mes armées, Collection, Peinture…) pour ouvrir la section.","Pour jouer : touche « Mode jeu », choisis ta liste, et suis l'assistant.","Pour lancer des dés tout de suite : « Lancer de dés » dans Outils rapides, ou le bouton rond 🎲 de l'écran.","Pour revenir ici depuis n'importe où : touche l'icône 🏠 de la barre du bas.","Le petit rond « ? » en bas à gauche de chaque menu rouvre cette aide."],
+ it:[["🛡","Mes armées","Mes armées","Tes listes d'armée : créer, modifier, vérifier, jouer, partager."],
+ ["🎯","Missions & Layout","Missions & Layout","Les cartes de mission, les objectifs secondaires et les plans de terrain."],
+ ["📦","Collection","Collection","Toutes tes figurines, une fiche par unité."],
+ ["🎨","Peinture & Hobby","Peinture & Hobby","L'avancement de tes figurines, tes schémas et tes pots de peinture."],
+ ["📘","Règles V11","Règles V11","L'encyclopédie des règles, consultable hors ligne."],
+ ["📊","Centre de commandement","Centre de commandement","Tes parties jouées, statistiques, duels, conseils et journal."],
+ ["🎓","Apprendre à jouer","Apprendre à jouer","Les bases pour une première partie, et la partie tutorielle guidée."],
+ ["🛠","Constructeur d'armée","Constructeur d'armée","Compose une armée légale : points, détachements, équipements vérifiés."],
+ ["📜","Lore","Lore","Ton carnet d'histoire de l'univers (texte et images que tu écris)."],
+ ["🔔","Nouveautés","Nouveautés","Ce qui a changé dans l'appli et dans la bibliothèque, mise à jour manuelle."],
+ ["🎲","Mode jeu","Mode jeu","Lance ou reprend une partie : unités, stratagèmes, score, journal."],
+ ["📥","Importer","Importer","Ajoute des listes ou des règles depuis un PDF ou un texte collé."],
+ ["⚙","Personnaliser","Personnaliser","Choisis ce qui s'affiche sur l'accueil."]],
+ tp:["Rien n'est envoyé sur internet : tes données restent sur ton appareil.","L'application marche hors ligne ; elle se met à jour toute seule quand une connexion est disponible."]},
+lists:{t:"Mes armées",s:"Toutes tes listes d'armée. Chaque carte montre le nom, les points et l'état de la vérification.",
+ st:["Pour une armée vérifiée par les règles V11 : touche « 🛠 Créer une armée » (voir le tuto du Constructeur).","Pour une liste rapide sans contrôle : touche « + Liste simple », donne-lui un nom.","Pour reprendre une liste envoyée par un ami : « 📥 Recevoir une liste », puis scanne ou colle son code.","Ouvre une liste avec « Gérer » pour voir et modifier ses unités.","Pour la jouer : « ▶ Jouer » sur la carte.","Avant une partie : « ✅ Vérifier » contrôle la liste (points, détachement, équipements)."],
+ it:[["🛠","🛠 Créer une armée","Créer une armée","Ouvre le Constructeur : choix de faction, détachement, unités et équipements contrôlés en direct."],
+ ["➕","+ Liste simple","Liste simple","Une liste vide à remplir à la main. Aucun blocage, tu gères tout."],
+ ["📥","📥 Recevoir une liste","Recevoir une liste","Reçois une liste d'un autre appareil par QR code ou code texte."],
+ ["📷","📷","Photo","Ajoute une photo d'armée affichée sur la carte."],
  ["▶","▶ Jouer","Jouer","Démarre le Mode jeu avec cette liste."],
- ["📂","Gérer","Gérer","Ouvre la liste : unités, détachements, stratagèmes, optimisations."],
- ["✏","Renommer","Renommer","Change le nom de la liste."],
- ["🗑","Supprimer","Supprimer","Retire la liste. Tes figurines restent dans la collection."]]],
-units:["Unités d'une liste","Les figurines de ta liste.",[
- ["🃏","","Carte d'unité","Touche une carte pour ouvrir la fiche : profil, armes, aptitudes."],
- ["➕","+ Ajouter une figurine","Ajouter","Choisis une unité de ta collection, puis coche les armes qu'elle aura dans cette liste. Seules les armes validées sont visibles dans la liste."],
- ["📄","Fiche vide","Fiche vide","Crée une fiche à la main (nom, profil, armes)."],
- ["✏","Modifier la liste","Modifier la liste","Réorganise la liste, change son nom ou ses points."],
- ["✕","✕","Retirer","Enlève l'unité de la liste (elle reste en collection)."],
- ["⚔","","Armes de l'unité","Dans la fiche d'une unité de liste, les armes affichées sont celles que tu as validées à l'ajout."]],
- ["Les onglets du haut changent de vue : Unités, Règles de détachement, Stratagèmes, Optimisations."]],
-dets:["Règles de détachement","Les règles spéciales de ton détachement.",[
- ["📚","Bibliothèque (3)","Bibliothèque","Tous les détachements déjà enregistrés. Touche-en un pour l'utiliser."],
- ["➕","+ Détachement","Nouveau détachement","Crée un détachement avec sa règle et ses stratagèmes."],
- ["✔","","Utilisé dans cette liste","Le détachement actif : ses stratagèmes sont visibles en jeu."],
- ["👁","Voir ses stratagèmes","Stratagèmes","Ouvre la liste de ses stratagèmes."],
- ["✏","Modifier","Modifier / Supprimer","Corrige ou retire un détachement."]]],
-strats:["Stratagèmes","Les astuces à utiliser avec tes points de commandement.",[
- ["➕","+ Stratagème","Ajouter","Crée un stratagème (nom, coût en PC, quand l'utiliser, effet)."],
- ["🔎","Tir","Filtres par phase","Commandement, Mouvement, Tir, Charge, Combat : n'affiche que ceux de la phase."],
- ["📦","Ma liste","Groupes","Stratagèmes de base, puis ceux de ton détachement."]]],
-opti:["Optimisations","Les améliorations attachées à tes unités.",[
- ["➕","+ Optimisation","Ajouter","Note une optimisation (visible dans les listes)."],
- ["🧹","Effacer","Effacer","Supprime le texte d'une optimisation."]]],
-coll:["Collection","Toutes tes figurines, une fiche par unité.",[
- ["🔎","Rechercher","Recherche","Par nom, mot-clé ou liste."],
- ["☑","Sélectionner","Sélection multiple","Coche plusieurs fiches puis supprime-les d'un coup."],
- ["🏳","+ Faction","Factions","Crée une faction avec sa bannière. Les figurines sont rangées par faction."],
- ["🃏","","Fiche d'unité","Touche une carte : profil, armes, aptitudes. Si tu importes une fiche du même nom avec d'autres armes, elles sont ajoutées à cette même fiche."],
- ["📚","","Bibliothèque V11","Le symbole 📚 d'une fiche (Collection seulement) la rapproche, à ta main, d'une fiche Space Marines ou Orks de la bibliothèque : tu choisis ce qu'on ajoute, rien n'est écrasé. « 📚 Bibliothèque » ouvre la bibliothèque et ses mises à jour."]]],
-paint:["Peinture & Hobby","Suis l'avancement de tes figurines.",[
- ["🖌","🖌 Schémas par figurine","Schémas","Note les couleurs et recettes utilisées pour chaque figurine."],
- ["🎨","🎨 Mes peintures","Peintures","Ta collection de pots de peinture."],
- ["📊","À monter","Statuts","À monter, Monté, Sous-couché, En peinture, Terminé : touche pour changer."],
- ["🏆","","Progression","Le compteur du haut montre combien de figurines sont terminées."]]],
-mis:["Missions & Layout","Les cartes de mission et de terrain.",[
- ["🎯","🎯 Primaires","Primaires","Objectifs principaux de la partie."],
- ["⚡","⚡ Secondaires","Secondaires","Objectifs secondaires à tirer ou à choisir."],
- ["🗺","🗺 Layouts","Layouts","Plans de terrain et déploiements."],
- ["📁","+ Dossier de primaires","Dossiers","Crée tes propres dossiers de cartes."],
- ["📄","📄 Importer un PDF","Importer un PDF","Lit un PDF de règles, missions ou layouts et range chaque carte au bon endroit."],
- ["📷","⬆ Exporter mes photos","Photos","Exporte et importe les photos de tes layouts."]]],
-ana:["Centre de commandement","Parties, analyses et journal de bataille.",[
- ["🏁","Parties","Parties","Tes parties en cours et terminées, avec tes statistiques de victoires. « Historique manuel » ajoute une partie jouée ailleurs."],
- ["⚔","Affronter","Affronter","Duel : une figurine contre une autre. Simulation : les dés lancés des milliers de fois, avec le détail par arme."],
- ["💡","Conseils","Conseils","Qui envoyer contre qui, cibles prioritaires, unités à protéger, en mots simples."],
- ["📓","Journal","Journal","Tout ce que tu as noté en jouant : dégâts, unités tombées, jets de dés. Export et import possibles."],
- ["🛡","Armées","Armées","Comparer deux armées, simuler une bataille, estimer tes chances de victoire."]],
- ["Choisis tes deux armées en haut : elles servent aux analyses."]],
-imp:["Importer","Ajoute des listes et des règles.",[
- ["📄","Importer depuis un PDF","Liste en PDF","Choisis ton PDF : les unités, armes sont lues et ajoutés."],
- ["📋","…ou colle le texte de la liste","Texte","Colle la liste copiée depuis une autre appli."],
- ["🏳","…ou créer une nouvelle faction","Faction","Range les unités importées dans une faction."],
- ["🔁","📄 Rouvrir le dernier PDF","Dernier PDF","Reprend le dernier PDF sans le rechoisir."],
- ["📄","📄 Importer un PDF : règles, missions, layouts","PDF de règles","Range automatiquement missions et layouts."]]],
-enc:["Règles V11","Une encyclopédie hors ligne.",[
- ["🔎","Appui","Recherche","Tape un mot-clé ou le nom d'une règle."],
- ["📘","📘 Règles générales","Catégories","Règles générales, mots-clés, aptitudes, armes, terrain…"],
- ["＋","＋ Ajouter une règle","Ajouter","Écris ta propre règle ou précision."],
- ["⇅","⇅ Import / export","Import / export","Sauvegarde ou transfère ton encyclopédie."],
- ["🕓","🕓 Historique","Historique","Retrouve les modifications."],
- ["⚠","59 Règles à compléter","À compléter","Liste ce qui manque ou est ambigu, à valider."]]],
-learn:["Apprendre à jouer","Les bases d'une première partie.",[
- ["🎓","","Partie tutorielle","« Premières parties » : coche « Partie tutorielle » dans l'assistant de lancement du Mode jeu et HAMMER te guide pas à pas. Un bandeau d'indications apparaît en haut des écrans du jeu, et chaque unité ouverte affiche un conseil pour la phase en cours."],
- ["✅","","Pas à pas","Coche les 8 étapes de ta première partie."],
- ["📖","","Tiroirs","Dés, fiches, phases, attaque, objectifs, vocabulaire : touche un titre pour l'ouvrir."]]],
-play:["Mode jeu : Unités","Ta liste, pendant la partie.",[
- ["🔎","","Recherche","Unité, arme, aptitude ou stratagème."],
- ["↕","Tout déplier","Déplier / replier","Ouvre ou ferme toutes les fiches d'un coup."],
- ["🃏","","Fiche d'unité","Touche une unité : profil, armes, aptitudes."],
- ["🎲","3+/4++","Lancer les sauvegardes","Touche la valeur SV 🎲 pour lancer les dés de sauvegarde."],
- ["⚄","A","Lancer les attaques","Dans une arme, touche le nombre d'attaques (A) pour ouvrir le lanceur de dés. Quand c'est fini, 💾 enregistre le tir."],
- ["🩸","🩸","Noter des dégâts","Touche 🩸 à côté d'un nom : dégâts infligés ou subis, tour, figurines perdues. Une unité tombée devient grise et passe en bas."]],
- ["La barre du bas : Unités, Stratagèmes, Score, Règles, Gestion, Terminer."]],
-pst:["Mode jeu : Stratagèmes","Les astuces de ton armée.",[
- ["🔎","Tir","Filtres par phase","Commandement, Mouvement, Tir, Charge, Combat : n'affiche que la phase en cours."],
- ["💰","1PC","Coût","Chaque stratagème coûte des points de commandement (PC)."],
- ["📦","Ma liste","Groupes","Stratagèmes de base, puis ceux de ton détachement."]]],
-bat:["Mode jeu : Score","Points, commandement et missions.",[
- ["±","+5","Points à la main","−5, −1, +1, +5 : ajoute ou retire des points d'un joueur."],
- ["🔢","R 1","Rounds","Touche R1 à R5 pour voir ou corriger un round."],
- ["🎴","🎴 Tirer 2 secondaires","Objectifs secondaires","Mode Tactique : tire des cartes. Mode Fixe : choisis-les."],
- ["🚩","Suivre les missions de cette partie","Missions","Coche les objectifs réussis : les points se calculent."],
- ["🩸","🩸 État des unités","État des unités","Voir quelles unités sont encore en jeu."],
- ["📋","📋 Récapitulatif","Récapitulatif","Le résumé de la partie."],
- ["♻","Réinitialiser les scores","Remise à zéro","Remet tous les scores à 0."]]]
+ ["✅","✅ Vérifier","Vérifier la liste","Rapport : points, limite d'unités, détachement, équipements illégaux, avec la correction à faire. Rouge = à corriger, orange = à vérifier."],
+ ["📂","Gérer","Gérer","Ouvre la liste : unités, règles de détachement, stratagèmes, optimisations."],
+ ["⇄","⇄ Envoyer","Envoyer","Affiche un QR code / code pour copier la liste sur un autre téléphone."],
+ ["✏","Renommer","Renommer","Change le nom."],
+ ["🗑","Supprimer","Supprimer","Efface la liste. Les fiches de ta collection restent."]],
+ tp:["Une liste créée dans le Constructeur affiche un badge de conformité ; une liste simple n'est pas contrôlée.","Pense à vérifier ta liste avant de partir jouer."]},
+units:{t:"Unités d'une liste",s:"Le contenu d'une liste : une carte par unité, avec effectif, points et équipement.",
+ st:["Touche une carte pour ouvrir la fiche (profil, armes, aptitudes).","Pour ajouter une unité : « + Ajouter une figurine », choisis-la, valide.","Pour changer l'équipement : touche « ⚙ Équipement » sur la carte, puis la figurine à modifier.","Dans la fiche d'une figurine : touche une arme pour la choisir. Les armes incompatibles sont grisées avec la raison.","Touche « Enregistrer » : tu reviens à la liste des figurines, puis enregistre l'unité.","Pour modifier l'effectif ou les points à la main : champs « Fig. » et « Pts » de la carte.","Pour vérifier toute la liste : bouton « ✅ Vérifier la liste »."],
+ it:[["🃏","","Carte d'unité","Nom, nombre de figurines, points et statut d'équipement (✅ conforme / ❌ à corriger / ⚠ non configuré)."],
+ ["⚙","⚙ Équipement","Équipement","Configure les armes figurine par figurine. C'est le seul endroit où changer les armes d'une unité contrôlée."],
+ ["➕","+ Ajouter une figurine","Ajouter","Unité de ta collection ou de la bibliothèque, puis choix des armes."],
+ ["📄","Fiche vide","Fiche vide","Crée une fiche à la main si l'unité n'existe nulle part."],
+ ["👤","+X pts meneur / appui","Meneur et appui","Un personnage qui rejoint l'unité : ses points sont ajoutés à part."],
+ ["✅","✅ Vérifier la liste","Vérifier la liste","Contrôle V11 de toute la liste."],
+ ["✏","Modifier la liste","Modifier la liste","Réorganise ou renomme la liste."],
+ ["✕","✕","Retirer","Enlève l'unité de la liste ; elle reste en collection."],
+ ["📑","Onglets du haut","Unités / Détachement / Stratagèmes / Optimisations","Chaque onglet montre une partie de la liste."]],
+ tp:["Une unité ⚠ « non configuré » vient d'un import : touche ⚙ pour choisir son équipement.","Un import ne perd jamais tes points ni tes armes : l'ancien équipement est conservé."]},
+dets:{t:"Règles de détachement",s:"Les règles spéciales de ton détachement (une armée en choisit un ou plusieurs selon sa taille).",
+ st:["Regarde la bibliothèque (📚) : les détachements déjà connus.","Touche un détachement pour l'utiliser dans cette liste.","Il se marque « Utilisé » : ses stratagèmes apparaissent en jeu.","Pour en créer un à la main : « + Détachement » (règle et stratagèmes).","Modifier / Supprimer corrige ou retire un détachement que tu as créé."],
+ it:[["📚","Bibliothèque","Bibliothèque","Tous les détachements enregistrés."],["➕","+ Détachement","Nouveau détachement","Crée ta propre règle."],["✔","","Utilisé dans cette liste","Le détachement actif."],["👁","Voir ses stratagèmes","Stratagèmes","Ouvre la liste de ses stratagèmes."],["✏","Modifier","Modifier / Supprimer","Corrige ou retire."]],
+ tp:["Chaque détachement coûte des points de détachement ; le Constructeur t'empêche de dépasser la limite."]},
+strats:{t:"Stratagèmes",s:"Les astuces à jouer avec tes points de commandement (PC).",
+ st:["Choisis la phase avec les filtres (Commandement, Mouvement, Tir, Charge, Combat).","Lis le coût en PC et le moment où on peut le jouer.","Pour ajouter le tien : « + Stratagème » (nom, coût, quand, effet).","Les stratagèmes de base viennent en premier, puis ceux de ton détachement."],
+ it:[["➕","+ Stratagème","Ajouter","Nom, coût en PC, moment, effet."],["🔎","Tir","Filtres par phase","Ne montre que la phase choisie."],["📦","Ma liste","Groupes","Base puis détachement."]]},
+opti:{t:"Optimisations",s:"Les améliorations rattachées à tes personnages.",
+ st:["« + Optimisation » : écris son nom, son coût et son effet.","Elle apparaît sur la liste qui la porte.","Dans le Constructeur, les optimisations sont choisies directement sur le personnage et vérifiées (une seule par personnage, pas deux fois la même)."],
+ it:[["➕","+ Optimisation","Ajouter","Note une amélioration."],["🧹","Effacer","Effacer","Supprime le texte."]]},
+coll:{t:"Collection",s:"Toutes tes figurines, une fiche par unité (profil, armes, aptitudes).",
+ st:["Pour chercher : champ « Rechercher » (nom, mot-clé, équipement ou liste).","Touche une carte pour ouvrir la fiche.","Pour ajouter depuis la bibliothèque V11 : « 📚 Bibliothèque », choisis les unités, « ➕ Ajouter à ma collection ».","Pour une faction : « + Faction », nom et bannière ; tes figurines se rangent dedans.","Pour supprimer plusieurs fiches : « Sélectionner », coche, puis supprime.","Pour lier une fiche à la bibliothèque : touche 📚 sur la fiche (indispensable pour vérifier l'équipement)."],
+ it:[["🔎","Rechercher","Recherche","Par nom, mot-clé, équipement ou liste."],["📚","📚 Bibliothèque","Bibliothèque V11","Catalogue officiel des unités avec points et équipements."],["🏳","+ Faction","Factions","Crée une faction."],["☑","Sélectionner","Sélection multiple","Coche plusieurs fiches."],["🔗","🔗","Lien bibliothèque","Une fiche non liée ne peut pas être vérifiée : lie-la en une touche."],["🗑","Tout supprimer","Tout supprimer","Vide la collection (confirmation demandée)."]],
+ tp:["Une fiche importée avec le même nom que l'existante y ajoute ses armes sans rien écraser."]},
+bib:{t:"Bibliothèque V11",s:"Le catalogue officiel (Space Marines, Orks, etc.) : unités, détachements, stratagèmes, améliorations, règles.",
+ st:["Filtre par faction avec la liste déroulante.","Choisis un onglet : Unités, Détachements, Stratagèmes, Améliorations, Règles.","Touche un élément pour lire sa fiche.","Pour ajouter des unités : « ☐ Sélectionner », coche, puis « ➕ Ajouter à ma collection ».","« ⚠ À vérifier » liste ce qui est incertain.","« ⚙ Gérer » ouvre la mise à jour et les licences."],
+ it:[["🔎","Rechercher","Recherche","Français ou anglais."],["➕","➕ Ajouter à ma collection","Ajouter","Crée la fiche dans ta collection, liée à la bibliothèque."],["⚠","⚠ À vérifier","À vérifier","Points ou règles incertains."],["⚙","⚙ Gérer","Gérer","Mise à jour des données et sources."]]},
+paint:{t:"Peinture & Hobby",s:"L'avancement de tes figurines, tes schémas de peinture et tes pots.",
+ st:["Cherche une figurine ou une faction dans le champ du haut.","Touche l'état d'une figurine : À monter, Monté, Sous-couché, En peinture, Terminé.","« 🖌 Schémas par figurine » : note les couleurs utilisées.","« 🎨 Mes peintures » : ta collection de pots. Pour en ajouter, scanne le code-barres ou cherche la marque.","Sur un pot : touche la couleur plein écran, ± pour la quantité, état Plein / Vide / À acheter.","Le compteur du haut montre le pourcentage terminé."],
+ it:[["📊","À monter … Terminé","Statuts","Touche pour changer l'état."],["🖌","🖌 Schémas par figurine","Schémas","Recettes par figurine."],["🎨","🎨 Mes peintures","Peintures","Tes pots, avec quantité et état."],["📷","Scanner","Scanner un pot","Lit le code-barres et retrouve le pot (nécessite l'appareil photo)."],["🏆","","Progression","Pourcentage de figurines terminées."]]},
+mis:{t:"Missions & Layout",s:"Cartes de mission, objectifs secondaires et plans de terrain.",
+ st:["Choisis un onglet : 🎯 Primaires, ⚡ Secondaires, 🗺 Layouts, 📁 Autres.","Cherche une carte avec le champ de recherche.","Touche une carte pour lire sa mission.","Pour importer des cartes : « 📄 Importer un PDF », le PDF est lu et chaque carte rangée.","« + Dossier de primaires » crée ton propre dossier.","« ⬆ Exporter mes photos » sauvegarde les photos de layouts ; « ⬇ Importer des photos » les restaure."],
+ it:[["🎯","🎯 Primaires","Primaires","Objectifs principaux."],["⚡","⚡ Secondaires","Secondaires","Objectifs secondaires."],["🗺","🗺 Layouts","Layouts","Plans de terrain."],["📄","📄 Importer un PDF","Importer un PDF","Range automatiquement."],["📷","⬆ Exporter mes photos","Photos","Export / import."]]},
+ana:{t:"Centre de commandement",s:"Tes parties, statistiques, duels, conseils et journal.",
+ st:["Onglet « 🏁 Parties » : tes parties en cours et terminées. « Historique manuel » ajoute une partie jouée ailleurs.","Filtre avec « Filtres » pour regarder un adversaire ou un détachement.","Onglet « ⚔ Affronter » : duel (une figurine contre une autre) ou simulation.","Onglet « 💡 Conseils » : qui envoyer contre qui.","Onglet « 📓 Journal » : tout ce que tu as noté en jouant.","Onglet « 🛡 Armées » : choisis deux armées pour les comparer."],
+ it:[["🏁","🏁 Parties","Parties","Historique et statistiques de victoires."],["⚔","⚔ Affronter","Affronter","Duel ou simulation, avec le détail par arme."],["💡","💡 Conseils","Conseils","Cibles prioritaires, unités à protéger."],["📓","📓 Journal","Journal","Dégâts, unités tombées, jets. Export / import."],["🛡","🛡 Armées","Armées","Comparer deux armées."]]},
+imp:{t:"Importer",s:"Ajoute des listes ou des règles depuis un PDF ou un texte.",
+ st:["Donne un nom à la liste (facultatif : points de l'armée).","Choisis la faction des figurines, ou laisse « Automatique ».","Choisis un PDF avec « Importer depuis un PDF », ou colle le texte de la liste.","Touche « Importer ».","Va dans Mes armées : ouvre la liste et, sur chaque unité ⚠, touche ⚙ pour choisir l'équipement.","« 📄 Importer un PDF : règles, missions, layouts » range automatiquement les cartes."],
+ it:[["📄","Importer depuis un PDF","Liste en PDF","Lit unités et armes."],["📋","…ou colle le texte","Texte","Colle une liste copiée d'une autre appli."],["🏳","…ou créer une faction","Faction","Range les figurines importées."],["🔁","Rouvrir le dernier PDF","Dernier PDF","Reprend sans rechoisir."]],
+ tp:["Les points ne sont pas recalculés à l'import : ils sont conservés tels que lus."]},
+enc:{t:"Règles V11",s:"L'encyclopédie hors ligne des règles.",
+ st:["Tape un mot-clé dans la recherche.","Ou choisis une catégorie : Règles générales, Mots-clés, Aptitudes, Armes, Terrain…","Touche une règle pour la lire.","« ＋ Ajouter une règle » : écris ta propre précision.","« 🕓 Historique » retrouve les modifications ; « ⇅ Import / export » sauvegarde l'encyclopédie.","« Nouvelles règles à valider » liste ce qui vient d'être détecté."],
+ it:[["🔎","Rechercher","Recherche","Mot-clé ou nom."],["📘","Catégories","Catégories","Règles générales, mots-clés, aptitudes, armes, terrain."],["＋","＋ Ajouter une règle","Ajouter","Ta propre règle."],["⇅","⇅ Import / export","Import / export","Sauvegarde."],["🕓","🕓 Historique","Historique","Modifications."]]},
+learn:{t:"Apprendre à jouer",s:"Les bases pour une première partie.",
+ st:["Lis les tiroirs dans l'ordre : Avant de commencer, Les dés, Lire une fiche, Un tour, Une attaque, Objectifs, Vocabulaire, Conseils.","Coche les 8 étapes de « Ta première partie pas à pas » au fur et à mesure.","Pour être guidé en direct : « 🎓 Commencer une partie tutorielle » ; l'assistant du Mode jeu s'ouvre avec la partie tutorielle cochée.","Pendant la partie tutorielle, un bandeau en haut des écrans de jeu te dit quoi faire à chaque étape."],
+ it:[["🎓","🎓 Commencer une partie tutorielle","Partie tutorielle","Un coach pas à pas par-dessus le Mode jeu."],["✅","","Pas à pas","8 étapes à cocher."],["📖","","Tiroirs","Touche un titre pour l'ouvrir."]]},
+bld:{t:"Constructeur d'armée",s:"Crée une armée légale en 4 étapes : Armée, Règles, Unités, Vérifier.",
+ st:["Écran de départ : donne un nom, choisis la faction, la limite de points (500 / 1000 / 2000 ou saisie), un format facultatif, puis « Créer l'armée → ».","Étape 1 « Armée » : vérifie faction et limite, puis « ➕ Choisir un détachement » (le coût en points de détachement est affiché).","Étape 2 « Règles » : lis la règle de faction et celle du détachement ; « Suivant ».","Étape 3 « Unités » : « ➕ Ajouter une unité », cherche (français ou anglais), filtre par collection / bibliothèque / rôle, touche l'unité.","Écran de configuration : choisis l'effectif (le coût s'adapte), l'équipement, un meneur ou un appui, une amélioration (personnages).","Pour l'équipement : touche une figurine, touche les armes à prendre dans sa fiche (les incompatibles sont grisées), « Enregistrer », puis « Ajouter à l'armée ».","Si un choix est illégal, une fenêtre explique pourquoi : « Modifier » pour corriger ou « Ajouter quand même » à tes risques.","Étape 4 « Vérifier » : le verdict V11 liste les erreurs et leur correction. Corrige jusqu'au vert, puis enregistre."],
+ it:[["1","1 Armée","Armée","Faction, limite de points, détachement."],["2","2 Règles","Règles","Règle de faction et de détachement."],["3","3 Unités","Unités","Ajoute et configure."],["4","4 Vérifier","Vérifier","Verdict et corrections."],["🔎","Rechercher une unité…","Catalogue","📦 collection, 📚 bibliothèque ou toutes ; 🔗 = fiche à lier."],["⚙","⚙ Équipement","Équipement","Fiche figurine par figurine ; seule porte pour changer les armes."],["±","Composition","Composition","Nombre de figurines de chaque type (ex. 1 Sergent + 4)."],["💰","Équipements payants","Équipements payants","Coût en plus, selon le barème Wahapedia."],["⛔","Fenêtres de blocage","Blocages","Dépassement d'effectif, arme interdite, doublon d'amélioration, limite d'unités."],["ℹ","ℹ Comment ça marche ?","Aide du Constructeur","Rappel des règles V11 : limites de points, d'unités, de personnages épiques."]],
+ tp:["Incursion 1000 pts : 2 pts de détachement, 2 améliorations, 2 exemplaires max d'une unité ; Strike Force 2000 pts : 3 / 4 / 3.","Un doublon est doublé pour les unités Battleline et les Transports dédiés ; les Héros épiques : 1 seul.","Une amélioration par personnage, jamais sur un Héros épique."]},
+lore:{t:"Lore",s:"Ton carnet personnel d'univers : tu écris, il garde.",
+ st:["Touche une rubrique : Histoire, Personnages, Organisations, Couleurs et Héraldique.","Touche « ✎ Modifier » pour écrire ou changer le texte.","Ajoute des images si tu veux, puis enregistre."],
+ it:[["✎","✎ Modifier","Modifier","Écris ton texte."],["📚","Rubriques","Rubriques","Quatre rubriques de départ."]]},
+news:{t:"Nouveautés",s:"Ce qui a changé et l'état de tes données.",
+ st:["« 🔄 Vérifier maintenant » cherche une mise à jour (connexion nécessaire).","Ouvre un tiroir « 📚 Bibliothèque » pour voir ce qui a changé dans les règles et les points.","Ouvre un tiroir « 🛠 Application » pour lire les nouveautés de l'appli."],
+ it:[["🔄","🔄 Vérifier maintenant","Mise à jour","Cherche les données récentes."],["⚠","⚠️🌐","Hors ligne","Indique qu'il n'y a pas de connexion."]],
+ tp:["Sur l'APK, l'application se met à jour toute seule au lancement."]},
+play:{t:"Mode jeu : Unités",s:"Ta liste, pendant la partie.",
+ st:["Cherche une unité, une arme, une aptitude ou un stratagème.","Touche une unité pour déplier sa fiche ; « Tout déplier » ouvre toutes les fiches.","Touche la valeur de sauvegarde pour lancer les dés de sauvegarde.","Dans une arme, touche le nombre d'attaques pour ouvrir le lanceur de dés, puis 💾 enregistre le tir.","Touche 🩸 à côté d'un nom pour noter dégâts, tour et figurines perdues.","Une unité détruite devient grise et passe en bas.","Barre du bas : Unités, Stratagèmes, Score, Règles, Gestion, Terminer."],
+ it:[["🔎","","Recherche","Unité, arme, aptitude ou stratagème."],["↕","Tout déplier","Déplier / replier","Ouvre ou ferme toutes les fiches."],["🎲","3+/4++","Sauvegardes","Lance les dés de sauvegarde."],["⚄","A","Attaques","Lanceur de dés."],["🩸","🩸","Dégâts","Note dégâts et pertes."]]},
+pst:{t:"Mode jeu : Stratagèmes",s:"Les stratagèmes de ton armée, par phase.",
+ st:["Choisis la phase avec les filtres.","Lis le coût en PC et le moment où il se joue.","Les stratagèmes de base d'abord, puis ceux de ton détachement."],
+ it:[["🔎","Tir","Filtres","Phase en cours."],["💰","1PC","Coût","Points de commandement."]]},
+bat:{t:"Mode jeu : Score",s:"Points de victoire, commandement et missions.",
+ st:["Touche ±1 / ±5 pour modifier les points d'un joueur.","Touche R1 à R5 pour voir ou corriger un round.","« 🎴 Tirer 2 secondaires » (mode tactique) ou choisis-les (mode fixe).","« 🚩 Suivre les missions de cette partie » : coche les objectifs réussis, les points se calculent.","« 🩸 État des unités » montre ce qui est encore en jeu ; « 📋 Récapitulatif » résume la partie.","Termine avec « Terminer » en bas : la partie est enregistrée dans le Centre de commandement."],
+ it:[["±","+5","Points","−5, −1, +1, +5."],["🔢","R 1","Rounds","R1 à R5."],["🎴","🎴 Tirer 2 secondaires","Secondaires","Tactique ou fixe."],["🚩","Suivre les missions","Missions","Objectifs cochés."],["♻","Réinitialiser les scores","Remise à zéro","Remet à 0."]]}
 };
+const ALIAS={gm:"ana",str:"strats",strats0:"strats",dets0:"dets",det:"dets",enh:"opti",rules:"enc",chk:"lists"};
 const css=`<style id="hpcss">
-.hp{margin:0 0 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card);overflow:hidden}
-.hp>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 14px;min-height:48px;cursor:pointer;position:relative;font-weight:800;font-size:14px}.hp>summary::-webkit-details-marker{display:none}
-.hp>summary .hp-q{width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}.hp>summary small{display:block;font-weight:400;font-size:12px;color:var(--mu)}
-.hp>summary::after{content:"›";position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--mu);transition:transform .2s}.hp[open]>summary::after{transform:translateY(-50%) rotate(90deg)}
-.hp-b{padding:2px 12px 12px;border-top:1px solid var(--bd)}.hp-i{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--bd)}.hp-i:first-child{border-top:0}
-.hp-ic{font-size:22px;text-align:center;line-height:1.2}.hp-i b{display:block;font-size:14px}.hp-i p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--mu)}
-.hp-k{display:inline-block;margin:4px 0 2px;padding:3px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:12.5px;font-weight:700;box-shadow:0 1px 0 rgba(0,0,0,.25)}
-.hp-t{margin:8px 0 0;padding:8px 10px;border-left:4px solid var(--ac);background:var(--bg);border-radius:8px;font-size:12.5px;line-height:1.4}
+#hpq{position:fixed;left:10px;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:16;width:30px;height:30px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--mu);font:700 15px/1 system-ui;display:grid;place-items:center;opacity:.55;cursor:pointer;padding:0;box-shadow:0 1px 6px rgba(0,0,0,.25)}#hpq:active,#hpq:hover{opacity:1;color:var(--ac)}
+#hpov{position:fixed;inset:0;z-index:60;background:rgba(5,12,9,.65);display:flex;align-items:flex-end;justify-content:center}
+.hpn{background:var(--card);color:var(--tx);width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px 20px;box-shadow:0 -10px 40px rgba(0,0,0,.5)}
+.hpn h2{margin:0;font-size:20px}.hpn .hp-s{color:var(--mu);font-size:13px;margin:2px 0 8px}
+.hp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.hp-x{min-width:40px;min-height:40px;border-radius:50%;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px;cursor:pointer}
+.hp-h{margin:16px 0 6px;padding:6px 10px;border-radius:8px;background:var(--ac);color:#fff;font-weight:800;font-size:12.5px;letter-spacing:.6px;text-transform:uppercase}
+.hp-o{counter-reset:s;list-style:none;padding:0;margin:0}.hp-o li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:8px;padding:8px 0;border-top:1px solid var(--bd);font-size:14px;line-height:1.4}.hp-o li:first-child{border-top:0}
+.hp-o li::before{content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px}
+.hp-i{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--bd)}.hp-i:first-of-type{border-top:0}
+.hp-ic{font-size:21px;text-align:center;line-height:1.2}.hp-i b{display:block;font-size:14px}.hp-i p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--mu)}
+.hp-k{display:inline-block;margin:3px 0 1px;padding:2px 10px;border-radius:9px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:12px;font-weight:700}
+.hp-t{margin:6px 0 0;padding:8px 10px;border-left:4px solid #e08a2c;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.4}
+.hp-ok{width:100%;margin-top:14px;min-height:46px;border:0;border-radius:12px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer}
 </style>`;
-function html(k){const h=H[k];if(!h)return"";const tips=h[3]||[];
- return`<details class="hp" data-hp="${k}"><summary><span class="hp-q">?</span><div>Tuto : ${E(h[0])}<small>${E(h[1])}</small></div></summary><div class="hp-b">${h[2].map(i=>`<div class="hp-i"><span class="hp-ic">${i[0]}</span><div><b>${E(i[2])}</b>${i[1]?`<span class="hp-k">${E(i[1])}</span>`:""}<p>${E(i[3])}</p></div></div>`).join("")}${tips.map(t=>`<div class="hp-t">💡 ${E(t)}</div>`).join("")}</div></details>`}
-let busy=false,OPEN={};
-function mount(){if(busy)return;busy=true;try{const m=document.getElementById("m");if(!m||typeof tab==="undefined")return;
- if(!document.getElementById("hpcss"))document.head.insertAdjacentHTML("beforeend",css);
- const k=tab;const cur=m.querySelector(":scope>.hp");
- if(!H[k]){if(cur)cur.remove();return}
- if(cur&&cur.dataset.hp===k)return;if(cur)cur.remove();
- m.insertAdjacentHTML("afterbegin",html(k));const d=m.querySelector(":scope>.hp");if(d&&OPEN[k])d.open=true}
- catch(e){}finally{busy=false}}
-document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.classList.contains("hp"))OPEN[d.dataset.hp]=d.open},true);
-let tm=null;new MutationObserver(()=>{if(busy)return;clearTimeout(tm);tm=setTimeout(mount,50)}).observe(document.body,{childList:true,subtree:true});
+const key=()=>{const k=typeof tab!=="undefined"?tab:"home";return H[k]?k:(ALIAS[k]&&H[ALIAS[k]]?ALIAS[k]:null)};
+function html(k){const h=H[k];return`<div class="hpn" role="dialog" aria-label="Tuto : ${E(h.t)}"><div class="hp-top"><div><h2>${E(h.t)}</h2><div class="hp-s">${E(h.s)}</div></div><button class="hp-x" data-hpx aria-label="Fermer">✕</button></div>
+ <div class="hp-h">Pas à pas</div><ol class="hp-o">${h.st.map(x=>`<li><span>${E(x)}</span></li>`).join("")}</ol>
+ <div class="hp-h">Chaque bouton, en détail</div>${h.it.map(i=>`<div class="hp-i"><span class="hp-ic">${i[0]}</span><div><b>${E(i[2])}</b>${i[1]?`<span class="hp-k">${E(i[1])}</span>`:""}<p>${E(i[3])}</p></div></div>`).join("")}
+ ${(h.tp||[]).length?`<div class="hp-h">À savoir</div>${h.tp.map(x=>`<div class="hp-t">${E(x)}</div>`).join("")}`:""}
+ <button class="hp-ok" data-hpx>J'ai compris</button></div>`}
+function open(k){k=k||key();if(!k)return;close();document.body.insertAdjacentHTML("beforeend",`<div id="hpov">${html(k)}</div>`)}
+function close(){const o=document.getElementById("hpov");if(o)o.remove()}
+document.addEventListener("click",e=>{const t=e.target;if(!t||!t.closest)return;if(t.closest("#hpq")){e.preventDefault();open();return}if(t.closest("[data-hpx]")){close();return}if(t.id==="hpov")close()},true);
+function mount(){try{if(!document.getElementById("hpcss"))document.head.insertAdjacentHTML("beforeend",css);
+ const old=document.querySelector("#m>.hp");if(old)old.remove();
+ let b=document.getElementById("hpq");if(!b){b=document.createElement("button");b.id="hpq";b.type="button";b.title="Tuto de ce menu";b.setAttribute("aria-label","Tuto de ce menu");b.textContent="?";document.body.appendChild(b)}
+ b.style.display=key()?"":"none"}catch(e){}}
+let tm=null;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(mount,80)}).observe(document.body,{childList:true,subtree:true});
 mount();
-window.HELPUI={mount,topics:Object.keys(H)};
+window.HELPUI={mount,open,topics:Object.keys(H)};
 })();
 
 </script>
@@ -8393,6 +8401,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:56,d:"2026-11-23",t:"Tuto : un petit rond « ? » sur chaque menu",s:"Le bandeau de tuto n'est plus affiché en permanence. Un petit rond « ? » discret (en bas à gauche) ouvre le guide du menu en cours : pas à pas numéroté, puis explication de chaque bouton. Guides refaits et détaillés pour tous les menus, y compris Constructeur d'armée, Bibliothèque, Lore et Nouveautés."},
  {id:55,d:"2026-11-23",t:"Armes : un seul menu",s:"Les armes se changent désormais uniquement dans la fiche de la figurine : touche une figurine dans la liste pour l'ouvrir. Les boutons ＋/− d'armes de l'écran principal ont été retirés ; la composition (nombre de figurines par type) reste modifiable."},
  {id:54,d:"2026-11-23",t:"Fiche figurine plus lisible",s:"Dans la fiche d'une figurine : bandeaux colorés « Équipement actuel », « Changements possibles » (armes à choisir) et « Options d'équipement de l'unité » (règles officielles). Une arme incompatible avec ton choix est grisée et non cliquable."},
  {id:53,d:"2026-11-23",t:"Fiche plein écran par figurine",s:"Au choix des armes figurine par figurine, touche une figurine : sa fiche s'ouvre directement (caractéristiques, équipement actuel, profils de toutes les armes proposées). Touche une arme pour la choisir, puis « Enregistrer » te ramène à la liste des figurines."},
