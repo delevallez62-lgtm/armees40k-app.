@@ -18,6 +18,7 @@ const plusOn=re=>ev(re=>{const r=[...document.querySelectorAll('#bldm .bld-pr')]
 // ---- Escouade de Terminators, 5 figurines : + / − par arme
 await open('terminator','^Escouade de Terminators$',5);
 ok('lignes + / − affichées',await ev(()=>document.querySelectorAll('#bldm .bld-pr').length>=3),await ev(()=>document.querySelectorAll('#bldm .bld-pr').length));
+await ev(()=>{const d=document.querySelector("#bldm details[data-figq]");if(d)d.open=true});await wait(300);
 ok('poing tronçonneur : 0 au départ',await cntOf('tron|chainfist')===0,await cntOf('tron|chainfist'));
 await pm('tron|chainfist',1);await pm('tron|chainfist',1);await wait(200);
 ok('poing tronçonneur : + deux fois → 2',await cntOf('tron|chainfist')===2,await cntOf('tron|chainfist'));

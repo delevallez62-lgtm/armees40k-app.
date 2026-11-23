@@ -16,6 +16,7 @@ await p.screenshot({path:'eq6a.png'});
 await ev(()=>document.querySelector('[data-eqc="0"]').click());await wait(500);
 ok('le configurateur ＋/− s’ouvre sur l’unité de la liste',await ev(()=>!!document.querySelector('#bldm .bld-pr')&&/Équipement/.test(document.getElementById('bldm').innerText)),await ev(()=>document.getElementById('bldm').innerText.slice(0,120)));
 ok('configuration reconstituée légale (pas d’erreur)',await ev(()=>/Équipement conforme/.test(document.getElementById('bldm').innerText)),1);
+await ev(()=>{const d=document.querySelector("#bldm details[data-figq]");if(d)d.open=true});await wait(300);
 ok('2 armes spéciales d’emblée impossibles (max 1 pour 5) : ＋ bloqué',await ev(()=>{const r=[...document.querySelectorAll('#bldm .bld-pr')].find(r=>/canon d.assaut/i.test(r.innerText)||/lance-flammes/i.test(r.innerText));return r&&r.querySelector('button[data-d="1"]').disabled}),1);
 // − sur l'arme déjà placée puis ＋ sur une autre
 await ev(()=>{const rs=[...document.querySelectorAll('#bldm .bld-pr')].filter(r=>/canon d.assaut|lance-flammes|cyclone/i.test(r.innerText)&&+r.querySelector('.bld-st b').innerText>0);if(rs[0])rs[0].querySelector('button[data-d="-1"]').click()});await wait(250);
