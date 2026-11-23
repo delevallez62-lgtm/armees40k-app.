@@ -118,6 +118,11 @@ const css=`<style id="hpcss">
 .hp-t{margin:6px 0 0;padding:8px 10px;border-left:4px solid #e08a2c;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.4}
 .hp-ok{width:100%;margin-top:14px;min-height:46px;border:0;border-radius:12px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer}
 </style>`;
+const gcss=`<style id="gmcss">
+header .chrp{position:absolute;right:12px;top:55px;margin:0;padding:1px 9px;font-size:12px;background:rgba(255,255,255,.18)}
+.mzb:has(>.chrp:only-child){display:block;height:0;min-height:0;margin:0;padding:0;overflow:visible}
+header .mbq{padding:3px 8px 4px 12px;gap:1px}header .mbc button,header .mbq button{min-height:30px;min-width:30px}header .mbc b{font-size:17px}header .mbl b{font-size:18px}
+</style>`;
 const key=()=>{const k=typeof tab!=="undefined"?tab:"home";return H[k]?k:(ALIAS[k]&&H[ALIAS[k]]?ALIAS[k]:null)};
 function html(k){const h=H[k];return`<div class="hpn" role="dialog" aria-label="Tuto : ${E(h.t)}"><div class="hp-top"><div><h2>${E(h.t)}</h2><div class="hp-s">${E(h.s)}</div></div><button class="hp-x" data-hpx aria-label="Fermer">✕</button></div>
  <div class="hp-h">Pas à pas</div><ol class="hp-o">${h.st.map(x=>`<li><span>${E(x)}</span></li>`).join("")}</ol>
@@ -127,7 +132,7 @@ function html(k){const h=H[k];return`<div class="hpn" role="dialog" aria-label="
 function open(k){k=k||key();if(!k)return;close();document.body.insertAdjacentHTML("beforeend",`<div id="hpov">${html(k)}</div>`)}
 function close(){const o=document.getElementById("hpov");if(o)o.remove()}
 document.addEventListener("click",e=>{const t=e.target;if(!t||!t.closest)return;if(t.closest("#hpq")){e.preventDefault();open();return}if(t.closest("[data-hpx]")){close();return}if(t.id==="hpov")close()},true);
-function mount(){try{if(!document.getElementById("hpcss"))document.head.insertAdjacentHTML("beforeend",css);
+function mount(){try{if(!document.getElementById("hpcss"))document.head.insertAdjacentHTML("beforeend",css);if(!document.getElementById("gmcss"))document.head.insertAdjacentHTML("beforeend",gcss);
  const old=document.querySelector("#m>.hp");if(old)old.remove();
  let b=document.getElementById("hpq");if(!b){b=document.createElement("button");b.id="hpq";b.type="button";b.title="Tuto de ce menu";b.setAttribute("aria-label","Tuto de ce menu");b.textContent="?";document.body.appendChild(b)}
  b.style.display=key()?"":"none"}catch(e){}}
