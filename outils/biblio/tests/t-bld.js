@@ -4,7 +4,7 @@ const R=[];const ok=(n,c,x)=>{R.push((c?'✅ ':'❌ ')+n+(x!==undefined?' → '+
 await ctx.route(/^https?:\/\/(?!localhost)/,r=>{const u=r.request().url();if(/localhost:8766/.test(u))return r.continue();r.abort()});
 const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2500);
-const ev=(f,a)=>p.evaluate(f,a);const click=async sel=>{await p.evaluate(s=>{let e=document.querySelector(s);if(!e&&!s.includes('[data-bld="step"]')){for(const n of ['1','2','3','4']){const t=document.querySelector('[data-bld="step"][data-s="'+n+'"]');if(t){t.click();e=document.querySelector(s);if(e)break}}}if(!e)throw new Error('absent '+s);e.click()},sel);await p.waitForTimeout(250)};
+const ev=(f,a)=>p.evaluate(f,a);const click=async sel=>{await p.evaluate(s=>{if(!/figo|figall|figpm|figback|data-bld="fig"/.test(s)){const fb=document.querySelector('[data-bld="figback"]');if(fb)fb.click()}let e=document.querySelector(s);if(!e&&!s.includes('[data-bld="step"]')){for(const n of ['1','2','3','4']){const t=document.querySelector('[data-bld="step"][data-s="'+n+'"]');if(t){t.click();e=document.querySelector(s);if(e)break}}}if(!e)throw new Error('absent '+s);e.click()},sel);await p.waitForTimeout(250)};
 await ev(async()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();await BIB.init();window.__majPop=1;
  // fiches de collection : 1 liée à Terminator Squad, 1 non liée
  const W=(n,r,a,h,f,pa,d)=>({name:n,range:r,a,hit:h,f,pa,d,caps:''});
@@ -57,11 +57,12 @@ await ev(()=>{[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Terminator
 t=await html();
 ok('équipement par figurine : liste des figurines affichée',(await ev(()=>document.querySelectorAll('#bldm .bld-fg').length))>=5);
 // taille 10 : sergent arme énergétique ; 9 poings tronçonneurs (« toutes »)
-await click('[data-bld="size"][data-v="10"]');await ev(()=>{BLDSTATE.figOpen=true});await click('[data-bld="fig"][data-i="0"]');
+await click('[data-bld="size"][data-v="10"]');await ev(()=>{BLDSTATE.figOpen=true});await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await click('[data-bld="fig"][data-i="0"]');
 await ev(()=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>/énergétique|power weapon/i.test(x.innerText)&&!x.disabled);e.click()});await p.waitForTimeout(200);
-await click('[data-bld="fig"][data-i="1"]');
+await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await click('[data-bld="fig"][data-i="1"]');
 await ev(()=>{const e=document.querySelector('#bldm [data-bld="figall"]');e.click()});await p.waitForTimeout(250);
 // 7) équipement payant : Cyclone (barème Wahapedia)
+await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await p.waitForTimeout(200);
 const wg=await ev(()=>[...document.querySelectorAll('#bldm [data-bld="wg"]')].map(x=>x.dataset.k));ok('équipement payant lu dans le barème',wg.includes('Cyclone Missile Launcher'),wg);
 await ev(()=>document.querySelector('#bldm [data-bld="wg"][data-d="1"]').click());await ev(()=>document.querySelector('#bldm [data-bld="wg"][data-d="1"]').click());await p.waitForTimeout(150);
 const pvw=await ev(()=>document.querySelector('#bldm .bld-bar b').innerText);ok('coût de l\'équipement payant ajouté (2 × 10)',/\d+ pts/.test(pvw),pvw);
