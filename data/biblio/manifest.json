@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+pa4abb5a+wp2026-11-23+fr14615.a86bc7",
+ "version": "11e-2026-11-12-7cb6104+pa4abb5a+wp2026-11-23+fr14616.2c7949",
  "generated": "2026-11-23",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -65,15 +65,6 @@
     "enhancements": 0,
     "stratagems": 10,
     "rules": 49
-   }
-  },
-  {
-   "id": "fr",
-   "file": "fr.json",
-   "sha1": "a86bc72c6c94163eef91d07588db6a7011862399",
-   "bytes": 2225125,
-   "counts": {
-    "translations": 14615
    }
   },
   {
@@ -430,6 +421,15 @@
    "bytes": 98412,
    "counts": {
     "words": 3329
+   }
+  },
+  {
+   "id": "fr",
+   "file": "fr.json",
+   "sha1": "2c79495484b14bedb49bcde726108e0b76682adf",
+   "bytes": 2225518,
+   "counts": {
+    "translations": 14616
    }
   }
  ]
