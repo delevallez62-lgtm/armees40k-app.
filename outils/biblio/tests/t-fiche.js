@@ -12,4 +12,6 @@ const fig=async i=>{await ev(()=>{BLDSTATE.figOpen=true});await ev(()=>{const b=
 const chips=()=>ev(()=>[...document.querySelectorAll('#bldm .bld-fcw')].map(w=>({t:w.querySelector('.bld-fc').innerText.trim(),on:w.querySelector('.bld-fc').classList.contains('on'),off:w.querySelector('.bld-fc').disabled,why:(w.querySelector('.bld-why')||{}).innerText||''})));
 await open('terminator','^Escouade de Terminators$',5);await ev(()=>{BLDSTATE.figOpen=true});await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await click('[data-bld="fig"][data-i="0"]');
 const r=await ev(()=>({fiche:(document.querySelector('.bld-fiche')||{}).innerText,chip:(document.querySelector('.bld-fc')||{}).innerText}));console.log(JSON.stringify(r).slice(0,700));
-await p.screenshot({path:'fiche.png'});await b.close()})();
+await ev(()=>{const e=[...document.querySelectorAll("#bldm .bld-fc")].find(x=>/Poing tron/i.test(x.innerText)&&!x.disabled);if(e)e.click()});await wait(300);
+console.log(JSON.stringify(await ev(()=>({off:[...document.querySelectorAll("#bldm .bld-fc")].filter(x=>x.disabled).map(x=>x.innerText.split("\n")[0]),ops:(document.querySelector(".bld-ops")||{innerText:""}).innerText.length,secs:[...document.querySelectorAll(".bld-sec")].map(x=>x.innerText.split("\n")[0])}))));
+await p.screenshot({path:"fiche.png"});await b.close()})();
