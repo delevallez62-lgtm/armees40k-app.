@@ -14,13 +14,13 @@ const card=await ev(()=>{const b=document.querySelector('[data-eqc="0"]');return
 ok('carte de l’unité importée : bouton équipement avec statut ❌',card&&/❌/.test(card.t),card);
 await p.screenshot({path:'eq6a.png'});
 await ev(()=>document.querySelector('[data-eqc="0"]').click());await wait(500);
-ok('le configurateur ＋/− s’ouvre sur l’unité de la liste',await ev(()=>!!document.querySelector('#bldm .bld-pr')&&/Équipement/.test(document.getElementById('bldm').innerText)),await ev(()=>document.getElementById('bldm').innerText.slice(0,120)));
+ok('le configurateur s’ouvre sur l’unité de la liste (figurines à modifier)',await ev(()=>!!document.querySelector('#bldm .bld-fg')&&/Équipement/.test(document.getElementById('bldm').innerText)),await ev(()=>document.getElementById('bldm').innerText.slice(0,120)));
 ok('configuration reconstituée légale (pas d’erreur)',await ev(()=>/Équipement conforme/.test(document.getElementById('bldm').innerText)),1);
-await ev(()=>{const d=document.querySelector("#bldm details[data-figq]");if(d)d.open=true});await wait(300);
-ok('2 armes spéciales d’emblée impossibles (max 1 pour 5) : ＋ bloqué',await ev(()=>{const r=[...document.querySelectorAll('#bldm .bld-pr')].find(r=>/canon d.assaut/i.test(r.innerText)||/lance-flammes/i.test(r.innerText));return r&&r.querySelector('button[data-d="1"]').disabled}),1);
-// − sur l'arme déjà placée puis ＋ sur une autre
-await ev(()=>{const rs=[...document.querySelectorAll('#bldm .bld-pr')].filter(r=>/canon d.assaut|lance-flammes|cyclone/i.test(r.innerText)&&+r.querySelector('.bld-st b').innerText>0);if(rs[0])rs[0].querySelector('button[data-d="-1"]').click()});await wait(250);
-await ev(()=>{const r=[...document.querySelectorAll('#bldm .bld-pr')].find(r=>/tron|chainfist/i.test(r.innerText));r.querySelector('button[data-d="1"]').click()});await wait(250);
+ok('plus de boutons ＋/− d’armes dans l’écran principal',await ev(()=>!document.querySelector('#bldm .bld-pr')&&!document.querySelector('#bldm .bld-fc')),1);
+await ev(()=>{document.querySelector('#bldm .bld-fg').click()});await wait(300);
+ok('la fiche de la figurine permet de choisir les armes',await ev(()=>!!document.querySelector('#bldm .bld-fc')),1);
+await ev(()=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>!x.disabled&&!x.classList.contains('on'));if(e)e.click()});await wait(250);
+await ev(()=>{document.querySelector('[data-bld="figback"]').click()});await wait(250);
 await p.screenshot({path:'eq6b.png'});
 await ev(()=>{const x=[...document.querySelectorAll('#bldm button')].find(x=>/Enregistrer|Ajouter à l.armée/.test(x.innerText));x.click()});await wait(500);
 const u=await ev(()=>{const u=S.lists[0].units[0];return{pts:u.pts,equip:u.equip,old:u.equipOld,hasCfg:!!u.cfg&&!!u.cfg.figs,weapons:u.weapons.length,bld:!!S.lists[0].bld,pm:u.pm}});
@@ -39,7 +39,7 @@ ok('fiche en modification : plus d’ajout/suppression d’arme (règles de la f
 await ev(()=>{const x=window.__EDX;x.close();draw()});await wait(200);
 await ev(()=>{S.lists[0].units[0].cfg=null;S.lists[0].units[0].equip='5 × Bolter d assaut ; 5 × Poing énergétique';tab='units';draw()});await wait(300);
 const opened=await ev(()=>WPK.ask('rt',false));await wait(600);
-ok('après l\'import : le choix d\'armes ouvre le configurateur ＋/−',opened===true&&await ev(()=>!!document.querySelector('#bldm .bld-pr')),opened);
+ok('après l\'import : le choix d\'armes ouvre le configurateur ＋/−',opened===true&&await ev(()=>!!document.querySelector('#bldm .bld-fg')),opened);
 await ev(()=>{const x=[...document.querySelectorAll('#bldm button')].find(x=>/^✕$/.test(x.innerText.trim()));x&&x.click()});await wait(300);
 ok('fermer sans enregistrer : rien n\'a changé, pas de réglages de constructeur',await ev(()=>!S.lists[0].bld&&!S.lists[0].units[0].cfg),1);
 await b.close()})();

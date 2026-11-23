@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:55,d:"2026-11-23",t:"Armes : un seul menu",s:"Les armes se changent désormais uniquement dans la fiche de la figurine : touche une figurine dans la liste pour l'ouvrir. Les boutons ＋/− d'armes de l'écran principal ont été retirés ; la composition (nombre de figurines par type) reste modifiable."},
  {id:54,d:"2026-11-23",t:"Fiche figurine plus lisible",s:"Dans la fiche d'une figurine : bandeaux colorés « Équipement actuel », « Changements possibles » (armes à choisir) et « Options d'équipement de l'unité » (règles officielles). Une arme incompatible avec ton choix est grisée et non cliquable."},
  {id:53,d:"2026-11-23",t:"Fiche plein écran par figurine",s:"Au choix des armes figurine par figurine, touche une figurine : sa fiche s'ouvre directement (caractéristiques, équipement actuel, profils de toutes les armes proposées). Touche une arme pour la choisir, puis « Enregistrer » te ramène à la liste des figurines."},
  {id:52,d:"2026-11-23",t:"Fiche de la figurine",s:"En choisissant les armes figurine par figurine, touche une figurine : sa fiche s'affiche avec toutes les caractéristiques de son équipement actuel, et chaque arme proposée montre son profil (portée, A, touche, F, PA, D, capacités) avant que tu la choisisses."},
