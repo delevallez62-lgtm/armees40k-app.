@@ -10,3 +10,14 @@
 .lr-t{width:auto;margin:6px 0}.lr-t td{padding:4px 14px 4px 0;border:0;text-align:left}.lr-t b{font-size:16px;color:var(--ac)}
 .lr-steps{display:grid;gap:6px;margin:8px 0}.lr-s{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);margin:0;cursor:pointer;color:var(--tx);font-size:14px}.lr-s.on{border-color:#2e9d6b;background:color-mix(in srgb,#2e9d6b 12%,var(--card))}.lr-s input{width:26px;height:26px;flex:none;margin:0}.lr-s b{display:block;font-size:14.5px}.lr-s small{display:block;color:var(--mu);font-size:12.5px;margin-top:2px;line-height:1.35}
 .lr-src{margin:14px 2px 0;font-size:11.5px;color:var(--mu)}
+.cs-hero{display:grid;grid-template-columns:1fr;border:2px solid var(--ac);border-radius:16px;overflow:hidden;background:var(--card);margin:6px 0}
+.cs-img{aspect-ratio:2/0.95;overflow:hidden;background:var(--bd)}.cs-img img{width:100%;display:block;object-fit:cover;object-position:top}
+.cs-ht{padding:12px 14px;display:grid;gap:4px}.cs-ht b{font-size:18px}.cs-ht span{font-size:13.5px;color:var(--mu)}.cs-ht small{color:var(--mu);font-size:12px}
+.cs-bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:6px}.cs-bar i{display:block;height:100%;background:var(--ac)}
+.cs-cr{font-size:11px;color:var(--mu);margin:4px 2px 10px}
+.cs-svg{width:100%;max-width:420px;display:block;margin:8px auto}
+.cs-app{margin:10px 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--ac) 13%,var(--card));border:1px solid var(--ac);font-size:13.5px}
+.cs-tip{margin:10px 0;padding:8px 10px;border-left:4px solid #e08a2c;background:var(--bg);border-radius:8px;font-size:13.5px}
+.cs-ex{margin:10px 0;padding:8px 10px;border-left:4px solid #4a5d8f;background:var(--bg);border-radius:8px;font-size:13.5px;line-height:1.5}
+.cs-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.cs-nav .b{flex:1;min-height:44px}
+.cs-l.done>summary b{color:var(--ac)}.cs-lk{list-style:none;padding:0}.cs-lk li{margin:8px 0}.cs-lk a{display:block;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);text-decoration:none;font-weight:600}

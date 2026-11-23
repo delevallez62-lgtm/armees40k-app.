@@ -9,7 +9,7 @@ rep('ana:["chart","Centre de commandement","#5fd0c0"],','ana:["chart","Centre de
 rep('["ana","Centre de commandement"],["enc","Règles V11"],["imp","Importer"]','["ana","Centre de commandement"],["learn","Apprendre à jouer"],["enc","Règles V11"],["imp","Importer"]')
 rep('["tab","ana","ana",SEC.ana[1],"Parties, analyses, simulations et conseils",pk(3)],','["tab","ana","ana",SEC.ana[1],"Parties, analyses, simulations et conseils",pk(3)],["tab","learn","learn",SEC.learn[1],"Les bases pour ta première partie",""],')
 rep('["ana","Centre de commandement","ana"],["enc","Règles V11","enc"]','["ana","Centre de commandement","ana"],["learn","Apprendre à jouer","learn"],["enc","Règles V11","enc"]')
-J=open(d+'/learn.js',encoding='utf8').read();C=open(d+'/learn.css',encoding='utf8').read()
+J=open(d+'/learn.js',encoding='utf8').read()+'\n'+open(d+'/course.js',encoding='utf8').read();C=open(d+'/learn.css',encoding='utf8').read()
 assert '�' not in J+C
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Apprendre à jouer ===== -->\n<style id="lrcss">\n'+C+'</style>\n<script>\n'+J+'\n</script>\n'+s[k:]

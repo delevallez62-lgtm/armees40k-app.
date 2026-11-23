@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:800},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));
+await p.evaluate(async()=>{try{await BIB.init()}catch(e){}window.__majPop=1;document.querySelectorAll('#encov,.bib-ov').forEach(e=>e.remove());tab='learn';draw()});await p.waitForTimeout(500);
+ok('cours affiché',await p.evaluate(()=>document.querySelectorAll('.cs-l').length),0);
+ok('image masquée hors ligne (pas de trou)',await p.evaluate(()=>{const i=document.querySelector('.cs-img img');return !i||i.parentNode.style.display==='none'||i.complete}),1);
+await p.screenshot({path:'crs0.png'});
+await p.evaluate(()=>{const d=document.querySelectorAll('.cs-l');d[3].open=true;d[3].scrollIntoView()});await p.waitForTimeout(300);await p.screenshot({path:'crs1.png'});
+await p.evaluate(()=>document.querySelector('[data-cl-next="3"]').click());await p.waitForTimeout(500);
+ok('leçon suivante ouverte + 4 cochée',await p.evaluate(()=>{const d=document.querySelectorAll('.cs-l');return d[4].open&&d[3].classList.contains('done')}),1);
+await p.evaluate(()=>{const d=document.querySelectorAll('.cs-l');d[10].open=true;d[10].scrollIntoView()});await p.waitForTimeout(300);await p.screenshot({path:'crs2.png'});
+await b.close()})();
