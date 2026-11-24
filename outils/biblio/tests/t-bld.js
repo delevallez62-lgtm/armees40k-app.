@@ -58,7 +58,7 @@ t=await html();
 ok('équipement par figurine : liste des figurines affichée',(await ev(()=>document.querySelectorAll('#bldm .bld-fg').length))>=5);
 // taille 10 : sergent arme énergétique ; 9 poings tronçonneurs (« toutes »)
 await click('[data-bld="size"][data-v="10"]');await ev(()=>{BLDSTATE.figOpen=true});await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await click('[data-bld="fig"][data-i="0"]');
-await ev(()=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>/énergétique|power weapon/i.test(x.innerText)&&!x.disabled);e.click()});await p.waitForTimeout(200);
+await ev(()=>{const e=[...document.querySelectorAll('#bldm .bld-fc')].find(x=>/énergétique|power weapon/i.test(x.innerText)&&!x.disabled&&!x.classList.contains('bld-fb'));e.click()});await p.waitForTimeout(200);
 await ev(()=>{const b=document.querySelector('[data-bld="figback"]');if(b)b.click()});await click('[data-bld="fig"][data-i="1"]');
 await ev(()=>{const e=document.querySelector('#bldm [data-bld="figall"]');e.click()});await p.waitForTimeout(250);
 // 7) équipement payant : Cyclone (barème Wahapedia)
