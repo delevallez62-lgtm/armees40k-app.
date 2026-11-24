@@ -415,21 +415,21 @@
    }
   },
   {
-   "id": "lex",
-   "file": "lex.json",
-   "sha1": "aab180b350b4f7b6f51e8fad503ead2d052b59c9",
-   "bytes": 98412,
-   "counts": {
-    "words": 3329
-   }
-  },
-  {
    "id": "fr",
    "file": "fr.json",
    "sha1": "2c79495484b14bedb49bcde726108e0b76682adf",
    "bytes": 2225518,
    "counts": {
     "translations": 14616
+   }
+  },
+  {
+   "id": "lex",
+   "file": "lex.json",
+   "sha1": "5f6b562e32d9b2a2cfef403846686490bc21cea2",
+   "bytes": 98412,
+   "counts": {
+    "words": 3329
    }
   }
  ]
