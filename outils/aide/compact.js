@@ -29,6 +29,7 @@ function apply(){const m=document.getElementById("m");if(!m||typeof tab==="undef
  if(t==="mis"){const n=by(m,/^(⬆ Exporter mes photos|\+ Dossier de primaires)/,"button").concat(by(m,/Importer des photos/,"label"));if(n.length>=2)wrap(n,"⚙ Outils : photos, dossiers","mis")}
  if(t==="enc"){const n=by(m,/^(Tri :|🕓 Historique|⇅ Import)/,"button");if(n.length>=2)wrap(n,"⋯ Outils : tri, historique, import / export","e1");
   const r=by(m,/(Règles à compléter|Doublons ou variantes|Nouvelles règles à valider)/,"button").filter(x=>x.children.length<5||true);if(r.length>=2)wrap(r,"🔎 À traiter dans l'encyclopédie","e2")}
+ if(t==="imp"){const bt=[...m.querySelectorAll("button.b.p")].find(x=>tx(x)==="Importer");if(bt)bt.classList.add("stk")}
  if(t==="imp"){const n=by(m,/^(Points de l.armée|Faction des figurines|…ou créer une nouvelle faction|Ajouter seulement les figurines)/,"label");if(n.length>=2)wrap(n,"⚙ Options d'import (points, faction, collection seule)","i")}
 }
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.classList&&d.classList.contains("cmp"))OPEN[d.dataset.k]=d.open},true);

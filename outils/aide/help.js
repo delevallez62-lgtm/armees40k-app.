@@ -126,6 +126,17 @@ body.gmini header .chrp{top:5px;right:10px;font-size:12px;padding:1px 9px}
 body.gmini header .mzb{gap:2px}body.gmini header .mbp{gap:5px}body.gmini header .mbq{padding:2px 6px 2px 10px;gap:0;border-radius:10px}
 body.gmini header .mbl b{font-size:15px}body.gmini header .mbn{font-size:11px}body.gmini header .mbl small{font-size:9px}
 body.gmini header .mbc button{min-height:24px;min-width:30px;height:26px;font-size:15px;padding:0}body.gmini header .mbc b{font-size:15px}body.gmini header .mbc small{font-size:9px}
+/* fiches d'unités compactes (liste) */
+#m .card.hv>.row{display:grid;grid-template-columns:44px 1fr;grid-template-areas:"img nm" "blp blp";gap:6px 10px;align-items:center;padding-right:30px}
+#m .card.hv>.row>.img{grid-area:img;width:44px;height:44px;font-size:9px}#m .card.hv>.row>span:nth-child(2){grid-area:nm;min-width:0}#m .card.hv>.row>.blp-s{grid-area:blp}
+#m .card.hv .blp-s{display:flex!important;flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px}#m .card.hv .blp-s label{display:flex;align-items:center;gap:4px;margin:0;font-size:12px}#m .card.hv .blp-s input{width:54px;padding:3px 6px;min-height:32px;font-size:15px}#m .card.hv .blp-s .blp-eq{width:auto!important;flex:1 1 120px;min-height:32px;padding:2px 8px;font-size:12.5px;white-space:nowrap}
+#m .card.hv .chips{margin-top:6px;gap:4px;flex-wrap:nowrap}#m .card.hv .chips span{padding:2px 4px!important;min-height:0!important;height:auto!important;font-size:11px!important;line-height:1.15!important;flex:1;text-align:center;min-width:0}#m .card.hv .chips span b{font-size:15px!important;display:block}
+/* Mode jeu : recherche sur une ligne */
+.psb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px!important;margin-bottom:6px!important}.psb .row{display:contents}.psb input{flex:1 1 150px;min-width:0;padding:6px 10px}.psb .b{min-height:34px!important;padding:2px 10px!important}.psb .mu{flex:1 1 100%;font-size:11px;margin:0}
+details.bld-fr{padding:2px 8px}details.bld-fr>summary{min-height:36px}
+/* bouton « ? » : s'efface quand on fait défiler vers le bas ; message bref : un toucher le ferme */
+#hpq{transition:opacity .2s}#hpq.hpq-h{opacity:0!important;pointer-events:none}#ts.show{pointer-events:auto}
+.stk{position:fixed!important;left:16px;right:16px;width:auto!important;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:7;box-shadow:0 6px 18px rgba(0,0,0,.55)}.card:has(>.stk),.card:has(.stk){padding-bottom:74px}
 header .mbc b{font-size:17px}header .mbl b{font-size:18px}
 </style>`;
 const key=()=>{const k=typeof tab!=="undefined"?tab:"home";return H[k]?k:(ALIAS[k]&&H[ALIAS[k]]?ALIAS[k]:null)};
@@ -143,5 +154,6 @@ function mount(){try{if(!document.getElementById("hpcss"))document.head.insertAd
  b.style.display=key()?"":"none"}catch(e){}}
 let tm=null;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(mount,80)}).observe(document.body,{childList:true,subtree:true});
 mount();
+(()=>{let y=window.scrollY||0;window.addEventListener("scroll",()=>{const n=window.scrollY||0,q=document.getElementById("hpq");if(q){if(n>y+8&&n>80)q.classList.add("hpq-h");else if(n<y-8||n<80)q.classList.remove("hpq-h")}y=n},{passive:true});document.addEventListener("click",e=>{const t=e.target;if(t&&t.id==="ts")t.className=""},true)})();
 window.HELPUI={mount,open,topics:Object.keys(H)};
 })();
