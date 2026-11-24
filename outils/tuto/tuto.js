@@ -367,13 +367,18 @@ function launchHint(){const t=T(),w=document.getElementById("gpo"),h=box("ttl2")
  }else{
   if(wizOpen&&!S.pm&&t.phase==="launch"&&t.on){t.on=false;sv()}
   wizOpen=false;if(h.innerHTML){h.innerHTML="";h.dataset.m=""}}}
-function tick(){try{launchHint();const t=T();if(t.on&&t.phase==="launch"&&S.pm){t.list=S.pm;t.phase="run";t.min=false;t.step=0;t.done={};t.seen={start:1,mission:1};t.pop=null;sv();SIG=""}render()}catch(e){}}
+function tick(){try{launchHint();const t=T();
+ /* le tutoriel ne vit que pendant SA partie : partie finie / autre partie / assistant abandonné → il s'éteint */
+ if(t.on&&t.phase==="run"&&(!S.pm||S.pm!==t.list)){t.on=false;t.pop=null;t.sub=null;sv();const pl=document.getElementById("ttpill");if(pl)pl.remove()}
+ if(t.on&&t.phase==="run"){const g=S.bat&&S.bat.gid;if(g){if(!t.gid){t.gid=g;sv()}else if(t.gid!==g){t.on=false;t.pop=null;t.sub=null;t.gid=null;sv();const pl=document.getElementById("ttpill");if(pl)pl.remove()}}}
+ if(t.on&&t.phase==="launch"&&!S.pm&&!document.getElementById("gpo")&&(!t.ls||Date.now()-t.ls>5000)){t.on=false;t.pop=null;sv()}
+if(t.on&&t.phase==="launch"&&S.pm){t.list=S.pm;t.phase="run";t.min=false;t.step=0;t.done={};t.seen={start:1,mission:1};t.pop=null;t.gid=null;sv();SIG=""}render()}catch(e){}}
 function openQ(){ensureCss();const o=box("ttq");o.innerHTML=`<div class="tt-ov" data-tt="qx"><div class="tt-pn tt-q"><div class="tt-top"><h2 style="flex:1">❓ Question</h2><button class="b" data-tt="qx">✕</button></div><input id="ttqi" type="search" placeholder="Cherche un mot : touche, sauvegarde, engagée…" autocomplete="off"><div class="tt-qp" id="ttqp">${QP.map((q,i)=>`<button class="b" data-tt="qp" data-i="${i}">${E(q[0])}</button>`).join("")}</div><div id="ttqr"></div><p class="mu">Les réponses viennent uniquement des règles importées dans HAMMER. Si une information manque, je te le dis.</p></div></div>`}
 function showQ(html){const r=document.getElementById("ttqr");if(r){r.innerHTML=html;r.scrollIntoView({block:"nearest"})}}
 function act(a,b,e){const t=T();
  switch(a){
  case"start":{const ls=S.lists||[];if(!ls.length){try{info("Crée ou importe d'abord une armée (Gestion → Importer).")}catch(_){}break}
-  t.on=true;t.phase="launch";t.step=0;t.done={};t.u=0;t.min=false;t.rv=false;t.list=(ls.some(l=>l.id===S.cur)?S.cur:ls[0].id);sv();SIG="";
+  t.on=true;t.phase="launch";t.ls=Date.now();t.step=0;t.done={};t.u=0;t.min=false;t.rv=false;t.list=(ls.some(l=>l.id===S.cur)?S.cur:ls[0].id);sv();SIG="";
   if(window.gPrep){tab="lists";try{draw()}catch(_){}window.gPrep(t.list)}break}
  case"go":break;
  case"resume":t.on=true;t.min=false;sv();SIG="";if(S.pm&&S.pm===t.list){t.phase="run";try{draw()}catch(_){}render()}break;
@@ -399,7 +404,7 @@ function act(a,b,e){const t=T();
  default:return false}
  return true}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tt]");if(!b)return;if(b.dataset.tt==="qx"&&e.target!==b&&b.classList.contains("tt-ov"))return;if(b.dataset.tt==="bg"&&e.target!==b)return;const r=act(b.dataset.tt,b,e);if(r!==false){e.preventDefault();e.stopPropagation()}},true);
-document.addEventListener("change",e=>{if(e.target&&e.target.id==="ttopt"){const t=T();if(e.target.checked){t.on=true;t.phase="launch";t.step=0;t.done={};t.u=0;t.min=false}else{t.on=false}sv();try{launchHint()}catch(_){}}});
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="ttopt"){const t=T();if(e.target.checked){t.on=true;t.phase="launch";t.ls=Date.now();t.step=0;t.done={};t.u=0;t.min=false}else{t.on=false}sv();try{launchHint()}catch(_){}}});
 document.addEventListener("input",e=>{if(e.target&&e.target.id==="ttqi"){const q=e.target.value,r=search(q);document.getElementById("ttqp").style.display=q.trim()?"none":"";showQ(q.trim().length<2?"":(r.length?r.map(x=>`<div class="tt-rule"><b>${E(x.n)}</b><p>${E(x.def)}</p></div>`).join(""):`<p class="tt-miss">Je n'ai rien trouvé à ce sujet dans les règles importées : information non disponible.</p>`))}});
 /* intégration : carte dans « Apprendre à jouer », rendu après chaque draw(), suivi du lancement de la partie */
 window.XV=window.XV||{};const base=window.XV.learn;window.XV.learn=function(){let c="";try{ensureCss();c=card()}catch(e){}return c+(base?base():"")};
