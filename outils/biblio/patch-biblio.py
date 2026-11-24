@@ -72,6 +72,11 @@ rep('<span class="stk ${p.s||"ok"}">${p.s==="bas"?"Presque vide":p.s==="achat"?"
 
 rep('${hTab==="pt"?`<button class="b p" data-x="ptnew">+ Peinture</button><button class="b" data-camgo="1">🎥 Lire un pot</button><button class="b" data-x="ocr">📷 Depuis une capture</button>`:""}</div>','</div>${hTab==="pt"?`<details class="card" id="gxadd" style="margin:8px 0"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center"><b>➕ Ajouter une nouvelle peinture</b></summary><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="b p" data-pscan="1">▦ Scanner un code-barres</button><button class="b" data-x="ptnew">+ Peinture à la main</button><button class="b" data-camgo="1">🎥 Lire un pot</button><button class="b" data-x="ocr">📷 Depuis une capture</button><button class="b" data-x="pstarter">30 peintures Citadel courantes</button></div></details>`:""}')
 rep('<div class="gadd2"><button class="b p" data-camgo="1">🎥 Lire un pot avec la caméra</button><button class="b p" data-x="ocr">📷 Importer depuis une capture d\'écran</button><button class="b" data-x="pstarter">Ajouter 30 peintures Citadel courantes</button></div>','<p class="mu">Ouvre « ➕ Ajouter une nouvelle peinture » ci-dessus pour scanner un pot, importer une capture ou ajouter les peintures courantes.</p>')
+# Cohérence des libellés (audit d'utilisation)
+rep('Crée-en une avec « + Nouvelle liste » ou importe ton armée.','Crée-en une avec « 🛠 Créer une armée » (contrôlée par les règles) ou « + Liste simple » (libre), ou importe ton armée depuis l’onglet Importer.')
+rep('<span class="l">${run?"Reprendre":"Jeu"}</span>','<span class="l">${run?"Reprendre":"Mode jeu"}</span>')
+rep('["lists","Armées","lists"],["jeu","Jeu",""]','["lists","Mes armées","lists"],["jeu","Mode jeu",""]')
+rep("Fonctionne sans Claude : l'appli lit le PDF et te propose les ajouts à valider.","Fonctionne hors ligne : l'appli lit le PDF et te propose les ajouts à valider.")
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))

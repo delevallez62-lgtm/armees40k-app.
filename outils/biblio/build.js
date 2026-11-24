@@ -226,9 +226,9 @@ function printList(L){let p=document.getElementById("bldprint");if(!p){p=documen
 /* ----- vues principales ----- */
 function homeHtml(){const lists=S.lists||[];
  return`<div class="card"><b style="font-size:18px">🛠 Créer une armée</b>
- <p class="bib-meta">Tu vas construire ta liste en 5 étapes simples. Rien n'est définitif : tu peux tout modifier ensuite.</p>
- <ol class="bld-steps"><li><b>Faction et taille de la partie</b> (ci-dessous)</li><li><b>Détachements</b> : les règles spéciales de ton armée</li><li><b>Unités</b> : tu les choisis dans un catalogue avec images</li><li><b>Équipement</b> de chaque unité, et un chef (meneur) si tu veux</li><li><b>Récapitulatif</b> : les points sont calculés pour toi</li></ol></div>
- <div class="card"><b>1 · Faction et taille de la partie</b>
+ <p class="bib-meta">Tu vas construire ta liste en 4 étapes (la barre du haut les montre). Rien n'est définitif : tu peux tout modifier ensuite.</p>
+ <ol class="bld-steps"><li><b>Armée</b> : faction, taille de la partie et détachement (ci-dessous)</li><li><b>Règles</b> : les règles spéciales de ton armée</li><li><b>Unités</b> : tu les choisis dans un catalogue, puis tu règles effectif, équipement et chef (meneur)</li><li><b>Vérifier</b> : les points sont calculés et la liste est contrôlée</li></ol></div>
+ <div class="card"><b>1 · Armée : faction et taille de la partie</b>
  <label>Nom de ton armée<input id="bldn" placeholder="ex. Mon armée Orks"></label>
  <label>Faction <span class="bib-meta">(le camp que tu joues)</span><select id="bldfac"><option value="">— Choisir ma faction —</option>${facList().map(([k,n])=>`<option value="${E(k)}">${E(n)}</option>`).join("")}</select></label>
  <label>Limite de points <span class="bib-meta">(la taille de la partie : plus c'est grand, plus il y a d'unités)</span><input id="bldlim" inputmode="numeric" value="2000"></label>

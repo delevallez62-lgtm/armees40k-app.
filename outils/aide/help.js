@@ -121,7 +121,7 @@ const css=`<style id="hpcss">
 const gcss=`<style id="gmcss">
 header .chrp{position:absolute;right:12px;top:55px;margin:0;padding:1px 9px;font-size:12px;background:rgba(255,255,255,.18)}
 .mzb:has(>.chrp:only-child){display:block;height:0;min-height:0;margin:0;padding:0;overflow:visible}
-header .mbq{padding:3px 8px 4px 12px;gap:1px}header .mbc button,header .mbq button{min-height:30px;min-width:30px}header .mbc b{font-size:17px}header .mbl b{font-size:18px}
+header .mbq{padding:3px 8px 4px 12px;gap:1px}header .mbc button,header .mbq button{min-height:30px;min-width:30px}.gt>span:not(.gdeco){min-width:0;overflow-wrap:anywhere;hyphens:auto;line-height:1.15}header .mbc b{font-size:17px}header .mbl b{font-size:18px}
 </style>`;
 const key=()=>{const k=typeof tab!=="undefined"?tab:"home";return H[k]?k:(ALIAS[k]&&H[ALIAS[k]]?ALIAS[k]:null)};
 function html(k){const h=H[k];return`<div class="hpn" role="dialog" aria-label="Tuto : ${E(h.t)}"><div class="hp-top"><div><h2>${E(h.t)}</h2><div class="hp-s">${E(h.s)}</div></div><button class="hp-x" data-hpx aria-label="Fermer">✕</button></div>
