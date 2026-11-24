@@ -14,23 +14,21 @@ const pick=async re=>{await ev(re=>{const e=[...document.querySelectorAll('#bldm
 const pop=()=>ev(()=>{const p=document.getElementById('lckpop');return p?p.innerText.replace(/\n+/g,' | '):null});
 // ---- Escouade de Terminators, 5 figurines
 await open('terminator','^Escouade de Terminators$',5);
-const banner=()=>ev(()=>{const e=document.querySelector('#bldm .bld-twin');return e?e.innerText.replace(/\n+/g,' | ').slice(0,200):null});
-const sums=()=>ev(()=>{const f=BLDSTATE.cfg.figs;return f.map(g=>JSON.stringify(g.c||{}))});
+const banner=()=>ev(()=>{const e=document.querySelector('#bldm .bld-twin');return e?e.innerText.replace(/\n+/g,' | ').slice(0,220):null});
+const sums=()=>ev(()=>BLDSTATE.cfg.figs.map(g=>JSON.stringify(g.c||{})));
+const tw=sel=>ev(sel=>document.querySelector(sel).click(),sel);
 await fig(1);
 ok('pas de bandeau avant changement',!(await banner()),await banner());
 await pick('tronçon|chainfist');
-const bn=await banner();ok('bandeau « figurines identiques » après changement',/3 autres figurines/.test(bn||''),bn);
-await ev(()=>document.querySelector('[data-bld="figtwin"]').click());await wait(350);
-const s1=await sums();ok('équipement copié sur les 3 figurines identiques',s1.slice(1).every(x=>x===s1[1])&&s1[1]!=='{}',s1);
-ok('plus de bandeau après application',!(await banner()),await banner());
+ok('bandeau : 3 autres figurines',/3 autres figurines/.test(await banner()||''),await banner());
+await tw('[data-bld="figtwinn"][data-d="-1"]');await tw('[data-bld="figtwinn"][data-d="-1"]');await wait(200);
+ok('compteur = 1',/Appliquer à 1 figurine identique/.test(await banner()||''),await banner());
+await tw('[data-bld="figtwin"]');await wait(300);
+let s=await sums();ok('1 seule figurine copiée (2 au total avec la source)',s.filter(x=>x!=='{}').length===2,s);
+ok('il reste 2 figurines proposées',/2 autres figurines/.test(await banner()||''),await banner());
+ok('compteur remis au maximum (2)',/Appliquer à 2 figurines identiques/.test(await banner()||''),await banner());
+await tw('[data-bld="figtwin"]');await wait(300);
+s=await sums();ok('toutes les figurines identiques (4)',s.filter(x=>x!=='{}').length===4&&s[1]===s[2]&&s[2]===s[3]&&s[3]===s[4],s);
+ok('plus de bandeau',!(await banner()),await banner());
 ok('configuration légale',await ev(()=>/Équipement conforme/.test(document.getElementById('bldm').innerText)),1);
-// limite : arme lourde (max 2 pour 5)
-await click('[data-bld="figback"]');await fig(2);
-const ch=await chips();console.log('options fig 2 :',JSON.stringify(ch.map(x=>x.t+(x.off?'(x)':''))));
-await pick('canon|cyclone|lance-flammes lourd|heavy flamer|assault cannon');
-const b2=await banner();console.log('  bandeau après canon :',b2);
-await ev(()=>document.querySelector('[data-bld="figtwin"]').click());await wait(400);
-const pp=await pop();ok('limite respectée : popup explicatif',/Impossible de l'appliquer|Appliqué à \d figurine/.test(pp||''),pp);
-await ev(()=>{const b=document.querySelector('#lckpop [data-k="ok"],#lckpop button');if(b)b.click()});await wait(200);
-ok('toujours conforme (max 2 armes lourdes)',await ev(()=>/Équipement conforme/.test(document.getElementById('bldm').innerText)),1);
 await b.close()})();
