@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const pdf=fs.readFileSync('/root/.claude/uploads/23af94af-db82-542e-90e8-f7f093cb9b4f/9b52e551-liste_2108977.pdf').toString('base64');
+const W=390;
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:780},isMobile:true,hasTouch:true});
+await ctx.route(/^https?:\/\/(?!localhost)/,r=>{const u=r.request().url();if(/pdf(?:\.min|\.worker\.min)\.js$/.test(u))return r.fulfill({path:'/tmp/pdfjs/node_modules/pdfjs-dist/build/'+u.split('/').pop(),contentType:'text/javascript'});r.abort()});
+const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(2200);
+await p.evaluate(()=>{const c=document.querySelector('#encov [data-enc="ovclose"]');if(c)c.click();S.mg=true;tab='imp';draw()});await p.waitForTimeout(300);
+await p.evaluate(async b64=>{await readPdf(new File([Uint8Array.from(atob(b64),c=>c.charCodeAt(0))],'l.pdf'))},pdf);await p.waitForTimeout(2500);
+const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));
+await p.evaluate(()=>{const d=document.querySelector('#dg [data-act="dgno"]');if(d)d.click();document.querySelectorAll('.ov,#encov,.bib-ov').forEach(e=>e.remove());window.__majPop=1;tab='lists';draw()});await p.waitForTimeout(500);
+await p.evaluate(()=>{document.querySelector('details.cmp>summary').click()});await p.waitForTimeout(200);
+ok('tiroir ouvert, 3 boutons dedans',await p.evaluate(()=>document.querySelectorAll('details.cmp[open] .cmp-b button').length===3),await p.evaluate(()=>document.querySelector('details.cmp .cmp-b').innerText));
+await p.evaluate(()=>[...document.querySelectorAll('details.cmp button')].find(b=>/Renommer/.test(b.innerText)).click());await p.waitForTimeout(400);
+ok('« Renommer » fonctionne depuis le tiroir',await p.evaluate(()=>!!document.querySelector('.ov,#dg input,#cf input,dialog')||!!document.querySelector('#dg *')),await p.evaluate(()=>document.getElementById('dg').innerHTML.slice(0,100)));
+await p.evaluate(()=>{const c=document.querySelector('#dg [data-act="dgno"],#dg .b');if(c)c.click()});
+const bef=await p.evaluate(()=>[...document.querySelectorAll('details.cmp button')].map(b=>b.innerText).join('|'));
+await p.evaluate(()=>{tab='lists';draw()});await p.waitForTimeout(400);
+ok('tiroir resté ouvert après redessin',await p.evaluate(()=>!!document.querySelector('details.cmp[open]')),1);
+for(const t of ['units','coll','mis','enc','imp']){await p.evaluate(t=>{S.cur=S.lists[0].id;tab=t;draw()},t);await p.waitForTimeout(500);
+ const r=await p.evaluate(()=>[...document.querySelectorAll('details.cmp')].map(d=>d.dataset.k+':'+d.querySelectorAll('button,label,#spdcard').length));console.log(t,r)}
+await b.close()})();
