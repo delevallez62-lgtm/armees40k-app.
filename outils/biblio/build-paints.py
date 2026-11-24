@@ -52,6 +52,15 @@ if os.path.exists(xf):
         if p['id'] not in ean and k in XC and XC[k] not in taken:
             ean[p['id']]=[XC[k]];taken.add(XC[k]);nx+=1
     print('codes-barres ajoutés depuis ak-ean.json :',nx)
+# Complément : codes relevés sur des pages produit de revendeur (data/biblio/shop-ean.json), rangés par marque puis par référence.
+sf=os.path.join(out,'shop-ean.json')
+if os.path.exists(sf):
+    SC=json.load(open(sf,encoding='utf8')).get('codes',{});taken={c for v in ean.values() for c in v};ns=0
+    for p in P['paints']:
+        e=(SC.get(p['brand']) or {}).get(p.get('productCode') or '')
+        if p['id'] not in ean and e and e not in taken and len(e)==13 and e.isdigit():
+            ean[p['id']]=[e];taken.add(e);ns+=1
+    print('codes-barres ajoutés depuis shop-ean.json :',ns)
 rows=[]
 for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['name'])):
     hx=(p.get('hex') or '').lower();hx=hx if re.match(r'^#[0-9a-f]{6}$',hx) else ''
