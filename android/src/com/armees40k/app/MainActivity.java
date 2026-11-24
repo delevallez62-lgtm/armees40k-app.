@@ -177,7 +177,37 @@ public class MainActivity extends Activity {
 
     private void start() {
         if (prefs.getBoolean("sync", false) && online()) { offlineShown = false; web.loadUrl(ONLINE); }
+        else if (online()) launchUpdate();
         else openOffline(false);
+    }
+
+    /** Mise à jour au lancement : on télécharge la dernière version AVANT d'afficher l'application (4 s maximum). */
+    private void launchUpdate() {
+        web.loadData("<html><body style='margin:0;background:#0d1511;color:#e6efe9;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh'><div style='text-align:center'><div style='font-size:34px'>&#9881;</div><div style='font-size:16px;opacity:.85'>Mise &#224; jour&#8230;</div></div></body></html>", "text/html", "utf-8");
+        final boolean[] done = {false};
+        new Thread(() -> {
+            try { fetchAndInstall(DEFAULT_UPDATE_URL, 4000, 8000); } catch (Exception ignored) {}
+            synchronized (done) { if (done[0]) return; done[0] = true; }
+            runOnUiThread(() -> openOffline(false));
+        }).start();
+        // garde-fou : si le réseau traîne, on lance l'application telle quelle après 9 s
+        web.postDelayed(() -> {
+            synchronized (done) { if (done[0]) return; done[0] = true; }
+            openOffline(false);
+        }, 9000);
+    }
+
+    /** Télécharge une page « Mes armées 40k » et l'installe ; renvoie "ok", "same" ou un message d'erreur. */
+    private String fetchAndInstall(String url, int connMs, int readMs) throws Exception {
+        String sep = url.contains("?") ? "&" : "?";
+        HttpURLConnection c = (HttpURLConnection) new URL(url + sep + "t=" + System.currentTimeMillis()).openConnection();
+        c.setConnectTimeout(connMs); c.setReadTimeout(readMs);
+        c.setRequestProperty("Cache-Control", "no-cache");
+        int code = c.getResponseCode();
+        if (code != 200) throw new Exception("le serveur a répondu " + code);
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        try (InputStream in = c.getInputStream()) { byte[] buf = new byte[16384]; int n; while ((n = in.read(buf)) > 0) b.write(buf, 0, n); }
+        return install(new String(b.toByteArray(), StandardCharsets.UTF_8));
     }
 
     private void openOffline(boolean noNet) {
