@@ -1,5 +1,5 @@
 {
-"source": "Pages produit de scalemodelshop.co.uk (balisage « sku » + « gtin »), relevées le 2026-11-24 : Mission Models, Mr Hobby, AK Interactive, AMMO by Mig Jimenez",
+"source": "Pages produit de scalemodelshop.co.uk (balisage « sku » + « gtin »), relevées le 2026-11-24 : Mission Models, Mr Hobby, AK Interactive, AMMO by Mig Jimenez ; ClayPitRC (claypitrc.eu), relevé du 2026-11-24 : AK Interactive (Quick Gen, vernis, apprêts, diluants, terrains)",
 "codes": {
 "AK Interactive": {
 "AK066": "8436535570664",
@@ -42,7 +42,9 @@
 "AK302": "8436535573023",
 "AK075": "8436535570756",
 "AK070": "8436535570701",
-"AK263": "8436535572637"
+"AK263": "8436535572637",
+"AK16043": "8435568347298",
+"AK16044": "8435568347304"
 },
 "AMMO by Mig Jimenez": {
 "AMIG1006": "8432074010067",

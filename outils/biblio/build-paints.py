@@ -61,6 +61,16 @@ if os.path.exists(sf):
         if p['id'] not in ean and e and e not in taken and len(e)==13 and e.isdigit():
             ean[p['id']]=[e];taken.add(e);ns+=1
     print('codes-barres ajoutés depuis shop-ean.json :',ns)
+# Complément : produits (vernis, apprêts, diluants, terrains, mediums) absents du catalogue, relevés sur un revendeur (data/biblio/extra-paints.json).
+XP=[]
+xf=os.path.join(out,'extra-paints.json')
+if os.path.exists(xf):
+    taken={c for v in ean.values() for c in v};have={(p['brand'],re.sub(r'[\s-]','',(p.get('productCode') or '').upper())) for p in P['paints']}
+    for x in json.load(open(xf,encoding='utf8')).get('paints',[]):
+        k=(x['brand'],re.sub(r'[\s-]','',x['c'].upper()))
+        if x['brand'] in bi and k not in have and x['e'] not in taken and len(x['e'])==13 and x['e'].isdigit():
+            XP.append(x);taken.add(x['e'])
+    print('produits ajoutés depuis extra-paints.json :',len(XP))
 rows=[]
 for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['name'])):
     hx=(p.get('hex') or '').lower();hx=hx if re.match(r'^#[0-9a-f]{6}$',hx) else ''
@@ -75,6 +85,7 @@ for p in sorted(P['paints'],key=lambda x:(x['brand'],x.get('range') or '',x['nam
     if p['id'] in prod_q:r['q']=1
     if p.get('status') and p['status']!='current':r['s']=p['status']
     rows.append(r)
+for x in XP:rows.append({'b':bi[x['brand']],'n':x['n'],'h':'','t':x.get('t',''),'c':x['c'],'e':[x['e']]})
 n_ean=sum(len(r.get('e',[])) for r in rows)
 if len(rows)<5000 or n_ean<3000:sys.exit(f"Catalogue de peintures incomplet ({len(rows)} peintures, {n_ean} codes) : mise à jour refusée")
 body={'schema':1,'id':'paints','source':'WarHub/warhub-catalog (MIT) — catalogue de peintures et codes-barres','catalogVersion':P.get('version'),'brands':brands,'paints':rows}
