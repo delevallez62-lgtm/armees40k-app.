@@ -118,6 +118,7 @@ const css=`<style id="hpcss">
 .hp-ok{width:100%;margin-top:14px;min-height:46px;border:0;border-radius:12px;background:var(--ac);color:#fff;font:inherit;font-weight:800;font-size:15px;cursor:pointer}
 </style>`;
 const gcss=`<style id="gmcss">
+.gt b{hyphens:none!important;-webkit-hyphens:none!important;overflow-wrap:normal!important;word-break:normal!important;font-size:min(15px,4vw)}
 header .chrp{position:absolute;right:12px;top:55px;margin:0;padding:1px 9px;font-size:12px;background:rgba(255,255,255,.18)}
 .mzb:has(>.chrp:only-child){display:block;height:0;min-height:0;margin:0;padding:0;overflow:visible}
 header .mbq{padding:3px 8px 4px 12px;gap:1px}header .mbc button,header .mbq button{min-height:30px;min-width:30px}.gt>span:not(.gdeco){min-width:0;overflow-wrap:anywhere;hyphens:auto;line-height:1.15}body.gmini header{padding:4px 10px 5px}body.gmini header h1{font-size:0;margin:0 0 3px;display:flex;align-items:center;gap:8px;min-height:26px;padding-right:80px}body.gmini header h1 .glogo{width:24px;height:24px}body.gmini header h1 small{font-size:13px;margin:0;opacity:.9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}body.gmini header h1 #sy{font-size:12px;margin:0}

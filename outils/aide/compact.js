@@ -27,7 +27,7 @@ function apply(){const m=document.getElementById("m");if(!m||typeof tab==="undef
  if(t==="coll"){m.querySelectorAll(".card,.fh,.fhd").forEach(c=>{if(c.querySelector("details.cmp"))return;const n=by(c,/^(Renommer|Bannière|Supprimer)$/,"button");if(n.length>=2)wrap(n,"⋯ Faction : renommer, bannière, supprimer",kOf(n[0],"f"))})}
  if(t==="mis"||t==="enc"||t==="imp"){const s=document.getElementById("spdcard");if(s&&!s.closest("details.cmp"))wrap([s],"📄 Importer un PDF de règles, missions, layouts","pdf:"+t)}
  if(t==="mis"){const n=by(m,/^(⬆ Exporter mes photos|\+ Dossier de primaires)/,"button").concat(by(m,/Importer des photos/,"label"));if(n.length>=2)wrap(n,"⚙ Outils : photos, dossiers","mis")}
- if(t==="enc"){const n=by(m,/^(Tri :|🕓 Historique|⇅ Import)/,"button");if(n.length>=2)wrap(n,"⋯ Outils : tri, historique, import / export","e1");
+ if(t==="enc"){const n=by(m,/^(Tri :|🕓 Historique|⇅ Import)/,"button");if(n.length>=2)wrap(n,"⋯ Outils (tri, import…)","e1");
   const r=by(m,/(Règles à compléter|Doublons ou variantes|Nouvelles règles à valider)/,"button").filter(x=>x.children.length<5||true);if(r.length>=2)wrap(r,"🔎 À traiter dans l'encyclopédie","e2")}
  if(t==="imp"){const bt=[...m.querySelectorAll("button.b.p")].find(x=>tx(x)==="Importer");if(bt)bt.classList.add("stk")}
  if(t==="imp"){const n=by(m,/^(Points de l.armée|Faction des figurines|…ou créer une nouvelle faction|Ajouter seulement les figurines)/,"label");if(n.length>=2)wrap(n,"⚙ Options d'import (points, faction, collection seule)","i")}

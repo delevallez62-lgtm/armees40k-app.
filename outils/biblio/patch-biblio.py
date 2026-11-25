@@ -78,6 +78,9 @@ rep('<span class="l">${run?"Reprendre":"Jeu"}</span>','<span class="l">${run?"Re
 rep('["lists","Armées","lists"],["jeu","Jeu",""]','["lists","Mes armées","lists"],["jeu","Mode jeu",""]')
 rep("Fonctionne sans Claude : l'appli lit le PDF et te propose les ajouts à valider.","Fonctionne hors ligne : l'appli lit le PDF et te propose les ajouts à valider.")
 rep('const ARM=["lists","units","dets","strats","opti"];','const ARM=["lists","units","dets","strats","opti","bld"];')
+# Collection vide : un débutant doit savoir quoi faire
+rep('</div></div>`).join("")}</div>`:"<p>Aucune figurine trouvée.</p>"};','</div></div>`).join("")}</div>`:`<p class="mu">${Object.keys(S.coll||{}).length?"Aucune figurine trouvée : essaie un autre mot.":"Ta collection est vide. Ouvre « 📚 Bibliothèque » ci-dessus pour ajouter tes figurines, ou importe ton armée depuis un PDF (menu ☰ → Importer)."}</p>`};')
+
 # Centre de commandement : « Conseils » rejoint le nouvel Assistant d'optimisation (le comparateur de listes et le duel restent séparés)
 rep('["rec","💡","Conseils",["rec"]]','["ast","🎯","Assistant",["ast","cons","rec"]]')
 rep('rec:"Conseils",','rec:"Contre un adversaire",ast:"Mon assistant",cons:"Conseils",')

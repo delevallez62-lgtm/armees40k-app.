@@ -55,10 +55,19 @@ if os.path.exists(xf):
 # Complément : codes relevés sur des pages produit de revendeur (data/biblio/shop-ean.json), rangés par marque puis par référence.
 sf=os.path.join(out,'shop-ean.json')
 if os.path.exists(sf):
-    SC=json.load(open(sf,encoding='utf8')).get('codes',{});taken={c for v in ean.values() for c in v};ns=0
+    NK=lambda x:re.sub(r'[\s\-_.]','',str(x or '').upper())
+    SC={b:{NK(c):e for c,e in v.items()} for b,v in json.load(open(sf,encoding='utf8')).get('codes',{}).items()};taken={c for v in ean.values() for c in v};ns=0
     for p in P['paints']:
-        e=(SC.get(p['brand']) or {}).get(p.get('productCode') or '')
+        e=(SC.get(p['brand']) or {}).get(NK(p.get('productCode')))
         if p['id'] not in ean and e and e not in taken and len(e)==13 and e.isdigit():
+            ean[p['id']]=[e];taken.add(e);ns+=1
+    # même chose par NOM (marque + nom identique, unique dans la marque) quand la référence manque côté catalogue
+    SN=json.load(open(sf,encoding='utf8')).get('names',{});nkn=lambda x:re.sub(r'[^a-z0-9]+',' ',re.sub(r'\b\d+\s*ml\b','',str(x or '').lower())).strip()
+    cnt={}
+    for p in P['paints']:cnt[(p['brand'],nkn(p['name']))]=cnt.get((p['brand'],nkn(p['name'])),0)+1
+    for p in P['paints']:
+        e=(SN.get(p['brand']) or {}).get(nkn(p['name']))
+        if p['id'] not in ean and e and cnt[(p['brand'],nkn(p['name']))]==1 and e not in taken and len(e)==13 and e.isdigit():
             ean[p['id']]=[e];taken.add(e);ns+=1
     print('codes-barres ajoutés depuis shop-ean.json :',ns)
 # Complément : produits (vernis, apprêts, diluants, terrains, mediums) absents du catalogue, relevés sur un revendeur (data/biblio/extra-paints.json).
