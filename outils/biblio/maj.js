@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:68,d:"2026-11-25",t:"Noms français : +75 noms officiels",s:"Nouveaux noms d'unités lus sur le Manuel du Munitorum français (Warhammer Community) : 43 confirmés, 32 à relire (🟠). Il reste des unités sans nom français officiel trouvé : elles gardent leur nom anglais."},
  {id:67,d:"2026-11-25",t:"Retour à l'arme de base + fiche à jour",s:"Dans la fiche d'une figurine, l'équipement de base est maintenant un choix à part entière : un seul toucher pour y revenir après un changement. Pour une unité importée dont tu règles l'équipement depuis ton armée, la fiche affiche désormais toutes les armes choisies (profils mis à jour) ; l'ancien équipement importé reste sauvegardé."},
  {id:66,d:"2026-11-24",t:"Choisir combien de figurines modifier",s:"Dans le bandeau 🧬 des figurines identiques, un compteur − / + te laisse choisir combien d'entre elles reçoivent ton changement (1 à N). Le bandeau reste proposé pour les figurines restantes."},
  {id:65,d:"2026-11-24",t:"Équipement : appliquer aux figurines identiques",s:"Dans la fiche d'une figurine, si d'autres figurines de l'unité avaient exactement le même équipement, un bandeau 🧬 te propose, après ton changement, de l'appliquer aussi à elles. C'est facultatif, et les limites des options sont respectées (le nombre de figurines pouvant recevoir l'arme est indiqué)."},

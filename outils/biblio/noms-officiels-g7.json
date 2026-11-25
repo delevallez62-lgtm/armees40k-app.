@@ -1,0 +1,452 @@
+[
+ {
+  "en": "Servitor Battleclade",
+  "fr": "Clade de Combat de Servitors",
+  "url": "https://mfm.warhammer-community.com/fr/adeptus-mechanicus",
+  "preuve": "CLADE DE COMBAT DE SERVITORS"
+ },
+ {
+  "en": "Clanblade",
+  "fr": "Lame de Clan",
+  "url": "https://mfm.warhammer-community.com/fr/aeldari",
+  "preuve": "LAME DE CLAN"
+ },
+ {
+  "en": "Leystalker",
+  "fr": "Traqueur Tellurien",
+  "url": "https://mfm.warhammer-community.com/fr/aeldari",
+  "preuve": "TRAQUEUR TELLURIEN"
+ },
+ {
+  "en": "Shroud Runners",
+  "fr": "Coureurs Mirages",
+  "url": "https://mfm.warhammer-community.com/fr/aeldari",
+  "preuve": "COUREURS MIRAGES"
+ },
+ {
+  "en": "Starfangs",
+  "fr": "Croc Stellaire",
+  "url": "https://mfm.warhammer-community.com/fr/aeldari",
+  "preuve": "CROC STELLAIRE"
+ },
+ {
+  "en": "Crusade Ancient",
+  "fr": "Doyen de Croisade",
+  "url": "https://mfm.warhammer-community.com/fr/black-templars",
+  "preuve": "DOYEN DE CROISADE"
+ },
+ {
+  "en": "Sword Brethren Squad",
+  "fr": "Escouade de Frères d'Épée",
+  "url": "https://mfm.warhammer-community.com/fr/black-templars",
+  "preuve": "ESCOUADE DE FRÈRES D'ÉPÉE"
+ },
+ {
+  "en": "Ancient in Terminator Armour",
+  "fr": "Doyen en Armure Terminator",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "DOYEN EN ARMURE TERMINATOR"
+ },
+ {
+  "en": "Assault Intercessors with Jump Packs",
+  "fr": "Intercessors d’Assaut à Réacteurs Dorsaux",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "INTERCESSORS D’ASSAUT À RÉACTEURS DORSAUX"
+ },
+ {
+  "en": "Bladeguard Ancient",
+  "fr": "Doyen Gardelame",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "DOYEN GARDELAME"
+ },
+ {
+  "en": "Captain with Jump Pack",
+  "fr": "Capitaine à Réacteur Dorsal",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "CAPITAINE À RÉACTEUR DORSAL"
+ },
+ {
+  "en": "Chaplain on Bike",
+  "fr": "Chapelain à Moto",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "CHAPELAIN À MOTO"
+ },
+ {
+  "en": "Eradicator Squad with Heavy Bolters",
+  "fr": "Escouade Eradicator avec Bolters Lourds",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "ESCOUADE ERADICATOR AVEC BOLTERS LOURDS"
+ },
+ {
+  "en": "Eradicator Squad with Melta Rifles",
+  "fr": "Escouade Eradicator avec Fusils Fuseurs",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "ESCOUADE ERADICATOR AVEC FUSILS FUSEURS"
+ },
+ {
+  "en": "Firestrike Servo-Turrets",
+  "fr": "Servo-Tourelles Firestrike",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "SERVO-TOURELLES FIRESTRIKE"
+ },
+ {
+  "en": "Invader ATVs",
+  "fr": "Quads Invader",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "QUADS INVADER"
+ },
+ {
+  "en": "Thunderhawk Gunship",
+  "fr": "Escorteur Thunderhawk",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "ESCORTEUR THUNDERHAWK"
+ },
+ {
+  "en": "Blood Angels Captain",
+  "fr": "Capitaine des Blood Angels",
+  "url": "https://mfm.warhammer-community.com/fr/blood-angels",
+  "preuve": "CAPITAINE DES BLOOD ANGELS"
+ },
+ {
+  "en": "Death Company Captain with Jump Pack",
+  "fr": "Capitaine de la Cie de la Mort à Réacteur Dorsal",
+  "url": "https://mfm.warhammer-community.com/fr/blood-angels",
+  "preuve": "CAPITAINE DE LA CIE DE LA MORT À RÉACTEUR DORSAL"
+ },
+ {
+  "en": "Chaos Bikers",
+  "fr": "Motards du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "MOTARDS DU CHAOS"
+ },
+ {
+  "en": "Chaos Vindicator",
+  "fr": "Vindicator du Chaos",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "VINDICATOR DU CHAOS"
+ },
+ {
+  "en": "Heretic Astartes Daemon Prince",
+  "fr": "Prince Démon de l’Hereticus Astartes",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "PRINCE DÉMON DE L’HERETICUS ASTARTES"
+ },
+ {
+  "en": "Heretic Astartes Daemon Prince With Wings",
+  "fr": "Prince Démon de l’Hereticus Astartes Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "PRINCE DÉMON DE L’HERETICUS ASTARTES AILÉ"
+ },
+ {
+  "en": "Noctilith Crown",
+  "fr": "Couronne de Noctilithe",
+  "url": "https://mfm.warhammer-community.com/fr/chaos-space-marines",
+  "preuve": "COURONNE DE NOCTILITHE"
+ },
+ {
+  "en": "Daemon Prince of Nurgle",
+  "fr": "Prince Démon de Nurgle",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "PRINCE DÉMON DE NURGLE"
+ },
+ {
+  "en": "Daemon Prince of Nurgle with Wings",
+  "fr": "Prince Démon de Nurgle Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "PRINCE DÉMON DE NURGLE AILÉ"
+ },
+ {
+  "en": "Foul Blightspawn",
+  "fr": "Corrupteur Nidoreux",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "CORRUPTEUR NIDOREUX"
+ },
+ {
+  "en": "Icon Bearer",
+  "fr": "Porte-Icône",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "PORTE-ICÔNE"
+ },
+ {
+  "en": "Lord of Virulence",
+  "fr": "Seigneur de la Virulence",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "SEIGNEUR DE LA VIRULENCE"
+ },
+ {
+  "en": "Miasmic Malignifier",
+  "fr": "Exhausteur Pandémique",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "EXHAUSTEUR PANDÉMIQUE"
+ },
+ {
+  "en": "Noxious Blightbringer",
+  "fr": "Délabreur Délétère",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "DÉLABREUR DÉLÉTÈRE"
+ },
+ {
+  "en": "Plagueburst Crawler",
+  "fr": "Chenillé Crachepeste",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "CHENILLÉ CRACHEPESTE"
+ },
+ {
+  "en": "Plague Surgeon",
+  "fr": "Chirurgien de la Peste",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "CHIRURGIEN DE LA PESTE"
+ },
+ {
+  "en": "Tallyman",
+  "fr": "Intendant",
+  "url": "https://mfm.warhammer-community.com/fr/death-guard",
+  "preuve": "INTENDANT"
+ },
+ {
+  "en": "Decimus Kill Team",
+  "fr": "Kill Team Decimus",
+  "url": "https://mfm.warhammer-community.com/fr/deathwatch",
+  "preuve": "KILL TEAM DECIMUS"
+ },
+ {
+  "en": "Talonstrike Kill Team",
+  "fr": "Kill Team Talonstrike",
+  "url": "https://mfm.warhammer-community.com/fr/deathwatch",
+  "preuve": "KILL TEAM TALONSTRIKE"
+ },
+ {
+  "en": "Hand of the Archon",
+  "fr": "Main de l'Archonte",
+  "url": "https://mfm.warhammer-community.com/fr/drukhari",
+  "preuve": "MAIN DE L'ARCHONTE"
+ },
+ {
+  "en": "Scourges with Heavy Weapons",
+  "fr": "Fléaux avec Armes Lourdes",
+  "url": "https://mfm.warhammer-community.com/fr/drukhari",
+  "preuve": "FLÉAUX AVEC ARMES LOURDES"
+ },
+ {
+  "en": "Scourges with Shardcarbines",
+  "fr": "Fléaux avec Carabine à Éclats",
+  "url": "https://mfm.warhammer-community.com/fr/drukhari",
+  "preuve": "FLÉAUX AVEC CARABINE À ÉCLATS"
+ },
+ {
+  "en": "Acolyte Hybrids With Autopistols",
+  "fr": "Hybrides Acolytes avec Pistolets-Mitrailleurs",
+  "url": "https://mfm.warhammer-community.com/fr/genestealer-cults",
+  "preuve": "HYBRIDES ACOLYTES AVEC PISTOLETS-MITRAILLEURS"
+ },
+ {
+  "en": "Acolyte Hybrids With Hand Flamers",
+  "fr": "Hybrides Acolytes avec Lance-Flammes Légers",
+  "url": "https://mfm.warhammer-community.com/fr/genestealer-cults",
+  "preuve": "HYBRIDES ACOLYTES AVEC LANCE-FLAMMES LÉGERS"
+ },
+ {
+  "en": "Acolyte Iconward",
+  "fr": "Acolyte Garde-Icône",
+  "url": "https://mfm.warhammer-community.com/fr/genestealer-cults",
+  "preuve": "ACOLYTE GARDE-ICÔNE"
+ },
+ {
+  "en": "Goliath Truck",
+  "fr": "Camion Goliath",
+  "url": "https://mfm.warhammer-community.com/fr/genestealer-cults",
+  "preuve": "CAMION GOLIATH"
+ },
+ {
+  "en": "Arkanyst Evaluator",
+  "fr": "Évaluateur Arkanyste",
+  "url": "https://mfm.warhammer-community.com/fr/leagues-of-votann",
+  "preuve": "ÉVALUATEUR ARKANYSTE"
+ },
+ {
+  "en": "Hekaton Land Fortress",
+  "fr": "Forteresse Mobile Hekaton",
+  "url": "https://mfm.warhammer-community.com/fr/leagues-of-votann",
+  "preuve": "FORTERESSE MOBILE HEKATON"
+ },
+ {
+  "en": "Ironkin Steeljacks with Heavy Volkanite Disintegrators",
+  "fr": "Chaudronniers Cognats de Fer avec Désintégrateurs Volkanites Lourds",
+  "url": "https://mfm.warhammer-community.com/fr/leagues-of-votann",
+  "preuve": "CHAUDRONNIERS COGNATS DE FER AVEC DÉSINTÉGRATEURS VOLKANITES LOURDS"
+ },
+ {
+  "en": "Ironkin Steeljacks with Melee Weapons",
+  "fr": "Chaudronniers Cognats de Fer avec Armes de Mêlée",
+  "url": "https://mfm.warhammer-community.com/fr/leagues-of-votann",
+  "preuve": "CHAUDRONNIERS COGNATS DE FER AVEC ARMES DE MÊLÉE"
+ },
+ {
+  "en": "Breaka Boyz",
+  "fr": "Kasseurs",
+  "url": "https://mfm.warhammer-community.com/fr/orks",
+  "preuve": "KASSEURS"
+ },
+ {
+  "en": "Gargantuan Squiggoth",
+  "fr": "Squiggouth Gargantuesque",
+  "url": "https://mfm.warhammer-community.com/fr/orks",
+  "preuve": "SQUIGGOUTH GARGANTUESQUE"
+ },
+ {
+  "en": "Painboss",
+  "fr": "Médiboss",
+  "url": "https://mfm.warhammer-community.com/fr/orks",
+  "preuve": "MÉDIBOSS"
+ },
+ {
+  "en": "Rukkatrukk Squigbuggies",
+  "fr": "Buggys Fourre-Squigs",
+  "url": "https://mfm.warhammer-community.com/fr/orks",
+  "preuve": "BUGGYS FOURRE-SQUIGS"
+ },
+ {
+  "en": "Warbuggies",
+  "fr": "Buggys de Guerre",
+  "url": "https://mfm.warhammer-community.com/fr/orks",
+  "preuve": "BUGGYS DE GUERRE"
+ },
+ {
+  "en": "Iron Priest",
+  "fr": "Prêtre de Fer",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "PRÊTRE DE FER"
+ },
+ {
+  "en": "Wolf Guard Headtakers",
+  "fr": "Preneurs de Têtes Gardes Loups",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "PRENEURS DE TÊTES GARDES LOUPS"
+ },
+ {
+  "en": "Wolf Priest",
+  "fr": "Prêtre Loup",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "PRÊTRE LOUP"
+ },
+ {
+  "en": "Wolf Scouts",
+  "fr": "Scouts Space Wolves",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "SCOUTS SPACE WOLVES"
+ },
+ {
+  "en": "Wulfen with Storm Shields",
+  "fr": "Wulfens avec Boucliers Tempête",
+  "url": "https://mfm.warhammer-community.com/fr/space-wolves",
+  "preuve": "WULFENS AVEC BOUCLIERS TEMPÊTE"
+ },
+ {
+  "en": "Cadre Fireblade",
+  "fr": "Sabre de Feu",
+  "url": "https://mfm.warhammer-community.com/fr/tau-empire",
+  "preuve": "SABRE DE FEU"
+ },
+ {
+  "en": "Piranhas",
+  "fr": "Piranha",
+  "url": "https://mfm.warhammer-community.com/fr/tau-empire",
+  "preuve": "PIRANHA"
+ },
+ {
+  "en": "The Twin Lance",
+  "fr": "Les Lances Jumelles",
+  "url": "https://mfm.warhammer-community.com/fr/tau-empire",
+  "preuve": "LES LANCES JUMELLES"
+ },
+ {
+  "en": "Daemon Prince of Tzeentch",
+  "fr": "Prince Démon de Tzeentch",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "PRINCE DÉMON DE TZEENTCH"
+ },
+ {
+  "en": "Daemon Prince of Tzeentch with Wings",
+  "fr": "Prince Démon de Tzeentch Ailé",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "PRINCE DÉMON DE TZEENTCH AILÉ"
+ },
+ {
+  "en": "Exalted Sorcerer on Disc of Tzeentch",
+  "fr": "Sorcier Exalté sur Disque de Tzeentch",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "SORCIER EXALTÉ SUR DISQUE DE TZEENTCH"
+ },
+ {
+  "en": "Tzaangor Enlightened",
+  "fr": "Tzaangors Éclairés",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "TZAANGORS ÉCLAIRÉS"
+ },
+ {
+  "en": "Tzaangor Shaman",
+  "fr": "Chaman Tzaangor",
+  "url": "https://mfm.warhammer-community.com/fr/thousand-sons",
+  "preuve": "CHAMAN TZAANGOR"
+ },
+ {
+  "en": "Broodlord",
+  "fr": "Génocrate",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "GÉNOCRATE"
+ },
+ {
+  "en": "Gargoyles",
+  "fr": "Gargouilles",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "GARGOUILLES"
+ },
+ {
+  "en": "Harpy",
+  "fr": "Harpie",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "HARPIE"
+ },
+ {
+  "en": "Harridan",
+  "fr": "Haridelle",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "HARIDELLE"
+ },
+ {
+  "en": "Hierophant",
+  "fr": "Hiérophante",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "HIÉROPHANTE"
+ },
+ {
+  "en": "Hive Crone",
+  "fr": "Virago des Ruches",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "VIRAGO DES RUCHES"
+ },
+ {
+  "en": "Hyperadapted Raveners",
+  "fr": "Rôdeurs Hyperadaptés",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "RÔDEURS HYPERADAPTÉS"
+ },
+ {
+  "en": "Mucolid Spores",
+  "fr": "Spores Mucolides",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "SPORES MUCOLIDES"
+ },
+ {
+  "en": "Old One Eye",
+  "fr": "Le Vieux Borgne",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "LE VIEUX BORGNE"
+ },
+ {
+  "en": "Sporocyst",
+  "fr": "Sporokyste",
+  "url": "https://mfm.warhammer-community.com/fr/tyranids",
+  "preuve": "SPOROKYSTE"
+ }
+]
