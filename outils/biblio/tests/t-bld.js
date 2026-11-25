@@ -84,9 +84,9 @@ const noL=await ev(()=>BLDCALC(BLDL()).total);ok('retrait du meneur',noL<tot1,[t
 // 8b) appui (en plus du meneur)
 await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldr"][data-kind="Appui"]');
 const ah=await html();ok('écran « Ajouter un appui »',/Ajouter un appui/.test(ah),ah.slice(0,100));
-await ev(()=>{const q=document.getElementById('bldlq');q.value='ancient';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
-const sc=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')));ok('appuis proposés (unités Support)',sc.length>0&&sc.some(x=>/Ancient/i.test(x)),sc.slice(0,3));
-await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Ancient/i.test(x.innerText)).click());await p.waitForTimeout(300);
+await ev(()=>{const q=document.getElementById('bldlq');q.value='doyen';q.dispatchEvent(new Event('input',{bubbles:true}))});await p.waitForTimeout(250);
+const sc=await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].map(x=>x.innerText.replace(/\n/g,' | ')));ok('appuis proposés (unités Support)',sc.length>0&&sc.some(x=>/Ancient|Doyen/i.test(x)),sc.slice(0,3));
+await ev(()=>[...document.querySelectorAll('#bldm .bld-c')].find(x=>/Ancient|Doyen/i.test(x.innerText)).click());await p.waitForTimeout(300);
 await click('[data-bld="ok"]');
 const wa=await ev(()=>({subs:BLDL().units[2].subs.map(s=>s.label),lines:BLDCALC(BLDL()).lines.filter(l=>l.k==='l').map(l=>l.name+':'+l.pts)}));ok('appui ajouté avec son coût',wa.subs.includes('Appui')&&wa.lines.some(l=>/^Appui :/.test(l)),wa);
 await click('[data-bld="edit"][data-i="2"]');await click('[data-bld="ldr"][data-kind="Meneur"]');
