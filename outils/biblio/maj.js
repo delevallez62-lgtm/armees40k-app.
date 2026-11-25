@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:71,d:"2026-11-25",t:"Bulle du bloc-notes déplaçable",s:"Fais glisser la bulle 📝 où tu veux sur l'écran : elle garde sa place, même après avoir relancé l'appli. Un simple toucher ouvre toujours le post-it, qui s'ouvre à côté de la bulle (au-dessus ou en dessous selon la place)."},
  {id:70,d:"2026-11-25",t:"Bloc-notes (post-it)",s:"Dans une armée ouverte comme en Mode jeu, une petite bulle 📝 ouvre un post-it sombre où tu notes ce que tu veux. Ce que tu écris s'enregistre tout seul et reste jusqu'à modification, même après avoir fermé ou relancé l'appli. En Mode jeu : un onglet « Armée » (la même note que dans l'armée) et un onglet « Cette partie » pour tes remarques du match. Un point orange sur la bulle indique qu'une note existe."},
  {id:69,d:"2026-11-25",t:"Noms français : tes 32 choix enregistrés",s:"Les 32 noms « à relire » sont remplacés par ta liste validée (par exemple Doyen Bladeguard, Exhauster Miasmatique, Breaka Boyz). Ils sont marqués comme fournis par toi : ils ne seront jamais écrasés par une mise à jour."},
  {id:68,d:"2026-11-25",t:"Noms français : +75 noms officiels",s:"Nouveaux noms d'unités lus sur le Manuel du Munitorum français (Warhammer Community) : 43 confirmés, 32 à relire (🟠). Il reste des unités sans nom français officiel trouvé : elles gardent leur nom anglais."},

@@ -5,7 +5,7 @@ const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">
 const GAME=["play","pst","bat"],LISTT=["units","dets","strats","opti"];
 let open=false,sub="l",key="",sv=null;
 const css=`<style id="nbcss">
-#nbub{position:fixed;right:12px;bottom:calc(128px + env(safe-area-inset-bottom,0px));z-index:16;width:44px;height:44px;border-radius:50%;border:1px solid color-mix(in srgb,var(--ac) 45%,var(--bd));background:linear-gradient(145deg,color-mix(in srgb,#caa13a 22%,var(--card)),var(--card));color:var(--tx);font-size:21px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+#nbub{touch-action:none;user-select:none;-webkit-user-select:none;position:fixed;right:12px;bottom:calc(128px + env(safe-area-inset-bottom,0px));z-index:16;width:44px;height:44px;border-radius:50%;border:1px solid color-mix(in srgb,var(--ac) 45%,var(--bd));background:linear-gradient(145deg,color-mix(in srgb,#caa13a 22%,var(--card)),var(--card));color:var(--tx);font-size:21px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 14px rgba(0,0,0,.45)}
 #nbub:active{transform:scale(.94)}#nbub i{position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#e0a030;border:2px solid var(--card);display:none}#nbub.has i{display:block}
 #npad{position:fixed;right:10px;bottom:calc(184px + env(safe-area-inset-bottom,0px));z-index:30;width:min(340px,calc(100vw - 20px));display:none;flex-direction:column;border-radius:6px 6px 14px 6px;background:color-mix(in srgb,#2b2410 76%,var(--card));border:1px solid color-mix(in srgb,#caa13a 40%,var(--bd));box-shadow:0 14px 40px rgba(0,0,0,.6);transform:rotate(-.6deg);color:var(--tx)}
 #npad.on{display:flex}
@@ -27,13 +27,27 @@ function build(c){const p=document.getElementById("npad");const k=[c.L.id,c.game
  <textarea id="nbt" placeholder="${sub==="p"&&c.game?"Remarques sur cette partie…":"Pense-bête sur cette armée…"}" aria-label="Notes">${E(getTxt(c))}</textarea><div class="nf"><span>${sub==="p"&&c.game?"Propre à la partie en cours":"Rattaché à cette armée"}</span><span id="nbs">Enregistré automatiquement</span></div>`}
 function update(){try{const c=ctx();if(!document.getElementById("nbcss"))document.head.insertAdjacentHTML("beforeend",css);
  let b=document.getElementById("nbub"),p=document.getElementById("npad");
- if(!b){b=document.createElement("button");b.id="nbub";b.type="button";b.title="Bloc-notes";b.setAttribute("aria-label","Bloc-notes");b.innerHTML="📝<i></i>";document.body.appendChild(b);p=document.createElement("div");p.id="npad";document.body.appendChild(p)}
+ if(!b){b=document.createElement("button");b.id="nbub";b.type="button";b.title="Bloc-notes";b.setAttribute("aria-label","Bloc-notes");b.innerHTML="📝<i></i>";document.body.appendChild(b);p=document.createElement("div");p.id="npad";document.body.appendChild(p);applyPos()}
  if(!c){b.style.display="none";p.className="";open=false;return}
  b.style.display="";b.classList.toggle("has",has(c));
  if(!c.game&&sub==="p")sub="l";
- if(open){p.className="on";build(c)}else p.className=""}catch(e){}}
+ if(open){p.className="on";build(c);placePad()}else p.className=""}catch(e){}}
+const PK="a40k_nb_pos";let moved=0;
+const clampPos=(x,y,w,h)=>[Math.max(6,Math.min(innerWidth-w-6,x)),Math.max(70,Math.min(innerHeight-h-70,y))];
+function applyPos(){const b=document.getElementById("nbub");if(!b)return;let p=null;try{p=JSON.parse(localStorage.getItem(PK)||"null")}catch(_){}
+ if(p&&typeof p.x==="number"){const r=b.getBoundingClientRect(),w=r.width||44,h=r.height||44,c=clampPos(p.x*innerWidth,p.y*innerHeight,w,h);b.style.left=c[0]+"px";b.style.top=c[1]+"px";b.style.right="auto";b.style.bottom="auto"}
+ placePad()}
+function placePad(){const b=document.getElementById("nbub"),d=document.getElementById("npad");if(!b||!d||b.style.display==="none")return;const r=b.getBoundingClientRect(),w=Math.min(340,innerWidth-20);
+ const x=Math.max(10,Math.min(innerWidth-w-10,r.right-w));d.style.left=x+"px";d.style.right="auto";
+ if(r.top>innerHeight/2){d.style.top="auto";d.style.bottom=(innerHeight-r.top+8)+"px"}else{d.style.bottom="auto";d.style.top=(r.bottom+8)+"px"}}
+(()=>{let st=null;document.addEventListener("pointerdown",e=>{const b=e.target&&e.target.closest&&e.target.closest("#nbub");if(!b)return;const r=b.getBoundingClientRect();st={id:e.pointerId,sx:e.clientX,sy:e.clientY,ox:r.left,oy:r.top,w:r.width,h:r.height,d:false}},true);
+ document.addEventListener("pointermove",e=>{if(!st||e.pointerId!==st.id)return;const dx=e.clientX-st.sx,dy=e.clientY-st.sy;if(!st.d&&Math.hypot(dx,dy)<8)return;st.d=true;const b=document.getElementById("nbub");if(!b)return;try{b.setPointerCapture(e.pointerId)}catch(_){}
+  const c=clampPos(st.ox+dx,st.oy+dy,st.w,st.h);b.style.left=c[0]+"px";b.style.top=c[1]+"px";b.style.right="auto";b.style.bottom="auto";placePad();e.preventDefault()},true);
+ const end=e=>{if(!st||e.pointerId!==st.id)return;if(st.d){moved=Date.now();const b=document.getElementById("nbub"),r=b.getBoundingClientRect();try{localStorage.setItem(PK,JSON.stringify({x:r.left/innerWidth,y:r.top/innerHeight}))}catch(_){}placePad()}st=null};
+ document.addEventListener("pointerup",end,true);document.addEventListener("pointercancel",end,true)})();
+window.addEventListener("resize",()=>{applyPos()});
 document.addEventListener("click",e=>{const t=e.target;if(!t||!t.closest)return;
- if(t.closest("#nbub")){const c=ctx();if(!c)return;open=!open;if(open){sub="l";const p=document.getElementById("npad");if(p)p.dataset.k=""}update();if(open){const x=document.getElementById("nbt");if(x)x.focus({preventScroll:true})}e.preventDefault();return}
+ if(t.closest("#nbub")){if(Date.now()-moved<350){e.preventDefault();return}const c=ctx();if(!c)return;open=!open;if(open){sub="l";const p=document.getElementById("npad");if(p)p.dataset.k=""}update();if(open){const x=document.getElementById("nbt");if(x)x.focus({preventScroll:true})}e.preventDefault();return}
  const a=t.closest("[data-nb]");if(!a)return;const c=ctx();const k=a.dataset.nb;
  if(k==="x"){open=false;update()}
  if(c&&(k==="sl"||k==="sp")){sub=k==="sp"?"p":"l";update()}},true);
