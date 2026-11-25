@@ -67,7 +67,7 @@ function right(A,R,s){const x=R.find(y=>y.id===s.rec)||null;
  ${x.pros.length?`<div class="ast-pf g"><b>Avantages</b><ul>${x.pros.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`:""}${x.cons.length?`<div class="ast-pf r"><b>Inconvénients</b><ul>${x.cons.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`:""}
  ${x.legal.ok?"":`<div class="ast-pf r"><b>Pourquoi ce n'est pas applicable</b><ul>${x.legal.notes.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`}
  <details><summary>Pourquoi ce conseil ?</summary><ul>${x.trace.map(t=>`<li>${E2(t)}</li>`).join("")}<li>Scores : 50 = médiane des unités de la bibliothèque pour cette faction.</li></ul></details>
- <button class="ast-go" data-ast="apply" ${x.legal.ok?"":"disabled"}>✔ Appliquer cette optimisation<small>Crée une variante, ta liste d'origine reste intacte</small></button></div>`}
+ <button class="ast-go" data-ast="apply" ${x.legal.ok?"":"disabled"}>➜ Appliquer dans l'atelier<small>Onglet Conseils : liste de travail en direct, ta liste d'origine reste intacte</small></button></div>`}
 function variants(L,s){const base=L.varOf||L.id,orig=(S.lists||[]).find(l=>l.id===base)||L,vs=(S.lists||[]).filter(l=>l.varOf===base);if(!vs.length&&!L.varOf)return"";
  return`<div class="ast-p" style="margin-top:10px"><h4>🗂 Variantes de « ${E2(orig.name||"Liste")} »</h4>
  <div class="ast-var"><b>📌 ${E2(orig.name||"Liste")} <span class="mu">(liste d'origine)</span></b><button data-ast="open" data-v="${E2(orig.id)}">Ouvrir</button></div>
@@ -92,9 +92,9 @@ document.addEventListener("click",e=>{const b=e.target&&e.target.closest&&e.targ
  if(k==="rec"){s.rec=s.rec===v?null:v;draw();return}
  if(k==="goto"){const C=compute(L),x=C.R.find(y=>y.id===v);if(x){s.unit=x.unitIdx;s.rec=x.id}draw();window.scrollTo(0,0);return}
  if(k==="prev"||k==="next"){const n=(L.units||[]).length;s.unit=((s.unit||0)+(k==="next"?1:-1)+n)%n;s.rec=null;draw();return}
- if(k==="apply"){const C=compute(L),x=C.R.find(y=>y.id===s.rec);if(!x||!x.legal.ok)return;let V=null;try{V=B.applyRec(L,x)}catch(err){BIBLCK.pop({t:"Application impossible",p:String(err&&err.message),items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
-  if(!V){BIBLCK.pop({t:"Application impossible",p:"La variante n'a pas pu être créée.",items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
-  s.list=V.id;s.rec=null;try{toast("Variante créée : "+V.name)}catch(_){}draw();return}
+ if(k==="apply"){const C=compute(L),x=C.R.find(y=>y.id===s.rec);if(!x||!x.legal.ok)return;const W=B.workspace;let ok=false;try{ok=W.apply(x)}catch(err){ok=false}
+  if(!ok){BIBLCK.pop({t:"Application impossible",p:"Ce changement n'a pas pu être appliqué.",items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+  s.rec=null;(S.ana=S.ana||{}).sec="cons";try{save()}catch(_){}draw();window.scrollTo(0,0);return}
  if(k==="open"){openList(v);return}if(k==="pick"){s.list=v;s.rec=null;s.unit=0;draw();return}
  if(k==="cmp"){const a=S.ana=S.ana||{};a.a=b.dataset.o;a.b=v;a.sec="cmp";try{save()}catch(_){}draw();window.scrollTo(0,0);return}
  if(k==="copy"){const V=(S.lists||[]).find(l=>l.id===v);try{const t=BIBLCK.text(V);(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Liste copiée")).catch(()=>BIBLCK.pop({t:"Liste",p:t,items:[],buttons:[{k:"ok",l:"Fermer",cls:"p"}]}))}catch(_){}return}

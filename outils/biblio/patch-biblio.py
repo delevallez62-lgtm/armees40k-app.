@@ -24,7 +24,7 @@ emb={'manifest':man,'chunks':{}}
 for c in man['chunks']:
     raw=open(os.path.join(datadir,c['file']),'rb').read()
     emb['chunks'][c['id']]=base64.b64encode(gzip.compress(raw,9,mtime=0)).decode()
-J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__LCHK__*/',open(d+'/listcheck.js',encoding='utf8').read()).replace('/*__EQE__*/',open(d+'/equip.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__PSCAN__*/',open(d+'/paintscan.js',encoding='utf8').read()).replace('/*__ASSIST__*/',open(d+'/../assistant/assistant-engine.js',encoding='utf8').read()+'\n'+open(d+'/../assistant/assistant-recommend.js',encoding='utf8').read()+'\n'+open(d+'/../assistant/assistant-ui.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
+J=open(d+'/biblio.js',encoding='utf8').read().replace('/*__RULES__*/',open(d+'/trrules.js',encoding='utf8').read()).replace('/*__MAJ__*/',open(d+'/maj.js',encoding='utf8').read()).replace('/*__BLD__*/',open(d+'/build.js',encoding='utf8').read()).replace('/*__LCHK__*/',open(d+'/listcheck.js',encoding='utf8').read()).replace('/*__EQE__*/',open(d+'/equip.js',encoding='utf8').read()).replace('/*__UNI__*/',open(d+'/unify.js',encoding='utf8').read()).replace('/*__PSCAN__*/',open(d+'/paintscan.js',encoding='utf8').read()).replace('/*__ASSIST__*/',open(d+'/../assistant/assistant-engine.js',encoding='utf8').read()+'\n'+open(d+'/../assistant/assistant-recommend.js',encoding='utf8').read()+'\n'+open(d+'/../assistant/assistant-ui.js',encoding='utf8').read()+'\n'+open(d+'/../assistant/assistant-workspace.js',encoding='utf8').read()).replace('/*__LORE__*/',open(d+'/lore.js',encoding='utf8').read().replace('/*__LOREIMG__*/',open(d+'/lore-img.js',encoding='utf8').read()))
 assert '</script>' not in J
 rep('(e.u.name+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)','(e.u.name+" "+(window.BIBAL?BIBAL(e.u.ref):"")+" "+e.u.kw+" "+e.u.equip+" "+e.in.join(" ")).toLowerCase().includes(s)',2)
 rep('p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n if(!p.me)','p.l=(S.lists.some(l=>l.id===S.cur)?S.cur:S.lists[0].id);\n {const L0=S.lists.find(l=>l.id===p.l);if(L0&&L0.mission){p.m1="";p.i1=L0.mid||""}}\n if(!p.me)')
@@ -79,11 +79,11 @@ rep('["lists","Armées","lists"],["jeu","Jeu",""]','["lists","Mes armées","list
 rep("Fonctionne sans Claude : l'appli lit le PDF et te propose les ajouts à valider.","Fonctionne hors ligne : l'appli lit le PDF et te propose les ajouts à valider.")
 rep('const ARM=["lists","units","dets","strats","opti"];','const ARM=["lists","units","dets","strats","opti","bld"];')
 # Centre de commandement : « Conseils » rejoint le nouvel Assistant d'optimisation (le comparateur de listes et le duel restent séparés)
-rep('["rec","💡","Conseils",["rec"]]','["ast","🎯","Assistant",["ast","rec"]]')
-rep('rec:"Conseils",','rec:"Contre un adversaire",ast:"Mon assistant",')
-rep('const need=!["par","jou","his"].includes(a.sec);','const need=!["par","jou","his","ast"].includes(a.sec);')
-rep(' if(a.sec==="his")return h+secHis()+"</div>";',' if(a.sec==="ast"&&window.BIBAST&&BIBAST.render)return h+BIBAST.render()+"</div>";\n if(a.sec==="his")return h+secHis()+"</div>";')
-rep('const DESC={par:','const DESC={ast:"Analyse ta liste, repère ses faiblesses et applique des optimisations contrôlées (sur une copie de ta liste).",par:')
+rep('["rec","💡","Conseils",["rec"]]','["ast","🎯","Assistant",["ast","cons","rec"]]')
+rep('rec:"Conseils",','rec:"Contre un adversaire",ast:"Mon assistant",cons:"Conseils",')
+rep('const need=!["par","jou","his"].includes(a.sec);','const need=!["par","jou","his","ast","cons"].includes(a.sec);')
+rep(' if(a.sec==="his")return h+secHis()+"</div>";',' if(a.sec==="ast"&&window.BIBAST&&BIBAST.render)return h+BIBAST.render()+"</div>";\n if(a.sec==="cons"&&window.BIBAST&&BIBAST.renderCons)return h+BIBAST.renderCons()+"</div>";\n if(a.sec==="his")return h+secHis()+"</div>";')
+rep('const DESC={par:','const DESC={cons:"Conseils détaillés : modifie une copie de ta liste en direct, plusieurs unités à la fois, puis enregistre une variante ou reviens à ta liste initiale.",ast:"Analyse ta liste, repère ses faiblesses et applique des optimisations contrôlées (sur une copie de ta liste).",par:')
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))

@@ -1,6 +1,10 @@
 /* ===== Assistant d'optimisation — diagnostic, recommandations, validation, variantes ===== */
 (()=>{
 const T=AST,clone=o=>JSON.parse(JSON.stringify(o));
+const chipsOf=(m,pts,B)=>{if(!m||!pts||!B)return[];const c={ac:(m.dc/pts)/B.dc,ai:(m.di/pts)/B.di,res:(m.en/pts)/B.en,obj:(m.oc/pts)/B.oc};return Object.keys(c).filter(k=>Number.isFinite(c[k])).sort((a,b)=>c[b]-c[a]).slice(0,3).filter(k=>c[k]>=1.15).map(k=>({k,t:T.NAMES[k],x:Math.round(c[k]*10)/10}))};
+const infoOf=(B,m,pts,size,name)=>({name,pts,size,chips:chipsOf(m,pts,B)});
+const infoRow=(B,r)=>({name:r.name,pts:r.pts,size:r.u&&r.u.size,v:r.v,chips:chipsOf(r.m,r.pts,B)});
+const uidOf=(L,i)=>{const u=L.units[i];let n=0;for(let k=0;k<=i;k++)if(L.units[k].ref===u.ref)n++;return u.ref+"#"+n};
 const facKeyOf=(L,libs)=>{const b=L.bld&&L.bld.fac;if(b)return b;const c={};libs.forEach(l=>{if(l)c[l._c]=(c[l._c]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
 const limitOf=L=>+(L.bld&&L.bld.limit)||0;
 const fr=n=>{try{return frName(n)}catch(_){return n}};
@@ -26,6 +30,19 @@ function analyse(L){const units=L.units||[];if(!units.length)return{ok:false,why
  const fn=r=>{const c={ac:(r.m.dc/r.pts)/B.dc,ai:(r.m.di/r.pts)/B.di,res:(r.m.en/r.pts)/B.en,obj:(r.m.oc/r.pts)/B.oc};const k=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return c[k]>=1.4?k:null};
  const fc={};ok.forEach(r=>{r.fn=fn(r);if(r.fn)(fc[r.fn]=fc[r.fn]||[]).push(r)});
  Object.keys(fc).forEach(k=>{if(fc[k].length>=3)weaknesses.push({k:"red",t:fc[k].length+" unités remplissent le même rôle ("+T.NAMES[k].toLowerCase()+") : "+fc[k].map(r=>r.name).slice(0,3).join(", ")})});
+ /* verdict par unité : une bonne unité n'est jamais proposée au remplacement */
+ const ledIds=new Set();rows.forEach(r=>{if(r.lib&&isChar(r.lib))((r.lib.wp&&r.lib.wp.leads)||[]).forEach(n=>ledIds.add(nk(n)))});
+ const libNames=new Set(rows.filter(r=>r.lib).map(r=>nk(r.lib.n)));
+ ok.forEach(r=>{const c={ac:(r.m.dc/r.pts)/B.dc,ai:(r.m.di/r.pts)/B.di,res:(r.m.en/r.pts)/B.en,obj:(r.m.oc/r.pts)/B.oc};r.c=c;const best=Object.keys(c).sort((x,y)=>c[y]-c[x])[0];r.best=best;
+  const sh={ac:tot("dc")?r.m.dc/tot("dc"):0,ai:tot("di")?r.m.di/tot("di"):0,res:tot("en")?r.m.en/tot("en"):0,obj:tot("oc")?r.m.oc/tot("oc"):0};
+  const need=["ac","ai","res","obj"].find(k=>I.ind[k]!=null&&I.ind[k]<=55&&sh[k]>=0.25),avg=(c.ac+c.ai+c.res+c.obj)/4,x=v=>(Math.round(v*10)/10).toString().replace(".",",");
+  const leads=r.lib&&isChar(r.lib)&&((r.lib.wp&&r.lib.wp.leads)||[]).some(n=>libNames.has(nk(n)));
+  if(need)r.v={lvl:"key",protect:true,t:"Indispensable",txt:"Produit "+Math.round(100*sh[need])+" % de ton "+T.NAMES[need].toLowerCase()+", un point faible de ta liste : à garder."};
+  else if(leads)r.v={lvl:"key",protect:true,t:"Indispensable",txt:"Personnage qui peut mener une unité de ta liste (synergie) : à garder."};
+  else if(c[best]>=1.3)r.v={lvl:"good",protect:true,t:"Bon choix",txt:T.NAMES[best]+" à "+x(c[best])+" × la médiane de la faction pour son coût : à garder."};
+  else if(avg>=0.9||c[best]>=1.0)r.v={lvl:"ok",protect:false,t:"Correct",txt:"Rendement proche de la médiane de la faction ("+T.NAMES[best].toLowerCase()+" "+x(c[best])+" ×)."};
+  else r.v={lvl:"weak",protect:false,t:"À revoir",txt:"Rend moins que la médiane de la faction pour son coût (meilleur point : "+T.NAMES[best].toLowerCase()+" à "+x(c[best])+" ×)."}});
+ rows.forEach(r=>{if(!r.v)r.v={lvl:"na",protect:true,t:"Non évalué",txt:"Données insuffisantes pour juger cette unité."}});
  const conf=partial.length?"partial":"verified";
  return{ok:true,L,rows,okRows:ok,I,B,fac,total,lim,room,strengths,weaknesses,partial,conf,syn}}
 const IKEYS=["ac","ai","res","mob","obj"];
@@ -64,13 +81,13 @@ function recommend(A){const recs=[];if(!A||!A.ok)return recs;const L=A.L;
    const aft=after(A,[r.i],[nr]);if(!aft)return;const best=weak.reduce((b,k)=>Math.max(b,pm(aft.ind[k])-pm(A.I.ind[k])),-99);const g=pm(aft.ind.glob)-pm(A.I.ind.glob);
    if(best<2||g<1)return;if(A.room!=null&&cost>A.room)return;
    const u2=clone(u);u2.cfg.figs=nf;const lg=legalOf(L,L.units.map((x,i)=>i===r.i?u2:x),[]);
-   const txt=EQE.altTxt(alt);recs.push(mkRec(A,{id:"eq-"+r.i+"-"+rule.id+"-"+ai,kind:"equip",unitIdx:r.i,key:"eq|"+r.i+"|"+rule.id+"|"+ai,after:aft,cost,legal:lg,
-    title:"Équiper "+n+" figurine"+(n>1?"s":"")+" de « "+txt+" »",unitName:r.name,
+   const txt=EQE.altTxt(alt);recs.push(mkRec(A,{id:"eq-"+r.i+"-"+rule.id+"-"+ai,kind:"equip",unitIdx:r.i,key:"eq|"+uidOf(L,r.i)+"|"+rule.id+"|"+ai,after:aft,cost,legal:lg,
+    title:"Équiper "+n+" figurine"+(n>1?"s":"")+" de « "+txt+" »",unitName:r.name,info:{from:infoRow(A.B,r)},toName:txt,fromName:(rule.from||[]).map(x=>EQE.itemTxt(x)).join(" + ")||"équipement de base",nFig:n,
     why:[PROB[weak[0]],"Cet équipement augmente la puissance de "+r.name+" ("+T.NAMES[weak[0]].toLowerCase()+") sans changer son rôle.","Effet : "+T.NAMES[weak[0]]+" "+A.I.ind[weak[0]]+" → "+aft.ind[weak[0]]+(cost?" pour "+cost+" pts de plus.":", sans coût supplémentaire.")],
     trace:["Unité : "+r.name+" ("+size+" fig.), équipement validé par le moteur d'options","Dégâts moyens vs char (réf. E10 Sv3+ PV12) : "+Math.round(m0.dc*10)/10+" → "+Math.round(m1.dc*10)/10,"Dégâts moyens vs infanterie (réf. 10× E4 Sv3+ PV2) : "+Math.round(m0.di*10)/10+" → "+Math.round(m1.di*10)/10,"Coût : "+cost+" pts (équipements payants du barème)"],
     apply:{op:"equip",i:r.i,figs:nf,wg:wgAdd}}))}))});
  /* ---- B. ajout et C. remplacement ---- */
- const room=A.room,donors=A.okRows.filter(r=>!(r.lib&&isChar(r.lib))&&r.pts>0).map(r=>{const sp=r.pts/A.I.pts,c=["dc","di","en","oc"].reduce((a,k)=>a+(A.I.raw[{dc:"dc",di:"di",en:"en",oc:"oc"}[k]]?(r.m[k]||0)/A.I.raw[k]:0),0)/4;return{r,sp,c,ratio:c/sp}}).sort((a,b)=>a.ratio-b.ratio).slice(0,3);
+ const room=A.room,donors=A.okRows.filter(r=>!(r.v&&r.v.protect)&&r.pts>0).map(r=>{const sp=r.pts/A.I.pts,c=["dc","di","en","oc"].reduce((a,k)=>a+(A.I.raw[{dc:"dc",di:"di",en:"en",oc:"oc"}[k]]?(r.m[k]||0)/A.I.raw[k]:0),0)/4;return{r,sp,c,ratio:c/sp}}).sort((a,b)=>a.ratio-b.ratio).slice(0,3);
  const scored=[];cands.forEach(c=>{const copy=(L.units||[]).filter(u=>{const l=lckLib(u);return l&&l.id===c.lib.id}).length+1,cs=costOf(c.lib,c.size,copy);if(cs.pts==null)return;
   const row={i:-1,u:null,lib:c.lib,m:c,pts:cs.pts,name:fr(c.lib.n)};
   const aftAdd=after(A,[],[row]);if(aftAdd&&(room==null||cs.pts<=room)){const best=weak.reduce((b,k)=>Math.max(b,pm(aftAdd.ind[k])-pm(A.I.ind[k])),-99),g=pm(aftAdd.ind.glob)-pm(A.I.ind.glob);if(best>=3&&g>=1)scored.push({kind:"add",c,row,aft:aftAdd,best,g,cost:cs.pts})}
@@ -81,10 +98,10 @@ function recommend(A){const recs=[];if(!A||!A.ok)return recs;const L=A.L;
  for(const s of scored){if(per[s.kind]>=3||tested>=24)continue;tested++;const lib=s.c.lib,fg=T.figsOf(lib,s.c.size);if(!fg||fg.v.errors.length)continue;
   const tmp=tmpUnit(lib,s.c.size,fg.figs),units=s.kind==="replace"?L.units.filter((u,i)=>i!==s.donor.i):L.units.slice(),lg=legalOf(L,units,[tmp]);if(!lg.ok)continue;
   const nm=fr(lib.n),W=weak[0];
-  if(s.kind==="add")recs.push(mkRec(A,{id:"add-"+lib.id,kind:"add",key:"add|"+lib.id,unitIdx:null,after:s.aft,cost:s.cost,legal:lg,title:"Ajouter : "+nm,unitName:nm,
+  if(s.kind==="add")recs.push(mkRec(A,{id:"add-"+lib.id,kind:"add",key:"add|"+lib.id,unitIdx:null,after:s.aft,cost:s.cost,legal:lg,title:"Ajouter : "+nm,unitName:nm,toName:nm,info:{to:infoOf(A.B,s.c,s.cost,s.c.size,nm)},
    why:[PROB[W],WHYS[W]+" "+nm+" apporte cette capacité.","Effet : "+T.NAMES[W]+" "+A.I.ind[W]+" → "+s.aft.ind[W]+", pour "+s.cost+" pts de plus ("+(room==null?"aucune limite de points définie":"il te reste "+room+" pts")+")."],
    trace:["Unité candidate : "+nm+" ("+s.c.size+" fig., "+s.cost+" pts, barème Wahapedia 11e)","Dégâts moyens vs char : "+Math.round(s.c.dc*10)/10+" · vs infanterie : "+Math.round(s.c.di*10)/10,"Équipement de base validé ; légalité vérifiée avec la liste complète"],apply:{op:"add",lib:lib.id,size:s.c.size}}));
-  else recs.push(mkRec(A,{id:"rep-"+s.donor.i+"-"+lib.id,kind:"replace",key:"rep|"+s.donor.i+"|"+lib.id,unitIdx:s.donor.i,after:s.aft,cost:s.cost,legal:lg,title:"Remplacer "+s.donor.name+" par "+nm,unitName:s.donor.name,
+  else recs.push(mkRec(A,{id:"rep-"+s.donor.i+"-"+lib.id,kind:"replace",key:"rep|"+uidOf(L,s.donor.i)+"|"+lib.id,unitIdx:s.donor.i,after:s.aft,cost:s.cost,legal:lg,title:"Remplacer "+s.donor.name+" par "+nm,unitName:s.donor.name,toName:nm,info:{from:infoRow(A.B,s.donor),to:infoOf(A.B,s.c,s.row.pts,s.c.size,nm)},
    why:[PROB[W],s.donor.name+" contribue peu à ta liste par rapport à son coût ; "+nm+" répond mieux au besoin ("+T.NAMES[W].toLowerCase()+").","Effet : "+T.NAMES[W]+" "+A.I.ind[W]+" → "+s.aft.ind[W]+" ; "+(s.cost>=0?"+":"")+s.cost+" pts."],
    trace:["Unité retirée : "+s.donor.name+" ("+s.donor.pts+" pts)","Unité ajoutée : "+nm+" ("+s.cost+(s.cost>=0?" pts de plus":" pts de moins")+" que l'unité retirée)","Les autres unités de la liste restent identiques ; légalité vérifiée"],apply:{op:"replace",i:s.donor.i,lib:lib.id,size:s.c.size}}));per[s.kind]++}
  const seen=new Set();return recs.filter(r=>!seen.has(r.key)&&seen.add(r.key)).sort((a,b)=>(b.gain+Math.max(...IKEYS.map(k=>pm(b.dl[k]))))-(a.gain+Math.max(...IKEYS.map(k=>pm(a.dl[k])))))}
@@ -95,13 +112,32 @@ function createUnit(lib,size){const key="u:"+lib.id;let e=catEntries().find(x=>x
  const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const n={ref:m.ref,size:c.size,pts:0,subs:[],man:1};SH.forEach(f=>{n[f]=clone(m[f])});n.weapons=Wn;n.equip=eqLines(c).join(" ; ")||"";n.cfg={lib:lib.id,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:null,manual:0,eq:eqLines(c)};return n}
 function nextName(L){const base=String(L.name||"Liste").replace(/ — variante \d+$/,"");const n=(S.lists||[]).filter(x=>x.varOf===L.id||(String(x.name||"").indexOf(base+" — variante")===0)).length+1;return base+" — variante "+n}
-function applyRec(L,rec){const V=clone(L);V.id="l"+Date.now()+Math.floor(Math.random()*1000);V.varOf=L.varOf||L.id;V.name=nextName(L);V.optLog=(L.optLog||[]).concat([{at:Date.now(),t:rec.title,cost:rec.cost,before:rec.before.glob,after:rec.after.glob,conf:rec.conf}]);
- const a=rec.apply;
- if(a.op==="equip"){const u=V.units[a.i],e=catEntries().find(x=>x.colls.some(m=>m.ref===u.ref))||catEntries().find(x=>x.key==="u:"+u.cfg.lib);const c={key:e.key,idx:a.i,size:u.cfg.size,figs:clone(a.figs),wq:{},wn:clone(u.cfg.wn||{}),wg:clone(u.cfg.wg||{}),enh:u.cfg.enh||null,subs:u.subs||[],manual:u.cfg.manual||0};
+function applyOp(V,a){
+ if(a.op==="equip"){const u=V.units[a.i],e=catEntries().find(x=>x.colls.some(m=>m.ref===u.ref))||catEntries().find(x=>x.key==="u:"+u.cfg.lib);if(!e)return false;const c={key:e.key,idx:a.i,size:u.cfg.size,figs:clone(a.figs),wq:{},wn:clone(u.cfg.wn||{}),wg:clone(u.cfg.wg||{}),enh:u.cfg.enh||null,subs:u.subs||[],manual:u.cfg.manual||0};
   figSync(c,e);const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
   if(Wn.length)u.weapons=Wn;u.equip=eqLines(c).join(" ; ")||u.equip;u.cfg=Object.assign({},u.cfg,{wq:c.wq,figs:c.figs,eq:eqLines(c)});if(a.wg&&Object.keys(a.wg).length){const w=Object.assign({},u.cfg.wg||{});Object.keys(a.wg).forEach(k=>{w[k]=(w[k]||0)+a.wg[k]});u.cfg.wg=w}}
- else{const lib=D.byId[a.lib],nu=createUnit(lib,a.size);if(!nu)return null;if(a.op==="add")V.units.push(nu);else V.units[a.i]=nu}
- try{applyPts(V)}catch(_){}try{syncPts(V)}catch(_){}S.lists.push(V);try{save()}catch(_){}return V}
+ else if(a.op==="remove"){V.units.splice(a.i,1)}
+ else{const lib=D.byId[a.lib],nu=createUnit(lib,a.size);if(!nu)return false;if(a.op==="add")V.units.push(nu);else V.units[a.i]=nu;V.__created=(V.__created||[]).concat([nu.ref])}
+ try{applyPts(V)}catch(_){}try{syncPts(V)}catch(_){}return true}
+function applyRec(L,rec){const V=clone(L);V.id="l"+Date.now()+Math.floor(Math.random()*1000);V.varOf=L.varOf||L.id;V.name=nextName(L);V.optLog=(L.optLog||[]).concat([{at:Date.now(),t:rec.title,cost:rec.cost,before:rec.before.glob,after:rec.after.glob,conf:rec.conf}]);delete V.__created;
+ if(!applyOp(V,rec.apply))return null;S.lists.push(V);try{save()}catch(_){}return V}
+/* ---------- alternatives manuelles pour une unité (ou ajout libre) : même validation, sans seuil de gain ---------- */
+function alternatives(A,i,mode,max){const L=A.L,out=[];if(!A||!A.ok)return out;const donor=i==null?null:A.okRows.find(r=>r.i===i);if(mode==="replace"&&!donor)return out;
+ const weak=IKEYS.filter(k=>A.I.ind[k]!=null).sort((a,b)=>A.I.ind[a]-A.I.ind[b]).slice(0,2),W=weak[0];
+ const sc=[];A.B.ms.filter(m=>m.pts>0&&!/\[(Legends|Crucible)\]/i.test(m.lib.n)).forEach(c=>{if(donor&&donor.lib&&c.lib.id===donor.lib.id)return;
+  const copy=(L.units||[]).filter(u=>{const l=lckLib(u);return l&&l.id===c.lib.id}).length+1,cs=costOf(c.lib,c.size,copy);if(cs.pts==null)return;
+  const row={i:-1,u:null,lib:c.lib,m:c,pts:cs.pts,name:fr(c.lib.n)};const aft=after(A,donor?[donor.i]:[],[row]);if(!aft)return;
+  const nt=A.total+cs.pts-(donor?donor.pts:0);if(A.lim&&nt>A.lim)return;sc.push({c,row,aft,g:pm(aft.ind.glob)-pm(A.I.ind.glob),cost:cs.pts-(donor?donor.pts:0)})});
+ sc.sort((a,b)=>b.g-a.g);let tested=0;
+ for(const s of sc){if(out.length>=(max||6)||tested>=22)break;tested++;const lib=s.c.lib,fg=T.figsOf(lib,s.c.size);if(!fg||fg.v.errors.length)continue;
+  const tmp=tmpUnit(lib,s.c.size,fg.figs),units=donor?L.units.filter((u,k)=>k!==donor.i):L.units.slice(),lg=legalOf(L,units,[tmp]);if(!lg.ok)continue;const nm=fr(lib.n);
+  out.push(mkRec(A,{id:(donor?"alt-"+donor.i+"-":"add2-")+lib.id,kind:donor?"replace":"add",key:(donor?"rep|"+uidOf(L,donor.i)+"|":"add|")+lib.id,unitIdx:donor?donor.i:null,after:s.aft,cost:s.cost,legal:lg,
+   title:donor?"Remplacer "+donor.name+" par "+nm:"Ajouter : "+nm,unitName:donor?donor.name:nm,toName:nm,info:{from:donor?infoRow(A.B,donor):null,to:infoOf(A.B,s.c,s.row.pts,s.c.size,nm)},
+   why:[PROB[W],(donor?donor.name+" est remplacée par "+nm+".":nm+" est ajoutée.")+" Gain principal visé : "+T.NAMES[W].toLowerCase()+".","Effet : "+T.NAMES[W]+" "+A.I.ind[W]+" → "+s.aft.ind[W]+" ; "+(s.cost>=0?"+":"")+s.cost+" pts."],
+   trace:[(donor?"Unité retirée : "+donor.name+" ("+donor.pts+" pts)":"Aucune unité retirée"),"Unité ajoutée : "+nm+" ("+s.c.size+" fig., "+s.row.pts+" pts, barème Wahapedia 11e)","Légalité vérifiée avec la liste complète"],apply:donor?{op:"replace",i:donor.i,lib:lib.id,size:s.c.size}:{op:"add",lib:lib.id,size:s.c.size}}))}
+ return out}
+function removalOf(A,i){const L=A.L,r=A.rows.find(x=>x.i===i);if(!r)return null;const aft=after(A,[i],[]);const lg=legalOf(L,L.units.filter((u,k)=>k!==i),[]);
+ return mkRec(A,{id:"rm-"+i,kind:"remove",key:"rm|"+uidOf(L,i),unitIdx:i,after:aft||A.I,cost:-r.pts,legal:lg,title:"Retirer "+r.name,unitName:r.name,why:["Tu retires une unité de la liste.",r.name+" ("+r.pts+" pts) est retirée.","Effet : "+(aft?"score global "+A.I.ind.glob+" → "+aft.ind.glob:"indicateurs recalculés")+" ; "+(-r.pts)+" pts."],trace:["Unité retirée : "+r.name],apply:{op:"remove",i}})}
 /* ---------- outils de test (génèrent des listes réelles à partir de la bibliothèque) ---------- */
 function mkList(fac,limit,name){const fl=facList().find(x=>x[0]===fac),l={id:"l"+Date.now()+Math.floor(Math.random()*9999),name:name||"Test "+fac,units:[],dets:[],strats:[],total:"",bld:{fac,facN:fl?fl[1]:fac,fmt:"",limit,pv:ptsVer(),tot:0}};S.lists.push(l);return l}
 function fillList(L,seed){const fac=L.bld.fac,lim=L.bld.limit;let r=(seed||1)*9301;const rnd=()=>(r=(r*9301+49297)%233280)/233280;
@@ -109,5 +145,5 @@ function fillList(L,seed){const fac=L.bld.fac,lim=L.bld.limit;let r=(seed||1)*93
  for(const u of us){if(tries++>120)break;const sz=sizesOf(u,1)[0];if(!sz||sz.pts==null)continue;const R=calc(L);if(lim&&R.total+sz.pts>lim)continue;const nu=createUnit(u,sz.n);if(!nu)continue;
   const before=new Set(lckBadOf(L,L.units).map(x=>x.k));L.units.push(nu);applyPts(L);const bad=lckBadOf(L,L.units).filter(x=>!before.has(x.k));if(bad.length)L.units.pop()}
  applyPts(L);return L}
-window.BIBAST={analyse,recommend,applyRec,legalOf,IKEYS,PROB,WHYS,T:AST,facKeyOf,benchFor:k=>T.bench(k),test:{allUnits:()=>D.units,dedupe:()=>dedupeAll(),dbg:(lib,size)=>{const e=catEntries().find(x=>x.key==="u:"+lib.id);const fg=T.figsOf(lib,size);return{tot:Object.keys(fg.tot),groups:wgroups(weaponsOf(e)).map(g=>g.name+" => "+lckBase(g.name)),items:fg.v.final.map(f=>f.map(x=>x.n))}},libById:id=>D.byId[id],byName:n=>D.units.find(u=>u.n===n),mkList,fillList,createUnit,facs:()=>[...new Set(D.units.map(u=>u._c))],calc,bad:lckBadOf,applyPts,units:()=>D.units.length}};
+window.BIBAST={analyse,recommend,applyRec,applyOp,alternatives,removalOf,uidOf,legalOf,IKEYS,PROB,WHYS,T:AST,facKeyOf,benchFor:k=>T.bench(k),test:{allUnits:()=>D.units,dedupe:()=>dedupeAll(),dbg:(lib,size)=>{const e=catEntries().find(x=>x.key==="u:"+lib.id);const fg=T.figsOf(lib,size);return{tot:Object.keys(fg.tot),groups:wgroups(weaponsOf(e)).map(g=>g.name+" => "+lckBase(g.name)),items:fg.v.final.map(f=>f.map(x=>x.n))}},libById:id=>D.byId[id],byName:n=>D.units.find(u=>u.n===n),mkList,fillList,createUnit,facs:()=>[...new Set(D.units.map(u=>u._c))],calc,bad:lckBadOf,applyPts,units:()=>D.units.length}};
 })();
