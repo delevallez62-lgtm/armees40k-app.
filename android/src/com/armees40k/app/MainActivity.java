@@ -232,6 +232,10 @@ public class MainActivity extends Activity {
 
     class Bridge {
         @JavascriptInterface
+        public void checkApk() { runOnUiThread(() -> { if (apkUp == null) apkUp = new ApkUpdater(MainActivity.this, prefs); apkUp.check(true); }); }
+        @JavascriptInterface
+        public String apkVersion() { return apkUp == null ? "" : apkUp.currentName(); }
+        @JavascriptInterface
         public String info() {
             try {
                 File f = new File(getFilesDir(), "index.html");
@@ -389,5 +393,10 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onPause() { super.onPause(); web.onPause(); }
-    @Override protected void onResume() { super.onResume(); web.onResume(); }
+    private ApkUpdater apkUp;
+    @Override protected void onResume() {
+        super.onResume(); web.onResume();
+        if (apkUp == null) apkUp = new ApkUpdater(this, prefs);
+        web.postDelayed(() -> apkUp.onResume(), 2500);
+    }
 }
