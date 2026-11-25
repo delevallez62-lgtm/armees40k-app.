@@ -46,14 +46,15 @@ const curL=()=>(S.lists||[]).find(l=>l.id===BLD.id)||null;
 const imgOf=m=>(m&&S.imgs&&S.imgs[m.ref])||"";
 /* profils d'une même arme (« - Standard », « – frag », « (Supercharge) ») : une seule arme */
 const wgk=n=>String(n||"").replace(/^➤\s*/,"").replace(/\s*\(.*?\)\s*$/,"").split(/\s+[-–]\s+/)[0].trim();
-const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgk(w.name));if(!m.has(k))m.set(k,{key:k,name:wgk(w.name),ws:[]});m.get(k).ws.push(w)});return[...m.values()]};
+const wgBase=w=>wgk(w.en||w.name);
+const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgBase(w));if(!m.has(k)){let nm=wgk(w.name);if(w.en){try{nm=frName(wgk(w.en))||nm}catch(_){}}m.set(k,{key:k,name:nm,base:lckBase(wgBase(w)),ws:[]})}m.get(k).ws.push(w)});return[...m.values()]};
 /* « 9 × Épée ; 1 × Marteau — Sergent » ou « Fusil, Épée » -> totaux par arme */
 function eqFromText(t,size){const o={};String(t||"").split(/;|\n|,(?![^()]*\))/).forEach(x=>{x=x.trim();if(!x)return;const m=/^(\d+)\s*[x×]\s*(.+?)(?:\s+[—–-]\s+.*)?$/.exec(x);if(m){const k=m[2].trim();o[k]=Math.max(o[k]||0,+m[1])}else{const k=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").replace(/\s+[—–-]\s+.*$/,"").trim();if(k)o[k]=Math.max(o[k]||0,size||1)}});return o}
 /* ----- équipement figurine par figurine (moteur EQE) ----- */
 const figMode=c=>!!(c&&c.figs);
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.figd!==undefined)BLD.figOpen=d.open;if(d&&d.dataset&&d.dataset.figq!==undefined)BLD.figQ=d.open},true);
 function figSync(c,e){const M=EQE.model(e.lib),v=EQE.validate(M,c.size,c.figs),tot=EQE.totals(v.final),wq={};
- wgroups(weaponsOf(e)).forEach(g=>{const t=tot[lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
+ wgroups(weaponsOf(e)).forEach(g=>{const t=tot[g.base||lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
 function figInit(c,e){if(!e.lib||c.figs===null)return;let M;try{M=EQE.model(e.lib)}catch(_){return}if(!M||!M.usable||!EQE.counts(M,c.size))return;
  if(!c.figs||c.figs.length!==c.size){if(c.figs){c.figs=EQE.resize(M,c.size,c.figs)||EQE.newFigs(M,c.size)}else{const had=c.idx!=null&&Object.keys(c.wq||{}).length;c.figs=had?EQE.fromCounts(M,c.size,c.wq):EQE.newFigs(M,c.size)}}
  if(!c.figs)return;BLD.fig=0;BLD.figSheet=false;figSync(c,e)}
@@ -61,7 +62,7 @@ const typeLabel=n=>{let r;try{r=tName(n)}catch(_){r=null}if(r&&(r.st==="ok"||r.p
 const figName=(M,figs,i)=>{const f=figs[i],t=M.types[f.t];const same=figs.filter(g=>g.t===f.t);if(same.length<2)return typeLabel(t.name);return typeLabel(t.name)+" "+(figs.slice(0,i+1).filter(g=>g.t===f.t).length)};
 const figSum=(M,final,i)=>final[i].map(x=>EQE.itemTxt(x.n)+(x.q>1?" ×"+x.q:"")).join(" · ");
 const wstat=w=>`${w.range&&w.range!=="Mêlée"?E(w.range)+(/^\d/.test(w.range)?'"':"")+" · ":(w.range?E(w.range)+" · ":"")}A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}`;
-function wprof(e,items){const G=wgroups(weaponsOf(e));return(items||[]).map(it=>{const b=lckBase(it.n),g=G.find(x=>lckBase(x.name)===b);if(!g)return"";return g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<span class="bld-ws">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${wstat(w)}</span>`}).join("")}).join("")}
+function wprof(e,items){const G=wgroups(weaponsOf(e));return(items||[]).map(it=>{const b=lckBase(it.n),g=G.find(x=>(x.base||lckBase(x.name))===b);if(!g)return"";return g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<span class="bld-ws">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${wstat(w)}</span>`}).join("")}).join("")}
 function figSheetHtml(c,e,M){const v=EQE.validate(M,c.size,c.figs),sel=Math.min(BLD.fig||0,c.figs.length-1),f=c.figs[sel],t=M.types[f.t],lib=e.lib;
  const pr=((lib&&lib.pr)||[]);const p=pr.find(x=>nk(x.n)===nk(t.name))||pr[0];
  const L=[["Mvt","M"],["End.","E"],["Svg","SV"],["PV","PV"],["Cd","CD"],["CO","CO"]];

@@ -5736,9 +5736,9 @@ if(typeof module!=="undefined")module.exports=root.ANA;
 /* ===== HAMMER · Analyse & Simulation — interface (le moteur est ANA, voir ana-engine) ===== */
 (()=>{
 const A=window.ANA,E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const GROUPS=[["par","🏁","Parties",["par","his"]],["aff","⚔","Affronter",["duel","sim"]],["rec","💡","Conseils",["rec"]],["jou","📓","Journal",["jou"]],["arm","🛡","Armées",["cmp","bat","win"]]];
-const LEAF={par:"Mes parties",his:"Historique manuel",duel:"Duel",sim:"Simulation",rec:"Conseils",jou:"Journal",cmp:"Comparer",bat:"Bataille",win:"Victoire"};
-const DESC={par:"Tes parties en cours et terminées, avec tes statistiques de victoires.",his:"Ajoute à la main une partie jouée ailleurs.",duel:"Une figurine contre une autre : combien de PV elle retire et combien de figurines elle tue.",sim:"Les dés lancés des milliers de fois pour voir ce qui est le plus probable.",rec:"Les meilleurs choix de ta liste contre celle de l'adversaire, en mots simples.",jou:"Tout ce que tu as noté en jouant : dégâts, unités tombées, jets de dés.",cmp:"Tes deux armées côte à côte : puissance, mobilité, objectifs.",bat:"Une bataille complète simulée, tour par tour.",win:"Une estimation théorique de tes chances de victoire."};
+const GROUPS=[["par","🏁","Parties",["par","his"]],["aff","⚔","Affronter",["duel","sim"]],["ast","🎯","Assistant",["ast","rec"]],["jou","📓","Journal",["jou"]],["arm","🛡","Armées",["cmp","bat","win"]]];
+const LEAF={par:"Mes parties",his:"Historique manuel",duel:"Duel",sim:"Simulation",rec:"Contre un adversaire",ast:"Mon assistant",jou:"Journal",cmp:"Comparer",bat:"Bataille",win:"Victoire"};
+const DESC={ast:"Analyse ta liste, repère ses faiblesses et applique des optimisations contrôlées (sur une copie de ta liste).",par:"Tes parties en cours et terminées, avec tes statistiques de victoires.",his:"Ajoute à la main une partie jouée ailleurs.",duel:"Une figurine contre une autre : combien de PV elle retire et combien de figurines elle tue.",sim:"Les dés lancés des milliers de fois pour voir ce qui est le plus probable.",rec:"Les meilleurs choix de ta liste contre celle de l'adversaire, en mots simples.",jou:"Tout ce que tu as noté en jouant : dégâts, unités tombées, jets de dés.",cmp:"Tes deux armées côte à côte : puissance, mobilité, objectifs.",bat:"Une bataille complète simulée, tour par tour.",win:"Une estimation théorique de tes chances de victoire."};
 const SECS=GROUPS.flatMap(g=>g[3].map(k=>[k,LEAF[k]]));
 const pct=x=>x==null?"—":Math.round(x*100)+" %",n1=x=>x==null?"—":(Math.round(x*10)/10).toString().replace(".",","),n2=x=>x==null?"—":(Math.round(x*100)/100).toString().replace(".",",");
 let CACHE={key:"",res:null},RES=null,BUSY=false,HFORM={};
@@ -5790,7 +5790,7 @@ const css=`<style id="anacss">
 .an-th{display:grid;grid-template-columns:1fr 54px 64px 64px;gap:6px;font-size:11px;color:var(--mu);font-weight:700;text-transform:uppercase;padding:0 2px 4px}
 </style>`;
 const hdr=a=>{const L=lists();const opt=(id)=>L.map(l=>`<option value="${E(l.id)}"${l.id===id?" selected":""}>${E(l.name||"Liste")} (${(l.units||[]).length})</option>`).join("");
- const need=!["par","jou","his"].includes(a.sec);
+ const need=!["par","jou","his","ast"].includes(a.sec);
  const grp=GROUPS.find(g=>g[3].includes(a.sec))||GROUPS[0];a.last=a.last||{};
  return`<div class="an"><h2>CENTRE DE COMMANDEMENT</h2>
  <div class="an-nav">${GROUPS.map(([id,ic,nm,lv])=>`<button data-an="sec" data-v="${lv.includes(a.last[id])?a.last[id]:lv[0]}" class="${grp[0]===id?"on":""}"><i>${ic}</i><span>${nm}</span></button>`).join("")}</div>
@@ -6061,6 +6061,7 @@ function exportJ(){try{const d=JSON.stringify({app:"armees40k",v:1,exp:new Date(
 function importJ(file){const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result),x=j&&j.trk;if(!x||!Array.isArray(x.rec))throw new Error("fichier non reconnu");const t=trkd();let n=0;const have=new Set(t.rec.map(r=>r.id));x.rec.forEach(r=>{if(r&&r.id&&r.a&&r.b&&!have.has(r.id)){t.rec.push(r);n++}});const hm=new Set(t.man.map(m=>m.id));(x.man||[]).forEach(m=>{if(m&&m.id&&!hm.has(m.id))t.man.push(m)});Object.assign(t.meta,Object.assign({},x.meta,t.meta));Object.assign(t.pvo,Object.assign({},x.pvo,t.pvo));save();toast(n+" action(s) importée(s)");draw()}catch(e){toast("Import impossible : "+e.message)}};rd.readAsText(file)}
 /* ---- rendu ---- */
 function body(){const a=st();let h=css+hdr(a);const L=lists();
+ if(a.sec==="ast"&&window.BIBAST&&BIBAST.render)return h+BIBAST.render()+"</div>";
  if(a.sec==="his")return h+secHis()+"</div>";
  if(a.sec==="par")return h+secPar()+"</div>";
  if(a.sec==="jou")return h+secJou()+"</div>";
@@ -7293,8 +7294,8 @@ mis:{t:"Missions & Layout",s:"Cartes de mission, objectifs secondaires et plans 
  st:["Choisis un onglet : 🎯 Primaires, ⚡ Secondaires, 🗺 Layouts, 📁 Autres.","Cherche une carte avec le champ de recherche.","Touche une carte pour lire sa mission.","Pour importer des cartes : « 📄 Importer un PDF », le PDF est lu et chaque carte rangée.","« + Dossier de primaires » crée ton propre dossier.","« ⬆ Exporter mes photos » sauvegarde les photos de layouts ; « ⬇ Importer des photos » les restaure."],
  it:[["🎯","🎯 Primaires","Primaires","Objectifs principaux."],["⚡","⚡ Secondaires","Secondaires","Objectifs secondaires."],["🗺","🗺 Layouts","Layouts","Plans de terrain."],["📄","📄 Importer un PDF","Importer un PDF","Range automatiquement."],["📷","⬆ Exporter mes photos","Photos","Export / import."]]},
 ana:{t:"Centre de commandement",s:"Tes parties, statistiques, duels, conseils et journal.",
- st:["Onglet « 🏁 Parties » : tes parties en cours et terminées. « Historique manuel » ajoute une partie jouée ailleurs.","Filtre avec « Filtres » pour regarder un adversaire ou un détachement.","Onglet « ⚔ Affronter » : duel (une figurine contre une autre) ou simulation.","Onglet « 💡 Conseils » : qui envoyer contre qui.","Onglet « 📓 Journal » : tout ce que tu as noté en jouant.","Onglet « 🛡 Armées » : choisis deux armées pour les comparer."],
- it:[["🏁","🏁 Parties","Parties","Historique et statistiques de victoires."],["⚔","⚔ Affronter","Affronter","Duel ou simulation, avec le détail par arme."],["💡","💡 Conseils","Conseils","Cibles prioritaires, unités à protéger."],["📓","📓 Journal","Journal","Dégâts, unités tombées, jets. Export / import."],["🛡","🛡 Armées","Armées","Comparer deux armées."]]},
+ st:["Onglet « 🏁 Parties » : tes parties en cours et terminées. « Historique manuel » ajoute une partie jouée ailleurs.","Filtre avec « Filtres » pour regarder un adversaire ou un détachement.","Onglet « ⚔ Affronter » : duel (une figurine contre une autre) ou simulation.","Onglet « 🎯 Assistant » : analyse ta liste, points forts et faiblesses, conseils d'optimisation chiffrés. Touche un conseil pour voir l'avant / après, puis « Appliquer » : une variante est créée, ta liste d'origine ne change pas. Le sous-onglet « Contre un adversaire » donne qui envoyer contre qui.","Onglet « 📓 Journal » : tout ce que tu as noté en jouant.","Onglet « 🛡 Armées » : choisis deux armées pour les comparer."],
+ it:[["🏁","🏁 Parties","Parties","Historique et statistiques de victoires."],["⚔","⚔ Affronter","Affronter","Duel ou simulation, avec le détail par arme."],["🎯","🎯 Assistant","Assistant d'optimisation","Diagnostic de ta liste (anti-char, anti-infanterie, résistance, mobilité, objectifs, synergies), conseils d'équipement, d'ajout et de remplacement, variantes. Hors ligne, sans IA ; scores comparés à la médiane de ta faction."],["📓","📓 Journal","Journal","Dégâts, unités tombées, jets. Export / import."],["🛡","🛡 Armées","Armées","Comparer deux armées."]]},
 imp:{t:"Importer",s:"Ajoute des listes ou des règles depuis un PDF ou un texte.",
  st:["Donne un nom à la liste (facultatif : points de l'armée).","Choisis la faction des figurines, ou laisse « Automatique ».","Choisis un PDF avec « Importer depuis un PDF », ou colle le texte de la liste.","Touche « Importer ».","Va dans Mes armées : ouvre la liste et, sur chaque unité ⚠, touche ⚙ pour choisir l'équipement.","« 📄 Importer un PDF : règles, missions, layouts » range automatiquement les cartes."],
  it:[["📄","Importer depuis un PDF","Liste en PDF","Lit unités et armes."],["📋","…ou colle le texte","Texte","Colle une liste copiée d'une autre appli."],["🏳","…ou créer une faction","Faction","Range les figurines importées."],["🔁","Rouvrir le dernier PDF","Dernier PDF","Reprend sans rechoisir."]],
@@ -8011,7 +8012,12 @@ function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D
   (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
  D.units.forEach(u=>{if(!u.wp){const e=(ext[u._c]||{})[normN(u.n)];if(e)u.wp=e}});
  D.units.forEach(u=>{if(u.ab)u.ab=u.ab.filter(a=>!/^\s*templar vows\b/i.test(a.n))});
+ /* armes en double dans les données source (même nom, mêmes caractéristiques, ex. Flamestorm Gauntlets des Aggressors) : une seule ligne */
+ D.units.forEach(u=>["rw","mw"].forEach(k=>{if(!Array.isArray(u[k]))return;const seen=new Set();u[k]=u[k].filter(w=>{const key=[w.n,w.r,w.a,w.sk,w.s,w.ap,w.d,JSON.stringify((w.kw||[]).slice().sort())].join("|").toLowerCase();if(seen.has(key))return false;seen.add(key);return true})}));
  D.units.sort((a,b)=>a.n.localeCompare(b.n));applyOvr()}
+/* même nom ET mêmes caractéristiques : une seule ligne dans les fiches déjà créées (collection et unités de listes) */
+function dedupeW(arr){if(!Array.isArray(arr)||arr.length<2)return 0;const seen=new Set(),out=[];arr.forEach(w=>{const k=[nk(w&&w.name),wSig(w||{}),nk((w&&w.caps)||"")].join("|");if(seen.has(k))return;seen.add(k);out.push(w)});const n=arr.length-out.length;if(n){arr.length=0;out.forEach(w=>arr.push(w))}return n}
+function dedupeAll(){let n=0;Object.values(S.coll||{}).forEach(m=>{n+=dedupeW(m.weapons)});(S.lists||[]).forEach(L=>(L.units||[]).forEach(u=>{n+=dedupeW(u.weapons);(u.subs||[]).forEach(s=>{n+=dedupeW(s.weapons)})}));return n}
 async function loadFromIdb(){const m=await idbGet("meta","manifest");if(!m)return false;const rows=await idbAll("chunks"),ch={};rows.forEach(r=>{ch[r.id]=JSON.parse(r.raw)});D.man=m.man;D.origin=m.origin||"";D.chunks=ch;index();return true}
 async function importEmbedded(){const em=window.__BIBLIO;if(!em)throw new Error("Aucune donnée intégrée");
  const raws={};for(const c of em.manifest.chunks){const t=await gunzip(em.chunks[c.id]);if(sha1(t)!==c.sha1)throw new Error("Intégrité : "+c.id);raws[c.id]=t}
@@ -8021,7 +8027,7 @@ let INIT=null;
 function init(){if(INIT)return INIT;INIT=(async()=>{try{
   const em=window.__BIBLIO;let m=null;try{m=await idbGet("meta","manifest")}catch(_){}
   if(!m||(m.origin==="embedded"&&em&&m.man.version!==em.manifest.version))await importEmbedded();
-  await loadFromIdb();D.ready=true;D.err=null;setTimeout(()=>{try{syncAll();snapAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
+  await loadFromIdb();D.ready=true;D.err=null;try{const nd=dedupeAll();if(nd){window.__wdd=nd;sv()}}catch(_){}setTimeout(()=>{try{syncAll();snapAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
   return D})();return INIT}
 /* ---------- traduction : vocabulaire officiel français connu, jamais inventé ---------- */
 // Chaque paire a été retrouvée dans les règles de base françaises officielles, les fiches françaises ou l'encyclopédie V11 de l'appli.
@@ -8708,6 +8714,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:73,d:"2026-11-25",t:"🎯 Assistant d'optimisation + armes en double",s:"Nouveau dans le Centre de commandement : l'Assistant d'optimisation (hors ligne, sans IA). Il note ta liste (anti-char, anti-infanterie, résistance, mobilité, objectifs, synergies) par rapport à la médiane de ta faction, liste points forts et faiblesses, propose des optimisations d'équipement, d'ajout et de remplacement contrôlées (points, équipements, limites) avec avant / après, et les applique dans une variante sans toucher ta liste. « Conseils » devient « Contre un adversaire » ; comparateurs inchangés. Aussi : les armes en double (même nom et mêmes caractéristiques, ex. Aggressors) n'apparaissent plus qu'une fois, dans la bibliothèque et dans tes fiches existantes ; les armes à plusieurs profils traduits (ex. Hache de Khorne) sont de nouveau bien comptées dans le Constructeur."},
  {id:72,d:"2026-11-25",t:"Constructeur et Mes armées regroupés",s:"Le Constructeur d'armée n'est plus une tuile à part sur l'accueil : il s'ouvre depuis « Mes armées » avec le bouton 🛠 Créer une armée (toujours en tête), à côté de « + Liste simple » et « Recevoir une liste ». Mes armées reste allumé dans le menu du bas pendant la création. Rien n'est retiré."},
  {id:71,d:"2026-11-25",t:"Bulle du bloc-notes déplaçable",s:"Fais glisser la bulle 📝 où tu veux sur l'écran : elle garde sa place, même après avoir relancé l'appli. Un simple toucher ouvre toujours le post-it, qui s'ouvre à côté de la bulle (au-dessus ou en dessous selon la place)."},
  {id:70,d:"2026-11-25",t:"Bloc-notes (post-it)",s:"Dans une armée ouverte comme en Mode jeu, une petite bulle 📝 ouvre un post-it sombre où tu notes ce que tu veux. Ce que tu écris s'enregistre tout seul et reste jusqu'à modification, même après avoir fermé ou relancé l'appli. En Mode jeu : un onglet « Armée » (la même note que dans l'armée) et un onglet « Cette partie » pour tes remarques du match. Un point orange sur la bulle indique qu'une note existe."},
@@ -9032,14 +9039,15 @@ const curL=()=>(S.lists||[]).find(l=>l.id===BLD.id)||null;
 const imgOf=m=>(m&&S.imgs&&S.imgs[m.ref])||"";
 /* profils d'une même arme (« - Standard », « – frag », « (Supercharge) ») : une seule arme */
 const wgk=n=>String(n||"").replace(/^➤\s*/,"").replace(/\s*\(.*?\)\s*$/,"").split(/\s+[-–]\s+/)[0].trim();
-const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgk(w.name));if(!m.has(k))m.set(k,{key:k,name:wgk(w.name),ws:[]});m.get(k).ws.push(w)});return[...m.values()]};
+const wgBase=w=>wgk(w.en||w.name);
+const wgroups=W=>{const m=new Map();(W||[]).forEach(w=>{const k=nk(wgBase(w));if(!m.has(k)){let nm=wgk(w.name);if(w.en){try{nm=frName(wgk(w.en))||nm}catch(_){}}m.set(k,{key:k,name:nm,base:lckBase(wgBase(w)),ws:[]})}m.get(k).ws.push(w)});return[...m.values()]};
 /* « 9 × Épée ; 1 × Marteau — Sergent » ou « Fusil, Épée » -> totaux par arme */
 function eqFromText(t,size){const o={};String(t||"").split(/;|\n|,(?![^()]*\))/).forEach(x=>{x=x.trim();if(!x)return;const m=/^(\d+)\s*[x×]\s*(.+?)(?:\s+[—–-]\s+.*)?$/.exec(x);if(m){const k=m[2].trim();o[k]=Math.max(o[k]||0,+m[1])}else{const k=x.replace(/\s*\(\s*\d+\s*\)\s*$/,"").replace(/\s+[—–-]\s+.*$/,"").trim();if(k)o[k]=Math.max(o[k]||0,size||1)}});return o}
 /* ----- équipement figurine par figurine (moteur EQE) ----- */
 const figMode=c=>!!(c&&c.figs);
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.figd!==undefined)BLD.figOpen=d.open;if(d&&d.dataset&&d.dataset.figq!==undefined)BLD.figQ=d.open},true);
 function figSync(c,e){const M=EQE.model(e.lib),v=EQE.validate(M,c.size,c.figs),tot=EQE.totals(v.final),wq={};
- wgroups(weaponsOf(e)).forEach(g=>{const t=tot[lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
+ wgroups(weaponsOf(e)).forEach(g=>{const t=tot[g.base||lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
 function figInit(c,e){if(!e.lib||c.figs===null)return;let M;try{M=EQE.model(e.lib)}catch(_){return}if(!M||!M.usable||!EQE.counts(M,c.size))return;
  if(!c.figs||c.figs.length!==c.size){if(c.figs){c.figs=EQE.resize(M,c.size,c.figs)||EQE.newFigs(M,c.size)}else{const had=c.idx!=null&&Object.keys(c.wq||{}).length;c.figs=had?EQE.fromCounts(M,c.size,c.wq):EQE.newFigs(M,c.size)}}
  if(!c.figs)return;BLD.fig=0;BLD.figSheet=false;figSync(c,e)}
@@ -9047,7 +9055,7 @@ const typeLabel=n=>{let r;try{r=tName(n)}catch(_){r=null}if(r&&(r.st==="ok"||r.p
 const figName=(M,figs,i)=>{const f=figs[i],t=M.types[f.t];const same=figs.filter(g=>g.t===f.t);if(same.length<2)return typeLabel(t.name);return typeLabel(t.name)+" "+(figs.slice(0,i+1).filter(g=>g.t===f.t).length)};
 const figSum=(M,final,i)=>final[i].map(x=>EQE.itemTxt(x.n)+(x.q>1?" ×"+x.q:"")).join(" · ");
 const wstat=w=>`${w.range&&w.range!=="Mêlée"?E(w.range)+(/^\d/.test(w.range)?'"':"")+" · ":(w.range?E(w.range)+" · ":"")}A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}`;
-function wprof(e,items){const G=wgroups(weaponsOf(e));return(items||[]).map(it=>{const b=lckBase(it.n),g=G.find(x=>lckBase(x.name)===b);if(!g)return"";return g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<span class="bld-ws">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${wstat(w)}</span>`}).join("")}).join("")}
+function wprof(e,items){const G=wgroups(weaponsOf(e));return(items||[]).map(it=>{const b=lckBase(it.n),g=G.find(x=>(x.base||lckBase(x.name))===b);if(!g)return"";return g.ws.map(w=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim();return`<span class="bld-ws">${suf&&g.ws.length>1?"<i>"+E(suf)+"</i> · ":""}${wstat(w)}</span>`}).join("")}).join("")}
 function figSheetHtml(c,e,M){const v=EQE.validate(M,c.size,c.figs),sel=Math.min(BLD.fig||0,c.figs.length-1),f=c.figs[sel],t=M.types[f.t],lib=e.lib;
  const pr=((lib&&lib.pr)||[]);const p=pr.find(x=>nk(x.n)===nk(t.name))||pr[0];
  const L=[["Mvt","M"],["End.","E"],["Svg","SV"],["PV","PV"],["Cd","CD"],["CO","CO"]];
@@ -10354,6 +10362,279 @@ document.addEventListener("change",async e=>{const i=e.target;if(!i||i.id!=="goc
  if(codes.length){psOpen();codes.forEach(c=>psOnCode(c))}
  if(rest.length){const dt=new DataTransfer();rest.forEach(f=>dt.items.add(f));i.__psdone=1;i.files=dt.files;i.dispatchEvent(new Event("change",{bubbles:true}));i.__psdone=0}},true);
 window.BIBPSC={decodeDeep:psDecodeDeep,fromCanvas:psReadCanvas,open:psOpen,onCode:psOnCode,decode:psDecodeImage,lookup:psLookup,check:psCheck,type:psType,brand:psBrand,add:psAdd,data:psData};
+
+/* ===== HAMMER · Assistant d'optimisation — moteur (hors ligne, sans IA) =====
+   Inséré dans le module Bibliothèque : il réutilise ANA (calculs), EQE (équipements), listcheck (légalité), calc/costOf (points).
+   Principe : chaque score est une COMPARAISON À LA MÉDIANE DE LA FACTION (50 = médiane des unités de la bibliothèque de cette faction).
+   Aucune valeur inventée : sans données suffisantes le moteur répond « données insuffisantes ». */
+const AST=(()=>{
+const A=window.ANA;
+const CTX={half:false,cover:false,charged:false,still:false};
+const REFT={char:{n:1,E:10,SV:"3+",PV:12,kw:"vehicule, monstre"},inf:{n:10,E:4,SV:"3+",PV:2,kw:"infanterie"}};
+const REFW={F:8,PA:-2,D:2,hit:3};            /* arme de référence pour la résistance : F 8, PA -2, D 2, touche 3+ */
+const W={ac:.2,ai:.2,res:.2,mob:.1,obj:.2,syn:.1};
+const NAMES={ac:"Anti-char",ai:"Anti-infanterie",res:"Résistance",mob:"Mobilité",obj:"Objectifs",syn:"Synergies"};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const med=a=>{a=a.filter(x=>Number.isFinite(x)).sort((x,y)=>x-y);if(!a.length)return null;const m=a.length>>1;return a.length%2?a[m]:(a[m-1]+a[m])/2};
+const num=x=>{const m=/-?\d+(\.\d+)?/.exec(String(x==null?"":x));return m?+m[0]:null};
+const san=s=>String(s||"").replace(/,/g," ");
+/* ---- cibles de référence ---- */
+const TG={};const target=k=>TG[k]||(TG[k]=A.toProfile({name:"Cible "+k,size:REFT[k].n,stats:{M:'6"',E:String(REFT[k].E),SV:REFT[k].SV,PV:String(REFT[k].PV),CD:"7+",CO:"1"},kw:REFT[k].kw,weapons:[],equip:""}));
+function dmgVs(P,k){let t=0;try{const T=target(k);["shoot","melee"].forEach(m=>{const r=A.theory(P,T,m,CTX);if(r&&Number.isFinite(r.eff))t+=r.eff})}catch(_){return null}return t}
+/* durée de vie : nombre d'attaques de référence nécessaires pour détruire l'unité (plus c'est grand, plus elle est résistante) */
+function endur(P){try{const g=P.groups.filter(x=>!x.isLeader).reduce((b,x)=>(!b||x.n>b.n)?x:b,null)||P.groups[0];const E=g.stats.E,sv=g.stats.SV,inv=g.stats.INV;if(E==null)return null;
+ const wp=A.woundProbs({ct:REFW.hit,hitMod:0,woundMod:0,anti:null,sustained:0,fatal:false,deva:false,torrent:false,reroll:false},REFW.F,E),pw=wp.pc+wp.pn;
+ const pf=A.saveFailProb(g.stats.SV,g.stats.INV!=null?g.stats.INV:null,REFW.PA);const pHit=(7-REFW.hit)/6;const per=pHit*pw*pf*REFW.D;if(!(per>0))return null;
+ return A.totalWounds(P)/per}catch(_){return null}}
+/* ---- profils ---- */
+function equipOf(u){/* force les quantités d'armes depuis la configuration (le texte « 4 × arme » n'est pas lu par ANA) */
+ const wq=u.cfg&&u.cfg.wq;if(!wq||!Object.keys(wq).length)return u;const names=new Set((u.weapons||[]).map(w=>w.name));
+ const o=Object.assign({},u);o.weapons=(u.weapons||[]).filter(w=>wq[w.name]>0).map(w=>Object.assign({},w,{name:san(w.name)}));
+ o.equip=Object.entries(wq).filter(([n,q])=>q>0&&names.has(n)).map(([n,q])=>san(n)+" ("+q+")").join(", ");return o}
+function profOfListUnit(u){const x=equipOf(u);return A.toProfile(x)}
+function unitMetrics(P,lib){const dc=dmgVs(P,"char"),di=dmgVs(P,"inf"),en=endur(P);const g=P.groups[0];
+ return{dc,di,en,M:num(g&&g.stats&&g.stats.M),oc:P.groups.reduce((a,x)=>a+x.n*(num(x.stats&&x.stats.CO)||0),0),models:P.models,role:lib?(typeof roleOf==="function"?roleOf(lib):""):"",ok:dc!=null&&di!=null&&en!=null&&g&&g.stats&&g.stats.E!=null}}
+/* ---- bibliothèque : pseudo-unité depuis une fiche, avec équipement de base ---- */
+function figsOf(lib,size,figs){const M=EQE.model(lib);if(!M||!M.usable||!EQE.counts(M,size))return null;const f=figs||EQE.newFigs(M,size);if(!f)return null;const v=EQE.validate(M,size,f);return{M,figs:f,v,tot:EQE.totals(v.final)}}
+function pseudo(lib,size,tot,pts){const pr=lib.pr||[],pi=Math.max(0,pr.findIndex(p=>nk(p.n)===nk(lib.n))),p=profOf(lib,pi),stats={};["M","E","SV","PV","CD","CO"].forEach(k=>{stats[k]=statOf(p,k)||""});
+ const ws=[],eq=[];[...(lib.rw||[]).map(w=>[w,false]),...(lib.mw||[]).map(w=>[w,true])].forEach(([w,m])=>{const k=lckBase(String(w.n).replace(/^➤\s*/,"")),t=tot?tot[k]:null;if(tot&&!(t&&t.q>0))return;const a=wToApp(w,m);a.name=san(a.name);ws.push(a);eq.push(a.name+" ("+(t?t.q:1)+")")});
+ return{name:frName(lib.n),size,pts:pts==null?0:pts,stats,weapons:ws,equip:eq.join(", "),kw:(lib.kw||[]).map(k=>tKW(k).t).join(", "),fkw:(lib.f||[]).join(", "),subs:[],apt:""}}
+/* ---- bancs d'essai par faction (médianes de la bibliothèque) ---- */
+const BENCH={};
+function minSize(lib,copy){const s=sizesOf(lib,copy||1);return s.length?s[0]:null}
+function libMetric(lib){const sz=minSize(lib,1);if(!sz||sz.pts==null)return null;const fg=figsOf(lib,sz.n);if(!fg)return null;const U=pseudo(lib,sz.n,fg.tot,sz.pts);let P;try{P=A.toProfile(U)}catch(_){return null}const m=unitMetrics(P,lib);if(!m.ok)return null;return Object.assign(m,{lib,pts:sz.pts,size:sz.n,P,eqOk:fg.v.errors.length===0})}
+function bench(facKey){if(BENCH[facKey])return BENCH[facKey];const us=D.units.filter(u=>inFac(u,facKey)&&!/\[(Legends|Crucible)\]/i.test(u.n));const ms=[];us.forEach(u=>{const m=libMetric(u);if(m&&m.pts>0)ms.push(m)});
+ const b={n:ms.length,ms,dc:med(ms.map(m=>m.dc/m.pts)),di:med(ms.map(m=>m.di/m.pts)),en:med(ms.map(m=>m.en/m.pts)),M:med(ms.map(m=>m.M)),oc:med(ms.map(m=>m.oc/m.pts))};return BENCH[facKey]=b}
+/* ---- indicateurs d'une liste à partir des métriques d'unités ---- */
+function indicators(rows,B,syn){const pts=rows.reduce((a,r)=>a+(r.pts||0),0);if(!pts)return null;const S=k=>rows.reduce((a,r)=>a+(r.m[k]||0),0);
+ const sc=(v,ref)=>ref>0&&v!=null?clamp(Math.round(50*v/ref),0,100):null;
+ const mob=rows.reduce((a,r)=>a+(r.m.M||0)*r.pts,0)/pts;
+ const ind={ac:sc(S("dc")/pts,B.dc),ai:sc(S("di")/pts,B.di),res:sc(S("en")/pts,B.en),mob:sc(mob,B.M),obj:sc(S("oc")/pts,B.oc),syn:syn==null?null:clamp(Math.round(syn),0,100)};
+ let wt=0,s=0;Object.keys(W).forEach(k=>{if(ind[k]!=null){wt+=W[k];s+=W[k]*ind[k]}});ind.glob=wt?Math.round(s/wt):null;return{ind,pts,raw:{dc:S("dc"),di:S("di"),en:S("en"),mob,oc:S("oc")}}}
+/* synergies : part des unités de ligne ayant un personnage compatible présent dans la liste (analyse partielle) */
+function synergy(L,libs){const ch=[],un=[];libs.forEach((x,i)=>{if(!x||!x.lib)return;(isChar(x.lib)?ch:un).push(x)});if(!un.length)return null;if(!ch.length)return 0;
+ const leads=new Set();ch.forEach(c=>{((c.lib.wp&&c.lib.wp.leads)||[]).forEach(n=>leads.add(nk(n)));});const ok=un.filter(u=>leads.has(nk(u.lib.n))||((u.lib.wp&&u.lib.wp.ledby)||[]).some(n=>ch.some(c=>nk(c.lib.n)===nk(n)))).length;return 100*ok/un.length}
+return{CTX,REFT,REFW,W,NAMES,clamp,med,num,san,target,dmgVs,endur,equipOf,profOfListUnit,unitMetrics,figsOf,pseudo,bench,libMetric,minSize,indicators,synergy}
+})();
+
+/* ===== Assistant d'optimisation — diagnostic, recommandations, validation, variantes ===== */
+(()=>{
+const T=AST,clone=o=>JSON.parse(JSON.stringify(o));
+const facKeyOf=(L,libs)=>{const b=L.bld&&L.bld.fac;if(b)return b;const c={};libs.forEach(l=>{if(l)c[l._c]=(c[l._c]||0)+1});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||""};
+const limitOf=L=>+(L.bld&&L.bld.limit)||0;
+const fr=n=>{try{return frName(n)}catch(_){return n}};
+/* ---------- diagnostic ---------- */
+function analyse(L){const units=L.units||[];if(!units.length)return{ok:false,why:"La liste est vide : ajoute des unités pour lancer l'analyse."};
+ if(!(typeof D!=="undefined"&&D.ready))return{ok:false,why:"La bibliothèque V11 n'est pas encore chargée."};
+ const R=calc(L),ptsU=units.map((u,i)=>R.lines.filter(l=>l.i===i&&l.pts!=null).reduce((a,l)=>a+l.pts,0)),rows=[],partial=[];
+ units.forEach((u,i)=>{const lib=lckLib(u);let P=null;try{P=T.profOfListUnit(u)}catch(e){partial.push(u.name+" : fiche illisible");return}
+  const m=T.unitMetrics(P,lib);if(!m.ok)partial.push((u.name||"?")+" : caractéristiques ou armes incomplètes");if(!lib)partial.push((u.name||"?")+" : fiche non reliée à la bibliothèque");
+  rows.push({i,u,lib,P,m,pts:ptsU[i]||0,name:fr(u.name)})});
+ const ok=rows.filter(r=>r.m.ok&&r.pts>0);if(!ok.length)return{ok:false,why:"Les unités de cette liste n'ont pas assez de données (caractéristiques, armes, points) pour être analysées."};
+ const fac=facKeyOf(L,rows.map(r=>r.lib).filter(Boolean)),B=T.bench(fac);if(!B||B.n<5)return{ok:false,why:"Pas assez d'unités de référence dans la bibliothèque pour cette faction."};
+ const syn=T.synergy(L,rows.map(r=>({lib:r.lib})));const I=T.indicators(ok,B,syn);
+ const total=R.total,lim=limitOf(L),room=lim?lim-total:null;
+ /* contributions et lecture */
+ const tot=k=>ok.reduce((a,r)=>a+(r.m[k]||0),0),pts=I.pts;
+ const strengths=[],weaknesses=[];
+ Object.keys(T.NAMES).forEach(k=>{const v=I.ind[k];if(v==null)return;if(v>=65)strengths.push({k,t:T.NAMES[k]+" solide ("+v+"/100)",v});else if(v<=40)weaknesses.push({k,t:T.NAMES[k]+" faible ("+v+"/100)",v})});
+ const share=(r,k)=>tot(k)?(r.m[k]||0)/tot(k):0;
+ ok.forEach(r=>{const sp=r.pts/pts;["dc","di"].forEach(k=>{if(share(r,k)>0.45&&ok.length>=4)weaknesses.push({k:"dep",t:"Dépendance : "+r.name+" produit "+Math.round(100*share(r,k))+" % de ton "+(k==="dc"?"anti-char":"anti-infanterie")})});
+  if(sp>=0.08&&!(r.lib&&isChar(r.lib))&&["dc","di","en","oc"].every(k=>share(r,k)<0.5*sp))weaknesses.push({k:"low",i:r.i,t:r.name+" coûte "+Math.round(100*sp)+" % de la liste pour une contribution faible"})});
+ /* fonction dominante par unité (redondance) */
+ const fn=r=>{const c={ac:(r.m.dc/r.pts)/B.dc,ai:(r.m.di/r.pts)/B.di,res:(r.m.en/r.pts)/B.en,obj:(r.m.oc/r.pts)/B.oc};const k=Object.keys(c).sort((a,b)=>c[b]-c[a])[0];return c[k]>=1.4?k:null};
+ const fc={};ok.forEach(r=>{r.fn=fn(r);if(r.fn)(fc[r.fn]=fc[r.fn]||[]).push(r)});
+ Object.keys(fc).forEach(k=>{if(fc[k].length>=3)weaknesses.push({k:"red",t:fc[k].length+" unités remplissent le même rôle ("+T.NAMES[k].toLowerCase()+") : "+fc[k].map(r=>r.name).slice(0,3).join(", ")})});
+ const conf=partial.length?"partial":"verified";
+ return{ok:true,L,rows,okRows:ok,I,B,fac,total,lim,room,strengths,weaknesses,partial,conf,syn}}
+const IKEYS=["ac","ai","res","mob","obj"];
+const delta=(a,b)=>{const o={};Object.keys(a).forEach(k=>{o[k]=(a[k]!=null&&b[k]!=null)?b[k]-a[k]:null});return o};
+/* indicateurs après remplacement de lignes */
+function after(A,drop,add){const rows=A.okRows.filter(r=>!drop.includes(r.i)).concat(add),libs=A.rows.filter(r=>!drop.includes(r.i)).concat(add).map(r=>({lib:r.lib}));return T.indicators(rows,A.B,T.synergy(A.L,libs))}
+/* légalité d'une liste modifiée : aucune nouvelle erreur rouge, limite de points respectée */
+function legalOf(L,units,tmpUnits){const before=new Set(lckBadOf(L,L.units).map(x=>x.k));let bad=[];try{bad=lckBadOf(L,units.concat(tmpUnits||[])).filter(x=>!before.has(x.k))}catch(e){return{ok:false,notes:["Contrôle impossible : "+(e&&e.message)]}}
+ return{ok:bad.length===0,notes:bad.slice(0,3).map(x=>x.t+(x.d?" — "+x.d:""))}}
+function entryFor(lib){return catEntries().find(e=>e.key==="u:"+lib.id)||{key:"u:"+lib.id,name:fr(lib.n),lib,coll:null,colls:[]}}
+function tmpUnit(lib,size,figs,wg){const e=entryFor(lib);return lckTmpUnit(e,{size,wq:{},wn:{},wg:wg||{},figs:figs||null,enh:null,subs:[]})}
+/* ---------- recommandations ---------- */
+const PROB={ac:"Ton armée manque de puissance contre les véhicules et les monstres résistants.",ai:"Ton armée manque de puissance contre l'infanterie nombreuse.",res:"Tes unités encaissent mal les tirs adverses pour leur coût.",mob:"Ton armée est lente : elle aura du mal à atteindre les objectifs.",obj:"Ton armée contrôle peu d'objectifs pour son coût."};
+const WHYS={ac:"Une unité spécialisée contre les cibles blindées permet de détruire plus vite les véhicules et monstres adverses.",ai:"Plus de tirs à haute cadence permettent de nettoyer les unités nombreuses avant qu'elles ne prennent les objectifs.",res:"Des unités plus résistantes (points de vie, sauvegarde) restent plus longtemps sur la table.",mob:"Des unités plus rapides arrivent plus tôt sur les objectifs et sur les cibles.",obj:"Un contrôle d'objectif plus élevé (CO) permet de tenir plus de points de mission."};
+function pm(d){return d==null?0:d}
+function proscons(dl){const p=[],c=[];IKEYS.concat(["syn"]).forEach(k=>{const d=dl[k];if(d==null)return;if(d>=2)p.push(T.NAMES[k]+" +"+d);else if(d<=-2)c.push(T.NAMES[k]+" "+d)});return{pros:p,cons:c}}
+function mkRec(A,o){const dl=delta(A.I.ind,o.after.ind),pc=proscons(dl);const g=(o.after.ind.glob||0)-(A.I.ind.glob||0);
+ return Object.assign({},o,{before:A.I.ind,after:o.after.ind,dl,pros:pc.pros,cons:pc.cons,gain:g,conf:o.conf||A.conf,room:A.room})}
+function recommend(A){const recs=[];if(!A||!A.ok)return recs;const L=A.L;
+ const weak=IKEYS.filter(k=>A.I.ind[k]!=null).sort((a,b)=>A.I.ind[a]-A.I.ind[b]).slice(0,2);if(!weak.length)return recs;
+ const metr={ac:"dc",ai:"di",res:"en",obj:"oc",mob:"M"};
+ const used=new Set();(L.units||[]).forEach(u=>{const l=lckLib(u);if(l)used.add(l.id)});
+ const cands=A.B.ms.filter(m=>m.pts>0&&!/\[(Legends|Crucible)\]/i.test(m.lib.n));
+ /* ---- A. équipement ---- */
+ A.rows.forEach(r=>{const u=r.u,lib=r.lib;if(!lib||!u.cfg||u.cfg.lib!==lib.id||u.pm)return;const size=u.cfg.size,M=EQE.model(lib);if(!M||!M.usable||!EQE.counts(M,size))return;
+  let figs=u.cfg.figs;if(!figs){try{figs=EQE.fromCounts(M,size,u.cfg.wq||{})}catch(_){figs=null}}if(!figs)return;
+  const base=EQE.validate(M,size,figs);if(base.errors.length)return;const f0=T.figsOf(lib,size,figs);if(!f0)return;
+  const pr0=A.okRows.find(x=>x.i===r.i);if(!pr0)return;const U0=T.pseudo(lib,size,f0.tot,r.pts);let m0;try{m0=T.unitMetrics(A_.toProfile(U0),lib)}catch(_){return}if(!m0.ok)return;
+  const pc=pcOf(lib),wg=(pc&&pc.wg)||[];
+  M.rules.forEach(rule=>rule.alts.forEach((alt,ai)=>{if(!rule.types.some(t=>figs.some(f=>f.t===t)))return;
+   let nf=clone(figs),n=0;for(let j=0;j<nf.length;j++){const op=EQE.options(M,size,nf,j).find(o=>o.rule.id===rule.id);const a=op&&op.alts.find(x=>x.ai===ai);if(a&&a.ok&&!a.sel){const t=clone(nf);t[j].c=t[j].c||{};t[j].c[rule.id]=[ai];if(EQE.validate(M,size,t).errors.length===0){nf=t;n++}}}
+   if(!n)return;const f1=T.figsOf(lib,size,nf);if(!f1||f1.v.errors.length)return;
+   let cost=0;const wgAdd={};alt.forEach(x=>{const w=wg.find(g=>nk(g.n)===nk(frName(x.n))||nk(g.n)===nk(x.n));if(w){const q=(x.q||1)*n;cost+=q*w.pts;wgAdd[w.n]=(wgAdd[w.n]||0)+q}});
+   const U1=T.pseudo(lib,size,f1.tot,r.pts+cost);let m1;try{m1=T.unitMetrics(A_.toProfile(U1),lib)}catch(_){return}if(!m1.ok)return;
+   const nr=Object.assign({},pr0,{m:Object.assign({},pr0.m,{dc:pr0.m.dc+(m1.dc-m0.dc),di:pr0.m.di+(m1.di-m0.di),en:pr0.m.en+(m1.en-m0.en)}),pts:pr0.pts+cost});
+   const aft=after(A,[r.i],[nr]);if(!aft)return;const best=weak.reduce((b,k)=>Math.max(b,pm(aft.ind[k])-pm(A.I.ind[k])),-99);const g=pm(aft.ind.glob)-pm(A.I.ind.glob);
+   if(best<2||g<1)return;if(A.room!=null&&cost>A.room)return;
+   const u2=clone(u);u2.cfg.figs=nf;const lg=legalOf(L,L.units.map((x,i)=>i===r.i?u2:x),[]);
+   const txt=EQE.altTxt(alt);recs.push(mkRec(A,{id:"eq-"+r.i+"-"+rule.id+"-"+ai,kind:"equip",unitIdx:r.i,key:"eq|"+r.i+"|"+rule.id+"|"+ai,after:aft,cost,legal:lg,
+    title:"Équiper "+n+" figurine"+(n>1?"s":"")+" de « "+txt+" »",unitName:r.name,
+    why:[PROB[weak[0]],"Cet équipement augmente la puissance de "+r.name+" ("+T.NAMES[weak[0]].toLowerCase()+") sans changer son rôle.","Effet : "+T.NAMES[weak[0]]+" "+A.I.ind[weak[0]]+" → "+aft.ind[weak[0]]+(cost?" pour "+cost+" pts de plus.":", sans coût supplémentaire.")],
+    trace:["Unité : "+r.name+" ("+size+" fig.), équipement validé par le moteur d'options","Dégâts moyens vs char (réf. E10 Sv3+ PV12) : "+Math.round(m0.dc*10)/10+" → "+Math.round(m1.dc*10)/10,"Dégâts moyens vs infanterie (réf. 10× E4 Sv3+ PV2) : "+Math.round(m0.di*10)/10+" → "+Math.round(m1.di*10)/10,"Coût : "+cost+" pts (équipements payants du barème)"],
+    apply:{op:"equip",i:r.i,figs:nf,wg:wgAdd}}))}))});
+ /* ---- B. ajout et C. remplacement ---- */
+ const room=A.room,donors=A.okRows.filter(r=>!(r.lib&&isChar(r.lib))&&r.pts>0).map(r=>{const sp=r.pts/A.I.pts,c=["dc","di","en","oc"].reduce((a,k)=>a+(A.I.raw[{dc:"dc",di:"di",en:"en",oc:"oc"}[k]]?(r.m[k]||0)/A.I.raw[k]:0),0)/4;return{r,sp,c,ratio:c/sp}}).sort((a,b)=>a.ratio-b.ratio).slice(0,3);
+ const scored=[];cands.forEach(c=>{const copy=(L.units||[]).filter(u=>{const l=lckLib(u);return l&&l.id===c.lib.id}).length+1,cs=costOf(c.lib,c.size,copy);if(cs.pts==null)return;
+  const row={i:-1,u:null,lib:c.lib,m:c,pts:cs.pts,name:fr(c.lib.n)};
+  const aftAdd=after(A,[],[row]);if(aftAdd&&(room==null||cs.pts<=room)){const best=weak.reduce((b,k)=>Math.max(b,pm(aftAdd.ind[k])-pm(A.I.ind[k])),-99),g=pm(aftAdd.ind.glob)-pm(A.I.ind.glob);if(best>=3&&g>=1)scored.push({kind:"add",c,row,aft:aftAdd,best,g,cost:cs.pts})}
+  donors.forEach(d=>{const aftR=after(A,[d.r.i],[row]);const nt=A.total-d.r.pts+cs.pts;if(!aftR||(A.lim&&nt>A.lim))return;const best=weak.reduce((b,k)=>Math.max(b,pm(aftR.ind[k])-pm(A.I.ind[k])),-99),g=pm(aftR.ind.glob)-pm(A.I.ind.glob);
+   if(best>=4&&g>=2&&c.lib.id!==(d.r.lib&&d.r.lib.id))scored.push({kind:"replace",c,row,aft:aftR,best,g,cost:cs.pts-d.r.pts,donor:d.r})})});
+ scored.sort((a,b)=>(b.g+b.best/2)-(a.g+a.best/2));
+ const per={add:0,replace:0};let tested=0;
+ for(const s of scored){if(per[s.kind]>=3||tested>=24)continue;tested++;const lib=s.c.lib,fg=T.figsOf(lib,s.c.size);if(!fg||fg.v.errors.length)continue;
+  const tmp=tmpUnit(lib,s.c.size,fg.figs),units=s.kind==="replace"?L.units.filter((u,i)=>i!==s.donor.i):L.units.slice(),lg=legalOf(L,units,[tmp]);if(!lg.ok)continue;
+  const nm=fr(lib.n),W=weak[0];
+  if(s.kind==="add")recs.push(mkRec(A,{id:"add-"+lib.id,kind:"add",key:"add|"+lib.id,unitIdx:null,after:s.aft,cost:s.cost,legal:lg,title:"Ajouter : "+nm,unitName:nm,
+   why:[PROB[W],WHYS[W]+" "+nm+" apporte cette capacité.","Effet : "+T.NAMES[W]+" "+A.I.ind[W]+" → "+s.aft.ind[W]+", pour "+s.cost+" pts de plus ("+(room==null?"aucune limite de points définie":"il te reste "+room+" pts")+")."],
+   trace:["Unité candidate : "+nm+" ("+s.c.size+" fig., "+s.cost+" pts, barème Wahapedia 11e)","Dégâts moyens vs char : "+Math.round(s.c.dc*10)/10+" · vs infanterie : "+Math.round(s.c.di*10)/10,"Équipement de base validé ; légalité vérifiée avec la liste complète"],apply:{op:"add",lib:lib.id,size:s.c.size}}));
+  else recs.push(mkRec(A,{id:"rep-"+s.donor.i+"-"+lib.id,kind:"replace",key:"rep|"+s.donor.i+"|"+lib.id,unitIdx:s.donor.i,after:s.aft,cost:s.cost,legal:lg,title:"Remplacer "+s.donor.name+" par "+nm,unitName:s.donor.name,
+   why:[PROB[W],s.donor.name+" contribue peu à ta liste par rapport à son coût ; "+nm+" répond mieux au besoin ("+T.NAMES[W].toLowerCase()+").","Effet : "+T.NAMES[W]+" "+A.I.ind[W]+" → "+s.aft.ind[W]+" ; "+(s.cost>=0?"+":"")+s.cost+" pts."],
+   trace:["Unité retirée : "+s.donor.name+" ("+s.donor.pts+" pts)","Unité ajoutée : "+nm+" ("+s.cost+(s.cost>=0?" pts de plus":" pts de moins")+" que l'unité retirée)","Les autres unités de la liste restent identiques ; légalité vérifiée"],apply:{op:"replace",i:s.donor.i,lib:lib.id,size:s.c.size}}));per[s.kind]++}
+ const seen=new Set();return recs.filter(r=>!seen.has(r.key)&&seen.add(r.key)).sort((a,b)=>(b.gain+Math.max(...IKEYS.map(k=>pm(b.dl[k]))))-(a.gain+Math.max(...IKEYS.map(k=>pm(a.dl[k])))))}
+const A_=window.ANA;
+/* ---------- application : TOUJOURS dans une variante ---------- */
+function createUnit(lib,size){const key="u:"+lib.id;let e=catEntries().find(x=>x.key===key);if(!e)return null;const m=ensureSheet(e);const c={key,idx:null,wq:{},wn:{},wg:{},enh:null,subs:[],manual:0,size};
+ const keepF=BLD.fig,keepS=BLD.figSheet;defaultWeapons(e,c);figInit(c,e);BLD.fig=keepF;BLD.figSheet=keepS;
+ const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+ const n={ref:m.ref,size:c.size,pts:0,subs:[],man:1};SH.forEach(f=>{n[f]=clone(m[f])});n.weapons=Wn;n.equip=eqLines(c).join(" ; ")||"";n.cfg={lib:lib.id,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:null,manual:0,eq:eqLines(c)};return n}
+function nextName(L){const base=String(L.name||"Liste").replace(/ — variante \d+$/,"");const n=(S.lists||[]).filter(x=>x.varOf===L.id||(String(x.name||"").indexOf(base+" — variante")===0)).length+1;return base+" — variante "+n}
+function applyRec(L,rec){const V=clone(L);V.id="l"+Date.now()+Math.floor(Math.random()*1000);V.varOf=L.varOf||L.id;V.name=nextName(L);V.optLog=(L.optLog||[]).concat([{at:Date.now(),t:rec.title,cost:rec.cost,before:rec.before.glob,after:rec.after.glob,conf:rec.conf}]);
+ const a=rec.apply;
+ if(a.op==="equip"){const u=V.units[a.i],e=catEntries().find(x=>x.colls.some(m=>m.ref===u.ref))||catEntries().find(x=>x.key==="u:"+u.cfg.lib);const c={key:e.key,idx:a.i,size:u.cfg.size,figs:clone(a.figs),wq:{},wn:clone(u.cfg.wn||{}),wg:clone(u.cfg.wg||{}),enh:u.cfg.enh||null,subs:u.subs||[],manual:u.cfg.manual||0};
+  figSync(c,e);const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+  if(Wn.length)u.weapons=Wn;u.equip=eqLines(c).join(" ; ")||u.equip;u.cfg=Object.assign({},u.cfg,{wq:c.wq,figs:c.figs,eq:eqLines(c)});if(a.wg&&Object.keys(a.wg).length){const w=Object.assign({},u.cfg.wg||{});Object.keys(a.wg).forEach(k=>{w[k]=(w[k]||0)+a.wg[k]});u.cfg.wg=w}}
+ else{const lib=D.byId[a.lib],nu=createUnit(lib,a.size);if(!nu)return null;if(a.op==="add")V.units.push(nu);else V.units[a.i]=nu}
+ try{applyPts(V)}catch(_){}try{syncPts(V)}catch(_){}S.lists.push(V);try{save()}catch(_){}return V}
+/* ---------- outils de test (génèrent des listes réelles à partir de la bibliothèque) ---------- */
+function mkList(fac,limit,name){const fl=facList().find(x=>x[0]===fac),l={id:"l"+Date.now()+Math.floor(Math.random()*9999),name:name||"Test "+fac,units:[],dets:[],strats:[],total:"",bld:{fac,facN:fl?fl[1]:fac,fmt:"",limit,pv:ptsVer(),tot:0}};S.lists.push(l);return l}
+function fillList(L,seed){const fac=L.bld.fac,lim=L.bld.limit;let r=(seed||1)*9301;const rnd=()=>(r=(r*9301+49297)%233280)/233280;
+ const us=D.units.filter(u=>inFac(u,fac)&&!/\[(Legends|Crucible)\]/i.test(u.n)&&sizesOf(u,1).length).sort(()=>rnd()-.5);let tries=0;
+ for(const u of us){if(tries++>120)break;const sz=sizesOf(u,1)[0];if(!sz||sz.pts==null)continue;const R=calc(L);if(lim&&R.total+sz.pts>lim)continue;const nu=createUnit(u,sz.n);if(!nu)continue;
+  const before=new Set(lckBadOf(L,L.units).map(x=>x.k));L.units.push(nu);applyPts(L);const bad=lckBadOf(L,L.units).filter(x=>!before.has(x.k));if(bad.length)L.units.pop()}
+ applyPts(L);return L}
+window.BIBAST={analyse,recommend,applyRec,legalOf,IKEYS,PROB,WHYS,T:AST,facKeyOf,benchFor:k=>T.bench(k),test:{allUnits:()=>D.units,dedupe:()=>dedupeAll(),dbg:(lib,size)=>{const e=catEntries().find(x=>x.key==="u:"+lib.id);const fg=T.figsOf(lib,size);return{tot:Object.keys(fg.tot),groups:wgroups(weaponsOf(e)).map(g=>g.name+" => "+lckBase(g.name)),items:fg.v.final.map(f=>f.map(x=>x.n))}},libById:id=>D.byId[id],byName:n=>D.units.find(u=>u.n===n),mkList,fillList,createUnit,facs:()=>[...new Set(D.units.map(u=>u._c))],calc,bad:lckBadOf,applyPts,units:()=>D.units.length}};
+})();
+
+/* ===== Assistant d'optimisation — interface (style centre d'analyse tactique) ===== */
+(()=>{
+const T=AST,B=window.BIBAST,E2=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TERMS={ac:["Anti-char","Capacité à détruire des véhicules et des monstres : cibles avec beaucoup de points de vie et une bonne endurance. Mesurée sur un véhicule de référence (Endurance 10, sauvegarde 3+, 12 PV)."],ai:["Anti-infanterie","Capacité à éliminer des groupes d'infanterie. Mesurée sur 10 figurines de référence (Endurance 4, sauvegarde 3+, 2 PV)."],
+ res:["Résistance","Combien d'attaques il faut pour détruire tes unités. Mesurée avec une arme de référence (Force 8, PA -2, dégâts 2) et rapportée à leur coût."],mob:["Mobilité","Vitesse moyenne de l'armée (valeur M), pondérée par les points : plus elle est élevée, plus tu atteins vite les objectifs."],obj:["Contrôle des objectifs","Somme des valeurs de Contrôle d'objectif (CO) des figurines, rapportée au coût. Sert à tenir les points de mission."],syn:["Synergies","Part de tes unités de ligne qui ont un personnage compatible dans la liste. Analyse partielle : auras et stratagèmes ne sont pas évalués."],
+ sat:["Saturation","Nombre d'attaques : beaucoup de petites attaques noient les défenses adverses."],proj:["Projection","Capacité à être posé ou à arriver vite près de l'adversaire."],pol:["Polyvalence","Capacité d'une unité à servir contre plusieurs types de cibles."],rend:["Rendement en points","Ce que l'unité apporte rapporté à son coût."]};
+const st=()=>{const a=(S.ana=S.ana&&typeof S.ana==="object"?S.ana:{});a.ast=a.ast&&typeof a.ast==="object"?a.ast:{};const s=a.ast,L=S.lists||[];if(!L.some(l=>l.id===s.list))s.list=(L.find(l=>l.id===S.cur)||L[0]||{}).id||"";return s};
+let CACHE={sig:"",A:null,R:null};
+const sig=L=>L?[L.id,(L.units||[]).map(u=>[u.name,u.size,u.pts,JSON.stringify(u.cfg&&u.cfg.figs),JSON.stringify(u.cfg&&u.cfg.wq),(u.subs||[]).length].join(",")).join(";"),(D&&D.ready)?D.man.version:"x"].join("|"):"";
+function compute(L){const k=sig(L);if(CACHE.sig===k)return CACHE;let A=null,R=[];try{A=B.analyse(L);if(A.ok)R=B.recommend(A)}catch(e){A={ok:false,why:"Erreur de calcul : "+(e&&e.message)}}CACHE={sig:k,A,R};return CACHE}
+const css=`<style id="astcss">
+.ast{--gold:#e0b34a;--cy:#4cc3ff;--st:#0a1622;color:var(--tx)}
+.ast-top{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;border:1px solid color-mix(in srgb,var(--gold) 55%,var(--bd));border-radius:14px;padding:10px 12px;background:linear-gradient(135deg,#0c1b2b,#08111b);color:#e8f0f7;box-shadow:inset 0 0 0 1px rgba(76,195,255,.12),0 6px 18px rgba(0,0,0,.45)}
+.ast-top h3{margin:0;font-size:22px;letter-spacing:.03em;color:#fff;flex:1 1 220px}.ast-top p{margin:2px 0 0;font-size:12.5px;color:#9db3c7}
+.ast-steps{display:flex;gap:6px;flex:1 1 100%}.ast-steps span{flex:1;display:flex;flex-direction:column;gap:1px;padding:6px 8px;border-radius:10px;border:1px solid rgba(76,195,255,.4);background:rgba(76,195,255,.08);font-size:12px;line-height:1.2}.ast-steps b{font-size:13px;color:#fff}.ast-steps span:nth-child(2){border-color:rgba(224,179,74,.55);background:rgba(224,179,74,.1)}.ast-steps span:nth-child(3){border-color:rgba(60,220,140,.5);background:rgba(60,220,140,.08)}
+.ast-grid{display:grid;gap:10px;margin-top:10px}@media(min-width:900px){.ast-grid{grid-template-columns:1fr 1.25fr 1fr;align-items:start}}
+.ast-p{border:1px solid color-mix(in srgb,var(--cy) 35%,var(--bd));border-radius:14px;padding:10px 12px;background:linear-gradient(160deg,color-mix(in srgb,#0c1b2b 80%,var(--card)),var(--card));box-shadow:inset 0 0 0 1px rgba(224,179,74,.1)}
+.ast-p h4{margin:0 0 8px;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold)}
+.ast-sel{width:100%;min-height:44px;margin:8px 0 0}
+.ast-ring{--v:50;width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--c,#3ddc97) calc(var(--v)*1%),rgba(255,255,255,.12) 0);display:grid;place-items:center;flex:none}.ast-ring i{width:80px;height:80px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-style:normal;text-align:center;line-height:1}.ast-ring b{font-size:30px}.ast-ring small{display:block;font-size:11px;color:var(--mu)}
+.ast-bar{display:grid;grid-template-columns:96px 1fr 38px;gap:6px;align-items:center;margin:5px 0;font-size:13px}.ast-bar .t{height:8px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden}.ast-bar .t i{display:block;height:100%;background:#3ddc97}.ast-bar.w .t i{background:#e0b34a}.ast-bar.l .t i{background:#e0563f}.ast-bar b{text-align:right}
+.ast-i{cursor:pointer;color:var(--cy);font-size:12px;margin-left:3px}
+.ast-pf{border-radius:12px;padding:8px 10px;margin:8px 0}.ast-pf.g{border:1px solid rgba(60,220,140,.5);background:rgba(60,220,140,.08)}.ast-pf.r{border:1px solid rgba(224,86,63,.55);background:rgba(224,86,63,.08)}.ast-pf b{display:block;margin-bottom:3px}.ast-pf ul{margin:0;padding-left:18px}.ast-pf li{font-size:13px;margin:3px 0}
+.ast-un{display:flex;gap:10px;align-items:center}.ast-un .nm{flex:1;min-width:0}.ast-un .nm b{font-size:19px;display:block;overflow-wrap:anywhere}.ast-un .pt{background:#0c5a9a;color:#fff;border-radius:10px;padding:4px 10px;font-weight:800;white-space:nowrap}
+.ast-nav{display:flex;align-items:center;gap:6px}.ast-nav button{min-width:40px;min-height:40px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px;cursor:pointer}.ast-nav span{font-size:13px;color:var(--mu)}
+.ast-roles{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.ast-roles span{font-size:12px;border:1px solid var(--bd);border-radius:99px;padding:3px 10px;background:rgba(255,255,255,.04)}
+.ast-rec{display:block;width:100%;text-align:left;border:1px solid var(--bd);border-left:4px solid #3ddc97;border-radius:12px;padding:9px 11px;margin:8px 0;background:var(--card);color:var(--tx);font:inherit;cursor:pointer}.ast-rec.on{border-color:#3ddc97;box-shadow:0 0 0 1px #3ddc97 inset,0 0 14px rgba(61,220,151,.2)}.ast-rec.b2{border-left-color:#4cc3ff}.ast-rec.b3{border-left-color:#e0b34a}
+.ast-rec b{display:block;font-size:15px}.ast-rec small{display:block;color:var(--mu);font-size:12.5px;margin-top:2px}.ast-rec .pts{float:right;margin-left:8px;font-weight:800;border-radius:8px;padding:2px 8px;background:rgba(224,86,63,.15);color:#ff8d79}.ast-rec .pts.n{background:rgba(61,220,151,.15);color:#6fe8b0}
+.ast-tag{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:1px 9px;margin:0 4px 2px 0}.ast-tag.v{background:rgba(61,220,151,.18);color:#6fe8b0}.ast-tag.p{background:rgba(224,179,74,.2);color:#f0c866}.ast-tag.i{background:rgba(224,86,63,.2);color:#ff8d79}
+.ast-t{width:100%;border-collapse:collapse;font-size:13px}.ast-t th{font-size:11px;color:var(--mu);text-transform:uppercase;padding:3px 2px}.ast-t td{padding:5px 2px;border-top:1px solid var(--bd);text-align:center}.ast-t td:first-child{text-align:left}.up{color:#3ddc97;font-weight:800}.dn{color:#ff6b5a;font-weight:800}.wa{color:#e0b34a;font-weight:800}.eq{color:var(--mu)}
+.ast-sum{border:1px solid rgba(160,120,255,.5);background:rgba(160,120,255,.08);border-radius:12px;padding:9px 11px;margin:8px 0;font-size:13.5px;line-height:1.45}
+.ast-go{display:block;width:100%;min-height:54px;margin:8px 0;border:0;border-radius:14px;background:linear-gradient(135deg,#1a9b5f,#0e6b3d);color:#fff;font:inherit;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4)}.ast-go small{display:block;font-weight:500;font-size:12px;opacity:.9}.ast-go[disabled]{background:#3a4650;opacity:.7;cursor:not-allowed}
+.ast-oth{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.ast-var{display:flex;flex-wrap:wrap;align-items:center;gap:6px;border-top:1px solid var(--bd);padding:7px 0;font-size:13px}.ast-var b{flex:1 1 160px}.ast-var button{min-height:36px;padding:2px 10px;border-radius:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-size:12.5px;cursor:pointer}
+.ast details{border:1px solid var(--bd);border-radius:10px;padding:5px 9px;margin:6px 0;background:rgba(255,255,255,.03)}.ast summary{cursor:pointer;font-weight:700;padding:5px 0}.ast .mu{color:var(--mu);font-size:12.5px}
+</style>`;
+const tip=k=>`<span class="ast-i" data-ast="term" data-v="${k}" role="button" aria-label="Explication : ${E2(TERMS[k][0])}">ⓘ</span>`;
+const ftxt=f=>{try{const l=facList().find(x=>x[0]===f);return l?l[1]:f}catch(_){return f}};
+const sc=v=>v==null?"—":v;
+const col=v=>v==null?"#7c8b99":v>=65?"#3ddc97":v>=40?"#e0b34a":"#e0563f";
+function dcell(d){if(d==null)return'<span class="eq">—</span>';if(d>=2)return'<span class="up">▲ +'+d+'</span>';if(d<=-2)return'<span class="dn">▼ '+d+'</span>';if(d!==0)return'<span class="wa">≈ '+(d>0?"+":"")+d+'</span>';return'<span class="eq">=</span>'}
+function confTag(c){return c==="verified"?'<span class="ast-tag v">✔ Données vérifiées</span>':c==="partial"?'<span class="ast-tag p">⚠ Analyse partielle</span>':'<span class="ast-tag i">Données insuffisantes</span>'}
+function left(A,L){const I=A.I.ind,lim=A.lim,det=((L.dets||(L.bld&&L.bld.dets)||[])[0]||{}).name||"";
+ const bars=["ac","ai","res","mob","obj","syn"].map(k=>{const v=I[k];return`<div class="ast-bar ${v==null?"":v>=65?"":v>=40?"w":"l"}"><span>${T.NAMES[k]}${tip(k)}</span><span class="t"><i style="width:${v||0}%"></i></span><b>${sc(v)}</b></div>`}).join("");
+ const sf=A.strengths.slice(0,4),wk=A.weaknesses.slice(0,5);
+ return`<div class="ast-p"><h4>📋 Ma liste actuelle</h4><div class="ast-un"><div class="nm"><b>${E2(ftxt(A.fac))}</b><span class="mu">${E2(det?"Détachement : "+det:"Détachement non précisé")}</span><br><span class="mu"><b style="color:var(--tx)">${A.total}</b>${lim?" / "+lim+" pts":" pts"}${lim&&A.total>lim?' <span class="ast-tag i">au-dessus de la limite</span>':""}</span></div>
+ <div class="ast-ring" style="--v:${I.glob||0};--c:${col(I.glob)}"><i><span><b>${sc(I.glob)}</b><small>/100</small></span></i></div></div>
+ <div style="margin:6px 0">${confTag(A.conf)} <span class="ast-i" data-ast="how">Comment sont calculés ces scores ?</span></div>${bars}
+ <div class="ast-pf g"><b>✅ Points forts</b>${sf.length?`<ul>${sf.map(x=>`<li>${E2(x.t)}</li>`).join("")}</ul>`:'<span class="mu">Aucun score ne dépasse nettement la médiane de la faction.</span>'}</div>
+ <div class="ast-pf r"><b>⚠ Points à améliorer</b>${wk.length?`<ul>${wk.map(x=>`<li>${E2(x.t)}</li>`).join("")}</ul>`:'<span class="mu">Aucune faiblesse nette détectée.</span>'}</div></div>`}
+function center(A,L,s,R){const rows=A.rows;if(s.unit==null||s.unit>=rows.length||s.unit<0)s.unit=0;const r=rows[s.unit];
+ const mine=R.filter(x=>x.unitIdx===s.unit);const gen=R.filter(x=>x.unitIdx==null);
+ const stt=r.u.stats||{};const roles=[];if(r.lib)roles.push(typeof roleOf==="function"?roleOf(r.lib):"");if(r.fn)roles.push("Fort en "+T.NAMES[r.fn].toLowerCase());roles.push(["M","E","SV","PV","CO"].map(k=>stt[k]?k+" "+stt[k]:"").filter(Boolean).join(" · "));
+ const recBtn=(x,i)=>`<button class="ast-rec b${(i%3)+1}${s.rec===x.id?" on":""}" data-ast="rec" data-v="${E2(x.id)}"><span class="pts ${x.cost<=0?"n":""}">${x.cost>0?"+":""}${x.cost} pts</span><b>${E2(x.title)}</b><small>${E2(x.why[2])}</small>${confTag(x.conf)}${x.legal.ok?"":'<span class="ast-tag i">non applicable</span>'}</button>`;
+ return`<div class="ast-p"><h4>🎯 Unité sélectionnée</h4><div class="ast-nav"><button data-ast="prev" aria-label="Unité précédente">‹</button><span>${s.unit+1} / ${rows.length}</span><button data-ast="next" aria-label="Unité suivante">›</button></div>
+ <div class="ast-un" style="margin-top:8px"><div class="nm"><b>${E2(r.name)}</b><span class="mu">${r.u.size||""} figurine${r.u.size>1?"s":""}</span></div><span class="pt">${r.pts} pts</span></div><div class="ast-roles">${roles.filter(Boolean).map(t=>`<span>${E2(t)}</span>`).join("")}</div>
+ ${r.m.ok?"":'<div class="ast-pf r"><b>Données insuffisantes</b>Cette unité n\'a pas assez de données pour être analysée.</div>'}
+ <h4 style="margin-top:12px">💡 Conseils pour cette unité</h4>${mine.length?mine.map(recBtn).join(""):`<p class="mu">${r.u.cfg&&r.u.cfg.lib?"Aucune optimisation fiable trouvée pour cette unité avec les données actuelles.":"Configure l'équipement de cette unité (⚙ dans « Mes armées ») pour obtenir des conseils d'équipement."}</p>`}
+ ${gen.length?`<h4 style="margin-top:12px">➕ Pour toute la liste</h4>${gen.map(recBtn).join("")}`:""}</div>`}
+function right(A,R,s){const x=R.find(y=>y.id===s.rec)||null;
+ if(!x)return`<div class="ast-p"><h4>📈 Impact sur ma liste</h4><p class="mu">Touche un conseil pour voir son impact, avant / après. Rien n'est modifié tant que tu n'appliques pas une optimisation.</p></div>`;
+ const rowsT=["ac","ai","res","mob","obj","syn"].map(k=>`<tr><td>${T.NAMES[k]}</td><td>${sc(x.before[k])}</td><td>${sc(x.after[k])}</td><td>${dcell(x.dl[k])}</td></tr>`).join("")+`<tr><td><b>Score global</b></td><td>${sc(x.before.glob)}</td><td>${sc(x.after.glob)}</td><td>${dcell((x.after.glob!=null&&x.before.glob!=null)?x.after.glob-x.before.glob:null)}</td></tr><tr><td>Coût total</td><td>${A.total}</td><td>${A.total+x.cost}</td><td>${dcell(x.cost>0?-x.cost:x.cost<0?-x.cost:0).replace("▲ +","▲ ").replace("▼ -","▼ +")}</td></tr>`;
+ const prob=x.why[0],reason=x.why[1],eff=x.why[2];
+ return`<div class="ast-p"><h4>📈 Impact sur ma liste</h4><div style="margin-bottom:6px">${confTag(x.conf)} ${x.legal.ok?'<span class="ast-tag v">✔ Légalité validée</span>':'<span class="ast-tag i">✖ Non légale</span>'}</div>
+ <table class="ast-t"><tr><th></th><th>Avant</th><th>Après</th><th>Évolution</th></tr>${rowsT}</table>
+ <div class="ast-sum"><b>En résumé (simple)</b><br>${E2(prob)}<br>${E2(reason)}<br>${E2(eff)}</div>
+ ${x.pros.length?`<div class="ast-pf g"><b>Avantages</b><ul>${x.pros.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`:""}${x.cons.length?`<div class="ast-pf r"><b>Inconvénients</b><ul>${x.cons.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`:""}
+ ${x.legal.ok?"":`<div class="ast-pf r"><b>Pourquoi ce n'est pas applicable</b><ul>${x.legal.notes.map(t=>`<li>${E2(t)}</li>`).join("")}</ul></div>`}
+ <details><summary>Pourquoi ce conseil ?</summary><ul>${x.trace.map(t=>`<li>${E2(t)}</li>`).join("")}<li>Scores : 50 = médiane des unités de la bibliothèque pour cette faction.</li></ul></details>
+ <button class="ast-go" data-ast="apply" ${x.legal.ok?"":"disabled"}>✔ Appliquer cette optimisation<small>Crée une variante, ta liste d'origine reste intacte</small></button></div>`}
+function variants(L,s){const base=L.varOf||L.id,orig=(S.lists||[]).find(l=>l.id===base)||L,vs=(S.lists||[]).filter(l=>l.varOf===base);if(!vs.length&&!L.varOf)return"";
+ return`<div class="ast-p" style="margin-top:10px"><h4>🗂 Variantes de « ${E2(orig.name||"Liste")} »</h4>
+ <div class="ast-var"><b>📌 ${E2(orig.name||"Liste")} <span class="mu">(liste d'origine)</span></b><button data-ast="open" data-v="${E2(orig.id)}">Ouvrir</button></div>
+ ${vs.map(v=>`<div class="ast-var"><b>${E2(v.name)} <span class="mu">${(v.optLog||[]).slice(-1).map(o=>"· "+E2(o.t)).join("")}</span></b><button data-ast="open" data-v="${E2(v.id)}">Ouvrir</button><button data-ast="pick" data-v="${E2(v.id)}">Analyser</button><button data-ast="cmp" data-v="${E2(v.id)}" data-o="${E2(base)}">Comparer</button><button data-ast="copy" data-v="${E2(v.id)}">Copier</button><button data-ast="del" data-v="${E2(v.id)}">Supprimer</button></div>`).join("")}
+ ${L.optLog&&L.optLog.length?`<details><summary>Historique des optimisations de cette variante</summary><ul>${L.optLog.map(o=>`<li>${new Date(o.at).toLocaleDateString("fr-FR")} — ${E2(o.t)} (${o.cost>0?"+":""}${o.cost} pts, score ${o.before}→${o.after})</li>`).join("")}</ul></details>`:""}</div>`}
+function render(){try{const s=st(),L=(S.lists||[]).find(l=>l.id===s.list);
+ const head=`<div class="ast"><div class="ast-top"><div><h3>Assistant d'optimisation</h3><p>Améliore ta liste pas à pas, avec des conseils clairs et simples.</p></div><div class="ast-steps"><span><b>1 · Analyse</b>On regarde ta liste</span><span><b>2 · Conseils</b>On propose des améliorations</span><span><b>3 · Choix</b>Tu appliques ce qui t'intéresse</span></div></div>`;
+ if(!(S.lists||[]).length)return css+head+`<div class="ast-p" style="margin-top:10px"><p>Aucune liste pour l'instant. Crée une armée dans « Mes armées » pour que l'assistant l'analyse.</p></div></div>`;
+ const sel=`<select class="ast-sel" data-ast-sel="list" aria-label="Liste à analyser">${S.lists.map(l=>`<option value="${E2(l.id)}"${l.id===s.list?" selected":""}>${E2(l.name||"Liste")}${l.varOf?" (variante)":""} — ${(l.units||[]).length} unités</option>`).join("")}</select>`;
+ const C=compute(L);if(!C.A.ok)return css+head+sel+`<div class="ast-p" style="margin-top:10px"><h4>Analyse impossible</h4><p>${E2(C.A.why)}</p>${confTag("insufficient")}</div>`+variants(L,s)+"</div>";
+ if(s.rec&&!C.R.some(x=>x.id===s.rec))s.rec=null;
+ const note=C.R.length?"":`<div class="ast-p" style="margin-top:10px"><h4>💡 Conseils</h4><p>Aucune optimisation assez fiable n'a été trouvée pour cette liste : mieux vaut aucun conseil qu'un conseil approximatif.</p>${C.A.partial.length?`<details><summary>Données manquantes (${C.A.partial.length})</summary><ul>${C.A.partial.slice(0,8).map(t=>`<li>${E2(t)}</li>`).join("")}</ul></details>`:""}</div>`;
+ const oth=C.R.filter(x=>x.unitIdx!==s.unit&&x.unitIdx!=null);
+ return css+head+sel+`<div class="ast-grid">${left(C.A,L)}${center(C.A,L,s,C.R)}${right(C.A,C.R,s)}</div>${note}
+ ${oth.length?`<div class="ast-p" style="margin-top:10px"><h4>✨ Autres améliorations possibles</h4><div class="ast-oth">${oth.slice(0,6).map((x,i)=>`<button class="ast-rec b${(i%3)+1}" data-ast="goto" data-v="${E2(x.id)}"><span class="pts ${x.cost<=0?"n":""}">${x.cost>0?"+":""}${x.cost} pts</span><b>${E2(x.unitName||x.title)}</b><small>${E2(x.title)}</small></button>`).join("")}</div></div>`:""}
+ ${variants(L,s)}
+ <details style="margin-top:10px"><summary>Comment fonctionne l'assistant ? (limites)</summary><ul><li>Entièrement hors ligne, sans intelligence artificielle : les scores viennent des caractéristiques et des points de la bibliothèque V11.</li><li>Un score de 50 = la médiane des unités de ta faction. Ce sont des repères, pas des taux de victoire.</li><li>Les calculs sont des moyennes sur des cibles de référence : stratagèmes, auras, personnages attachés, décors et déplacements ne sont pas simulés.</li><li>Toute optimisation est contrôlée (points, équipements, limites d'unités) avant d'être proposée, et s'applique sur une copie de ta liste.</li><li>La comparaison contre une faction adverse et l'analyse du journal de bataille sont prévues dans une prochaine étape.</li></ul></details></div>`}catch(e){return`<div class="card"><b>Erreur de l'assistant</b><p class="mu">${E2(e&&e.message)}</p></div>`}}
+function openList(id){S.cur=id;tab="units";try{draw()}catch(_){}}
+document.addEventListener("click",e=>{const b=e.target&&e.target.closest&&e.target.closest("[data-ast]");if(!b||!document.querySelector(".ast"))return;const k=b.dataset.ast,s=st(),v=b.dataset.v;const L=(S.lists||[]).find(l=>l.id===s.list);
+ if(k==="term"){const t=TERMS[v];if(t)BIBLCK.pop({t:t[0],p:t[1],items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+ if(k==="how"){BIBLCK.pop({t:"Comment sont calculés les scores",p:"Chaque score compare ta liste aux unités de la bibliothèque V11 de la même faction : 50 = la médiane. Anti-char et anti-infanterie : dégâts moyens (tir + mêlée) sur une cible de référence, par point. Résistance : nombre d'attaques de référence nécessaires pour détruire tes unités, par point. Mobilité : M moyen pondéré par les points. Objectifs : CO par point. Synergies : partie des unités de ligne ayant un personnage compatible. Le score global pèse : anti-char 20 %, anti-infanterie 20 %, résistance 20 %, objectifs 20 %, mobilité 10 %, synergies 10 %.",items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+ if(k==="rec"){s.rec=s.rec===v?null:v;draw();return}
+ if(k==="goto"){const C=compute(L),x=C.R.find(y=>y.id===v);if(x){s.unit=x.unitIdx;s.rec=x.id}draw();window.scrollTo(0,0);return}
+ if(k==="prev"||k==="next"){const n=(L.units||[]).length;s.unit=((s.unit||0)+(k==="next"?1:-1)+n)%n;s.rec=null;draw();return}
+ if(k==="apply"){const C=compute(L),x=C.R.find(y=>y.id===s.rec);if(!x||!x.legal.ok)return;let V=null;try{V=B.applyRec(L,x)}catch(err){BIBLCK.pop({t:"Application impossible",p:String(err&&err.message),items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+  if(!V){BIBLCK.pop({t:"Application impossible",p:"La variante n'a pas pu être créée.",items:[],buttons:[{k:"ok",l:"Compris",cls:"p"}]});return}
+  s.list=V.id;s.rec=null;try{toast("Variante créée : "+V.name)}catch(_){}draw();return}
+ if(k==="open"){openList(v);return}if(k==="pick"){s.list=v;s.rec=null;s.unit=0;draw();return}
+ if(k==="cmp"){const a=S.ana=S.ana||{};a.a=b.dataset.o;a.b=v;a.sec="cmp";try{save()}catch(_){}draw();window.scrollTo(0,0);return}
+ if(k==="copy"){const V=(S.lists||[]).find(l=>l.id===v);try{const t=BIBLCK.text(V);(navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Liste copiée")).catch(()=>BIBLCK.pop({t:"Liste",p:t,items:[],buttons:[{k:"ok",l:"Fermer",cls:"p"}]}))}catch(_){}return}
+ if(k==="del"){const V=(S.lists||[]).find(l=>l.id===v);if(!V)return;BIBLCK.pop({t:"Supprimer cette variante ?",p:"« "+V.name+" » sera supprimée. Ta liste d'origine n'est pas touchée.",items:[],buttons:[{k:"no",l:"Annuler"},{k:"yes",l:"Supprimer",cls:"p"}],cb:x=>{if(x==="yes"){S.lists=S.lists.filter(l=>l.id!==v);if(s.list===v)s.list=V.varOf||"";try{save()}catch(_){}draw()}}})}},true);
+document.addEventListener("change",e=>{const t=e.target;if(t&&t.dataset&&t.dataset.astSel==="list"){const s=st();s.list=t.value;s.rec=null;s.unit=0;draw()}},true);
+window.BIBAST.render=render;window.BIBAST.compute=compute;
+})();
 
 })();
 

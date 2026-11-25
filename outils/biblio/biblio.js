@@ -44,7 +44,12 @@ function index(){KP=null;KPB=false;KPREADY=false;ATC.clear();D.lexB=D.lexB||{};D
   (c.detachments||[]).forEach(x=>{x._c=g;D.dets.push(x)});(c.enhancements||[]).forEach(x=>{x._c=g;D.enh.push(x)});(c.stratagems||[]).forEach(x=>{x._c=g;D.str.push(x)});(c.rules||[]).forEach(x=>D.rules.push(x))});
  D.units.forEach(u=>{if(!u.wp){const e=(ext[u._c]||{})[normN(u.n)];if(e)u.wp=e}});
  D.units.forEach(u=>{if(u.ab)u.ab=u.ab.filter(a=>!/^\s*templar vows\b/i.test(a.n))});
+ /* armes en double dans les données source (même nom, mêmes caractéristiques, ex. Flamestorm Gauntlets des Aggressors) : une seule ligne */
+ D.units.forEach(u=>["rw","mw"].forEach(k=>{if(!Array.isArray(u[k]))return;const seen=new Set();u[k]=u[k].filter(w=>{const key=[w.n,w.r,w.a,w.sk,w.s,w.ap,w.d,JSON.stringify((w.kw||[]).slice().sort())].join("|").toLowerCase();if(seen.has(key))return false;seen.add(key);return true})}));
  D.units.sort((a,b)=>a.n.localeCompare(b.n));applyOvr()}
+/* même nom ET mêmes caractéristiques : une seule ligne dans les fiches déjà créées (collection et unités de listes) */
+function dedupeW(arr){if(!Array.isArray(arr)||arr.length<2)return 0;const seen=new Set(),out=[];arr.forEach(w=>{const k=[nk(w&&w.name),wSig(w||{}),nk((w&&w.caps)||"")].join("|");if(seen.has(k))return;seen.add(k);out.push(w)});const n=arr.length-out.length;if(n){arr.length=0;out.forEach(w=>arr.push(w))}return n}
+function dedupeAll(){let n=0;Object.values(S.coll||{}).forEach(m=>{n+=dedupeW(m.weapons)});(S.lists||[]).forEach(L=>(L.units||[]).forEach(u=>{n+=dedupeW(u.weapons);(u.subs||[]).forEach(s=>{n+=dedupeW(s.weapons)})}));return n}
 async function loadFromIdb(){const m=await idbGet("meta","manifest");if(!m)return false;const rows=await idbAll("chunks"),ch={};rows.forEach(r=>{ch[r.id]=JSON.parse(r.raw)});D.man=m.man;D.origin=m.origin||"";D.chunks=ch;index();return true}
 async function importEmbedded(){const em=window.__BIBLIO;if(!em)throw new Error("Aucune donnée intégrée");
  const raws={};for(const c of em.manifest.chunks){const t=await gunzip(em.chunks[c.id]);if(sha1(t)!==c.sha1)throw new Error("Intégrité : "+c.id);raws[c.id]=t}
@@ -54,7 +59,7 @@ let INIT=null;
 function init(){if(INIT)return INIT;INIT=(async()=>{try{
   const em=window.__BIBLIO;let m=null;try{m=await idbGet("meta","manifest")}catch(_){}
   if(!m||(m.origin==="embedded"&&em&&m.man.version!==em.manifest.version))await importEmbedded();
-  await loadFromIdb();D.ready=true;D.err=null;setTimeout(()=>{try{syncAll();snapAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
+  await loadFromIdb();D.ready=true;D.err=null;try{const nd=dedupeAll();if(nd){window.__wdd=nd;sv()}}catch(_){}setTimeout(()=>{try{syncAll();snapAll()}catch(_){}},0)}catch(e){D.err=e&&e.message||String(e)}
   return D})();return INIT}
 /* ---------- traduction : vocabulaire officiel français connu, jamais inventé ---------- */
 // Chaque paire a été retrouvée dans les règles de base françaises officielles, les fiches françaises ou l'encyclopédie V11 de l'appli.
@@ -657,4 +662,5 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /*__UNI__*/
 /*__LORE__*/
 /*__PSCAN__*/
+/*__ASSIST__*/
 })();
