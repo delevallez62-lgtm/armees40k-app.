@@ -404,15 +404,6 @@
    }
   },
   {
-   "id": "lex",
-   "file": "lex.json",
-   "sha1": "5f6b562e32d9b2a2cfef403846686490bc21cea2",
-   "bytes": 98412,
-   "counts": {
-    "words": 3329
-   }
-  },
-  {
    "id": "fr",
    "file": "fr.json",
    "sha1": "d9af3b14efa44b7144318e2c62e0469b04c19e2f",
@@ -430,6 +421,15 @@
     "paints": 8409,
     "barcodes": 5118,
     "brands": 21
+   }
+  },
+  {
+   "id": "lex",
+   "file": "lex.json",
+   "sha1": "44175b3592b0215351b2e4ea33ae7d772605231e",
+   "bytes": 98221,
+   "counts": {
+    "words": 3322
    }
   }
  ]
