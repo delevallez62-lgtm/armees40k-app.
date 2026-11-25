@@ -13,8 +13,8 @@ rep('function doImport(r,items,o){','function doImport(r,items,o){if(window.BIBM
 rep('syncAll(r.units);','syncAll(r.units);window.BIBMERGE&&window.BIBMERGE.post(o);window.BIBCLEAN&&window.BIBCLEAN();setTimeout(()=>{try{window.BIBUNI&&window.BIBUNI()}catch(_){}},300);',2)
 rep('function pkRes(){if(pk.mode==="d")return pkResD();','function pkRes(){if(pk.mode==="d")return pkResD();if(!pk.lead&&window.BIBPK){const _h=window.BIBPK(pk);if(_h!==null)return _h}')
 rep('["tab","learn","learn",SEC.learn[1],"Les bases pour ta première partie",""],','["tab","learn","learn",SEC.learn[1],"Les bases pour ta première partie",""],["tab","news","news",SEC.news[1],"Mises à jour de la bibliothèque et de l\'application",""],')
-rep('["tab","news","news",SEC.news[1],','["tab","bld","bld",SEC.bld[1],"Créer une armée avec le catalogue visuel et les points V11",""],["tab","lore","lore",SEC.lore[1],"Histoire, personnages, organisations et héraldique",""],...(window.BIBTRW&&BIBTRW.n()?[["tab","trw","trw","⚠ "+SEC.trw[1]+" ("+BIBTRW.n()+")","Textes non traduits : touche pour les corriger",""]]:[]),["tab","news","news",SEC.news[1],')
-rep('<button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?','<span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button></span></div>`+(S.lists.length?')
+rep('["tab","news","news",SEC.news[1],','["tab","lore","lore",SEC.lore[1],"Histoire, personnages, organisations et héraldique",""],...(window.BIBTRW&&BIBTRW.n()?[["tab","trw","trw","⚠ "+SEC.trw[1]+" ("+BIBTRW.n()+")","Textes non traduits : touche pour les corriger",""]]:[]),["tab","news","news",SEC.news[1],')
+rep('<button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?','<span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button></span></div><p class="mu" style="margin:-6px 6px 12px"><b>Créer une armée</b> : pas à pas, détachement et équipements vérifiés (règles V11). <b>Liste simple</b> : libre, sans contrôle.</p>`+(S.lists.length?')
 # lien discret dans « Modifier » (fiche de collection uniquement)
 rep('${co?"":`<label>Optimisation (visible uniquement','${co&&window.BIBLNK?window.BIBLNK(u):""}${co?"":`<label>Optimisation (visible uniquement')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')
@@ -77,6 +77,7 @@ rep('Crée-en une avec « + Nouvelle liste » ou importe ton armée.','Crée-en 
 rep('<span class="l">${run?"Reprendre":"Jeu"}</span>','<span class="l">${run?"Reprendre":"Mode jeu"}</span>')
 rep('["lists","Armées","lists"],["jeu","Jeu",""]','["lists","Mes armées","lists"],["jeu","Mode jeu",""]')
 rep("Fonctionne sans Claude : l'appli lit le PDF et te propose les ajouts à valider.","Fonctionne hors ligne : l'appli lit le PDF et te propose les ajouts à valider.")
+rep('const ARM=["lists","units","dets","strats","opti"];','const ARM=["lists","units","dets","strats","opti","bld"];')
 k=s.rindex('</body>')
 s=s[:k]+'<!-- ===== Bibliothèque de données V11 (Space Marines + Orks) ===== -->\n<script>window.__BIBLIO='+json.dumps(emb,separators=(',',':'))+';</script>\n<script>\n'+J+'\n</script>\n'+s[k:]
 open(out,'w',encoding='utf8').write(s);print('ok',len(s))
