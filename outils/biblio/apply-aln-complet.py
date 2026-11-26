@@ -21,7 +21,11 @@ def put(kind,en,f,keep=False):
     if not f or nk(f)==nk(en):return
     t[k]={'fr':f,'at':today,'ok':True,'src':SRC};c['nouvelles' if not cur else 'validées']+=1
 for en,frn,st,*_ in rd('aln-aptitudes-fr.csv'):put('aptitudes',en,frn,keep=st.startswith('confirmée'))
-for en,frn,*_ in rd('aln-unites-fr.csv'):put('unités',en,frn)
+# surnoms : un nom d'unité vu dans une seule liste (ou du type : "Surnom") est presque toujours un surnom de joueur -> ignoré
+def surnom(frn,n):return int(n or 0)<2 or bool(re.match(r'^\s*:|["“”]',frn or ''))
+for en,frn,n,*_ in rd('aln-unites-fr.csv'):
+    if surnom(frn,n):cnt.setdefault('unités ignorées (vues 1 fois = surnoms probables)',{'ignorées':0})['ignorées']+=1;continue
+    put('unités',en,frn)
 for cid,den,cur_fr,ok,lab,*_ in rd('aln-detachements-fr.csv'):put('détachements',den,cur_fr or lab,keep=bool(cur_fr) and nk(cur_fr)==nk(lab))
 for cid,den,enh,cur_fr,ok,meth,frn,*_ in rd('aln-ameliorations-fr.csv'):put('améliorations',enh,cur_fr if meth=='confirmée' else frn,keep=(meth=='confirmée'))
 for k,v in cnt.items():print(k,v)

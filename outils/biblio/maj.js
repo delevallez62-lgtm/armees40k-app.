@@ -1,6 +1,7 @@
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:92,d:"2026-11-26",t:"Surnoms de joueurs ignorés",s:"Un nom d'unité relevé sur ALN dans une seule liste, ou écrit sous la forme « : \"Surnom\" », est considéré comme un surnom de joueur et n'est plus utilisé comme traduction. 12 traductions issues de ces surnoms ont été retirées (par exemple « Trygon » → « Primat »). Les noms confirmés ne sont jamais touchés."},
  {id:91,d:"2026-11-26",t:"Configurateur : plus d'espace entre les catégories d'armes",s:"Les tiroirs de choix d'armes (Remplacer / Ajouter) sont plus espacés pour mieux distinguer chaque catégorie."},
  {id:90,d:"2026-11-26",t:"Profils retrouvés : Sororitas et Custodes",s:"Les équipements spéciaux dont tu as fourni le texte (Vexilla, Oratoire de Denuncia, Simulacrum Imperialis) affichent maintenant leur effet dans le configurateur au lieu de « pas de profil ». Les 14 lignes fournies ont été comparées à la bibliothèque : aucun écart. Rien n'est jamais écrasé : ces données ne servent que quand la bibliothèque n'a rien."},
  {id:89,d:"2026-11-26",t:"Configurateur : textes superflus retirés",s:"Dans le choix des armes, la légende, les phrases d'explication et les lignes de limites ont été retirées. Il reste le nom des armes, leurs caractéristiques, leurs aptitudes et les raisons des choix impossibles."},
