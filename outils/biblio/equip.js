@@ -130,11 +130,18 @@ const EQE=(()=>{
  /* totaux par arme (clé canonique) sur toute l'unité */
  function totals(final){const t={};final.forEach(its=>its.forEach(x=>{const k=K(x.n);t[k]=(t[k]||{n:x.n,q:0});t[k].q+=x.q}));return t}
  /* reconstitue des figurines à partir de totaux d'armes (anciennes configurations) ; renvoie null si impossible */
- function fromCounts(M,size,wq){const figs=newFigs(M,size);if(!figs)return null;const tot={};Object.keys(wq||{}).forEach(k=>{const b=K(k);tot[b]=Math.max(tot[b]||0,wq[k])});
+ /* noms d'armes saisis ailleurs (ALN, import PDF) : rapprochement avec les armes de l'unité, jamais ambigu */
+ const tk=s=>nk(String(s||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]).split(" ").map(w=>w.length>3&&/[sx]$/.test(w)?w.slice(0,-1):w).filter(w=>w&&!/^(?:de|du|des|la|le|les|d|l|a|au|aux|et|the|of)$/.test(w)),sub=(a,B)=>a.length>0&&a.every(x=>B.has(x));
+ let ALIAS=(name,cands)=>{const nt=tk(name);if(!nt.length)return null;const N=new Set(nt);
+  const hits=cands.filter(c=>{const en=tk(c);let fr=[];try{const r=tName(c);fr=tk(r.t);if(r.prop)fr=fr.concat(tk(r.prop))}catch(_){}const U=new Set([...en,...fr]);return sub(nt,U)||sub(en,N)||sub(fr,N)});
+  return hits.length===1?hits[0]:null};const setAlias=f=>{ALIAS=f};
+ function unitNames(M){const o=new Map();const add=n=>{if(n&&!o.has(K(n)))o.set(K(n),n)};Object.values(M.base||{}).forEach(l=>(l||[]).forEach(x=>add(x.n)));(M.rules||[]).forEach(r=>{(r.from||[]).forEach(n=>add(typeof n==="string"?n:n&&n.n));(r.alts||[]).forEach(a=>a.forEach(x=>add(x.n)))});return o}
+ function fromCounts(M,size,wq){const figs=newFigs(M,size);if(!figs)return null;const tot={};const UN=ALIAS?unitNames(M):null;
+  Object.keys(wq||{}).forEach(k=>{let b=K(k);if(UN&&!UN.has(b)){try{const a=ALIAS(k,[...UN.values()]);if(a)b=K(a)}catch(_){}}tot[b]=Math.max(tot[b]||0,wq[k])});
   const baseTot=totals(figs.map(f=>(M.base[f.t]||[]).map(x=>({n:x.n,q:x.q}))));
   M.rules.forEach(r=>{r.alts.forEach((a,ai)=>{let n=Infinity;a.forEach(x=>{const k=K(x.n);const extra=(tot[k]||0)-((baseTot[k]&&baseTot[k].q)||0);n=Math.min(n,Math.floor(Math.max(0,extra)/Math.max(1,x.q)))});
      if(!isFinite(n)||n<=0)return;
      for(let j=0;j<figs.length&&n>0;j++){const f=figs[j];if(!r.types.includes(f.t)||(f.c[r.id]||[]).length)continue;
       const t=JSON.parse(JSON.stringify(figs));t[j].c[r.id]=[ai];const v=validate(M,size,t);if(!v.errors.length){figs[j].c[r.id]=[ai];n--}}})});
   return figs}
- return{model,counts,compatible,newFigs,resize,setCount,flexN,tally,validate,options,totals,fromCounts,figItems,lim,itemTxt,altTxt}})();
+ return{model,counts,compatible,newFigs,resize,setCount,flexN,tally,validate,options,totals,fromCounts,setAlias,figItems,lim,itemTxt,altTxt}})();
