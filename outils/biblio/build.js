@@ -92,7 +92,14 @@ function gfind(G,n,b){let g=G.find(x=>(x.base||lckBase(x.name))===b);if(g)return
  const n2=gclean(n);if(n2&&n2!==n){const b2=lckBase(n2);g=G.find(x=>(x.base||lckBase(x.name))===b2);if(g)return g}
  for(const m of n2&&n2!==n?[n,n2]:[n]){try{const h=G.filter(x=>EQE.alias(x.name,[m])===m);if(h.length===1)return h[0]}catch(_){}}return undefined}
 const gsplit=(G,items)=>(items||[]).flatMap(it=>{if(gfind(G,it.n,lckBase(it.n)))return[it];const parts=String(it.n||"").split(/\s*,\s*|\s+and\s+/i).filter(Boolean);return parts.length>1?parts.map(x=>Object.assign({},it,{n:x})):[it]});
-function wprof(e,items,cmp){const G=wgA(e);return gsplit(G,items).map(it=>{const b=lckBase(it.n),g=gfind(G,it.n,b);if(!g)return"";return g.ws.map((w,wi)=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim(),mel=!w.range||/m[êe]l/i.test(w.range),rg=mel?"Mêlée":E(w.range)+(/^\d/.test(w.range)?'"':""),
+const EQFX=/*__EQFX__*/[];let EQFXM=null;
+/* profils / effets fournis (data : equip-effets.json) : utilisés seulement quand la bibliothèque n'a rien pour cet élément */
+function eqfx(e,n){if(!EQFXM){EQFXM=new Map();EQFX.forEach(x=>{[x.en,x.fr].forEach(nm=>{const k=x.u+"|"+nk(nm);if(!EQFXM.has(k))EQFXM.set(k,[]);EQFXM.get(k).push(x)})})}
+ const u=nk(e&&(e.lib&&e.lib.n||e.name)||""),a=nk(gclean(n)||n);let r=EQFXM.get(u+"|"+a);if(!r){const b=nk(n);r=EQFXM.get(u+"|"+b)}return r||[]}
+function eqfxHtml(L){return L.map(x=>{if(x.k==="fx")return`<span class="bld-ws"><span class="bld-fx">${E(x.fx)}</span></span>`;
+ const mel=x.m,cells=[["Portée",mel?"Mêlée":E(x.r)],["A",x.a],[mel?"CC":"CT",x.h],["F",x.f],["PA",x.p],["D",x.d]];
+ return`<span class="bld-ws"><span class="bld-sg">${cells.map(([l,v])=>`<span><i>${l}</i><b>${E(v==null||v===""||v==="—"?"–":v)}</b></span>`).join("")}</span>${x.caps.length?`<span class="bld-ab">${x.caps.map(c=>`<em>${E(c)}</em>`).join("")}</span>`:""}</span>`}).join("")}
+function wprof(e,items,cmp){const G=wgA(e);return gsplit(G,items).map(it=>{const b=lckBase(it.n),g=gfind(G,it.n,b);if(!g){const L=eqfx(e,it.n);return L.length?eqfxHtml(L):""}return g.ws.map((w,wi)=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim(),mel=!w.range||/m[êe]l/i.test(w.range),rg=mel?"Mêlée":E(w.range)+(/^\d/.test(w.range)?'"':""),
  cw=cmp&&cmp.length?(cmp.length===g.ws.length?cmp[wi]:(cmp.length===1?cmp[0]:null)):null,
  cells=[["Portée",rg,"range"],["A",w.a,"a"],[mel?"CC":"CT",w.hit,"hit"],["F",w.f,"f"],["PA",w.pa,"pa"],["D",w.d,"d"]],ab=String(w.caps||"").split(/\s*,\s*/).filter(x=>x&&x!=="-"),
  nz=x=>String(x==null?"":x).replace(/[\s"]/g,"").toLowerCase(),cmel=cw&&(!cw.range||/m[êe]l/i.test(cw.range));
@@ -578,6 +585,7 @@ window.BIBLP={fig:lpFg,pts:lpTot,
 .bld-bar{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;background:#0b0b0a!important;border-top:1px solid #C89B3C!important;z-index:14}
 .bld-bar .b.p{min-height:46px;font-weight:800}
 .bld-fc.on .bld-sg span.df{background:rgba(27,20,5,.16)!important}.bld-fc.on .bld-sg span.df b{color:#1b1405!important}
+.bld-fx{display:block;font-size:12px;color:#d8d0bb;line-height:1.35;border-left:2px solid #C89B3C;padding-left:7px;margin-top:2px}
 .bld-endsp{height:calc(84px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .bld-fh{font-size:14px}`;document.head.appendChild(c)})();
 (function(){const c=document.createElement("style");c.id="bldvdcss";c.textContent=`.bld-vd{font-weight:800;font-size:16px;padding:8px 12px;border-radius:12px;margin:8px 0}.bld-vd.ok{background:#17402c;color:#b9f1d2}.bld-vd.warn{background:#5a4416;color:#ffe3a6}.bld-vd.bad{background:#5a2323;color:#ffd0d0}`;document.head.appendChild(c)})();

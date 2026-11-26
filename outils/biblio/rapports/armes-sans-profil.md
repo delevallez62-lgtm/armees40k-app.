@@ -1,11 +1,11 @@
 # HAMMER — Armes et équipements sans profil
 
-Contrôle fait sur toutes les unités dont l'équipement est lisible par le moteur. **193 unités** contiennent au moins un élément sans profil dans les données de la source ; ils s'affichent « Pas de profil dans les données de cette unité ». Aucune caractéristique n'est inventée.
+**191 unités** contiennent au moins un élément sans profil dans les données (après intégration des profils fournis). Aucune caractéristique n'est inventée.
 
-- Armes probables sans profil : **146** lignes
-- Équipements non-armes probables (boucliers, icônes, vox, drones…) : **141** lignes
+- Armes probables sans profil : **143** lignes
+- Équipements non-armes probables : **141** lignes
 
-Le classement arme / équipement est automatique (mots-clés) : il peut se tromper sur quelques lignes.
+Classement arme / équipement automatique (mots-clés), approximatif.
 
 ## Armes sans profil
 
@@ -14,11 +14,6 @@ Le classement arme / équipement est automatique (mots-clés) : il peut se tromp
 **Battle Sanctum** — M - · E 11 · SV 3+ · PV 20 · CD 7+ · CO 0
   - Équipement de base (source) : This model is equipped with: nothing.
   - ❓ `nothing` (de base)
-**Celestian Insidiants** — M 6" · E 3 · SV 3+ · PV 1 · CD 7+ · CO 1
-  - Équipement de base (source) : Each model is equipped with: condemnor bolt pistol; null mace.
-  - Armes avec profil : Pistolet bolter Condemnor | Pistolet Inferno | Lance-flammes léger du Ministorum | Epée bénite | Masse de Négation | Canne d’admonestation
-  - ❓ `denuncia oratory` (option)
-  - ❓ `simulacrum imperialis` (option)
 **Dominion Squad** — M 6" · E 3 · SV 3+ · PV 1 · CD 7+ · CO 1
   - Équipement de base (source) : Every model is equipped with: bolt pistol; boltgun; close combat weapon.
   - Armes avec profil : Bolter storm d'Artificier | Pistolet bolter | Bolter | Arme combinée | Bolter condemnor | Pistolet Inferno | Fuseur | Lance-flammes du Ministorum | Lance-flammes léger du Ministorum | Pistolet à plasma | Epée tronçonneuse | arme de corps à corps | arme énergétique
@@ -29,10 +24,6 @@ Le classement arme / équipement est automatique (mots-clés) : il peut se tromp
   - ❓ `anchorite sarcophagus` (option)
 ### adeptus-custodes
 
-**Allarus Custodians** — M 7" · E 8 · SV 2+ · PV 6 · CD 5+ · CO 2
-  - Équipement de base (source) : Every model is equipped with: 1 Balistus Grenade Launcher; 1 Guardian Spear.
-  - Armes avec profil : Lance-grenades Balistus | Hache de castellan | Lance gardienne
-  - ❓ `Vexilla` (option)
 **Custodian Guard Sodality** — M 8" · E 7 · SV 2+ · PV 5 · CD 5+ · CO 3
   - Équipement de base (source) : Every model is equipped with: 1 Guardian Spear.
   - Armes avec profil : Lance gardienne
