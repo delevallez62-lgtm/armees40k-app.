@@ -1,0 +1,19 @@
+Teddy : [Space Marines] Test
+Héros épiques
+Infanterie
+Escouade d'assaut Intercessor (5) 85
+M E SV PV CD CO
+6 4 3+ 2 6+ 2
+Portée A C/T F PA D Capacités
+Pistolet bolter Lourd 18 1 3+ 4 -1 1 Pistolet
+Epée tronçonneuse Astartes Mêlée 4 3+ 5 -1 1
+Marteau Thunder Mêlée 3 4+ 8 -2 2 Blessures Dévastatrices
+Pistolet à plasma - Standard 12 1 3+ 7 -2 1 Combat Rapproché
+Pistolet à plasma - Surcharge 12 1 3+ 8 -3 2 A Risque, Combat Rapproché
+Equipement : Pistolet bolter Lourd (4), Epée tronçonneuse (4)
+Aptitudes : Intercession Ciblée, Doctrines de Combat
+Mots-clés : Explosifs, Imperium, Infanterie, Ligne, Tacticus
+Mots-clés de faction : Adeptus Astartes
+Sergent Intercessor d'Assaut
+Equipement : Pistolet à plasma, Marteau Tonnerre
+© 2026 https://40k.armylistnetwork.com

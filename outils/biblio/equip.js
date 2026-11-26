@@ -144,4 +144,4 @@ const EQE=(()=>{
      for(let j=0;j<figs.length&&n>0;j++){const f=figs[j];if(!r.types.includes(f.t)||(f.c[r.id]||[]).length)continue;
       const t=JSON.parse(JSON.stringify(figs));t[j].c[r.id]=[ai];const v=validate(M,size,t);if(!v.errors.length){figs[j].c[r.id]=[ai];n--}}})});
   return figs}
- return{model,counts,compatible,newFigs,resize,setCount,flexN,tally,validate,options,totals,fromCounts,setAlias,figItems,lim,itemTxt,altTxt}})();
+ return{model,counts,compatible,newFigs,resize,setCount,flexN,tally,validate,options,totals,fromCounts,setAlias,alias:(n,c)=>ALIAS(n,c),figItems,lim,itemTxt,altTxt}})();
