@@ -1,0 +1,102 @@
+﻿faction (chunk);détachement (anglais);français actuel HAMMER;ok actuel;libellé ALN;listes;recoupements
+orks;Blitz Brigade;Brigade blitz;False;Brigade Blitz;3;3
+orks;Brute Bosses;Boss brutes;False;Boss brutes;31;3
+orks;Green Tide;Marée verte;False;Marée Verte;22;3
+orks;War Horde;Horde de guerre;False;Horde de Guerre;15;3
+space-marines;Angelic Inheritors;Héritiers angéliques;False;Héritiers Angéliques;12;5
+space-marines;Blade of Ultramar;Lame d'Ultramar;False;Lame d'Ultramar;3;5
+space-marines;Ceramite Sentinels;Sentinelles de céramite;False;Sentinelles de Céramite;7;4
+space-marines;Champions of Fenris;Champions de Fenris;False;Champions de Fenris;4;5
+space-marines;Encarmine Speartip;Fer de lance encarmin;False;Pointe de Lance Carmin;9;2
+space-marines;Gladius Task Force;Force d'intervention Gladius;False;Gladius;4;3
+space-marines;Gravis Siege Force;Force de siège Gravis;False;Force de siège Gravis;8;3
+space-marines;Ironclad Champions;Champions cuirassés;False;Champions Cuirassés;59;3
+space-marines;Medusa's Wrath;Courroux de Méduse;False;Medusa;7;2
+space-marines;Saga of the Beastslayer;Saga du tueur de bêtes;False;Saga du Tueur de Bêtes;12;4
+space-marines;Tacticus Attack Force;Force d'attaque Tacticus;False;Force d'Attaque Tacticus;11;4
+space-marines;Vow-Sworn Crusaders;Croisés liés par serment;False;Liges du Voeu;38;2
+space-marines;Wrath of the Rock;Courroux du Roc;False;Colère du Roc;41;2
+wp-adepta-sororitas;Army of Faith;Armée de la foi;False;Armée de la Foi;6;6
+wp-adepta-sororitas;Bringers of Flame;Porteurs de flammes;False;Porteuses de la Flamme;12;4
+wp-adepta-sororitas;Chorus of Condemnation;Chœur de condamnation;False;Chœur de Condamnation;8;4
+wp-adepta-sororitas;Sanctified Orators;Orateurs sanctifiés;False;Orateurs Sanctifiés;2;3
+wp-adeptus-custodes;Auric Champions;Champions auriques;False;Champions Auriques;7;4
+wp-adeptus-custodes;Emissaries Imperatus;Émissaires Imperatus;False;Emissaires Imperatus;2;3
+wp-adeptus-custodes;Emperor’s Chosen;Élus de l'Empereur;False;Elus de l'Empereur;3;5
+wp-adeptus-custodes;Guardians of the Throne;Gardiens du Trône;False;Gardiens du Trône;4;5
+wp-adeptus-custodes;Lions of the Emperor;Lions de l'Empereur;False;Lions de l'Empereur;6;4
+wp-adeptus-custodes;Might of the Moritoi;Puissance des Moritoi;False;Puissance des Moritoi;45;3
+wp-adeptus-custodes;Solar Watch;Garde solaire;False;Garde Solaire;18;3
+wp-adeptus-mechanicus;Cohort Cybernetica;Cohorte Cybernetica;False;Cohorte Cybernetica;27;4
+wp-adeptus-mechanicus;Eradication Cohort;Cohorte d'éradication;False;Cohorte d'Eradication;22;4
+wp-adeptus-mechanicus;Explorator Maniple;Manipule explorator;False;Manipule Explorator;1;3
+wp-adeptus-mechanicus;Lords of the Forge;Seigneurs de la forge;False;Seigneurs de la Forge;11;3
+wp-aeldari;Fateful Performance;Représentation fatidique;False;Représentation Fatidique;2;4
+wp-aeldari;Ghosts of the Webway;Fantômes de la Toile;False;Fantômes de la Toile;5;3
+wp-aeldari;Seer Council;Conseil des voyants;False;Conseil des Prescients;9;2
+wp-aeldari;Windrider Host;Cohorte des Chevaucheurs de vent;False;Gardiens du Vent;7;2
+wp-astra-militarum;Abhuman Auxiliaries;Auxiliaires abhumains;False;Auxiliaires Abhumains;3;3
+wp-astra-militarum;Bridgehead Strike;Frappe de tête de pont;False;Frappe de Tête de Pont;1;3
+wp-astra-militarum;Combined Arms;Armes combinées;False;Forces Combinées;19;3
+wp-astra-militarum;Hammer of the Emperor;Marteau de l'Empereur;False;Marteau de l'Empereur;2;4
+wp-astra-militarum;Siege Regiment;Régiment de siège;False;Régiment de Siège;1;3
+wp-astra-militarum;Steel Hammer;Marteau d'acier;False;Marteau d'Acier;8;4
+wp-chaos-daemons;Cavalcade of Chaos;Cavalcade du Chaos;False;Cavalcade du Chaos;4;4
+wp-chaos-daemons;Daemonic Incursion;Incursion démoniaque;False;Incursion Démoniaque;25;4
+wp-chaos-daemons;Legion of Excess;Légion de l'excès;False;Légion de l'Excès;3;4
+wp-chaos-daemons;Lords of the Warp;Seigneurs du Warp;False;Seigneurs du Warp;2;3
+wp-chaos-daemons;Plague Legion;Légion de la peste;False;Légion de la Peste;23;5
+wp-chaos-daemons;Scintillating Legion;Légion scintillante;False;Légion Scintillante;12;5
+wp-chaos-daemons;Shadow Legion;Légion de l'ombre;False;Légion de l'Ombre;28;4
+wp-chaos-knights;Helhunt Lance;;False;Lance de Traque Infernale;2;2
+wp-chaos-knights;Houndpack Lance;Lance de la meute de chiens;False;Lance Hordedogue;30;3
+wp-chaos-knights;Iconoclast Fiefdom;Fief iconoclaste;False;Fief Iconoclaste;3;4
+wp-chaos-knights;Infernal Lance;Lance infernale;False;Lance Infernale;25;4
+wp-chaos-knights;Lords of Dread;Seigneurs de l'effroi;False;Seigneurs de l'Effroi;26;5
+wp-chaos-knights;Traitoris Lance;Lance Traitoris;False;Lance Traitoris;13;6
+wp-chaos-space-marines;Cabal of Chaos;Cabale du Chaos;False;Cabale du Chaos;9;4
+wp-chaos-space-marines;Cult of the Arkifane;Culte de l'Arkifane;False;Culte de l'Arkifane;1;3
+wp-chaos-space-marines;Devotees of Destruction;Dévots de la destruction;False;Dévôts de la destruction;1;3
+wp-chaos-space-marines;Huron’s Marauders;Maraudeurs de Huron;False;Maraudeurs de Huron;1;3
+wp-chaos-space-marines;Renegade Raiders;Pillards renégats;False;Pillards Renégats;1;3
+wp-chaos-space-marines;Veterans of the Long War;Vétérans de la Longue Guerre;False;Vétérans de la Longue Guerre;5;3
+wp-death-guard;Champions of Contagion;Champions de la contagion;False;Champions de la Contagion;3;5
+wp-death-guard;Death Lord’s Chosen;Élus du Seigneur de la mort;False;Elus du Seigneur de la Mort;8;4
+wp-death-guard;Mortarion’s Hammer;Marteau de Mortarion;False;Marteau de Mortarion;6;3
+wp-death-guard;Virulent Vectorium;Vectorium virulent;False;Vectorium Virulent;25;3
+wp-drukhari;Covenite Coterie;;False;Sabbat des Coteries;4;2
+wp-drukhari;Kabalite Cartel;Cartel kabalite;False;Cartel Kabalite;4;4
+wp-drukhari;Realspace Raiders;Pillards de l'espace réel;False;Pillards de l'Espace Réel;7;4
+wp-drukhari;Tools of Torment;Outils de tourment;False;Outils de Tourment;9;3
+wp-emperor-s-children;Court of the Phoenician;Cour du Phénicien;False;Cour du Phénicien;15;4
+wp-emperor-s-children;Elegant Brutes;Brutes élégantes;False;Brutes Élégantes;2;4
+wp-emperor-s-children;Mercurial Host;Hôte versatile;False;Ost Inconstant;7;4
+wp-emperor-s-children;Rapid Evisceration;Éviscération rapide;False;Eviscération Rapide;1;3
+wp-emperor-s-children;Slaanesh’s Chosen;Élus de Slaanesh;False;Elus de Slaanesh;4;4
+wp-genestealer-cults;Biosanctic Broodsurge;;False;Couvain Biosanctifié;29;2
+wp-genestealer-cults;Final Day;Jour final;False;Le Dernier Jour;2;2
+wp-genestealer-cults;Heroes of the Uprising;Héros du soulèvement;False;Héros du Soulèvement;7;4
+wp-grey-knights;Argent Assault;Assaut d'argent;False;Assaut d'argent;14;4
+wp-grey-knights;Banishers;Bannisseurs;False;Bannisseurs;23;3
+wp-leagues-of-votann;Armoured Trailblazers;Pionniers blindés;False;Pionniers Blindés;2;3
+wp-leagues-of-votann;Brandfast Oathband;;False;Bande Assermentée Expresse;4;2
+wp-leagues-of-votann;Mercenary Oathband;Bande jurée mercenaire;False;Mercenaires Assermentés;6;2
+wp-leagues-of-votann;Needgaârd Oathband;;False;Gaârd du Besoin;12;2
+wp-necrons;Annihilation Legion;Légion d'annihilation;False;Légion d'Annihilation;6;4
+wp-necrons;Awakened Dynasty;Dynastie éveillée;False;Dynastie Éveillée;16;3
+wp-necrons;Canoptek Court;Cour canoptek;False;Cour Canoptek;5;4
+wp-necrons;Cryptek Conclave;Conclave de Cryptek;False;Conclave de Crypteks;9;3
+wp-necrons;Cursed Legion;Légion maudite;False;Légion Maudite;30;4
+wp-necrons;Hand of the Dynasty;Main de la dynastie;False;Main de la Dynastie;20;3
+wp-necrons;Pantheon of Woe;Panthéon du malheur;False;Panthéon de Malheur;11;2
+wp-necrons;The Phaeron's Armoury;L'arsenal du Phaéron;False;L'Arsenal du Phaëron;1;3
+wp-t-au-empire;Advanced Acquisition Cadre;Cadre d'acquisition avancée;False;Cadre d’Acquisition Avancée;11;3
+wp-t-au-empire;Auxiliary Cadre;Cadre auxiliaire;False;Cadre Auxiliaire;1;4
+wp-t-au-empire;Kauyon;;False;Kauyon;28;2
+wp-t-au-empire;Kroot Hunting Pack;Meute de chasse kroot;False;Meute de Chasse Kroot;5;3
+wp-t-au-empire;Mont’ka;;False;Mont'ka;19;3
+wp-thousand-sons;Ritual of Regeneration;Rituel de régénération;False;Rituel de Régénération;5;5
+wp-tyranids;Invasion Fleet;Flotte d'invasion;False;Flotte d'Invasion;10;4
+wp-tyranids;Synaptic Nexus;Nexus synaptique;False;Nexus Synaptique;7;5
+wp-tyranids;Vanguard Onslaught;Assaut d'avant-garde;False;Offensive d'Avant-garde;12;2
+wp-world-eaters;Possessed Slaughterband;Bande de massacre possédée;False;Ecorcherie de possédés;9;2
