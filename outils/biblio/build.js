@@ -586,6 +586,7 @@ window.BIBLP={fig:lpFg,pts:lpTot,
 .bld-bar .b.p{min-height:46px;font-weight:800}
 .bld-fc.on .bld-sg span.df{background:rgba(27,20,5,.16)!important}.bld-fc.on .bld-sg span.df b{color:#1b1405!important}
 .bld-fx{display:block;font-size:12px;color:#d8d0bb;line-height:1.35;border-left:2px solid #C89B3C;padding-left:7px;margin-top:2px}
+.bld-fo.bld-dr{margin:18px 0!important}.bld-fo.bld-dr+.bld-fo.bld-dr{margin-top:22px!important}
 .bld-endsp{height:calc(84px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .bld-fh{font-size:14px}`;document.head.appendChild(c)})();
 (function(){const c=document.createElement("style");c.id="bldvdcss";c.textContent=`.bld-vd{font-weight:800;font-size:16px;padding:8px 12px;border-radius:12px;margin:8px 0}.bld-vd.ok{background:#17402c;color:#b9f1d2}.bld-vd.warn{background:#5a4416;color:#ffe3a6}.bld-vd.bad{background:#5a2323;color:#ffd0d0}`;document.head.appendChild(c)})();
