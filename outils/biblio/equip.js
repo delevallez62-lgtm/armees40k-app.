@@ -131,7 +131,8 @@ const EQE=(()=>{
  function totals(final){const t={};final.forEach(its=>its.forEach(x=>{const k=K(x.n);t[k]=(t[k]||{n:x.n,q:0});t[k].q+=x.q}));return t}
  /* reconstitue des figurines à partir de totaux d'armes (anciennes configurations) ; renvoie null si impossible */
  /* noms d'armes saisis ailleurs (ALN, import PDF) : rapprochement avec les armes de l'unité, jamais ambigu */
- const tk=s=>nk(String(s||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]).split(" ").map(w=>w.length>3&&/[sx]$/.test(w)?w.slice(0,-1):w).filter(w=>w&&!/^(?:de|du|des|la|le|les|d|l|a|au|aux|et|the|of)$/.test(w)),sub=(a,B)=>a.length>0&&a.every(x=>B.has(x));
+ const tk=s=>nk(String(s||"").replace(/^➤\s*/,"").replace(/\(.*?\)/g,"").split(/\s+[-–]\s+/)[0]).split(" ").map(w=>w.length>3&&/[sx]$/.test(w)?w.slice(0,-1):w).filter(w=>w&&!/^(?:de|du|des|la|le|les|d|l|a|au|aux|et|the|of)$/.test(w)),fz=(a,b)=>{if(a===b)return true;if(a.length<6||b.length<6||Math.abs(a.length-b.length)>1)return false;let i=0;while(i<a.length&&a[i]===b[i])i++;let j=0;while(j<a.length-i&&j<b.length-i&&a[a.length-1-j]===b[b.length-1-j])j++;const A=a.slice(i,a.length-j),B=b.slice(i,b.length-j);return A.length<=1&&B.length<=1||(A.length===2&&B.length===2&&A[0]===B[1]&&A[1]===B[0])},
+ has=(S,x)=>S.has(x)||[...S].some(y=>fz(x,y)),sub=(a,B)=>a.length>0&&a.every(x=>has(B,x));
  let ALIAS=(name,cands)=>{const nt=tk(name);if(!nt.length)return null;const N=new Set(nt);
   const hits=cands.filter(c=>{const en=tk(c);let fr=[];try{const r=tName(c);fr=tk(r.t);if(r.prop)fr=fr.concat(tk(r.prop))}catch(_){}const U=new Set([...en,...fr]);return sub(nt,U)||sub(en,N)||sub(fr,N)});
   return hits.length===1?hits[0]:null};const setAlias=f=>{ALIAS=f};
