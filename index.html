@@ -8716,6 +8716,7 @@ window.BIB={hh,kpReset:()=>{KP=null;KPB=false;KPREADY=false;ATC.clear()},kpNear:
 /* ---------- mises à jour : détail, propagation, nouvelles fiches, nouveautés, modifications de l'utilisateur ---------- */
 /* Journal de l'application (écrit à la main, plus récent d'abord). id croissant. */
 const APPLOG=[
+ {id:86,d:"2026-11-26",t:"Fiche d'unité : toutes les armes choisies apparaissent",s:"Après avoir choisi des armes (épée tronçonneuse, marteau, pistolet à plasma…) et enregistré, la fiche d'unité ouverte depuis ta liste d'armée affiche maintenant toutes les armes sélectionnées, tir et corps à corps, sans exception. Le bug touchait les listes importées d'ALN dont les noms d'armes diffèrent un peu de la bibliothèque : les armes de mêlée disparaissaient à l'enregistrement."},
  {id:85,d:"2026-11-26",t:"Équipement : statistiques de toutes les armes proposées",s:"Pour une liste importée d'ALN puis reliée à la bibliothèque, chaque arme portée ou proposée affiche maintenant ses statistiques (portée, A, CT/CC, F, PA, D) et ses aptitudes, y compris l'épée tronçonneuse de base, le gantelet énergétique, l'arme énergétique, etc. Avant, « Profil non disponible » ou aucune statistique apparaissait quand le nom ALN différait du nom de la bibliothèque."},
  {id:84,d:"2026-11-26",t:"Équipement : noms d'armes d'ALN reconnus",s:"Quand tu importes une liste ALN puis modifies l'équipement d'une unité reliée à la bibliothèque, les armes dont le nom diffère un peu (« Epée tronçonneuse Astartes », « Marteau Thunder »…) sont maintenant reconnues et ne disparaissent plus du tableau. Le rapprochement n'est fait que s'il n'y a qu'une seule arme possible dans l'unité ; sinon le nom est ignoré, jamais deviné."},
  {id:83,d:"2026-11-26",t:"Choix des armes : différences bien visibles",s:"Chaque choix est numéroté (1, 2, 3…), a une barre de couleur et une pastille TIR (bleu) ou MÊLÉE (rouge), et un nom plus gros. Les valeurs qui changent par rapport à l'arme actuelle sont entourées d'un cadre doré (sans notion de mieux ou moins bien). Espacement plus large entre les choix."},
@@ -9061,7 +9062,7 @@ function eqFromText(t,size){const o={};String(t||"").split(/;|\n|,(?![^()]*\))/)
 const figMode=c=>!!(c&&c.figs);
 document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.figdr!==undefined){BLD.figDr=BLD.figDr||{};BLD.figDr[d.dataset.figdr]=d.open}if(d&&d.dataset&&d.dataset.figd!==undefined)BLD.figOpen=d.open;if(d&&d.dataset&&d.dataset.figq!==undefined)BLD.figQ=d.open},true);
 function figSync(c,e){const M=EQE.model(e.lib),v=EQE.validate(M,c.size,c.figs),tot=EQE.totals(v.final),wq={};
- wgroups(weaponsOf(e)).forEach(g=>{const t=tot[g.base||lckBase(g.name)];if(t&&t.q>0)g.ws.forEach(w=>{wq[w.name]=t.q})});c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
+ {const G=wgA(e);Object.keys(tot).forEach(k=>{const t=tot[k];if(!(t&&t.q>0))return;const g=gfind(G,t.n,k);if(g)g.ws.forEach(w=>{wq[w.name]=Math.max(wq[w.name]||0,t.q)})})}c.wq=wq;c.wn={};c.figErr=v.errors;c.figEq=Object.values(tot).filter(t=>t.q>0).map(t=>t.q+" × "+EQE.itemTxt(t.n))}
 function figInit(c,e){if(!e.lib||c.figs===null)return;let M;try{M=EQE.model(e.lib)}catch(_){return}if(!M||!M.usable||!EQE.counts(M,c.size))return;
  if(!c.figs||c.figs.length!==c.size){if(c.figs){c.figs=EQE.resize(M,c.size,c.figs)||EQE.newFigs(M,c.size)}else{const had=c.idx!=null&&Object.keys(c.wq||{}).length;c.figs=had?EQE.fromCounts(M,c.size,c.wq):EQE.newFigs(M,c.size)}}
  if(!c.figs)return;BLD.fig=0;BLD.figSheet=false;figSync(c,e)}
@@ -9070,6 +9071,7 @@ const figName=(M,figs,i)=>{const f=figs[i],t=M.types[f.t];const same=figs.filter
 const figSum=(M,final,i)=>final[i].map(x=>EQE.itemTxt(x.n)+(x.q>1?" ×"+x.q:"")).join(" · ");
 const wstat=w=>`${w.range&&w.range!=="Mêlée"?E(w.range)+(/^\d/.test(w.range)?'"':"")+" · ":(w.range?E(w.range)+" · ":"")}A ${E(w.a)} · ${E(w.hit)} · F ${E(w.f)} · PA ${E(w.pa)} · D ${E(w.d)}${w.caps?" · "+E(w.caps):""}`;
 function wgA(e){const G=wgroups(weaponsOf(e));if(!e||!e.lib)return G;try{const lw=[...(e.lib.rw||[]).map(w=>Object.assign(wToApp(w,false),{name:frName(String(w.n).replace(/^➤\s*/,"")),en:w.n})),...(e.lib.mw||[]).map(w=>Object.assign(wToApp(w,true),{name:frName(String(w.n).replace(/^➤\s*/,"")),en:w.n}))];wgroups(lw).forEach(g=>{const bs=g.base||lckBase(g.name);if(!G.some(x=>(x.base||lckBase(x.name))===bs)&&!gfind(G,g.name,bs))G.push(g)})}catch(_){}return G}
+function wSel(e,c){const seen=new Set(),o=[];wgA(e).forEach(g=>g.ws.forEach(w=>{if((c.wq[w.name]||0)>0&&!seen.has(w.name)){seen.add(w.name);o.push(w)}}));return o}
 function gfind(G,n,b){let g=G.find(x=>(x.base||lckBase(x.name))===b);if(g)return g;
  try{const h=G.filter(x=>EQE.alias(x.name,[n])===n);if(h.length===1)return h[0]}catch(_){}return undefined}
 function wprof(e,items,cmp){const G=wgA(e);return(items||[]).map(it=>{const b=lckBase(it.n),g=gfind(G,it.n,b);if(!g)return"";return g.ws.map((w,wi)=>{const suf=String(w.name).replace(/^➤\s*/,"").slice(wgk(w.name).length).replace(/^\s*[-–]\s*/,"").replace(/^\((.*)\)$/,"$1").trim(),mel=!w.range||/m[êe]l/i.test(w.range),rg=mel?"Mêlée":E(w.range)+(/^\d/.test(w.range)?'"':""),
@@ -9179,7 +9181,7 @@ function cfgHtml(){const L=curL(),c=BLD.cfg,e=entryOf(c.key);if(!L||!e)return"";
  if(!lib||!isChar(lib)){const slot=(kind,hint)=>{const mine=(c.subs||[]).map((x,j)=>[x,j]).filter(([x])=>(x.label||"Meneur")===kind);return`<h4>${kind} <span class="bib-meta">(${hint})</span></h4>`+(mine.length?mine.map(([sb])=>{const sl=sb.cfg&&sb.cfg.lib&&D.byId[sb.cfg.lib],cm=compat(lib,sl,kind);return`<div class="bld-w on"><div class="row" style="gap:8px;align-items:center"><span class="bld-im" style="width:44px;height:44px">${imgOf(S.coll[sb.ref])?`<img src="${imgOf(S.coll[sb.ref])}" alt="">`:"🛡"}</span><span style="flex:1"><b>${E(sb.name)}</b><div class="bib-meta">${sl?(costOf(sl,1,1).pts==null?"Coût à vérifier":costOf(sl,1,1).pts+" pts"):"coût saisi"} · ${E(cm.t)}</div></span></div><div class="row" style="gap:6px;margin-top:6px"><button type="button" class="b" data-bld="ldr" data-kind="${kind}">Changer</button><button type="button" class="b x" data-bld="ldrx" data-kind="${kind}">Retirer</button></div></div>`}).join(""):`<button type="button" class="b" data-bld="ldr" data-kind="${kind}" style="width:100%">➕ Ajouter ${kind==="Appui"?"un appui":"un meneur"}</button>`)};h+=slot("Meneur","un personnage qui rejoint l'unité")+slot("Appui","un personnage de soutien qui s'ajoute à l'unité")}
  h+=`<div class="bld-bar"><div><b>${pv.unk?"≥ ":""}${fmt(pv.total)} pts</b><div class="bib-meta">${pv.unk?pv.unk+" coût à vérifier":"unité + équipements"}</div></div><button class="b p" data-bld="ok" style="flex:1">${c.idx!=null?"Enregistrer":"Ajouter à l'armée"}</button></div>`;return h}
 function ensureSheet(e){return e.coll||createFromLib(e.lib)}
-function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)return;const m=ensureSheet(e),W=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+function commitCfg(){const L=curL(),c=BLD.cfg,e=c&&entryOf(c.key);if(!L||!e)return;const m=ensureSheet(e),W=wSel(e,c).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const old=c.idx!=null?L.units[c.idx]:null,n=old||{ref:m.ref,size:c.size,pts:0,subs:[],man:1};
  if(!old){SH.forEach(f=>{n[f]=clone(m[f])})}
  const imp=old&&!old.cfg;if(imp&&!old.equipOld)old.equipOld=old.equip||"";
@@ -10575,12 +10577,12 @@ const A_=window.ANA;
 /* ---------- application : TOUJOURS dans une variante ---------- */
 function createUnit(lib,size){const key="u:"+lib.id;let e=catEntries().find(x=>x.key===key);if(!e)return null;const m=ensureSheet(e);const c={key,idx:null,wq:{},wn:{},wg:{},enh:null,subs:[],manual:0,size};
  const keepF=BLD.fig,keepS=BLD.figSheet;defaultWeapons(e,c);figInit(c,e);BLD.fig=keepF;BLD.figSheet=keepS;
- const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+ const Wn=wSel(e,c).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const n={ref:m.ref,size:c.size,pts:0,subs:[],man:1};SH.forEach(f=>{n[f]=clone(m[f])});n.weapons=Wn;n.equip=eqLines(c).join(" ; ")||"";n.cfg={lib:lib.id,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:null,manual:0,eq:eqLines(c)};return n}
 function nextName(L){const base=String(L.name||"Liste").replace(/ — variante \d+$/,"");const n=(S.lists||[]).filter(x=>x.varOf===L.id||(String(x.name||"").indexOf(base+" — variante")===0)).length+1;return base+" — variante "+n}
 function applyOp(V,a){
  if(a.op==="equip"){const u=V.units[a.i],e=catEntries().find(x=>x.colls.some(m=>m.ref===u.ref))||catEntries().find(x=>x.key==="u:"+u.cfg.lib);if(!e)return false;const c={key:e.key,idx:a.i,size:u.cfg.size,figs:clone(a.figs),wq:{},wn:clone(u.cfg.wn||{}),wg:clone(u.cfg.wg||{}),enh:u.cfg.enh||null,subs:u.subs||[],manual:u.cfg.manual||0};
-  figSync(c,e);const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+  figSync(c,e);const Wn=wSel(e,c).map(w=>{const x=Object.assign({},w);delete x.en;return x});
   if(Wn.length)u.weapons=Wn;u.equip=eqLines(c).join(" ; ")||u.equip;u.cfg=Object.assign({},u.cfg,{wq:c.wq,figs:c.figs,eq:eqLines(c)});if(a.wg&&Object.keys(a.wg).length){const w=Object.assign({},u.cfg.wg||{});Object.keys(a.wg).forEach(k=>{w[k]=(w[k]||0)+a.wg[k]});u.cfg.wg=w}}
  else if(a.op==="remove"){V.units.splice(a.i,1)}
  else{const lib=D.byId[a.lib],nu=createUnit(lib,a.size);if(!nu)return false;if(a.op==="add")V.units.push(nu);else V.units[a.i]=nu;V.__created=(V.__created||[]).concat([nu.ref])}

@@ -109,12 +109,12 @@ const A_=window.ANA;
 /* ---------- application : TOUJOURS dans une variante ---------- */
 function createUnit(lib,size){const key="u:"+lib.id;let e=catEntries().find(x=>x.key===key);if(!e)return null;const m=ensureSheet(e);const c={key,idx:null,wq:{},wn:{},wg:{},enh:null,subs:[],manual:0,size};
  const keepF=BLD.fig,keepS=BLD.figSheet;defaultWeapons(e,c);figInit(c,e);BLD.fig=keepF;BLD.figSheet=keepS;
- const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+ const Wn=wSel(e,c).map(w=>{const x=Object.assign({},w);delete x.en;return x});
  const n={ref:m.ref,size:c.size,pts:0,subs:[],man:1};SH.forEach(f=>{n[f]=clone(m[f])});n.weapons=Wn;n.equip=eqLines(c).join(" ; ")||"";n.cfg={lib:lib.id,size:c.size,wq:c.wq,wn:c.wn,wg:c.wg,figs:c.figs||null,enh:null,manual:0,eq:eqLines(c)};return n}
 function nextName(L){const base=String(L.name||"Liste").replace(/ — variante \d+$/,"");const n=(S.lists||[]).filter(x=>x.varOf===L.id||(String(x.name||"").indexOf(base+" — variante")===0)).length+1;return base+" — variante "+n}
 function applyOp(V,a){
  if(a.op==="equip"){const u=V.units[a.i],e=catEntries().find(x=>x.colls.some(m=>m.ref===u.ref))||catEntries().find(x=>x.key==="u:"+u.cfg.lib);if(!e)return false;const c={key:e.key,idx:a.i,size:u.cfg.size,figs:clone(a.figs),wq:{},wn:clone(u.cfg.wn||{}),wg:clone(u.cfg.wg||{}),enh:u.cfg.enh||null,subs:u.subs||[],manual:u.cfg.manual||0};
-  figSync(c,e);const Wn=weaponsOf(e).filter(w=>(c.wq[w.name]||0)>0).map(w=>{const x=Object.assign({},w);delete x.en;return x});
+  figSync(c,e);const Wn=wSel(e,c).map(w=>{const x=Object.assign({},w);delete x.en;return x});
   if(Wn.length)u.weapons=Wn;u.equip=eqLines(c).join(" ; ")||u.equip;u.cfg=Object.assign({},u.cfg,{wq:c.wq,figs:c.figs,eq:eqLines(c)});if(a.wg&&Object.keys(a.wg).length){const w=Object.assign({},u.cfg.wg||{});Object.keys(a.wg).forEach(k=>{w[k]=(w[k]||0)+a.wg[k]});u.cfg.wg=w}}
  else if(a.op==="remove"){V.units.splice(a.i,1)}
  else{const lib=D.byId[a.lib],nu=createUnit(lib,a.size);if(!nu)return false;if(a.op==="add")V.units.push(nu);else V.units[a.i]=nu;V.__created=(V.__created||[]).concat([nu.ref])}
