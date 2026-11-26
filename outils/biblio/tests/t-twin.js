@@ -18,7 +18,7 @@ const banner=()=>ev(()=>{const e=document.querySelector('#bldm .bld-twin');retur
 const sums=()=>ev(()=>BLDSTATE.cfg.figs.map(g=>JSON.stringify(g.c||{})));
 const tw=sel=>ev(sel=>document.querySelector(sel).click(),sel);
 await fig(1);
-ok('pas de bandeau avant changement',!(await banner()),await banner());
+ok('bandeau d’information avant changement (figurines identiques repérées, sans bouton d’application)',!!(await banner())&&!/Appliquer/.test(await banner()),await banner());
 await pick('tronçon|chainfist');
 ok('bandeau : 3 autres figurines',/3 autres figurines/.test(await banner()||''),await banner());
 await tw('[data-bld="figtwinn"][data-d="-1"]');await tw('[data-bld="figtwinn"][data-d="-1"]');await wait(200);
