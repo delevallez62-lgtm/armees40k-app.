@@ -1,5 +1,5 @@
 const {chromium}=require('playwright');
-(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();p.on('pageerror',e=>console.log('ERR',e.message));
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:360,height:780},isMobile:true,hasTouch:true});await ctx.route(/^https?:\/\/(?!localhost)/,r=>r.abort());const p=await ctx.newPage();await p.addInitScript(()=>{setInterval(()=>document.querySelectorAll('details.bld-dr:not([open])').forEach(d=>d.open=true),40)});p.on('pageerror',e=>console.log('ERR',e.message));
 await p.goto('http://localhost:8765/'+process.argv[2]);await p.waitForTimeout(3500);
 const ok=(n,c,x)=>console.log((c?'✅ ':'❌ ')+n,c?'':JSON.stringify(x));const ev=(f,a)=>p.evaluate(f,a);const wait=t=>p.waitForTimeout(t);
 await ev(async()=>{await BIB.init();window.__majPop=1;document.querySelectorAll('#encov,.bib-ov').forEach(e=>e.remove());
@@ -25,7 +25,7 @@ await p.screenshot({path:'eq6b.png'});
 await ev(()=>{const x=[...document.querySelectorAll('#bldm button')].find(x=>/Enregistrer|Ajouter à l.armée/.test(x.innerText));x.click()});await wait(500);
 const u=await ev(()=>{const u=S.lists[0].units[0];return{wn:u.weapons.map(w=>w.name).join('|'),pts:u.pts,equip:u.equip,old:u.equipOld,hasCfg:!!u.cfg&&!!u.cfg.figs,weapons:u.weapons.length,bld:!!S.lists[0].bld,pm:u.pm}});
 ok('après enregistrement : équipement mis à jour, points conservés',u.pts===190&&u.hasCfg&&/× /.test(u.equip),u);
-ok('la fiche affiche toutes les armes choisies (profils mis à jour) et l’ancien équipement est sauvegardé',u.weapons>=3&&/Poing tron|Chainfist/i.test(u.wn)&&/Poing énergétique|Power fist/i.test(u.wn)&&/Canon d.assaut/.test(u.old||''),u);
+ok('la fiche affiche toutes les armes choisies (profils mis à jour) et l’ancien équipement est sauvegardé',u.weapons>=3&&/Poing tron|Chainfist/i.test(u.wn)&&/Poing énergétique|Gantelet énergétique|Power fist/i.test(u.wn)&&/Canon d.assaut/.test(u.old||''),u);
 ok('liste d’armée simple : pas de réglages de constructeur ajoutés',u.bld===false,u);
 await p.screenshot({path:'eq6c.png'});
 const st=await ev(()=>BIBLCK.unitStatus(S.lists[0].units[0]));
