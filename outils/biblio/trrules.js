@@ -15,6 +15,10 @@ function subjGen(sj){const m=/^(?:(for every (\d+) models in (?:this|the) unit,)
  const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
  return{pre,txt:pre?txt:cap(txt),many}}
 function ruleTr(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!s)return null;
+ {let m=/^(\*+)\s*You cannot select the same (weapon|option) more than once per unit unless it contains (\d+) models, in which case you cannot select the same (?:weapon|option) more than twice per unit\.?$/i.exec(s);
+  if(m)return m[1]+" Une même "+(/weapon/i.test(m[2])?"arme":"option")+" ne peut être choisie qu'une seule fois par unité, sauf si l'unité compte "+m[3]+" figurines : elle peut alors l'être deux fois.";
+  if(m=/^(\*+)\s*A model can only take one of these options\.?$/i.exec(s))return m[1]+" Une figurine ne peut prendre qu'une seule de ces options.";
+  if(m=/^(\*+)\s*(This|Each) model cannot have duplicates of these pieces of wargear\.?$/i.exec(s))return m[1]+" "+(/this/i.test(m[2])?"Cette":"Chaque")+" figurine ne peut pas avoir de doublons de ces équipements."}
  const tn=x=>{const m=/^(\d+)\s+(.+)$/.exec(x.trim()),r=m?m[2].trim():x.trim(),f=WN[r.toLowerCase()]||T(r);return m?m[1]+" "+f:f};
  const tr=x=>{const w=tn(x);if(!/\sand\s/i.test(x)||String(w).toLowerCase()!==String(x).trim().toLowerCase())return w;return x.split(/\s+and\s+/i).map(p=>tn(p)).join(" et ")};
  const item=x=>{const m=/^(\d+(?:-\d+)?)\s+(.+?)\.?$/.exec(x.trim());if(!m){const y=x.trim().replace(/\.$/,"");return y&&!/^(?:\(|\*)/.test(y)?tr(y):y}const nm=m[2].trim();return m[1]+" "+tr(nm)};
@@ -36,7 +40,7 @@ function ruleTr(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!s)re
  // --- composition ---
  {const m=/^(\d+(?:-\d+)?)\s+(.+?)\s+models?$/i.exec(s);if(m)return m[1]+" figurine"+(m[1]==="1"?"":"s")+" "+(WM[m[2].toLowerCase()]||m[2])}
  // --- ajouts d'équipement ---
- {const m=/^(this model|this unit|1 model|(?:the|1) (.+?)(?: model)?|all models in this unit|any number of models(?: in this unit)?)\s+can\s+be\s+equipped\s+with\s+(.+)$/is.exec(s);
+ {const m=/^(this model|this unit|1 model|(?:the|1) (.+?)(?: model)?|all models in this unit|any number of models(?: in this unit)?)\s+can\s+(?:each\s+)?be\s+equipped\s+with\s+(.+)$/is.exec(s);
   if(m){const sj=m[1].toLowerCase();let fs=sj==="this model"?"Cette figurine":sj==="this unit"?"Cette unité":sj==="1 model"?"1 figurine":/^all models/.test(sj)?"Toutes les figurines de cette unité":/^any number/.test(sj)?"N'importe quel nombre de figurines":"La figurine « "+(m[2]||"")+" »";
    const verb=/^(all|any)/.test(sj)?"peuvent chacune être équipées de":(sj==="this unit"?"peut être équipée de":"peut être équipée de");
    let tail=m[3].trim();let res;
@@ -80,7 +84,7 @@ function ruleOpt(en,tw){const T=tw||(x=>x);const s=String(en||"").trim();if(!s)r
  if(m){mode="replace";subj=m[1];old=m[2];tail=m[3]}
  else if(m=/^(.*?)[’']s\s+(.+?)\s+can\s+be\s+replaced\s+with\s+(.+)$/s.exec(s)){mode="replace";subj=m[1];old=m[2];tail=m[3]}
  else if(m=/^(.*?)\s+can\s+(?:each\s+)?replace\s+(?:their|its|his|her)\s+(.+?)\s+with:?\s+(.+)$/s.exec(s)){mode="replace";subj=m[1];old=m[2];tail=m[3]}
- else if(m=/^(this model|this unit|1 model|all models in this unit|any number of models(?: in this unit)?|the .+?)\s+can\s+be\s+equipped\s+with\s+(.+)$/is.exec(s)){mode="add";subj=m[1];tail=m[2]}
+ else if(m=/^(this model|this unit|1 model|all models in this unit|any number of models(?: in this unit)?|the .+?)\s+can\s+(?:each\s+)?be\s+equipped\s+with\s+(.+)$/is.exec(s)){mode="add";subj=m[1];tail=m[2]}
  else return null;
  let who;const sj=subj.trim();let mm;
  if(/^this model$/i.test(sj))who="Cette figurine";else if(/^this unit$/i.test(sj))who="Cette unité";
