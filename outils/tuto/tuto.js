@@ -247,8 +247,8 @@ const running=()=>{const t=T();return t.on&&t.phase==="run"&&S.pm&&S.pm===t.list
 /* carte dans « Apprendre à jouer » */
 function card(){const t=T(),L=LST(),live=!!(L&&S.pm&&S.pm===t.list&&t.phase==="run");let b;
  if(live)b=`<p class="mu">Partie en cours avec <b>${E(L.name)}</b> · étape ${t.step+1} / ${N}.</p><button class="b p" data-tt="resume">▶ ${t.on?"Ouvrir le guide":"Reprendre le tutoriel"}</button><button class="b" data-tt="reset">↺ Recommencer le guide</button>`;
- else b=`<button class="b p" data-tt="start">🎓 Commencer une partie tutorielle</button><p class="mu">Tu lances une partie comme d'habitude (mêmes écrans que le Mode jeu), avec le guide en plus.</p>`;
- return`<section class="tt-card"><h3>Premières parties</h3><h4>Mode partie tutorielle</h4><p>Une partie normale, avec de petites fenêtres qui t'expliquent chaque étape : démarrer avec un autre joueur, le tour de jeu, les stratagèmes, la comparaison de force… Rien de tout cela n'apparaît dans une partie classique.</p>${b}</section>`}
+ else b=`<button class="b p" data-tt="start">🎓 Commencer une partie tutorielle</button>`;
+ return`<section class="tt-card"><h3>Premières parties</h3><h4>Mode partie tutorielle</h4>${b}</section>`}
 function closeM(id){const o=document.getElementById(id);if(o)o.innerHTML=""}
 /* coach */
 let SIG="";

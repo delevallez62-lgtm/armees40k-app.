@@ -58,7 +58,7 @@ function center(A,L,s,R){const rows=A.rows;if(s.unit==null||s.unit>=rows.length|
  <h4 style="margin-top:12px">💡 Conseils pour cette unité</h4>${mine.length?mine.map(recBtn).join(""):`<p class="mu">${r.u.cfg&&r.u.cfg.lib?"Aucune optimisation fiable trouvée pour cette unité avec les données actuelles.":"Configure l'équipement de cette unité (⚙ dans « Mes armées ») pour obtenir des conseils d'équipement."}</p>`}
  ${gen.length?`<h4 style="margin-top:12px">➕ Pour toute la liste</h4>${gen.map(recBtn).join("")}`:""}</div>`}
 function right(A,R,s){const x=R.find(y=>y.id===s.rec)||null;
- if(!x)return`<div class="ast-p"><h4>📈 Impact sur ma liste</h4><p class="mu">Touche un conseil pour voir son impact, avant / après. Rien n'est modifié tant que tu n'appliques pas une optimisation.</p></div>`;
+ if(!x)return`<div class="ast-p"><h4>📈 Impact sur ma liste</h4></div>`;
  const rowsT=["ac","ai","res","mob","obj","syn"].map(k=>`<tr><td>${T.NAMES[k]}</td><td>${sc(x.before[k])}</td><td>${sc(x.after[k])}</td><td>${dcell(x.dl[k])}</td></tr>`).join("")+`<tr><td><b>Score global</b></td><td>${sc(x.before.glob)}</td><td>${sc(x.after.glob)}</td><td>${dcell((x.after.glob!=null&&x.before.glob!=null)?x.after.glob-x.before.glob:null)}</td></tr><tr><td>Coût total</td><td>${A.total}</td><td>${A.total+x.cost}</td><td>${dcell(x.cost>0?-x.cost:x.cost<0?-x.cost:0).replace("▲ +","▲ ").replace("▼ -","▼ +")}</td></tr>`;
  const prob=x.why[0],reason=x.why[1],eff=x.why[2];
  return`<div class="ast-p"><h4>📈 Impact sur ma liste</h4><div style="margin-bottom:6px">${confTag(x.conf)} ${x.legal.ok?'<span class="ast-tag v">✔ Légalité validée</span>':'<span class="ast-tag i">✖ Non légale</span>'}</div>

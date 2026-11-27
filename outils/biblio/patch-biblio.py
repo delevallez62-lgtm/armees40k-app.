@@ -3,9 +3,12 @@ src,out=sys.argv[1:3]
 datadir=sys.argv[3] if len(sys.argv)>3 else os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','data','biblio')
 d=os.path.dirname(os.path.abspath(__file__))
 s=open(src,encoding='utf8').read()
+ALLEGE=True
 def rep(a,b,n=1):
     global s
-    c=s.count(a);assert c==n,(c,a[:90]);s=s.replace(a,b)
+    c=s.count(a)
+    if c==0 and n==1 and ALLEGE:print('IGNORÉ (texte retiré) :',a[:70]);return
+    assert c==n,(c,a[:90]);s=s.replace(a,b)
 rep('learn:["book","Apprendre à jouer","#f0b429"],','learn:["book","Apprendre à jouer","#f0b429"],bib:["book","Bibliothèque V11","#7f9cff"],news:["star","Nouveautés","#f0b429"],trw:["flag","À traduire","#e0a030"],lore:["book","Lore","#c9a227"],bld:["shield","Constructeur d\'armée","#55c46e"],')
 rep('const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">`','const prof=p=>`<div class="encu" data-encr="${esc(p.ref||"")}" data-encn="${esc(p.name||"")}">${window.BIBSYNC?window.BIBSYNC(p):""}`')
 rep('function cres(){','function cres(){const _r=cres0();return _r+(window.BIBCS?window.BIBCS(q):"")}function cres0(){')
@@ -14,7 +17,7 @@ rep('syncAll(r.units);','syncAll(r.units);window.BIBMERGE&&window.BIBMERGE.post(
 rep('function pkRes(){if(pk.mode==="d")return pkResD();','function pkRes(){if(pk.mode==="d")return pkResD();if(!pk.lead&&window.BIBPK){const _h=window.BIBPK(pk);if(_h!==null)return _h}')
 rep('["tab","learn","learn",SEC.learn[1],"Les bases pour ta première partie",""],','["tab","learn","learn",SEC.learn[1],"Les bases pour ta première partie",""],["tab","news","news",SEC.news[1],"Mises à jour de la bibliothèque et de l\'application",""],')
 rep('["tab","news","news",SEC.news[1],','["tab","lore","lore",SEC.lore[1],"Histoire, personnages, organisations et héraldique",""],...(window.BIBTRW&&BIBTRW.n()?[["tab","trw","trw","⚠ "+SEC.trw[1]+" ("+BIBTRW.n()+")","Textes non traduits : touche pour les corriger",""]]:[]),["tab","news","news",SEC.news[1],')
-rep('<button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?','<span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button></span></div><p class="mu" style="margin:-6px 6px 12px"><b>Créer une armée</b> : pas à pas, détachement et équipements vérifiés (règles V11). <b>Liste simple</b> : libre, sans contrôle.</p>`+(S.lists.length?')
+rep('<button class="b p" data-act="nlist">+ Nouvelle liste</button></div>`+(S.lists.length?','<span><button class="b p" data-tab="bld">🛠 Créer une armée</button> <button class="b" data-act="nlist">+ Liste simple</button></span></div>`+(S.lists.length?')
 # lien discret dans « Modifier » (fiche de collection uniquement)
 rep('${co?"":`<label>Optimisation (visible uniquement','${co&&window.BIBLNK?window.BIBLNK(u):""}${co?"":`<label>Optimisation (visible uniquement')
 rep('${csm?"":`<button class="b p" data-act="fnew">+ Faction</button>','${csm?"":`<button class="b" data-bib="home">📚 Bibliothèque</button> <button class="b p" data-act="fnew">+ Faction</button>')

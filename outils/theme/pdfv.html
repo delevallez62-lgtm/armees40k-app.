@@ -108,7 +108,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
 },true);
 /* bouton « Ouvrir un PDF » dans les fenêtres de fiche (unité, détachement, stratagèmes…) et dans l'import */
 function addBars(){document.querySelectorAll("#md .pn").forEach(pn=>{if(pn.querySelector(":scope>.gpdfbar"))return;if(!pn.querySelector("textarea,input[type=text],input:not([type])"))return;const bar=document.createElement("div");bar.className="gpdfbar";bar.innerHTML=`<button data-pv="openv">📄 Remplir depuis un PDF</button>`;const mb=pn.querySelector(":scope>.mb");if(mb)mb.after(bar);else pn.prepend(bar)});
- const pf=document.getElementById("pdf");if(pf&&!document.getElementById("gpdfimp")){const l=pf.closest("label");if(l)l.insertAdjacentHTML("afterend",`<p id="gpdfimp" class="mu" style="margin:4px 0 10px">Le PDF s'ouvre dans le lecteur : tu le consultes, puis tu importes tout ou seulement certaines pages. <button class="b" data-pv="openv" style="margin-left:6px">📄 Rouvrir le dernier PDF</button></p>`)}}
+ const pf=document.getElementById("pdf");if(pf&&!document.getElementById("gpdfimp")){const l=pf.closest("label");if(l)l.insertAdjacentHTML("afterend",`<p id="gpdfimp" class="mu" style="margin:4px 0 10px"><button class="b" data-pv="openv" style="margin-left:6px">📄 Rouvrir le dernier PDF</button></p>`)}}
 const mo=new MutationObserver(()=>{try{addBars()}catch(_){}});
 ["md","m"].forEach(i=>{const n=document.getElementById(i);if(n)mo.observe(n,{childList:true,subtree:true})});
 try{addBars()}catch(_){}
