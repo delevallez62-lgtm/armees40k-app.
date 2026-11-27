@@ -13,11 +13,13 @@ B=list(csv.DictReader(open(os.path.join(H,'bibliotheque-armes-fr.csv'),encoding=
 U={r['nom anglais exact']:r for r in csv.DictReader(open(os.path.join(H,'armes-officielles-urls.csv'),encoding='utf-8-sig'),delimiter=';')}
 man,ch=load_chunks(d);fr=ch['fr'];t=fr['tr'];today=datetime.date.today().isoformat()
 S=lambda n:re.sub(r'^➤\s*','',n).strip()
-n={'A':0,'B':0,'C':0};kept=[];confl=[];same=0;skipmode=[]
+n={'A':0,'B':0,'C':0};kept=[];confl=[];same=0;skipmode=[];lowc=[]
 for r in B:
     en=r['nom anglais exact'];st=r['statut'];f=r['traduction française retenue'].strip()
     if st not in n or not f or not en.strip():continue
     if nk(f)==nk(S(en)):same+=1;continue
+    # ALN seul/ALN+KT : un nom vu dans moins de 2 listes est trop fragile (surnom ou erreur) -> ignoré
+    if st in('B','C') and int(r.get('occurrences ALN') or 0)<2:lowc.append(en);continue
     # le nom anglais porte un mode (– standard, (Frag)…) mais le français l'a perdu : on n'applique pas (risque de confusion entre modes)
     if re.search(r'\s(?:[–—-]\s+\S|\()',S(en)) and not re.search(r'\s(?:[–—-]\s+\S|\()',f):skipmode.append(en);continue
     k=hh(S(en));cur=t.get(k)
@@ -32,7 +34,7 @@ for r in B:
     if not dry:t[k]=ent
     n[st]+=1
 print('appliquées',n,'| déjà confirmées / fournies (conservées)',len(kept),'| identiques à l\'anglais (ignorées)',same)
-print('ignorées (mode perdu)',len(skipmode))
+print('ignorées (mode perdu)',len(skipmode),'| ignorées (vues < 2 fois)',len(lowc))
 print('désaccords avec des traductions conservées :',len(confl))
 for x in confl[:40]:print('  ',x)
 json.dump(confl,open(os.path.join(H,'armes-desaccords.json'),'w'),ensure_ascii=False,indent=0) if not dry else None
