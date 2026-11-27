@@ -25,7 +25,7 @@
   "paints": {
    "source": "WarHub/warhub-catalog (MIT)",
    "version": "2026.11.20",
-   "synchronised": "2026-11-25"
+   "synchronised": "2026-11-27"
   }
  },
  "notice": "Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.",
@@ -404,32 +404,32 @@
    }
   },
   {
-   "id": "paints",
-   "file": "paints.json",
-   "sha1": "e322ed594c745a58816502cea001cb9dd9a82ed4",
-   "bytes": 924038,
-   "counts": {
-    "paints": 8409,
-    "barcodes": 5120,
-    "brands": 21
-   }
-  },
-  {
-   "id": "lex",
-   "file": "lex.json",
-   "sha1": "44175b3592b0215351b2e4ea33ae7d772605231e",
-   "bytes": 98221,
-   "counts": {
-    "words": 3322
-   }
-  },
-  {
    "id": "fr",
    "file": "fr.json",
    "sha1": "53c1517a501f9bef63969ce55e66faa8b3cd42ca",
    "bytes": 2541810,
    "counts": {
     "translations": 14616
+   }
+  },
+  {
+   "id": "paints",
+   "file": "paints.json",
+   "sha1": "595c4d95915a269c0b064f9241d45e173642675f",
+   "bytes": 923994,
+   "counts": {
+    "paints": 8409,
+    "barcodes": 5118,
+    "brands": 21
+   }
+  },
+  {
+   "id": "lex",
+   "file": "lex.json",
+   "sha1": "861d2a13194f122bc23d8aa89dd5235fffd99037",
+   "bytes": 95716,
+   "counts": {
+    "words": 3226
    }
   }
  ]
