@@ -2,7 +2,7 @@
  "schema": 1,
  "game": "wh40k-11e",
  "rules": "V11",
- "version": "11e-2026-11-12-7cb6104+pa595c4d+wp2026-11-23+fr14616.53c151",
+ "version": "11e-2026-11-12-7cb6104+pa6ab33d+wp2026-11-23+fr14616.53c151",
  "generated": "2026-11-26",
  "source": {
   "units": "BSData/wh40k-11e (communauté), via gregario/warhammer-oracle (MIT)",
@@ -24,8 +24,8 @@
   },
   "paints": {
    "source": "WarHub/warhub-catalog (MIT)",
-   "version": "2026.11.20",
-   "synchronised": "2026-11-27"
+   "version": "2026.11.27",
+   "synchronised": "2026-11-28"
   }
  },
  "notice": "Données communautaires non officielles. Warhammer 40,000 et ses règles sont la propriété de Games Workshop.",
@@ -413,23 +413,23 @@
    }
   },
   {
-   "id": "paints",
-   "file": "paints.json",
-   "sha1": "595c4d95915a269c0b064f9241d45e173642675f",
-   "bytes": 923994,
-   "counts": {
-    "paints": 8409,
-    "barcodes": 5118,
-    "brands": 21
-   }
-  },
-  {
    "id": "lex",
    "file": "lex.json",
    "sha1": "861d2a13194f122bc23d8aa89dd5235fffd99037",
    "bytes": 95716,
    "counts": {
     "words": 3226
+   }
+  },
+  {
+   "id": "paints",
+   "file": "paints.json",
+   "sha1": "6ab33db678ee085070daea314a7e825f10417aa3",
+   "bytes": 923994,
+   "counts": {
+    "paints": 8409,
+    "barcodes": 5118,
+    "brands": 21
    }
   }
  ]
